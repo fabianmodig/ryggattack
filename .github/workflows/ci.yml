@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  # Actions caches are branch-scoped: a pull request can restore what its base
+  # branch saved, but not what another pull request saved. Building main keeps
+  # a warm cache there for every pull request to start from.
   push:
     branches: [main]
   pull_request:
@@ -37,6 +40,12 @@ jobs:
 
       - name: Cache cargo registry and build artifacts
         uses: Swatinem/rust-cache@v2
+        with:
+          # Compiling Bevy is nearly all of a cold run, and a failing test does
+          # not invalidate it, so keep the dependency build either way.
+          cache-on-failure: true
+          # A fixed key, so the entry does not change if the job is ever renamed.
+          shared-key: test
 
       - name: Run tests
         run: cargo test --locked
