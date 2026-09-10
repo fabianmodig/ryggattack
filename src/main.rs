@@ -30,6 +30,9 @@ fn main() {
                         title: "Ryggattack — POC".into(),
                         resolution: WindowResolution::new(1280, 720),
                         present_mode: PresentMode::AutoVsync,
+                        // The WebAssembly build renders into the canvas that
+                        // `web/index.html` provides; ignored on desktop.
+                        canvas: Some("#ryggattack-canvas".into()),
                         fit_canvas_to_parent: true,
                         ..default()
                     }),
