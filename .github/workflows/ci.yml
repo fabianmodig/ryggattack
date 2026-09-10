@@ -21,12 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # bevy_gilrs links against libudev through gilrs-core. The rest of Bevy's
-      # Linux libraries are only loaded at runtime, so the tests need no more.
+      # Two Bevy dependencies resolve system libraries through pkg-config while
+      # building: gilrs-core needs libudev and wayland-sys needs wayland-client.
+      # X11 and xkbcommon are opened at runtime instead, so the tests need no
+      # headers for those.
       - name: Install Linux build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libudev-dev
+          sudo apt-get install -y --no-install-recommends libudev-dev libwayland-dev
 
       # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
       # than whatever the runner image happens to ship.
