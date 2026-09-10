@@ -1,5 +1,5 @@
 {
-  description = "Back Snack development environment";
+  description = "Ryggattack development environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 

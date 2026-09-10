@@ -1,6 +1,6 @@
-# Back Snack
+# Ryggattack
 
-Back Snack is a code-first, local multiplayer arena game built with Rust and
+Ryggattack is a code-first, local multiplayer arena game built with Rust and
 [Bevy](https://bevy.org/). The current proof of concept focuses on the core
 idea: get behind another player and land a shot in their back.
 

@@ -24,7 +24,7 @@ fn main() {
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
-                        title: "Back Snack — POC".into(),
+                        title: "Ryggattack — POC".into(),
                         resolution: WindowResolution::new(1280, 720),
                         present_mode: PresentMode::AutoVsync,
                         fit_canvas_to_parent: true,

@@ -90,7 +90,7 @@ pub(crate) fn spawn_main_menu(mut commands: Commands) {
         ))
         .with_children(|parent| {
             parent.spawn((
-                Text::new("BACK SNACK"),
+                Text::new("RYGGATTACK"),
                 TextFont {
                     font_size: FontSize::Px(68.0),
                     ..default()
