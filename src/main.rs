@@ -11,8 +11,9 @@ use bevy::prelude::*;
 use bevy::window::{PresentMode, WindowResolution};
 
 use game::{AppState, Round};
+use players::Roster;
 use tracks::RailMap;
-use ui::PauseState;
+use ui::{LobbyLatch, PauseState};
 
 fn main() {
     App::new()
@@ -20,6 +21,8 @@ fn main() {
         .insert_resource(Round::default())
         .insert_resource(RailMap::random())
         .init_resource::<PauseState>()
+        .init_resource::<Roster>()
+        .init_resource::<LobbyLatch>()
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -38,6 +41,8 @@ fn main() {
         .add_systems(Startup, scene::setup)
         .add_systems(OnEnter(AppState::MainMenu), ui::spawn_main_menu)
         .add_systems(OnExit(AppState::MainMenu), ui::despawn_main_menu)
+        .add_systems(OnEnter(AppState::Lobby), ui::spawn_lobby)
+        .add_systems(OnExit(AppState::Lobby), ui::despawn_lobby)
         .add_systems(OnEnter(AppState::Playing), game::start_new_game)
         .add_systems(OnExit(AppState::Playing), ui::close_pause_dialog)
         .add_systems(
@@ -48,6 +53,12 @@ fn main() {
                 ui::main_menu_keyboard.run_if(in_state(AppState::MainMenu)),
                 ui::toggle_pause_dialog.run_if(in_state(AppState::Playing)),
             ),
+        )
+        .add_systems(
+            Update,
+            (ui::lobby_input, ui::lobby_keyboard, ui::refresh_lobby)
+                .chain()
+                .run_if(in_state(AppState::Lobby)),
         )
         .add_systems(
             Update,

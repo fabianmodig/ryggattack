@@ -1,9 +1,15 @@
 //! Main menu, pause controls, and the score and timer HUD.
 
+mod lobby;
+
+pub(crate) use lobby::{
+    LobbyLatch, despawn_lobby, lobby_input, lobby_keyboard, refresh_lobby, spawn_lobby,
+};
+
 use bevy::prelude::*;
 
 use crate::game::{AppState, ROUND_SECONDS, Round};
-use crate::players::Player;
+use crate::players::{Player, Roster};
 
 #[derive(Resource, Default)]
 pub(crate) struct PauseState(bool);
@@ -20,6 +26,8 @@ pub(crate) struct PauseDialogUi;
 #[derive(Component, Clone, Copy)]
 pub(crate) enum MenuAction {
     Start,
+    Launch,
+    Back,
     Exit,
     Resume,
     ReturnToMenu,
@@ -66,7 +74,7 @@ pub(crate) fn update_hud(
         format!("TIME!  Player {winner} wins\n{score_line}\nPress R to restart")
     } else {
         format!(
-            "{remaining:02}s   {score_line}\nWASD choose at junctions  |  SPACE fire  |  Hit opponents from behind"
+            "{remaining:02}s   {score_line}\nSteer at junctions  |  Fire to shoot  |  Hit opponents from behind"
         )
     };
 }
@@ -173,7 +181,7 @@ fn spawn_pause_dialog(commands: &mut Commands) {
         });
 }
 
-fn menu_button(label: &'static str, action: MenuAction) -> impl Bundle {
+pub(super) fn menu_button(label: &'static str, action: MenuAction) -> impl Bundle {
     (
         Button,
         action,
@@ -216,6 +224,7 @@ pub(crate) fn handle_menu_actions(
     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
     pause_dialogs: Query<Entity, With<PauseDialogUi>>,
     mut pause: ResMut<PauseState>,
+    roster: Res<Roster>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     for (interaction, action) in &buttons {
@@ -224,7 +233,13 @@ pub(crate) fn handle_menu_actions(
         }
 
         match action {
-            MenuAction::Start => next_state.set(AppState::Playing),
+            MenuAction::Start => next_state.set(AppState::Lobby),
+            MenuAction::Launch => {
+                if roster.humans() > 0 {
+                    next_state.set(AppState::Playing);
+                }
+            }
+            MenuAction::Back => next_state.set(AppState::MainMenu),
             MenuAction::Exit => {
                 commands.write_message(AppExit::Success);
             }
@@ -245,7 +260,7 @@ pub(crate) fn main_menu_keyboard(
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     if keys.just_pressed(KeyCode::Enter) {
-        next_state.set(AppState::Playing);
+        next_state.set(AppState::Lobby);
     } else if keys.just_pressed(KeyCode::Escape) {
         commands.write_message(AppExit::Success);
     }

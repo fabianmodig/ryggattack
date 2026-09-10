@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use crate::combat::Projectile;
-use crate::players::Player;
+use crate::players::{Player, Roster};
 use crate::tracks::{RailFollower, RailMap, reset_cart};
 
 pub(crate) const ROUND_SECONDS: f32 = 60.0;
@@ -12,6 +12,7 @@ pub(crate) const ROUND_SECONDS: f32 = 60.0;
 pub(crate) enum AppState {
     #[default]
     MainMenu,
+    Lobby,
     Playing,
 }
 
@@ -30,23 +31,45 @@ impl Default for Round {
     }
 }
 
+/// Reset the round, the scores, and every cart, and apply the current seating.
+/// This is the single point where the roster becomes gameplay state.
+fn reset_round(
+    commands: &mut Commands,
+    round: &mut Round,
+    roster: &Roster,
+    rail_map: &RailMap,
+    players: &mut Query<(&mut Player, &mut RailFollower, &mut Transform)>,
+    projectiles: &Query<Entity, With<Projectile>>,
+) {
+    *round = Round::default();
+    for (mut player, mut rail, mut transform) in players.iter_mut() {
+        player.score = 0;
+        player.shot_cooldown = player.id as f32 * 0.12;
+        player.wants_to_fire = false;
+        player.input = roster.seat(player.id);
+        reset_cart(rail_map, player.id, &mut rail, &mut transform);
+    }
+    for entity in projectiles.iter() {
+        commands.entity(entity).despawn();
+    }
+}
+
 pub(crate) fn start_new_game(
     mut commands: Commands,
     mut round: ResMut<Round>,
+    roster: Res<Roster>,
     rail_map: Res<RailMap>,
     mut players: Query<(&mut Player, &mut RailFollower, &mut Transform)>,
     projectiles: Query<Entity, With<Projectile>>,
 ) {
-    *round = Round::default();
-    for (mut player, mut rail, mut transform) in &mut players {
-        player.score = 0;
-        player.shot_cooldown = player.id as f32 * 0.12;
-        player.wants_to_fire = false;
-        reset_cart(&rail_map, player.id, &mut rail, &mut transform);
-    }
-    for entity in &projectiles {
-        commands.entity(entity).despawn();
-    }
+    reset_round(
+        &mut commands,
+        &mut round,
+        &roster,
+        &rail_map,
+        &mut players,
+        &projectiles,
+    );
 }
 
 pub(crate) fn tick_round(time: Res<Time>, mut round: ResMut<Round>) {
@@ -60,6 +83,7 @@ pub(crate) fn restart_round(
     keys: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
     mut round: ResMut<Round>,
+    roster: Res<Roster>,
     rail_map: Res<RailMap>,
     mut players: Query<(&mut Player, &mut RailFollower, &mut Transform)>,
     projectiles: Query<Entity, With<Projectile>>,
@@ -68,14 +92,12 @@ pub(crate) fn restart_round(
         return;
     }
 
-    *round = Round::default();
-    for (mut player, mut rail, mut transform) in &mut players {
-        player.score = 0;
-        player.shot_cooldown = player.id as f32 * 0.12;
-        player.wants_to_fire = false;
-        reset_cart(&rail_map, player.id, &mut rail, &mut transform);
-    }
-    for entity in &projectiles {
-        commands.entity(entity).despawn();
-    }
+    reset_round(
+        &mut commands,
+        &mut round,
+        &roster,
+        &rail_map,
+        &mut players,
+        &projectiles,
+    );
 }

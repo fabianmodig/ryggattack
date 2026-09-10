@@ -85,7 +85,7 @@ pub(crate) fn spawn_players(
                     score: 0,
                     shot_cooldown: id as f32 * 0.12,
                     wants_to_fire: false,
-                    bot: id != 0,
+                    input: None,
                 },
                 RailFollower {
                     path,
