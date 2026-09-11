@@ -95,6 +95,7 @@ fn main() {
                 explosions::animate_smoke,
                 explosions::animate_flashes,
                 explosions::move_debris,
+                explosions::fade_scorches,
                 game::restart_round,
                 ui::update_hud,
             )

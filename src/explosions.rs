@@ -24,6 +24,11 @@ const GRAVITY: f32 = 16.0;
 /// The seconds over which a piece of wreckage shrinks away at the end of its life.
 const DEBRIS_FADE: f32 = 0.3;
 
+/// How long a missile scorches the ground, and how much of that it spends
+/// fading. Short enough that a round of shooting does not blacken the arena.
+const SCORCH_SECONDS: f32 = 8.0;
+const SCORCH_FADE: f32 = 3.0;
+
 /// A blast waiting for its fuse to run out.
 #[derive(Component)]
 pub(crate) struct Detonation {
@@ -99,8 +104,9 @@ impl EffectAssets {
                 ..default()
             }),
             scorch: materials.add(StandardMaterial {
-                base_color: Color::srgb(0.07, 0.06, 0.05),
+                base_color: Color::srgba(0.10, 0.08, 0.06, 0.6),
                 perceptual_roughness: 1.0,
+                alpha_mode: AlphaMode::Blend,
                 ..default()
             }),
         }
@@ -132,6 +138,13 @@ pub(crate) struct Smoke {
     start_radius: f32,
     end_radius: f32,
     rise: f32,
+}
+
+/// A patch of burnt ground that fades away.
+#[derive(Component)]
+pub(crate) struct Scorch {
+    life: f32,
+    radius: f32,
 }
 
 /// A loose piece flying through the air: a spark, or part of a wrecked prop.
@@ -175,6 +188,7 @@ pub(crate) fn run_detonations(
             &mut rng.0,
             detonation.position,
             size,
+            detonation.chain == 0,
         );
         if radius <= 0.0 {
             continue;
@@ -245,14 +259,15 @@ fn wreck(
     }
 }
 
-/// Fire, light, sparks, smoke, and a scorched patch of ground. `size` scales
-/// the lot, one being a missile's own blast.
+/// Fire, light, sparks, smoke, and for a missile's own blast a scorched patch
+/// of ground. `size` scales the lot, one being a missile's own blast.
 fn burst(
     commands: &mut Commands,
     assets: &EffectAssets,
     rng: &mut SimpleRng,
     position: Vec3,
     size: f32,
+    scorch: bool,
 ) {
     let centre = position.with_y(position.y.max(0.45 * size));
     for (offset, radius, delay) in [
@@ -324,17 +339,21 @@ fn burst(
         );
     }
 
-    commands.spawn((
-        Mesh3d(assets.disc.clone()),
-        MeshMaterial3d(assets.scorch.clone()),
-        Transform::from_xyz(position.x, 0.012, position.z).with_scale(Vec3::new(
-            1.1 * size,
-            1.0,
-            1.1 * size,
-        )),
-        NotShadowCaster,
-        Transient,
-    ));
+    if scorch {
+        let radius = 0.9 * size;
+        commands.spawn((
+            Scorch {
+                life: SCORCH_SECONDS,
+                radius,
+            },
+            Mesh3d(assets.disc.clone()),
+            MeshMaterial3d(assets.scorch.clone()),
+            Transform::from_xyz(position.x, 0.012, position.z)
+                .with_scale(Vec3::new(radius, 1.0, radius)),
+            NotShadowCaster,
+            Transient,
+        ));
+    }
 }
 
 /// One ball of smoke that grows, rises, and thins out.
@@ -428,6 +447,22 @@ pub(crate) fn animate_flashes(
             continue;
         }
         light.intensity = flash.peak * (1.0 - progress).powi(2);
+    }
+}
+
+pub(crate) fn fade_scorches(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut scorches: Query<(Entity, &mut Scorch, &mut Transform)>,
+) {
+    for (entity, mut scorch, mut transform) in &mut scorches {
+        scorch.life -= time.delta_secs();
+        if scorch.life <= 0.0 {
+            commands.entity(entity).despawn();
+            continue;
+        }
+        let radius = scorch.radius * (scorch.life / SCORCH_FADE).min(1.0);
+        transform.scale = Vec3::new(radius, 1.0, radius);
     }
 }
 
