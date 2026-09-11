@@ -1,0 +1,120 @@
+name: Publish web image
+
+# A tag push is the release: it names the image that carries the same version.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CARGO_TERM_COLOR: always
+  # The tag being released, or the branch when this is started by hand.
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Publishing to this repository's namespace on ghcr.io.
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # ghcr.io rejects an upper-case path, which a repository name may carry.
+      - name: Resolve the image name
+        run: |
+          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          echo "IMAGE=ghcr.io/$repository/web" >> "$GITHUB_ENV"
+
+      # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
+      # than whatever the runner image happens to ship.
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          # Its own entry: this job compiles a different target triple than
+          # the test job, so the two share nothing worth mixing.
+          shared-key: web
+          cache-on-failure: true
+
+      # The generated glue only works with the CLI of the version Cargo.lock
+      # pins, and the release tarball installs in seconds where building the
+      # CLI from source takes minutes.
+      - name: Install wasm-bindgen
+        run: |
+          version="$(scripts/wasm-bindgen-version.sh)"
+          release="wasm-bindgen-$version-x86_64-unknown-linux-musl"
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsSL "https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$version/$release.tar.gz" \
+            | tar xz --strip-components=1 -C "$RUNNER_TEMP/bin" "$release/wasm-bindgen"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Build the web bundle
+        run: scripts/build-web.sh
+
+      - name: Build the image
+        run: |
+          docker build \
+            --file web/Dockerfile \
+            --tag "$IMAGE:$VERSION" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.version=$VERSION" \
+            .
+
+      # Find a broken image here rather than after it has been published.
+      - name: Smoke-test the image
+        run: |
+          docker run --rm --detach --name ryggattack-web \
+            --publish 8080:8080 "$IMAGE:$VERSION"
+
+          for _ in $(seq 30); do
+            if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:8080/ | grep -q ryggattack-canvas
+          type="$(curl -fsS -o /dev/null -w '%{content_type}' \
+            http://127.0.0.1:8080/ryggattack_bg.wasm)"
+          case "$type" in
+            application/wasm*) ;;
+            *)
+              echo "the module is served as '$type', not application/wasm" >&2
+              exit 1
+              ;;
+          esac
+
+          docker stop ryggattack-web
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Push the image
+        run: |
+          docker push "$IMAGE:$VERSION"
+
+          # `latest` follows finished releases only, so a pre-release such as
+          # v0.2.0-rc1 and a manual run from a branch publish under their own
+          # name and move nothing else.
+          case "$VERSION" in
+            v*-*) ;;
+            v*)
+              docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+              docker push "$IMAGE:latest"
+              ;;
+          esac
