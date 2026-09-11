@@ -102,18 +102,22 @@ that cargo does not install; the build says which of the two it produced.
 
 ### The playable build
 
-Every `v*` tag deploys `dist/web/` to GitHub Pages, so the release is playable
-without installing anything:
+Every push to `main` deploys `dist/web/` to GitHub Pages, so the current state
+of the game is playable without installing anything:
 
 **<https://fabianmodig.github.io/ryggattack/>**
 
-The page loads about 39 MB of WebAssembly on a cold visit, which is most of a
-Bevy engine. Pages decides on its own whether to compress that; nothing in the
-repository can set the response headers.
+The page follows `main` rather than the last release, which keeps what people
+try the same as what the repository says. Tags publish the container image
+below; they do not move the page.
 
-Publishing needs one setting that a workflow cannot make for itself: under
-Settings → Pages, set the build and deployment source to **GitHub Actions**.
-Until that is done the deploy step fails.
+A cold visit loads about 39 MB of WebAssembly, which is most of a Bevy engine.
+Pages decides on its own whether to compress that — nothing here can set the
+response headers, which is why a release build shrinks the module itself.
+
+Pull requests build the bundle but deploy nothing. The deploy needs one
+setting no workflow can make for itself: under Settings → Pages, the build and
+deployment source has to be **GitHub Actions**.
 
 ### The published container image
 
@@ -129,9 +133,9 @@ module and the glue stored pre-compressed, and `.wasm` answered as
 as `v0.2.0-rc1` publishes under its own name and moves nothing else.
 
 `.github/workflows/release.yml` builds the image, starts it and checks that it
-really serves the page and the module, and pushes only then — after which the
-same bundle goes to Pages. Starting the workflow by hand publishes the branch
-name as the tag, which is a way to try a build without releasing it.
+really serves the page and the module, and pushes only then. Starting the
+workflow by hand publishes the branch name as the tag, which is a way to try a
+build without releasing it.
 
 The same image builds locally, from the repository root:
 

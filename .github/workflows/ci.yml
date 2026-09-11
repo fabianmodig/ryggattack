@@ -60,9 +60,56 @@ jobs:
       # for system libraries on Linux.
       - uses: ./.github/actions/setup-web-build
 
+      # Only worth its couple of minutes on the build that gets published;
+      # a pull request is being checked, not downloaded by anyone.
+      - name: Install wasm-opt
+        if: github.ref == 'refs/heads/main'
+        env:
+          BINARYEN: version_131
+        run: |
+          curl -fsSL "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN/binaryen-$BINARYEN-x86_64-linux.tar.gz" \
+            | tar xz --strip-components=2 -C "$RUNNER_TEMP/bin" "binaryen-$BINARYEN/bin/wasm-opt"
+          wasm-opt --version
+
       # Nothing else compiles this target, so without this job a broken web
       # build would surface only once someone cut a release — and the release
       # would start from a cold cache, since only the default branch can leave
       # one behind for it.
       - name: Build the web bundle
         run: scripts/build-web.sh
+
+      # Pull requests stop at the build: only main is published.
+      - name: Package the bundle for Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/web
+
+  pages:
+    name: Deploy to GitHub Pages
+    needs: web
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      # deploy-pages publishes as the Pages app and proves who it is with an
+      # OIDC token, so it needs both of these and nothing else.
+      pages: write
+      id-token: write
+
+    # Its own group, so two runs that both reached this point queue instead of
+    # racing each other onto the live site.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    # Recorded as a deployment of this environment, which is what puts the
+    # live URL on the repository page.
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v5

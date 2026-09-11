@@ -1,7 +1,7 @@
 name: Release
 
-# A tag push is the release: it names the image that carries the same version
-# and updates the playable build on GitHub Pages.
+# A tag push is the release: it names the image that carries the same version.
+# The playable page tracks main instead, and is deployed from ci.yml.
 on:
   push:
     tags: ["v*"]
@@ -107,31 +107,3 @@ jobs:
               docker push "$IMAGE:latest"
               ;;
           esac
-
-      # Hand the same bundle to the deploy job rather than compiling it twice.
-      - name: Package the bundle for Pages
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: dist/web
-
-  pages:
-    name: Deploy to GitHub Pages
-    needs: publish
-    runs-on: ubuntu-latest
-
-    permissions:
-      # deploy-pages publishes as the Pages app and proves who it is with an
-      # OIDC token, so it needs both of these and nothing else.
-      pages: write
-      id-token: write
-
-    # Recorded as a deployment of this environment, which is what puts the
-    # live URL on the repository page.
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-
-    steps:
-      - name: Deploy
-        id: deploy
-        uses: actions/deploy-pages@v5
