@@ -67,6 +67,26 @@ fi
 
 wasm-bindgen "${bindgen_args[@]}" "$target_dir/ryggattack.wasm"
 
+# Optional, because it needs Binaryen rather than anything cargo installs.
+# A host that cannot compress the response serves the module at its full size,
+# so releases are built where this is available and take the smaller one.
+module="$out_dir/ryggattack_bg.wasm"
+if [ "$profile" = "release" ] && command -v wasm-opt >/dev/null 2>&1; then
+  before="$(wc -c <"$module")"
+  # The feature flags have to cover whatever the current rustc emits. They are
+  # not a wish list: wasm-opt rejects a module using anything it was not told
+  # about, which fails this build rather than shipping a broken one.
+  wasm-opt -Oz \
+    --enable-bulk-memory \
+    --enable-nontrapping-float-to-int \
+    -o "$module.opt" "$module"
+  mv "$module.opt" "$module"
+  after="$(wc -c <"$module")"
+  echo "wasm-opt: $((before / 1000000)) MB -> $((after / 1000000)) MB"
+elif [ "$profile" = "release" ]; then
+  echo "note: wasm-opt was not found, so the module keeps its full size."
+fi
+
 cp web/index.html "$out_dir/index.html"
 if [ -d assets ]; then
   cp -R assets "$out_dir/assets"

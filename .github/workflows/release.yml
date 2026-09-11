@@ -1,6 +1,7 @@
-name: Publish web image
+name: Release
 
 # A tag push is the release: it names the image that carries the same version.
+# The playable page tracks main instead, and is deployed from ci.yml.
 on:
   push:
     tags: ["v*"]
@@ -36,6 +37,17 @@ jobs:
       # Shared with the web job in ci.yml, which builds the same target on
       # the default branch and so leaves the cargo cache this restores.
       - uses: ./.github/actions/setup-web-build
+
+      # Only the release path installs this: it trims about a quarter off the
+      # module, which matters on a host that serves it uncompressed, but it
+      # costs a couple of minutes that the pull request check does not need.
+      - name: Install wasm-opt
+        env:
+          BINARYEN: version_131
+        run: |
+          curl -fsSL "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN/binaryen-$BINARYEN-x86_64-linux.tar.gz" \
+            | tar xz --strip-components=2 -C "$RUNNER_TEMP/bin" "binaryen-$BINARYEN/bin/wasm-opt"
+          wasm-opt --version
 
       - name: Build the web bundle
         run: scripts/build-web.sh
