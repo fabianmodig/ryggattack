@@ -93,7 +93,28 @@ Everything lands in `dist/web/`, which is ignored by Git:
 
 Any static host will do — upload `dist/web/` as it is. Serve `.wasm` with the
 `application/wasm` content type and turn on compression: the release bundle is
-roughly 50 MB uncompressed and 15 MB gzipped, because it carries all of Bevy.
+roughly 39 MB uncompressed and 12 MB gzipped, because it carries all of Bevy.
+
+A release build also runs `wasm-opt -Oz` over the module when Binaryen is
+installed, which takes about a quarter off the uncompressed size and close to
+nothing off the compressed one. It is optional because it is the one tool here
+that cargo does not install; the build says which of the two it produced.
+
+### The playable build
+
+Every `v*` tag deploys `dist/web/` to GitHub Pages, so the release is playable
+without installing anything:
+
+**<https://fabianmodig.github.io/ryggattack/>**
+
+The page loads about 39 MB of WebAssembly on a cold visit, which is most of a
+Bevy engine. Pages decides on its own whether to compress that; nothing in the
+repository can set the response headers.
+
+Publishing needs one setting that a workflow cannot make for itself: under
+Settings → Pages, set the build and deployment source to **GitHub Actions**.
+Until that is done the deploy step fails, and because this repository is
+private, Pages also needs a paid plan and publishes the site publicly.
 
 ### The published container image
 
@@ -108,10 +129,10 @@ module and the glue stored pre-compressed, and `.wasm` answered as
 `application/wasm`. `latest` follows finished releases, so a pre-release such
 as `v0.2.0-rc1` publishes under its own name and moves nothing else.
 
-`.github/workflows/publish-web-image.yml` builds the image, starts it and
-checks that it really serves the page and the module, and pushes only then.
-Starting the workflow by hand publishes the branch name as the tag, which is
-a way to try a build without releasing it.
+`.github/workflows/release.yml` builds the image, starts it and checks that it
+really serves the page and the module, and pushes only then — after which the
+same bundle goes to Pages. Starting the workflow by hand publishes the branch
+name as the tag, which is a way to try a build without releasing it.
 
 The same image builds locally, from the repository root:
 
@@ -210,5 +231,5 @@ environment. Use `cargo fmt` to format changes.
 
 1. Improve movement, hit feedback, bot behavior, and round presentation.
 2. Add original character and arena art.
-3. Deploy the published web image somewhere public.
+3. Shrink the download; 39 MB is a lot to ask of a first visit.
 4. Validate Android and iOS packaging early.
