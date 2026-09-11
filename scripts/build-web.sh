@@ -88,9 +88,10 @@ elif [ "$profile" = "release" ]; then
 fi
 
 cp web/index.html "$out_dir/index.html"
-if [ -d assets ]; then
-  cp -R assets "$out_dir/assets"
-fi
+
+# `assets/` is deliberately not copied. Nothing loads it: the carts, riders
+# and arena are meshes built in code, and the game never touches the asset
+# server. Copy it here again once something actually reads it at runtime.
 
 echo
 echo "Built $out_dir. Serve it with:"
