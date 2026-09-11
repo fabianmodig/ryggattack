@@ -113,8 +113,7 @@ repository can set the response headers.
 
 Publishing needs one setting that a workflow cannot make for itself: under
 Settings → Pages, set the build and deployment source to **GitHub Actions**.
-Until that is done the deploy step fails, and because this repository is
-private, Pages also needs a paid plan and publishes the site publicly.
+Until that is done the deploy step fails.
 
 ### The published container image
 
