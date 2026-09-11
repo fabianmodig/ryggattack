@@ -1,0 +1,6 @@
+# web/Dockerfile copies only the built bundle and the server config, so keep
+# everything else — above all the multi-gigabyte cargo target directory — out
+# of the context that is handed to the daemon.
+*
+!dist/web
+!web/nginx.conf

@@ -1,0 +1,97 @@
+name: Publish web image
+
+# A tag push is the release: it names the image that carries the same version.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CARGO_TERM_COLOR: always
+  # The tag being released, or the branch when this is started by hand.
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Publishing to this repository's namespace on ghcr.io.
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # ghcr.io rejects an upper-case path, which a repository name may carry.
+      - name: Resolve the image name
+        run: |
+          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          echo "IMAGE=ghcr.io/$repository/web" >> "$GITHUB_ENV"
+
+      # Shared with the web job in ci.yml, which builds the same target on
+      # the default branch and so leaves the cargo cache this restores.
+      - uses: ./.github/actions/setup-web-build
+
+      - name: Build the web bundle
+        run: scripts/build-web.sh
+
+      - name: Build the image
+        run: |
+          docker build \
+            --file web/Dockerfile \
+            --tag "$IMAGE:$VERSION" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.version=$VERSION" \
+            .
+
+      # Find a broken image here rather than after it has been published.
+      - name: Smoke-test the image
+        run: |
+          docker run --rm --detach --name ryggattack-web \
+            --publish 8080:8080 "$IMAGE:$VERSION"
+
+          for _ in $(seq 30); do
+            if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:8080/ | grep -q ryggattack-canvas
+          type="$(curl -fsS -o /dev/null -w '%{content_type}' \
+            http://127.0.0.1:8080/ryggattack_bg.wasm)"
+          case "$type" in
+            application/wasm*) ;;
+            *)
+              echo "the module is served as '$type', not application/wasm" >&2
+              exit 1
+              ;;
+          esac
+
+          docker stop ryggattack-web
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Push the image
+        run: |
+          docker push "$IMAGE:$VERSION"
+
+          # `latest` follows finished releases only, so a pre-release such as
+          # v0.2.0-rc1 and a manual run from a branch publish under their own
+          # name and move nothing else.
+          case "$VERSION" in
+            v*-*) ;;
+            v*)
+              docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+              docker push "$IMAGE:latest"
+              ;;
+          esac

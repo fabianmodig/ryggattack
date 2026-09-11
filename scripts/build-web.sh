@@ -34,9 +34,7 @@ if command -v rustup >/dev/null 2>&1 &&
   exit 1
 fi
 
-# The generated JavaScript glue only works with the exact wasm-bindgen crate
-# version the binary was compiled against, so read it out of Cargo.lock.
-expected="$(sed -n '/^name = "wasm-bindgen"$/{n;s/^version = "\(.*\)"$/\1/p;q;}' Cargo.lock)"
+expected="$(scripts/wasm-bindgen-version.sh)"
 
 if ! command -v wasm-bindgen >/dev/null 2>&1; then
   echo "error: wasm-bindgen was not found on PATH." >&2
@@ -45,7 +43,7 @@ if ! command -v wasm-bindgen >/dev/null 2>&1; then
 fi
 
 actual="$(wasm-bindgen --version | awk '{print $2}')"
-if [ -n "$expected" ] && [ "$expected" != "$actual" ]; then
+if [ "$expected" != "$actual" ]; then
   echo "error: wasm-bindgen CLI $actual does not match the wasm-bindgen crate $expected." >&2
   echo "       run: cargo install wasm-bindgen-cli --version $expected --force" >&2
   exit 1

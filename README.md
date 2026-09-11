@@ -95,6 +95,35 @@ Any static host will do — upload `dist/web/` as it is. Serve `.wasm` with the
 `application/wasm` content type and turn on compression: the release bundle is
 roughly 50 MB uncompressed and 15 MB gzipped, because it carries all of Bevy.
 
+### The published container image
+
+Pushing a `v*` tag builds the bundle and publishes an image that serves it:
+
+```sh
+docker run --rm -p 8080:8080 ghcr.io/fabianmodig/ryggattack/web:v0.1.0
+```
+
+The image is nginx on port 8080 with `dist/web/` as its document root, the
+module and the glue stored pre-compressed, and `.wasm` answered as
+`application/wasm`. `latest` follows finished releases, so a pre-release such
+as `v0.2.0-rc1` publishes under its own name and moves nothing else.
+
+`.github/workflows/publish-web-image.yml` builds the image, starts it and
+checks that it really serves the page and the module, and pushes only then.
+Starting the workflow by hand publishes the branch name as the tag, which is
+a way to try a build without releasing it.
+
+The same image builds locally, from the repository root:
+
+```sh
+scripts/build-web.sh
+docker build -f web/Dockerfile -t ryggattack-web .
+docker run --rm -p 8080:8080 ryggattack-web
+```
+
+`web/Dockerfile` packages a bundle that already exists; it does not compile
+one, so `scripts/build-web.sh` has to run first.
+
 ### How the web build differs
 
 - The game renders into the `#ryggattack-canvas` element from
@@ -168,8 +197,9 @@ application is configured and the order in which gameplay systems run.
 | `src/tracks/render.rs` | Rail, track-bed, and sleeper meshes |
 
 The web build is driven from outside `src/`: `web/index.html` is the page
-shell that hosts the canvas, and `scripts/build-web.sh` compiles the
-WebAssembly bundle into `dist/web/`.
+shell that hosts the canvas, `scripts/build-web.sh` compiles the WebAssembly
+bundle into `dist/web/`, and `web/Dockerfile` with `web/nginx.conf` packages
+that bundle into the image a tag push publishes.
 
 `src/tracks/mod.rs` exposes the track functions and types used by the rest of
 the game. Tuning constants live with the feature they control. Tests live
@@ -180,5 +210,5 @@ environment. Use `cargo fmt` to format changes.
 
 1. Improve movement, hit feedback, bot behavior, and round presentation.
 2. Add original character and arena art.
-3. Automate deployment of the WebAssembly build.
+3. Deploy the published web image somewhere public.
 4. Validate Android and iOS packaging early.
