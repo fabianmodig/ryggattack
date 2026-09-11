@@ -27,7 +27,7 @@ impl RailMap {
         Self::from_seed(seed)
     }
 
-    pub(super) fn from_seed(seed: u64) -> Self {
+    pub(crate) fn from_seed(seed: u64) -> Self {
         let node_count = TRACK_GRID_SIZE * TRACK_GRID_SIZE;
         let mut rng = SimpleRng::new(seed);
         let mut possible_edges = grid_edges();
@@ -91,12 +91,30 @@ impl RailMap {
         let from = STARTS[id % STARTS.len()];
         (from, self.neighbors[from][id % self.neighbors[from].len()])
     }
+
+    /// How far a ground point is from the centre line of the nearest rail.
+    /// Junction curves stay within the corner they cut, so the straight lines
+    /// between junctions are a close enough stand-in for the whole network.
+    pub(crate) fn distance_to_track(&self, point: Vec2) -> f32 {
+        self.edges
+            .iter()
+            .map(|&(from, to)| {
+                let start = rail_position(from).xz();
+                let end = rail_position(to).xz();
+                let along = end - start;
+                let t = ((point - start).dot(along) / along.length_squared()).clamp(0.0, 1.0);
+                point.distance(start + along * t)
+            })
+            .fold(f32::INFINITY, f32::min)
+    }
 }
 
-struct SimpleRng(u64);
+/// A small xorshift generator: deterministic for a seed, and available on the
+/// web where the standard library has no random source.
+pub(crate) struct SimpleRng(u64);
 
 impl SimpleRng {
-    fn new(seed: u64) -> Self {
+    pub(crate) fn new(seed: u64) -> Self {
         Self(if seed == 0 {
             0x9e37_79b9_7f4a_7c15
         } else {
@@ -112,12 +130,22 @@ impl SimpleRng {
         self.0
     }
 
-    fn index(&mut self, length: usize) -> usize {
+    pub(crate) fn index(&mut self, length: usize) -> usize {
         (self.next() as usize) % length
     }
 
-    fn chance(&mut self, percent: u64) -> bool {
+    pub(crate) fn chance(&mut self, percent: u64) -> bool {
         self.next() % 100 < percent
+    }
+
+    /// A value in `[0, 1)`.
+    pub(crate) fn unit(&mut self) -> f32 {
+        (self.next() >> 40) as f32 / (1u64 << 24) as f32
+    }
+
+    /// A value in `[low, high)`.
+    pub(crate) fn range(&mut self, low: f32, high: f32) -> f32 {
+        low + (high - low) * self.unit()
     }
 
     fn shuffle<T>(&mut self, values: &mut [T]) {
@@ -221,5 +249,28 @@ mod tests {
     #[test]
     fn different_seeds_produce_different_maps() {
         assert_ne!(RailMap::from_seed(1).edges, RailMap::from_seed(2).edges);
+    }
+
+    #[test]
+    fn distance_to_track_measures_to_the_nearest_rail() {
+        let map = RailMap::from_edges(1, vec![(0, 1)]);
+        let start = rail_position(0).xz();
+        let end = rail_position(1).xz();
+        assert!(map.distance_to_track(start).abs() < 1e-5);
+        assert!((map.distance_to_track(start.lerp(end, 0.5) + Vec2::Y * 2.0) - 2.0).abs() < 1e-5);
+        // Beyond the end of a rail the distance grows diagonally, not sideways.
+        let past_end = end + Vec2::new(3.0, 4.0);
+        assert!((map.distance_to_track(past_end) - 5.0).abs() < 1e-5);
+    }
+
+    #[test]
+    fn random_floats_stay_in_range_and_repeat_for_a_seed() {
+        let mut left = SimpleRng::new(7);
+        let mut right = SimpleRng::new(7);
+        for _ in 0..1000 {
+            let value = left.range(-2.0, 3.0);
+            assert!((-2.0..3.0).contains(&value));
+            assert_eq!(value, right.range(-2.0, 3.0));
+        }
     }
 }

@@ -1,9 +1,11 @@
 //! Application configuration and explicit system order.
 
 mod combat;
+mod explosions;
 mod game;
 mod players;
 mod scene;
+mod scenery;
 mod tracks;
 mod ui;
 
@@ -17,7 +19,8 @@ use ui::{LobbyLatch, MenuFocus, MenuInput, PauseState, StickLatch};
 
 fn main() {
     App::new()
-        .insert_resource(ClearColor(Color::srgb(0.035, 0.045, 0.075)))
+        // The fog colour, so that anything past the tree line fades into it.
+        .insert_resource(ClearColor(Color::srgb(0.62, 0.72, 0.66)))
         .insert_resource(Round::default())
         .insert_resource(RailMap::random())
         .init_resource::<PauseState>()
@@ -85,7 +88,13 @@ fn main() {
                 players::handle_player_collisions,
                 combat::fire_projectiles,
                 combat::move_projectiles,
+                combat::strike_scenery,
                 combat::detect_hits,
+                explosions::run_detonations,
+                explosions::animate_fireballs,
+                explosions::animate_smoke,
+                explosions::animate_flashes,
+                explosions::move_debris,
                 game::restart_round,
                 ui::update_hud,
             )
