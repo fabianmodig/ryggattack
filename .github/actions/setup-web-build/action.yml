@@ -1,0 +1,35 @@
+name: Set up the web build
+description: >
+  Installs what scripts/build-web.sh needs and restores the cargo cache that
+  every job compiling the wasm32 target shares.
+
+runs:
+  using: composite
+  steps:
+    # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
+    # than whatever the runner image happens to ship.
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+
+    - uses: Swatinem/rust-cache@v2
+      with:
+        # One entry for every job that compiles this target, which is why the
+        # configuration lives here: a release only starts from a warm cache if
+        # its key matches the one a build on the default branch saved, and two
+        # copies of these settings would eventually stop matching.
+        shared-key: web
+        cache-on-failure: true
+
+    # The generated glue only works with the CLI of the version Cargo.lock
+    # pins, and the release tarball installs in seconds where building the CLI
+    # from source takes minutes.
+    - name: Install wasm-bindgen
+      shell: bash
+      run: |
+        version="$(scripts/wasm-bindgen-version.sh)"
+        release="wasm-bindgen-$version-x86_64-unknown-linux-musl"
+        mkdir -p "$RUNNER_TEMP/bin"
+        curl -fsSL "https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$version/$release.tar.gz" \
+          | tar xz --strip-components=1 -C "$RUNNER_TEMP/bin" "$release/wasm-bindgen"
+        echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"

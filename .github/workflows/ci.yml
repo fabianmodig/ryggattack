@@ -49,3 +49,20 @@ jobs:
 
       - name: Run tests
         run: cargo test --locked
+
+  web:
+    name: web build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # No apt step: targeting wasm32 skips the two build scripts that reach
+      # for system libraries on Linux.
+      - uses: ./.github/actions/setup-web-build
+
+      # Nothing else compiles this target, so without this job a broken web
+      # build would surface only once someone cut a release — and the release
+      # would start from a cold cache, since only the default branch can leave
+      # one behind for it.
+      - name: Build the web bundle
+        run: scripts/build-web.sh

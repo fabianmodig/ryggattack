@@ -33,32 +33,9 @@ jobs:
           repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
           echo "IMAGE=ghcr.io/$repository/web" >> "$GITHUB_ENV"
 
-      # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
-      # than whatever the runner image happens to ship.
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-
-      - name: Cache cargo registry and build artifacts
-        uses: Swatinem/rust-cache@v2
-        with:
-          # Its own entry: this job compiles a different target triple than
-          # the test job, so the two share nothing worth mixing.
-          shared-key: web
-          cache-on-failure: true
-
-      # The generated glue only works with the CLI of the version Cargo.lock
-      # pins, and the release tarball installs in seconds where building the
-      # CLI from source takes minutes.
-      - name: Install wasm-bindgen
-        run: |
-          version="$(scripts/wasm-bindgen-version.sh)"
-          release="wasm-bindgen-$version-x86_64-unknown-linux-musl"
-          mkdir -p "$RUNNER_TEMP/bin"
-          curl -fsSL "https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$version/$release.tar.gz" \
-            | tar xz --strip-components=1 -C "$RUNNER_TEMP/bin" "$release/wasm-bindgen"
-          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      # Shared with the web job in ci.yml, which builds the same target on
+      # the default branch and so leaves the cargo cache this restores.
+      - uses: ./.github/actions/setup-web-build
 
       - name: Build the web bundle
         run: scripts/build-web.sh
