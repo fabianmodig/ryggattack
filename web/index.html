@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Ryggattack</title>
+    <link rel="icon" href="data:," />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #090b13;
+        color: #c8d2e6;
+        font-family: system-ui, sans-serif;
+      }
+
+      #game {
+        position: absolute;
+        inset: 0;
+      }
+
+      #game canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+
+      #status {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 1.5rem;
+        line-height: 1.5;
+        pointer-events: none;
+      }
+
+      #status.failed {
+        color: #ff8080;
+        pointer-events: auto;
+        user-select: text;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"><canvas id="ryggattack-canvas" tabindex="0"></canvas></div>
+    <div id="status">Loading Ryggattack…</div>
+
+    <script type="module">
+      import init from "./ryggattack.js";
+
+      const status = document.getElementById("status");
+      const canvas = document.getElementById("ryggattack-canvas");
+
+      // Winit listens for key events on the canvas, so it has to hold focus
+      // for the keyboard controls to work.
+      canvas.focus();
+      window.addEventListener("pointerdown", () => canvas.focus());
+
+      try {
+        await init();
+        status.remove();
+      } catch (error) {
+        // Winit stops its web event loop by throwing, so this particular
+        // exception means the game started rather than that it failed.
+        if (String(error.message).startsWith("Using exceptions for control flow")) {
+          status.remove();
+        } else {
+          status.classList.add("failed");
+          status.textContent = `Ryggattack failed to start: ${error}`;
+          throw error;
+        }
+      }
+    </script>
+  </body>
+</html>

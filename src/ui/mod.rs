@@ -11,6 +11,10 @@ use bevy::prelude::*;
 use crate::game::{AppState, ROUND_SECONDS, Round};
 use crate::players::{Player, Roster};
 
+/// The browser tab owns the page, so the web build cannot close itself and
+/// leaves out the affordances that would only freeze the canvas.
+const CAN_EXIT: bool = !cfg!(target_arch = "wasm32");
+
 #[derive(Resource, Default)]
 pub(crate) struct PauseState(bool);
 
@@ -115,9 +119,15 @@ pub(crate) fn spawn_main_menu(mut commands: Commands) {
                 TextColor(Color::srgb(0.72, 0.78, 0.90)),
             ));
             parent.spawn(menu_button("START", MenuAction::Start));
-            parent.spawn(menu_button("EXIT", MenuAction::Exit));
+            if CAN_EXIT {
+                parent.spawn(menu_button("EXIT", MenuAction::Exit));
+            }
             parent.spawn((
-                Text::new("Enter: Start   |   Escape: Exit"),
+                Text::new(if CAN_EXIT {
+                    "Enter: Start   |   Escape: Exit"
+                } else {
+                    "Enter: Start"
+                }),
                 TextFont {
                     font_size: FontSize::Px(18.0),
                     ..default()
@@ -261,7 +271,7 @@ pub(crate) fn main_menu_keyboard(
 ) {
     if keys.just_pressed(KeyCode::Enter) {
         next_state.set(AppState::Lobby);
-    } else if keys.just_pressed(KeyCode::Escape) {
+    } else if CAN_EXIT && keys.just_pressed(KeyCode::Escape) {
         commands.write_message(AppExit::Success);
     }
 }

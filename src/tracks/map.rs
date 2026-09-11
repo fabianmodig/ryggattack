@@ -1,9 +1,9 @@
 //! Rail network generation and grid coordinates.
 
 use std::collections::HashSet;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use bevy::prelude::*;
+use web_time::{SystemTime, UNIX_EPOCH};
 
 const TRACK_GRID_SIZE: usize = 5;
 

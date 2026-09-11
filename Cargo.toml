@@ -5,6 +5,9 @@ edition = "2024"
 
 [dependencies]
 bevy = { version = "0.19.1", default-features = false, features = ["3d", "ui"] }
+# Re-exports `std::time` everywhere except the web, where it reads the clock
+# through the browser instead of panicking.
+web-time = "1.1"
 
 [profile.dev]
 opt-level = 1
