@@ -68,7 +68,7 @@ impl EffectAssets {
             ..default()
         };
         let haze = |alpha: f32| StandardMaterial {
-            base_color: Color::srgba(0.30, 0.30, 0.31, alpha),
+            base_color: Color::srgba(0.42, 0.42, 0.43, alpha),
             perceptual_roughness: 1.0,
             alpha_mode: AlphaMode::Blend,
             ..default()
@@ -91,7 +91,7 @@ impl EffectAssets {
                 Color::srgba(0.20, 0.08, 0.05, 0.14),
             ]
             .map(|color| materials.add(glow(color))),
-            smoke: [0.55, 0.45, 0.35, 0.25, 0.14, 0.05].map(|alpha| materials.add(haze(alpha))),
+            smoke: [0.50, 0.42, 0.33, 0.24, 0.14, 0.05].map(|alpha| materials.add(haze(alpha))),
             spark: materials.add(StandardMaterial {
                 base_color: Color::srgb(1.0, 0.80, 0.35),
                 emissive: LinearRgba::rgb(8.0, 3.5, 0.6),
@@ -263,7 +263,7 @@ fn burst(
         commands.spawn((
             Fireball {
                 age: -delay,
-                duration: rng.range(0.45, 0.6) * size.sqrt(),
+                duration: rng.range(0.55, 0.7) * size.sqrt(),
                 radius: radius * size,
             },
             Mesh3d(assets.sphere.clone()),
@@ -317,10 +317,10 @@ fn burst(
             commands,
             assets,
             centre + offset.with_y(offset.y.abs()),
-            0.35 * size,
-            1.3 * size,
-            rng.range(1.3, 1.8),
-            1.0,
+            0.25 * size,
+            1.1 * size,
+            rng.range(1.4, 1.9),
+            0.9,
         );
     }
 
@@ -407,8 +407,8 @@ pub(crate) fn animate_smoke(
             commands.entity(entity).despawn();
             continue;
         }
-        let radius =
-            smoke.start_radius + (smoke.end_radius - smoke.start_radius) * ease_out(progress);
+        // Smoke swells steadily, so the fireball is not smothered the moment it appears.
+        let radius = smoke.start_radius + (smoke.end_radius - smoke.start_radius) * progress;
         transform.scale = Vec3::splat(radius);
         transform.translation.y += smoke.rise * time.delta_secs();
         material.0 = assets.smoke[stage(progress, assets.smoke.len())].clone();
