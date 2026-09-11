@@ -13,7 +13,7 @@ use bevy::window::{PresentMode, WindowResolution};
 use game::{AppState, Round};
 use players::Roster;
 use tracks::RailMap;
-use ui::{LobbyLatch, PauseState};
+use ui::{LobbyLatch, MenuFocus, MenuInput, PauseState, StickLatch};
 
 fn main() {
     App::new()
@@ -23,6 +23,9 @@ fn main() {
         .init_resource::<PauseState>()
         .init_resource::<Roster>()
         .init_resource::<LobbyLatch>()
+        .init_resource::<MenuInput>()
+        .init_resource::<MenuFocus>()
+        .init_resource::<StickLatch>()
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -48,19 +51,28 @@ fn main() {
         .add_systems(OnExit(AppState::Lobby), ui::despawn_lobby)
         .add_systems(OnEnter(AppState::Playing), game::start_new_game)
         .add_systems(OnExit(AppState::Playing), ui::close_pause_dialog)
+        // Every menu reads one frame of device-agnostic intent, so it is
+        // gathered once, ahead of the screens that act on it.
+        .add_systems(Update, ui::gather_menu_input)
         .add_systems(
             Update,
             (
-                ui::update_menu_buttons,
-                ui::handle_menu_actions,
-                ui::main_menu_keyboard.run_if(in_state(AppState::MainMenu)),
+                ui::navigate_menu,
+                // Ahead of the actions, so that Start opening the dialog and
+                // Start confirming a button in it stay one frame apart.
                 ui::toggle_pause_dialog.run_if(in_state(AppState::Playing)),
-            ),
+                ui::handle_menu_actions,
+                ui::update_menu_buttons,
+                ui::main_menu_shortcuts.run_if(in_state(AppState::MainMenu)),
+            )
+                .chain()
+                .after(ui::gather_menu_input),
         )
         .add_systems(
             Update,
-            (ui::lobby_input, ui::lobby_keyboard, ui::refresh_lobby)
+            (ui::lobby_input, ui::lobby_shortcuts, ui::refresh_lobby)
                 .chain()
+                .after(ui::gather_menu_input)
                 .run_if(in_state(AppState::Lobby)),
         )
         .add_systems(
