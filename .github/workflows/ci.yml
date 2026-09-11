@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  # Actions caches are branch-scoped: a pull request can restore what its base
+  # branch saved, but not what another pull request saved. Building main keeps
+  # a warm cache there for every pull request to start from.
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch makes an in-flight run obsolete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Two Bevy dependencies resolve system libraries through pkg-config while
+      # building: gilrs-core needs libudev and wayland-sys needs wayland-client.
+      # X11 and xkbcommon are opened at runtime instead, so the tests need no
+      # headers for those.
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev libwayland-dev
+
+      # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
+      # than whatever the runner image happens to ship.
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          # Compiling Bevy is nearly all of a cold run, and a failing test does
+          # not invalidate it, so keep the dependency build either way.
+          cache-on-failure: true
+          # A fixed key, so the entry does not change if the job is ever renamed.
+          shared-key: test
+
+      - name: Run tests
+        run: cargo test --locked
