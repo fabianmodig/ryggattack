@@ -12,7 +12,7 @@ idea: get behind another player and land a shot in their back.
 - Guaranteed connectivity, no dead ends, and additional random loops
 - Automatic movement with junction choices
 - Cart collisions reverse both players along their current rails
-- Start/exit menu and an in-game Escape pause dialog
+- Menus driven by mouse, keyboard, or gamepad, and an in-game pause dialog
 - Low-poly 3D arena generated entirely in code
 - Rear-hit detection, scoring, 60-second rounds, and restart
 - No external assets or visual editor
@@ -171,26 +171,36 @@ Every seat steers the same way; only the buttons differ.
 | Choose direction at the next junction | W A S D | Arrow keys | D-pad or left stick |
 | Fire | Space | Right Ctrl | A / Cross, or right trigger |
 
-| Action | Keyboard |
-| --- | --- |
-| Pause / resume | Escape |
-| Restart after a round | R |
+| Action | Keyboard | Gamepad |
+| --- | --- | --- |
+| Move the menu highlight | Arrow keys or WASD | D-pad or left stick |
+| Select the highlighted button | Enter or Space | A / Cross, or Start |
+| Back / cancel | Escape | B / Circle |
+| Pause / resume | Escape | Start to pause, B or A on RESUME to resume |
+| Restart after a round | R | Start |
+
+Every menu can equally be clicked with the mouse, driven with the keyboard, or
+driven with a gamepad; the three share one highlight, so hovering a button with
+the mouse also moves the keyboard and gamepad selection there.
 
 START on the main menu opens the join lobby. Press **up** on a keyboard scheme
 or a gamepad to take a seat and **down** to leave it; seats are handed out in
 join order. Any seat still empty when the round begins is played by a bot, so
 one player against three bots still works. At least one player must join before
-the round can start. Enter, the gamepad Start button, or the START ROUND button
-begins the round, and Escape goes back to the main menu. The seating is kept
+the round can start.
+
+Up and down are taken by joining and leaving in the lobby, so its two buttons
+sit side by side and the highlight moves **left and right** there instead of up
+and down. START ROUND starts out highlighted, so Enter, A, or Start begins the
+round as before, and Escape or B goes back to the main menu. The seating is kept
 when you restart a round or return to the menu.
 
 If only one of the two keyboard seats is taken, that player can steer with WASD
 and the arrow keys interchangeably. Claiming both seats splits them into two
 independent players.
 
-The start menu can be controlled with the mouse or with Enter to start and
-Escape to exit. During a game, Escape opens a dialog with Resume and Return to
-Menu options.
+During a game, Escape or the gamepad Start button opens a dialog with Resume and
+Return to Menu options.
 
 The carts move automatically and can only change direction at intersections.
 Hold a direction while approaching a junction to choose that branch. The route
@@ -216,6 +226,7 @@ application is configured and the order in which gameplay systems run.
 | `src/combat.rs` | Projectiles, rear hits, and scoring |
 | `src/ui/mod.rs` | Main menu, pause dialog, and score display |
 | `src/ui/lobby.rs` | The join lobby and its seat cards |
+| `src/ui/nav.rs` | One reading of the menu keys, sticks, and buttons |
 | `src/tracks/map.rs` | Generate the connected rail network and grid coordinates |
 | `src/tracks/path.rs` | Junction routes, smooth movement, and reversing carts |
 | `src/tracks/render.rs` | Rail, track-bed, and sleeper meshes |

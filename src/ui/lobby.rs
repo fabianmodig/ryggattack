@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 
-use super::{MenuAction, menu_button};
+use super::{MenuAction, MenuInput, menu_button};
 use crate::game::AppState;
 use crate::players::{InputSource, PLAYER_COLORS, Roster, pad_axes};
 
@@ -106,8 +106,18 @@ pub(crate) fn spawn_lobby(mut commands: Commands, mut latch: ResMut<LobbyLatch>)
                         row.spawn(seat_card(id));
                     }
                 });
-            parent.spawn(menu_button("START ROUND", MenuAction::Launch));
-            parent.spawn(menu_button("BACK", MenuAction::Back));
+            // Side by side, because up and down claim and release seats here
+            // and the highlight steps sideways instead.
+            parent
+                .spawn(Node {
+                    flex_direction: FlexDirection::Row,
+                    column_gap: px(18),
+                    ..default()
+                })
+                .with_children(|row| {
+                    row.spawn(menu_button("START ROUND", MenuAction::Launch, 0));
+                    row.spawn(menu_button("BACK", MenuAction::Back, 1));
+                });
             parent.spawn((
                 LobbyHint,
                 Text::new(""),
@@ -198,15 +208,11 @@ pub(crate) fn lobby_input(
     }
 }
 
-pub(crate) fn lobby_keyboard(
-    keys: Res<ButtonInput<KeyCode>>,
-    roster: Res<Roster>,
-    mut next_state: ResMut<NextState<AppState>>,
-) {
-    if keys.just_pressed(KeyCode::Escape) {
+/// Starting the round goes through the highlighted button, so only backing out
+/// is left to a shortcut here.
+pub(crate) fn lobby_shortcuts(input: Res<MenuInput>, mut next_state: ResMut<NextState<AppState>>) {
+    if input.cancel {
         next_state.set(AppState::MainMenu);
-    } else if keys.just_pressed(KeyCode::Enter) && roster.humans() > 0 {
-        next_state.set(AppState::Playing);
     }
 }
 
@@ -216,18 +222,7 @@ pub(crate) fn refresh_lobby(
     mut labels: Query<(&SeatLabel, &mut Text, &mut TextColor), Without<LobbyHint>>,
     mut cards: Query<(&SeatCard, &mut BackgroundColor)>,
     mut hints: Query<&mut Text, With<LobbyHint>>,
-    mut next_state: ResMut<NextState<AppState>>,
 ) {
-    // A pad can also start the round, so it need not be reached for on the keyboard.
-    if roster.humans() > 0
-        && pads.iter().any(|(entity, pad, _)| {
-            roster.seat_of(InputSource::Pad(entity)).is_some()
-                && pad.just_pressed(GamepadButton::Start)
-        })
-    {
-        next_state.set(AppState::Playing);
-    }
-
     for (label, mut text, mut color) in &mut labels {
         let (caption, tint) = match roster.seat(label.0) {
             None => ("BOT".to_string(), Color::srgb(0.45, 0.50, 0.60)),
@@ -250,7 +245,7 @@ pub(crate) fn refresh_lobby(
         hint.0 = if roster.humans() == 0 {
             "Press UP on a keyboard or gamepad to take a seat".into()
         } else {
-            "Enter or gamepad START to begin   |   Escape: back".into()
+            "Left/Right: choose   |   Enter, A, or Start: select   |   Escape or B: back".into()
         };
     }
 }
