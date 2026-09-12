@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use bevy::ecs::system::SystemParam;
 use bevy::light::NotShadowCaster;
 use bevy::prelude::*;
 
@@ -28,6 +29,13 @@ const DEBRIS_FADE: f32 = 0.3;
 /// fading. Short enough that a round of shooting does not blacken the arena.
 const SCORCH_SECONDS: f32 = 8.0;
 const SCORCH_FADE: f32 = 3.0;
+
+/// Every surface a blast's light reaches pays for it on each frame, so the
+/// light stays close to the blast and only a few burn at once. Four carts
+/// spraying missiles set off a couple of dozen blasts a second, and lighting
+/// the whole arena from each of them was the single largest cost of a fight.
+const MAX_FLASHES: usize = 3;
+const FLASH_RANGE: f32 = 6.0;
 
 /// A blast waiting for its fuse to run out.
 #[derive(Component)]
@@ -72,9 +80,11 @@ impl EffectAssets {
             alpha_mode: AlphaMode::Blend,
             ..default()
         };
+        // Unlit, because smoke covers a lot of screen and lit transparent
+        // fragments also sample the shadow map and every nearby flash.
         let haze = |alpha: f32| StandardMaterial {
-            base_color: Color::srgba(0.42, 0.42, 0.43, alpha),
-            perceptual_roughness: 1.0,
+            base_color: Color::srgba(0.56, 0.56, 0.57, alpha),
+            unlit: true,
             alpha_mode: AlphaMode::Blend,
             ..default()
         };
@@ -160,6 +170,32 @@ pub(crate) struct Debris {
     rest: f32,
 }
 
+/// What a blast reaches: the props standing around it, the pieces they are
+/// built from, and the flashes already burning.
+#[derive(SystemParam)]
+pub(crate) struct Surroundings<'w, 's> {
+    scenery: Query<
+        'w,
+        's,
+        (
+            Entity,
+            &'static Transform,
+            &'static Scenery,
+            &'static Children,
+        ),
+    >,
+    parts: Query<
+        'w,
+        's,
+        (
+            &'static Mesh3d,
+            &'static MeshMaterial3d<StandardMaterial>,
+            &'static GlobalTransform,
+        ),
+    >,
+    flashes: Query<'w, 's, (), With<Flash>>,
+}
+
 /// Run down every fuse and set off the blasts whose time has come.
 pub(crate) fn run_detonations(
     mut commands: Commands,
@@ -167,11 +203,11 @@ pub(crate) fn run_detonations(
     assets: Res<EffectAssets>,
     mut rng: ResMut<EffectRng>,
     mut detonations: Query<(Entity, &mut Detonation)>,
-    scenery: Query<(Entity, &Transform, &Scenery, &Children)>,
-    parts: Query<(&Mesh3d, &MeshMaterial3d<StandardMaterial>, &GlobalTransform)>,
+    world: Surroundings,
 ) {
     // Two blasts in one frame can reach the same prop; it only comes apart once.
     let mut wrecked = HashSet::new();
+    let mut flash_budget = MAX_FLASHES.saturating_sub(world.flashes.iter().count());
 
     for (entity, mut detonation) in &mut detonations {
         detonation.fuse -= time.delta_secs();
@@ -181,20 +217,19 @@ pub(crate) fn run_detonations(
         commands.entity(entity).despawn();
 
         let radius = CHAIN_BLAST_RADII[detonation.chain];
-        let size = if detonation.chain == 0 { 1.0 } else { 0.55 };
         burst(
             &mut commands,
             &assets,
             &mut rng.0,
             detonation.position,
-            size,
-            detonation.chain == 0,
+            detonation.chain,
+            &mut flash_budget,
         );
         if radius <= 0.0 {
             continue;
         }
 
-        for (prop, transform, prop_scenery, children) in &scenery {
+        for (prop, transform, prop_scenery, children) in &world.scenery {
             let distance = transform
                 .translation
                 .xz()
@@ -204,7 +239,7 @@ pub(crate) fn run_detonations(
             }
             wreck(
                 &mut commands,
-                &parts,
+                &world.parts,
                 children,
                 detonation.position,
                 &mut rng.0,
@@ -260,15 +295,19 @@ fn wreck(
 }
 
 /// Fire, light, sparks, smoke, and for a missile's own blast a scorched patch
-/// of ground. `size` scales the lot, one being a missile's own blast.
+/// of ground. A missile's own blast (`chain` zero) is full size; the links
+/// after it are smaller and leave no scorch. The light is spent from
+/// `flash_budget`, and skipped once it runs out.
 fn burst(
     commands: &mut Commands,
     assets: &EffectAssets,
     rng: &mut SimpleRng,
     position: Vec3,
-    size: f32,
-    scorch: bool,
+    chain: usize,
+    flash_budget: &mut usize,
 ) {
+    let size = if chain == 0 { 1.0 } else { 0.55 };
+    let scorch = chain == 0;
     let centre = position.with_y(position.y.max(0.45 * size));
     for (offset, radius, delay) in [
         (Vec3::ZERO, 1.6, 0.0),
@@ -289,22 +328,25 @@ fn burst(
         ));
     }
 
-    commands.spawn((
-        Flash {
-            age: 0.0,
-            duration: 0.28,
-            peak: 2.5e6 * size,
-        },
-        PointLight {
-            color: Color::srgb(1.0, 0.72, 0.35),
-            intensity: 0.0,
-            range: 14.0 * size,
-            shadow_maps_enabled: false,
-            ..default()
-        },
-        Transform::from_translation(centre + Vec3::Y * 0.6),
-        Transient,
-    ));
+    if *flash_budget > 0 {
+        *flash_budget -= 1;
+        commands.spawn((
+            Flash {
+                age: 0.0,
+                duration: 0.22,
+                peak: 2.5e6 * size,
+            },
+            PointLight {
+                color: Color::srgb(1.0, 0.72, 0.35),
+                intensity: 0.0,
+                range: FLASH_RANGE * size,
+                shadow_maps_enabled: false,
+                ..default()
+            },
+            Transform::from_translation(centre + Vec3::Y * 0.6),
+            Transient,
+        ));
+    }
 
     let sparks = (14.0 * size) as usize;
     for _ in 0..sparks {
@@ -326,14 +368,14 @@ fn burst(
         ));
     }
 
-    for _ in 0..6 {
+    for _ in 0..4 {
         let offset = random_direction(rng) * 0.45 * size;
         puff(
             commands,
             assets,
             centre + offset.with_y(offset.y.abs()),
             0.25 * size,
-            1.1 * size,
+            0.95 * size,
             rng.range(1.4, 1.9),
             0.9,
         );

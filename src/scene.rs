@@ -1,5 +1,6 @@
 //! Startup scene assembly: camera, lighting, ground, tracks, forest, carts, and HUD.
 
+use bevy::light::{CascadeShadowConfigBuilder, DirectionalLightShadowMap};
 use bevy::prelude::*;
 
 use crate::combat::MissileAssets;
@@ -17,6 +18,13 @@ const GROUND_SIZE: f32 = 100.0;
 /// The far edge of the frame is about forty units out, so the fog closes in
 /// just past it: what would be popping trees is a misty tree line instead.
 const FOG_COLOR: Color = Color::srgb(0.62, 0.72, 0.66);
+
+/// Shadows reach the same forty units, and no further: past that the woods
+/// are mist. One cascade at this size covers it, where Bevy's default of four
+/// cascades out to a hundred and fifty units rendered the whole forest four
+/// times a frame, which is what made an integrated GPU crawl.
+const SHADOW_DISTANCE: f32 = 40.0;
+const SHADOW_MAP_SIZE: usize = 1024;
 
 pub(crate) fn setup(
     mut commands: Commands,
@@ -39,6 +47,9 @@ pub(crate) fn setup(
         },
     ));
 
+    commands.insert_resource(DirectionalLightShadowMap {
+        size: SHADOW_MAP_SIZE,
+    });
     commands.spawn((
         DirectionalLight {
             color: Color::srgb(1.0, 0.95, 0.85),
@@ -46,6 +57,12 @@ pub(crate) fn setup(
             shadow_maps_enabled: true,
             ..default()
         },
+        CascadeShadowConfigBuilder {
+            num_cascades: 1,
+            maximum_distance: SHADOW_DISTANCE,
+            ..default()
+        }
+        .build(),
         Transform::from_xyz(4.0, 12.0, 6.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 
