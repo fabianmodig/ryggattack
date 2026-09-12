@@ -13,7 +13,9 @@ idea: get behind another player and land a shot in their back.
 - Automatic movement with junction choices
 - Cart collisions reverse both players along their current rails
 - Menus driven by mouse, keyboard, or gamepad, and an in-game pause dialog
-- Low-poly 3D arena generated entirely in code
+- Low-poly 3D arena generated entirely in code, set in a forest that grows
+  back at the start of every round
+- Missiles that explode on impact and blow apart the trees around them
 - Rear-hit detection, scoring, 60-second rounds, and restart
 - No external assets or visual editor
 
@@ -206,9 +208,16 @@ The carts move automatically and can only change direction at intersections.
 Hold a direction while approaching a junction to choose that branch. The route
 is selected on entry, and the cart follows it smoothly through the junction.
 Carts cannot make a 180-degree turn. The white marker shows the front and the red
-panel is the vulnerable rear target. A hit only scores when the projectile is
+panel is the vulnerable rear target. A hit only scores when the missile is
 travelling in approximately the same direction as the target—the attacker is
 behind them. Scored-on players respawn on their starting rail.
+
+Missiles explode on whatever they meet first: a cart, a wall, or one of the
+trees that stand between the rails. A blast wrecks the scenery around it, and
+each wrecked tree goes up in a smaller blast of its own a moment later, so a
+shot into a thicket clears a patch of forest. Low growth such as bushes and
+ferns is flown over rather than struck, but still goes up in the blast. The
+forest grows back when a round starts or restarts.
 
 ## Source layout
 
@@ -219,11 +228,13 @@ application is configured and the order in which gameplay systems run.
 | --- | --- |
 | `src/main.rs` | Application setup and system scheduling |
 | `src/game.rs` | Game states, round timer, start, and restart |
-| `src/scene.rs` | Assemble the camera, lighting, arena, tracks, carts, and HUD |
+| `src/scene.rs` | Assemble the camera, lighting, ground, tracks, forest, carts, and HUD |
+| `src/scenery.rs` | Where every tree, bush, and rock stands, and how the forest grows back |
+| `src/explosions.rs` | Blasts, the wreckage they make of the scenery, and the chain reaction |
 | `src/players/mod.rs` | Player state, device and bot input, movement, and collisions |
 | `src/players/roster.rs` | Which device holds each of the four seats |
 | `src/players/visuals.rs` | Cart and rider models |
-| `src/combat.rs` | Projectiles, rear hits, and scoring |
+| `src/combat.rs` | Missiles, what they strike, rear hits, and scoring |
 | `src/ui/mod.rs` | Main menu, pause dialog, and score display |
 | `src/ui/lobby.rs` | The join lobby and its seat cards |
 | `src/ui/nav.rs` | One reading of the menu keys, sticks, and buttons |
