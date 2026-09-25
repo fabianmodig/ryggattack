@@ -1,6 +1,6 @@
 // Still frames for visual-regression checks: the lobby and the first moments
 // of a round, at a fixed size, so that two builds can be diffed.
-// Usage: node shots.mjs <dist> <label> [--width W --height H --out DIR]
+// Usage: node shots.mjs <dist> <label> [--width W --height H --out DIR --video "<saved settings>"]
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
@@ -26,6 +26,9 @@ const page = await (await browser.newContext({ viewport: { width, height } })).n
 // The map is seeded from the wall clock (web_time -> Date.now), so pin it:
 // every build then grows the same track and forest.
 await page.addInitScript(() => { Date.now = () => 1790000000000; });
+// --video "<saved settings>" pre-seeds the video settings, as in ingame.mjs.
+const video = opt("video", "");
+await page.addInitScript((video) => { if (video) localStorage.setItem("ryggattack.video", video); }, video);
 const shot = (n) => page.screenshot({ path: path.join(outDir, `shot-${label}-${n}.png`), timeout: 180000 });
 const hold = async (key, ms = 5000) => { await page.keyboard.down(key); await sleep(ms); await page.keyboard.up(key); await sleep(4000); };
 await page.goto(`http://127.0.0.1:${server.address().port}/`);

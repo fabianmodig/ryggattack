@@ -3,18 +3,21 @@
 // state, then sample rAF intervals, WebGL call counts, and CDP metrics for an
 // idle and a firing window at each CPU throttle rate.
 // Usage: node ingame.mjs <dist> <label> [--width W --height H --throttle 1,4]
+//        [--browser chromium|firefox|webkit] [--video "<saved settings>"]
+// CDP (main-thread time, CPU throttling) exists only in Chromium; the other
+// engines report the rAF and WebGL numbers at 1x only.
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 const require = createRequire(process.env.PLAYWRIGHT_NODE_MODULES ?? import.meta.url);
-const { chromium } = require("playwright");
+const engines = require("playwright");
 const args = process.argv.slice(2);
 const dist = path.resolve(args[0]);
 const label = args[1];
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
 const width = Number(opt("width", "320")), height = Number(opt("height", "180"));
-const throttles = opt("throttle", "1").split(",").map(Number);
+let throttles = opt("throttle", "1").split(",").map(Number);
 const secs = Number(opt("seconds", "15"));
 const outDir = path.dirname(new URL(import.meta.url).pathname);
 const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".html": "text/html", ".png": "image/png" };
@@ -25,18 +28,25 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+const engine = opt("browser", "chromium");
+const isChromium = engine === "chromium";
+const browser = await engines[engine].launch(isChromium ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] } : {});
 const dpr = Number(opt("dpr", "1"));
 const ablate = opt("ablate", "");
 var out_meta;
 const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: dpr });
-out_meta = { dpr, ablate };
+if (!isChromium) throttles = [1];
+out_meta = { engine, dpr, ablate };
 const page = await context.newPage();
 // --video "<saved settings>" pre-seeds localStorage, e.g. the Low preset:
 //   "scale=67% aa=OFF shadows=OFF effects=LOW forest=SPARSE fps=OFF"
 const video = opt("video", "");
 out_meta.video = video || "default (High)";
 await page.addInitScript((video) => { if (video) localStorage.setItem("ryggattack.video", video); }, video);
+// --pin-seed fixes Date.now, which seeds the map, so every run and build
+// plays on the same track and forest (as shots.mjs does).
+out_meta.pin_seed = args.includes("--pin-seed");
+if (out_meta.pin_seed) await page.addInitScript(() => { Date.now = () => 1790000000000; });
 await page.addInitScript((ablate) => {
   if (!ablate) return;
   const P = WebGL2RenderingContext.prototype;
@@ -52,8 +62,11 @@ await page.addInitScript((ablate) => {
   for (const name of ["drawElements", "drawArrays", "drawElementsInstanced", "drawArraysInstanced"]) {
     const o = P[name]; P[name] = function (...a) { if (skip(name, a)) return; return o.apply(this, a); }; }
 }, ablate);
-const cdp = await context.newCDPSession(page);
-await cdp.send("Performance.enable");
+const cdp = isChromium ? await context.newCDPSession(page) : null;
+if (cdp) await cdp.send("Performance.enable");
+const errors = [];
+page.on("console", (m) => { if (m.type() === "error") errors.push(m.text().slice(0, 300)); });
+page.on("pageerror", (e) => errors.push("pageerror: " + String(e).slice(0, 300)));
 await page.addInitScript(() => {
   const P = WebGL2RenderingContext.prototype;
   const c = (window.__gl = { t: [], calls: 0, draws: 0, tris: 0, up: 0, upBytes: 0, perFrameDraws: [], cur: 0 });
@@ -82,7 +95,7 @@ await page.waitForFunction(() => !document.getElementById("status"), null, { tim
 await sleep(5000);
 await page.locator("#ryggattack-canvas").focus();
 
-async function metrics() { const { metrics } = await cdp.send("Performance.getMetrics"); return Object.fromEntries(metrics.map((m) => [m.name, m.value])); }
+async function metrics() { if (!cdp) return { TaskDuration: NaN, ScriptDuration: NaN, JSHeapUsedSize: NaN }; const { metrics } = await cdp.send("Performance.getMetrics"); return Object.fromEntries(metrics.map((m) => [m.name, m.value])); }
 async function sample(s) {
   await page.evaluate(() => { const c = window.__gl; c.t = []; c.calls = 0; c.draws = 0; c.tris = 0; c.up = 0; c.upBytes = 0; c.perFrameDraws = []; });
   const b = await metrics();
@@ -113,7 +126,7 @@ await hold("Enter", 4000);      // START ROUND (focused by default)
 await sleep(4000);
 await shot("playing");
 for (const rate of throttles) {
-  await cdp.send("Emulation.setCPUThrottlingRate", { rate });
+  if (cdp) await cdp.send("Emulation.setCPUThrottlingRate", { rate });
   await sleep(2000);
   out.results[`idle_x${rate}`] = await sample(secs);
   console.log(`partial idle_x${rate} ` + JSON.stringify(out.results[`idle_x${rate}`]));
@@ -125,5 +138,7 @@ for (const rate of throttles) {
   await page.keyboard.up("Space");
   await sleep(4000);
 }
+out.console_errors = errors;
+out.saved_video = await page.evaluate(() => localStorage.getItem("ryggattack.video"));
 console.log("RESULTS " + JSON.stringify(out));
 await browser.close(); server.close();
