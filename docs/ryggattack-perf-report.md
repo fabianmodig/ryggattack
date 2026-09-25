@@ -482,3 +482,145 @@ ImageMagick (`compare -metric AE -fuzz 3%`) on the same runner:
   removing them would change the image.
 - **Fewer track-corner steps** (#3): not needed now that corners are welded
   and cost no draws.
+
+## 8. Final results
+
+Branch `perf/final`: `perf/web-video-settings` @ `3729381` (video settings)
+merged with `perf/visual-neutral` @ `14f4f39` (optimisations), plus one fix
+found during this check (§8.4). All numbers are for the release bundle built
+from that branch by `scripts/build-web.sh` (thin LTO, `wasm-opt -Oz`) in
+GitHub Actions run 36186128221, against the `main` @ `61fd92a` bundle from
+run 36175079981.
+
+### 8.1 How it was measured
+
+- **Scene:** the §3.1 scene. Main menu → lobby (WASD takes P1, bots take
+  P2-P4) → START ROUND. "idle" means the round is running and P1 is not
+  firing; "fight" means P1 holds fire for the whole window. The viewport is
+  320×180 and each window is 15 s. The map seed is now pinned
+  (`--pin-seed`), so every run plays the same track and forest.
+- **Chromium:** Playwright Chromium, headless, SwiftShader, on an otherwise
+  idle `ubuntu-latest` runner, with CPU throttling at 1x and 4x through CDP.
+  Two alternating rounds (main, High, Low); the tables show the mean.
+  Medium ran once.
+- **WebKit** (the Safari engine; Safari itself does not run on Linux):
+  Playwright WebKit on the same kind of runner, 1x only.
+- **Firefox:** Playwright Firefox 155 on the dev host (§2), under Xvfb with
+  Mesa llvmpipe, 1x only. Headless Firefox on the runner gets no WebGL2
+  context at all, and `main` fails there in the same way, so the runner's
+  Firefox numbers were thrown away.
+- **Metrics:** WebKit and Firefox have no CDP, so they report no main-thread
+  time and cannot be throttled. As in §2, the absolute FPS on a software
+  rasteriser means little. Read the columns against each other, and treat
+  main-thread ms/frame as the number that carries over to machines with a
+  GPU.
+- **Scripts:** `scripts/perf/ingame.mjs`, which now takes `--browser`,
+  `--video` and `--pin-seed` and records console errors; the new
+  `scripts/perf/settings.mjs` end-to-end settings check; and
+  `scripts/perf/shots.mjs`. The CI workflow is on the temporary branch
+  `ci/perf-final`.
+
+### 8.2 Numbers
+
+Chromium, per frame (main = `61fd92a`; High is the default; Low =
+`scale=67% aa=OFF shadows=OFF effects=LOW forest=SPARSE`):
+
+| Window | Metric | main | **High** | High vs main | **Low** | Low vs main |
+|---|---|---|---|---|---|---|
+| idle, 1x | main-thread ms/frame | 12.7 | **9.1** | **-28 %** | **6.9** | **-46 %** |
+| idle, 1x | FPS | 1.29 | **1.50** | +16 % | **8.07** | **6.3x** |
+| idle, 1x | median / p95 frame (ms) | 775 / 1525 | **667 / 842** | -14 % / -45 % | **117 / 233** | -85 % / -85 % |
+| fight, 1x | main-thread ms/frame | 12.5 | **11.8** | -6 % | **7.4** | **-41 %** |
+| fight, 1x | FPS | 1.30 | **1.54** | +18 % | **7.71** | **5.9x** |
+| fight, 1x | median / p95 frame (ms) | 767 / 1508 | **642 / 700** | -16 % / -54 % | **133 / 150** | -83 % / -90 % |
+| idle, 4x CPU | main-thread ms/frame | 43.5 | **33.0** | **-24 %** | **26.5** | **-39 %** |
+| idle, 4x CPU | FPS | 1.10 | **1.27** | +15 % | **7.31** | **6.6x** |
+| idle, 4x CPU | median / p95 frame (ms) | 942 / 1867 | **792 / 1534** | -16 % / -18 % | **133 / 250** | -86 % / -87 % |
+| fight, 4x CPU | main-thread ms/frame | 49.6 | **39.5** | **-20 %** | **24.5** | **-51 %** |
+| fight, 4x CPU | FPS | 1.10 | **1.35** | +23 % | **7.45** | **6.8x** |
+| fight, 4x CPU | median / p95 frame (ms) | 850 / 1683 | **717 / 1467** | -16 % / -13 % | **133 / 200** | -84 % / -88 % |
+| idle, 1x | draws / GL calls | 531 / 12 648 | **378 / 8 081** | -29 % / -36 % | **130 / 3 826** | -76 % / -70 % |
+| idle, 1x | triangles | 288k | **294k** | +2 % | **90k** | -69 % |
+
+Medium (`scale=100% aa=OFF shadows=LOW effects=MEDIUM forest=FULL`, one
+round): main-thread 8.1 / 8.5 / 28.9 / 30.5 ms per frame and 3.5 / 3.4 / 3.2
+/ 3.3 FPS (idle 1x / fight 1x / idle 4x / fight 4x). That sits between High
+and Low, as it should.
+
+The other engines, at 1x:
+
+| Engine | Window | FPS main → **High** → **Low** | median frame (ms) main → **High** → **Low** | draws main → High → Low |
+|---|---|---|---|---|
+| WebKit (runner) | idle | 8.19 → **9.16** (+12 %) → **38.7** (4.7x) | 122 → **107** → **26** | 535 → 389 → 142 |
+| WebKit (runner) | fight | 8.20 → **8.91** (+9 %) → **38.9** (4.7x) | 121 → **110** → **26** | 555 → 431 → 161 |
+| Firefox (dev host, llvmpipe) | idle | 5.14 → **6.29** (+22 %) → **27.6** (5.4x) | 199 → **151** → **33** | 536 → 384 → 135 |
+| Firefox (dev host, llvmpipe) | fight | 5.24 → **6.11** (+17 %) → **27.2** (5.2x) | 184 → **166** → **33** | 556 → 408 → 162 |
+
+What the numbers show:
+
+- **High** keeps the original look and is faster in every engine. In
+  Chromium it takes 20-28 % less main-thread time than `main`, except for
+  fight at 1x, which is noisy (§2) and dropped only 6 %. FPS is up 9-23 %,
+  and median frame time is down 14-16 %. The gain comes from 29 % fewer
+  draws and 36 % fewer GL calls.
+- **Low** takes 39-51 % less main-thread time than `main`, including 51 %
+  in the worst case (fight under 4x throttling). With about 70-76 % fewer
+  draws, GL calls and triangles, it runs at 4.7-6.8x the frame rate in all
+  three engines.
+- A software rasteriser inflates Low's FPS gain, because scale 67 % (0.44x
+  the pixels), no MSAA and no shadow pass mostly save fill-rate.
+  Main-thread time is the fairer estimate for a real GPU. For example, the
+  4x-throttled fight goes from about 50 ms to about 25 ms of CPU per frame,
+  roughly 20 → 40 fps before GPU cost.
+- On the 720×640 settings run in Chromium, the Low preset showed
+  "45 FPS 22.2 ms" in the game's own counter.
+
+### 8.3 Checks
+
+| Check | Result | Evidence |
+|---|---|---|
+| Builds (release wasm, LTO + `wasm-opt -Oz`) | **PASS** | run 36186128221, job `bundle` |
+| `cargo test --locked` | **PASS**, 63/63 (including the new `the_scene_image_can_be_resized_without_a_gpu_copy`) | job `test` |
+| `cargo clippy --all-targets` | **PASS**, 0 warnings | job `test` |
+| Runs in Chromium | **PASS** | all runs above |
+| Runs in Firefox | **PASS** (dev host, llvmpipe) | headless Firefox on the runner has no WebGL2; `main` fails there the same way |
+| Runs in Safari | **PASS as WebKit** | Playwright WebKit on Linux; real Safari (macOS) was not available |
+| High looks identical to the original | **PASS** | pinned-seed shots at 640×360: lobby **0 px** differ from `main`; in round 18 144 px (7.9 %) against a same-build noise floor of 15 168 px (6.6 %). The diff mask (`docs/perf-shots/final-diff-main-vs-high.png` vs `final-noise-high.png`) only marks carts, missiles, smoke and blasts, which frame timing places differently. Crops of track, rail shadows, trees and rocks match. |
+| Low looks like a lower preset, not broken | **PASS** | `docs/perf-shots/final-low-playing.png`: full scene, no shadows, softer at 67 % |
+| Every setting changes and is saved | **PASS** in Chromium, Firefox and WebKit (16/16 checks each) | `scripts/perf/settings.mjs`: QUALITY Low/Medium/High both ways plus Enter; RESOLUTION, ANTI-ALIASING, SHADOWS, EFFECTS, FOREST and SHOW FPS one step each, with `localStorage["ryggattack.video"]` checked after every step; a mouse click on QUALITY; Custom shown for a mixed set |
+| Settings persist | **PASS** | a custom mix survives a reload, and SHOW FPS comes back on |
+| Reachable from the main menu and pause; Escape goes back | **PASS** | pause → SETTINGS → Low → Escape → pause dialog → Escape resumes |
+| Presets apply live | **PASS** after the §8.4 fix; **FAIL before it** | see §8.4 |
+| No console errors | **PASS** | every Chromium and WebKit run (main, High, Low, Medium, settings) and every dev-host Firefox run logged 0 console errors and 0 page errors |
+| Gameplay unchanged | **PASS** | the rounds play: the timer runs, bots fire, and scores change (for example P1 3, P2 2 on Low). Gameplay code is unchanged apart from the effects budget. Collision, blast and chain radii, cooldowns, spawn rules and system order are the same. `EffectRng` feeds only effect and debris visuals, so a lower effects setting shifts debris angles and nothing else. FOREST thins only the backdrop no blast can reach, and a test covers that. |
+| Low-FPS suggestion | **PASS (unit test only)** | `a_sustained_low_frame_rate_suggests_once`; not checked by eye in a browser |
+
+### 8.4 Issue found and fixed
+
+**Any RESOLUTION below 100 %, which includes the Low preset, stopped all
+rendering.** The scene image came from `Image::new_target_texture`, which
+sets `copy_on_resize`. On the first resize, Bevy copied the old texture into
+the new one, and that texture lacks `COPY_SRC`. wgpu raised a validation
+error ("copy_image_on_resize … do not contain required usage flags COPY_SRC")
+and Bevy's default error policy stopped rendering for good. The canvas froze
+on its last frame, the rAF loop kept going, and the game issued no draws.
+The settings task missed this because it never ran a lowered scale in a
+browser.
+
+The fix is in `src/settings.rs` (`SceneImage::new` sets
+`copy_on_resize = false`) and comes with a regression test. The picture is
+redrawn every frame, so nothing is lost by not copying it. After the fix,
+Low renders in all three engines with no errors, as §8.2 shows.
+
+### 8.5 Left open (not blocking)
+
+- **Real Safari and hardware GPUs have not been measured.** Every number
+  here comes from a software rasteriser. A check on one real laptop and one
+  phone would confirm the absolute frame rates.
+- **A warning, not a regression.** "Entity … has a `Camera` component, but
+  it doesn't have a render graph configured" is logged once at startup, and
+  `main` logs it too. It is a warning, not an error.
+- **§7.6 still applies.** Missile welding, effect pooling and `detect_hits`
+  scratch reuse are still to do.
+- **Temporary CI branches can be deleted** once this is merged:
+  `ci/perf-bundles` and `ci/perf-final`.
