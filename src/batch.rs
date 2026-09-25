@@ -112,17 +112,26 @@ impl MaterialBatches {
         meshes: &mut Assets<Mesh>,
         extra: impl Bundle + Clone,
     ) {
-        for (material, batch) in self.batches {
-            if batch.is_empty() {
-                continue;
-            }
+        for (mesh, material) in self.build(meshes) {
             commands.spawn((
-                Mesh3d(meshes.add(batch.build())),
+                Mesh3d(mesh),
                 MeshMaterial3d(material),
                 Transform::IDENTITY,
                 extra.clone(),
             ));
         }
+    }
+
+    /// One welded mesh per material that was used, ready to be spawned.
+    pub(crate) fn build(
+        self,
+        meshes: &mut Assets<Mesh>,
+    ) -> Vec<(Handle<Mesh>, Handle<StandardMaterial>)> {
+        self.batches
+            .into_iter()
+            .filter(|(_, batch)| !batch.is_empty())
+            .map(|(material, batch)| (meshes.add(batch.build()), material))
+            .collect()
     }
 }
 

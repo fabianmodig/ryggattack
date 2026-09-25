@@ -354,3 +354,131 @@ average frame time stays above 25 ms for a few seconds.
 - Re-run `scripts/perf/ingame.mjs` with the same arguments
   (`--width 320 --height 180 --throttle 1,4 --seconds 15`) after each fix, and
   compare "main-thread busy / frame" and "draws / frame" against §3.1.
+
+## 7. Visual-neutral optimisations: before and after
+
+Branch `perf/visual-neutral` @ `2342170`, one commit on top of
+`perf/web-video-settings` @ `9d8f5d1`.
+
+### 7.1 What changed
+
+| Report item | Change | Where |
+|---|---|---|
+| #1 track | Every track piece (straight beds, rails, sleepers, corner beds and rails, junction sleepers) is welded into one mesh per material at startup: 3 meshes instead of about 250 entities. The corners no longer use `drawArrays` at all. | `tracks/render.rs`, `batch.rs` (`MaterialBatches::build`) |
+| #1 carts | The 22 rigid parts of each cart and rider are welded into one mesh per material (9 per cart), still children of the moving cart root. | `players/visuals.rs` (`cart_model`, with a test) |
+| #1 forest | Already done on the parent branch: the unreachable backdrop is baked in 14-unit patches. | `scenery.rs` |
+| #2 | `NotShadowCaster` on the arena ground slab and the forest floor. They are the lowest geometry, so their shadow lands on nothing. | `scene.rs` |
+| #3 | Forest cylinders 32→16 sides, pine cones 32→24, fern fronds 8; rider heads and hair ico 5→3, hands and eyes ico 5→2; missile exhaust ico 5→2. | `scenery.rs`, `players/visuals.rs`, `combat.rs` |
+| #4 | Fireballs and smoke puffs write their material handle only when the stage changes, not every frame. | `explosions.rs` |
+| #7 | The HUD text is rebuilt only when the seconds, the scores or the finished flag change. | `ui/mod.rs` |
+| #8 | The per-frame `HashSet` in `run_detonations` is a reused `Local`. The O(missiles × props) scan in `strike_scenery` is already bounded by the parent branch, because only reachable props are `Scenery` entities. | `explosions.rs` |
+
+Nothing that affects gameplay changed. Collision radii, timings, spawn
+logic, RNG use and system order are all the same.
+
+### 7.2 How it was measured
+
+The dev host cannot link a release (thin LTO) wasm, and during this task it
+was also compiling a sibling branch. So these numbers come from a GitHub
+Actions `ubuntu-latest` runner that was doing nothing else:
+
+- Three release bundles were built exactly as `scripts/build-web.sh` builds
+  them (LTO, `wasm-opt -Oz`): `main` @ `61fd92a` (the §3 baseline),
+  `9d8f5d1` (parent branch) and `2342170` (this change).
+- `scripts/perf/ingame.mjs` ran with the §3.1 arguments
+  (`--width 320 --height 180 --throttle 1,4 --seconds 15`), in two rounds,
+  alternating builds within each round.
+- The runner CPU is not the §3 host, so compare the columns below with each
+  other, not with §3.1. It is the same SwiftShader method, so absolute FPS is
+  still not meaningful. Main-thread ms per frame, draws and GL calls are the
+  numbers to read.
+
+### 7.3 Results (mean of the two rounds)
+
+Renderer main-thread busy time per frame (ms):
+
+| Window | main `61fd92a` | parent `9d8f5d1` | **after `2342170`** | vs parent | vs main |
+|---|---|---|---|---|---|
+| menu | 10.4 | 13.7 | **10.3** | -25 % | -1 % |
+| idle, 1x CPU | 11.6 | 12.3 | **9.9** | -20 % | -15 % |
+| fight, 1x CPU | 13.0 | 12.7 | **11.2** | -12 % | -14 % |
+| idle, 4x CPU | 43.3 | 42.4 | **32.0** | -25 % | -26 % |
+| fight, 4x CPU | 54.8 | 46.0 | **40.1** | -13 % | -27 % |
+
+FPS and median frame time under SwiftShader, which is CPU-rasterised:
+
+| Window | FPS main / parent / **after** | median frame (ms) main / parent / **after** |
+|---|---|---|
+| idle, 1x | 1.31 / 1.27 / **1.47** | 759 / 792 / **675** |
+| fight, 1x | 1.36 / 1.23 / **1.49** | 725 / 817 / **659** |
+| idle, 4x | 1.07 / 0.94 / **1.28** | 917 / 992 / **809** |
+| fight, 4x | 1.22 / 1.11 / **1.41** | 817 / 900 / **717** |
+
+Work per frame:
+
+| Window | draws main / parent / **after** | WebGL calls main / parent / **after** | triangles main / parent / **after** |
+|---|---|---|---|
+| idle, 1x | 474 / 689 / **381** | 11 657 / 13 243 / **8 377** | 288k / 360k / **310k** |
+| fight, 1x | 504 / 718 / **419** | 12 656 / 14 253 / **9 700** | 289k / 359k / **311k** |
+
+From `anatomy.mjs --fire`, one fight frame, parent → after:
+
+- Shadow pass: 341 → **219** draws, 664k → **496k** vertices. `drawArrays`
+  93 → **0**.
+- Main opaque pass: 259 → **141** draws, 521k → **386k** vertices.
+
+Compared with the parent branch, draws are down 42-45 % and GL calls down
+32-37 %. Main-thread time is down 12-25 %, and median frame time is down
+15-20 % at both CPU rates.
+
+The parent branch already draws more than `main`: about 200 more draws and
+70k more triangles per frame. This was not investigated here, but the likely
+cause is the backdrop patches and settings changes. This change more than
+wins it back: against `main`, main-thread time is 14-27 % lower.
+
+### 7.4 Visual regression check
+
+`scripts/perf/shots.mjs` pins `Date.now`, which seeds the map through
+`web_time`, so every build grows the same track and forest. It shoots the
+lobby and a frame 12 s into a round at 640×360. The shots were compared with
+ImageMagick (`compare -metric AE -fuzz 3%`) on the same runner:
+
+| View | parent vs after | parent vs parent (noise floor) |
+|---|---|---|
+| lobby | 0 px | 0 px |
+| in round | 23 581 px (10 %) | 11 657 px (5 %) |
+
+- In-round frames differ even between two runs of the *same* build, because
+  the carts and the bots' missiles are wherever the frame timing put them.
+- The diff masks (`docs/perf-shots/diff-playing.png` against
+  `noise-playing.png`) show every differing pixel sits on carts, missiles,
+  smoke and blasts. Both masks look the same in kind. There are no
+  differences on the track, ground, walls, forest or shadows.
+- Close crops of the carts, compared side by side
+  (`shot-9d8f5d1-playing.png`, `shot-2342170-playing.png`), show the same
+  shapes, colours and shading on riders, hats and wheels.
+
+### 7.5 Tests and build
+
+- `cargo test --locked` passes on `2342170`, including the new
+  `a_cart_welds_into_one_mesh_per_material`.
+- The release web build succeeds (GitHub Actions runs on branch
+  `ci/perf-bundles`, which is temporary scaffolding only).
+- A round plays normally in every run. The screenshots show the round timer
+  counting down, the scores changing (P3 scored in one run), the bots firing,
+  and blasts and smoke. Gameplay code is untouched apart from the reused
+  `HashSet`. Nothing queries cart or track child entities; the only
+  `Children` user is prop wrecking, and props are unchanged.
+
+### 7.6 Not done here (still visual-neutral)
+
+- **Missiles as one welded mesh per owner** (#1): the saving is small, 5
+  entities per missile, and they are already instanced.
+- **Effect entity pooling** (#4): smoke, sparks and fireballs still
+  spawn and despawn.
+- **Scratch collections in `detect_hits`** (#8): still allocated every frame.
+- **Track `NotShadowCaster`** (#2): left out on purpose. Rails and sleepers
+  stand 0.1-0.16 above the bed and cast thin shadows that can be seen, so
+  removing them would change the image.
+- **Fewer track-corner steps** (#3): not needed now that corners are welded
+  and cost no draws.

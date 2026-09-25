@@ -206,10 +206,12 @@ pub(crate) fn run_detonations(
     mut detonations: Query<(Entity, &mut Detonation)>,
     world: Surroundings,
     settings: Res<VideoSettings>,
+    mut wrecked: Local<HashSet<Entity>>,
 ) {
     let budget = settings.effects.budget();
-    // Two blasts in one frame can reach the same prop; it only comes apart once.
-    let mut wrecked = HashSet::new();
+    // Two blasts in one frame can reach the same prop; it only comes apart
+    // once. The set is kept between frames only to reuse its allocation.
+    wrecked.clear();
     let mut flash_budget = budget
         .max_flashes
         .saturating_sub(world.flashes.iter().count());
@@ -455,7 +457,12 @@ pub(crate) fn animate_fireballs(
             continue;
         }
         transform.scale = Vec3::splat(fireball.radius * (0.25 + 0.75 * ease_out(progress)));
-        material.0 = assets.fireball[stage(progress, assets.fireball.len())].clone();
+        // Only on a change of stage: writing the handle every frame marks the
+        // material changed, which re-extracts and re-batches the entity.
+        let next = &assets.fireball[stage(progress, assets.fireball.len())];
+        if material.0 != *next {
+            material.0 = next.clone();
+        }
     }
 }
 
@@ -481,7 +488,10 @@ pub(crate) fn animate_smoke(
         let radius = smoke.start_radius + (smoke.end_radius - smoke.start_radius) * progress;
         transform.scale = Vec3::splat(radius);
         transform.translation.y += smoke.rise * time.delta_secs();
-        material.0 = assets.smoke[stage(progress, assets.smoke.len())].clone();
+        let next = &assets.smoke[stage(progress, assets.smoke.len())];
+        if material.0 != *next {
+            material.0 = next.clone();
+        }
     }
 }
 

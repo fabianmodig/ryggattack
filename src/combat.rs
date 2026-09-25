@@ -49,7 +49,12 @@ impl MissileAssets {
             body: meshes.add(Cylinder::new(0.11, 0.46)),
             nose: meshes.add(Cone::new(0.11, 0.24)),
             fin: meshes.add(Cuboid::new(0.03, 0.36, 0.14)),
-            exhaust: meshes.add(Sphere::new(0.09)),
+            exhaust: meshes.add(
+                Sphere::new(0.09)
+                    .mesh()
+                    .ico(2)
+                    .expect("two subdivisions are well within the limit"),
+            ),
             hull: materials.add(StandardMaterial {
                 base_color: Color::srgb(0.88, 0.88, 0.86),
                 metallic: 0.6,
