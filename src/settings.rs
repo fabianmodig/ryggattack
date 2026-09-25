@@ -382,6 +382,45 @@ struct SceneView;
 #[derive(Component)]
 struct FpsText;
 
+/// The note that suggests a lower quality when the frame rate stays low.
+#[derive(Component)]
+struct LowFpsHint;
+
+/// Below this frame rate, held for [`LOW_FPS_SECONDS`], the game suggests a
+/// lower preset. It suggests once per visit and never changes anything itself.
+const LOW_FPS: f64 = 45.0;
+const LOW_FPS_SECONDS: f32 = 10.0;
+/// How long the suggestion stays on screen.
+const HINT_SECONDS: f32 = 8.0;
+
+/// Tracks how long the frame rate has stayed low.
+#[derive(Resource, Default)]
+struct LowFpsWatch {
+    low_for: f32,
+    /// Counts down while the note is showing; `None` until it has shown.
+    showing: Option<f32>,
+}
+
+impl LowFpsWatch {
+    /// Feed one frame's smoothed FPS. Returns `true` on the frame the note
+    /// should appear.
+    fn observe(&mut self, fps: f64, dt: f32, preset: Preset) -> bool {
+        if self.showing.is_some() || preset == Preset::Low {
+            return false;
+        }
+        if fps < LOW_FPS {
+            self.low_for += dt;
+        } else {
+            self.low_for = 0.0;
+        }
+        if self.low_for >= LOW_FPS_SECONDS {
+            self.showing = Some(HINT_SECONDS);
+            return true;
+        }
+        false
+    }
+}
+
 /// The off-screen picture the world is drawn into, at the chosen fraction of
 /// the canvas's resolution, and stretched over the window by the UI.
 #[derive(Resource)]
@@ -434,8 +473,10 @@ impl Plugin for SettingsPlugin {
                     fit_scene_image,
                     apply_settings.run_if(resource_changed::<VideoSettings>),
                     update_fps,
+                    suggest_lower_quality,
                 ),
-            );
+            )
+            .init_resource::<LowFpsWatch>();
     }
 }
 
@@ -482,6 +523,58 @@ fn spawn_scene_view(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         GlobalZIndex(1000),
         Visibility::Hidden,
     ));
+    commands.spawn((
+        LowFpsHint,
+        Text::new("Low frame rate: try a lower QUALITY under SETTINGS"),
+        TextFont {
+            font_size: FontSize::Px(18.0),
+            ..default()
+        },
+        TextColor(Color::srgb(0.95, 0.78, 0.24)),
+        TextShadow::default(),
+        Node {
+            position_type: PositionType::Absolute,
+            bottom: px(12),
+            right: px(12),
+            ..default()
+        },
+        GlobalZIndex(1000),
+        Visibility::Hidden,
+    ));
+}
+
+/// Suggest a lower preset once, when the frame rate has stayed under
+/// [`LOW_FPS`] for a while. The player decides; nothing changes on its own.
+fn suggest_lower_quality(
+    time: Res<Time>,
+    settings: Res<VideoSettings>,
+    diagnostics: Res<DiagnosticsStore>,
+    mut watch: ResMut<LowFpsWatch>,
+    mut hint: Single<&mut Visibility, With<LowFpsHint>>,
+) {
+    let dt = time.delta_secs();
+    if let Some(left) = watch.showing.as_mut()
+        && *left > 0.0
+    {
+        *left -= dt;
+        if *left <= 0.0 {
+            **hint = Visibility::Hidden;
+        }
+        return;
+    }
+    // The first seconds after loading are always slow; don't count them.
+    if time.elapsed_secs() < 5.0 {
+        return;
+    }
+    let Some(fps) = diagnostics
+        .get(&FrameTimeDiagnosticsPlugin::FPS)
+        .and_then(|fps| fps.smoothed())
+    else {
+        return;
+    };
+    if watch.observe(fps, dt, settings.matching_preset()) {
+        **hint = Visibility::Inherited;
+    }
 }
 
 /// The size, in pixels, the world is drawn at for a canvas of `window`
@@ -681,6 +774,21 @@ mod tests {
             assert!(less.smoke_puffs <= more.smoke_puffs);
             assert!(less.max_flashes <= more.max_flashes);
         }
+    }
+
+    #[test]
+    fn a_sustained_low_frame_rate_suggests_once() {
+        let mut watch = LowFpsWatch::default();
+        // A brief dip does not count.
+        assert!(!watch.observe(20.0, 5.0, Preset::High));
+        assert!(!watch.observe(60.0, 0.1, Preset::High));
+        assert!(!watch.observe(20.0, 5.0, Preset::High));
+        assert!(watch.observe(20.0, 5.0, Preset::High));
+        // Only once.
+        assert!(!watch.observe(20.0, 60.0, Preset::High));
+        // Already at the lowest preset: nothing to suggest.
+        let mut low = LowFpsWatch::default();
+        assert!(!low.observe(10.0, 60.0, Preset::Low));
     }
 
     #[test]

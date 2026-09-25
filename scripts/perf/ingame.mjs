@@ -32,6 +32,11 @@ var out_meta;
 const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: dpr });
 out_meta = { dpr, ablate };
 const page = await context.newPage();
+// --video "<saved settings>" pre-seeds localStorage, e.g. the Low preset:
+//   "scale=67% aa=OFF shadows=OFF effects=LOW forest=SPARSE fps=OFF"
+const video = opt("video", "");
+out_meta.video = video || "default (High)";
+await page.addInitScript((video) => { if (video) localStorage.setItem("ryggattack.video", video); }, video);
 await page.addInitScript((ablate) => {
   if (!ablate) return;
   const P = WebGL2RenderingContext.prototype;
