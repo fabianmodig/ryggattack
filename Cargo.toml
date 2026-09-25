@@ -18,3 +18,11 @@ opt-level = 3
 [profile.release]
 lto = "thin"
 codegen-units = 1
+
+# Lighter than release: no LTO and parallel codegen, so a wasm build fits in a
+# few GB of RAM. Good for iterating on web performance; ship with release.
+[profile.web-dev]
+inherits = "release"
+lto = false
+codegen-units = 16
+debug = false

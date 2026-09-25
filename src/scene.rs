@@ -31,11 +31,21 @@ pub(crate) fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     rail_map: Res<RailMap>,
+    settings: Res<VideoSettings>,
 ) {
     info!("Generated railway map with seed {}", rail_map.seed);
 
     commands.spawn((
         Camera3d::default(),
+        WorldCamera,
+        // Until the settings move the world into its own lowered-resolution
+        // picture, this camera draws straight into the canvas, UI included.
+        IsDefaultUiCamera,
+        if settings.anti_aliasing {
+            Msaa::Sample4
+        } else {
+            Msaa::Off
+        },
         Transform::from_xyz(0.0, 16.5, 15.5).looking_at(Vec3::ZERO, Vec3::Y),
         DistanceFog {
             color: FOG_COLOR,
@@ -47,14 +57,11 @@ pub(crate) fn setup(
         },
     ));
 
-    commands.insert_resource(DirectionalLightShadowMap {
-        size: SHADOW_MAP_SIZE,
-    });
     commands.spawn((
         DirectionalLight {
             color: Color::srgb(1.0, 0.95, 0.85),
             illuminance: 9_000.0,
-            shadow_maps_enabled: true,
+            shadow_maps_enabled: settings.shadows != Shadows::Off,
             ..default()
         },
         CascadeShadowConfigBuilder {
