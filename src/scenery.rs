@@ -103,6 +103,7 @@ pub(crate) struct Forest {
 struct ForestAssets {
     cylinder: Handle<Mesh>,
     cone: Handle<Mesh>,
+    frond: Handle<Mesh>,
     sphere: Handle<Mesh>,
     bark: Handle<StandardMaterial>,
     birch_bark: Handle<StandardMaterial>,
@@ -161,8 +162,14 @@ impl Forest {
         Self {
             props: layout(rail_map),
             assets: ForestAssets {
-                cylinder: meshes.add(Cylinder::new(1.0, 1.0)),
-                cone: meshes.add(Cone::new(1.0, 1.0)),
+                // Bevy's default of 32 sides is far finer than a trunk a few
+                // pixels wide or a pine tier seen from twenty units off can
+                // show: the outline moves by well under a pixel, and the
+                // forest is most of the scene's triangles.
+                cylinder: meshes.add(Cylinder::new(1.0, 1.0).mesh().resolution(16)),
+                cone: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(24)),
+                // Fern fronds are a couple of pixels thick.
+                frond: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(8)),
                 sphere: meshes.add(
                     Sphere::new(1.0)
                         .mesh()
@@ -517,7 +524,7 @@ fn parts<'a>(
                 let transform = Transform::from_xyz(lean.x * 0.08, 0.22, lean.y * 0.08)
                     .with_rotation(Quat::from_axis_angle(axis, 0.55))
                     .with_scale(Vec3::new(0.07, 0.5, 0.07));
-                (&assets.cone, &assets.fern, transform)
+                (&assets.frond, &assets.fern, transform)
             })
             .collect(),
     }

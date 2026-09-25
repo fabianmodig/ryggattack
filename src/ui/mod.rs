@@ -81,7 +81,23 @@ pub(crate) fn update_hud(
     round: Res<Round>,
     players: Query<&Player>,
     mut hud: Single<&mut Text, With<Hud>>,
+    mut shown: Local<Option<(u32, [u32; 4], bool)>>,
 ) {
+    let remaining = (ROUND_SECONDS - round.timer.elapsed_secs()).max(0.0).ceil() as u32;
+    let mut score_by_id = [0; 4];
+    for player in &players {
+        if let Some(score) = score_by_id.get_mut(player.id) {
+            *score = player.score;
+        }
+    }
+    // The text only changes about once a second. Rewriting it every frame
+    // marks it changed, and Bevy then reshapes and lays it out again.
+    let key = (remaining, score_by_id, round.finished);
+    if *shown == Some(key) {
+        return;
+    }
+    *shown = Some(key);
+
     let mut scores: Vec<(usize, u32)> = players.iter().map(|p| (p.id, p.score)).collect();
     scores.sort_by_key(|(id, _)| *id);
     let score_line = scores
@@ -89,7 +105,6 @@ pub(crate) fn update_hud(
         .map(|(id, score)| format!("P{}: {}", id + 1, score))
         .collect::<Vec<_>>()
         .join("   ");
-    let remaining = (ROUND_SECONDS - round.timer.elapsed_secs()).max(0.0).ceil() as u32;
 
     hud.0 = if round.finished {
         let winner = scores

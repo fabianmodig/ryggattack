@@ -1,6 +1,6 @@
 //! Startup scene assembly: camera, lighting, ground, tracks, forest, carts, and HUD.
 
-use bevy::light::CascadeShadowConfigBuilder;
+use bevy::light::{CascadeShadowConfigBuilder, NotShadowCaster};
 use bevy::prelude::*;
 use bevy::render::view::Msaa;
 
@@ -97,6 +97,10 @@ pub(crate) fn setup(
             0.2,
             ARENA_HALF_SIZE * 2.0,
         )),
+        // The ground is the lowest thing there is, so the shadow it would
+        // cast falls on nothing; leaving it out of the shadow pass changes no
+        // pixel and spares that pass its two biggest meshes.
+        NotShadowCaster,
     ));
     let forest_floor = materials.add(StandardMaterial {
         base_color: Color::srgb(0.17, 0.35, 0.14),
@@ -107,6 +111,7 @@ pub(crate) fn setup(
         Mesh3d(unit_cube.clone()),
         MeshMaterial3d(forest_floor),
         Transform::from_xyz(0.0, -0.12, -8.0).with_scale(Vec3::new(GROUND_SIZE, 0.2, GROUND_SIZE)),
+        NotShadowCaster,
     ));
 
     spawn_tracks(&mut commands, &mut meshes, &mut materials, &rail_map);
