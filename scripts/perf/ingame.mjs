@@ -30,7 +30,9 @@ await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const engine = opt("browser", "chromium");
 const isChromium = engine === "chromium";
-const browser = await engines[engine].launch(isChromium ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] } : {});
+const launchOpts = { chromium: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] },
+  firefox: { firefoxUserPrefs: { "webgl.force-enabled": true, "webgl.disabled": false } } };
+const browser = await engines[engine].launch(launchOpts[engine] ?? {});
 const dpr = Number(opt("dpr", "1"));
 const ablate = opt("ablate", "");
 var out_meta;

@@ -25,7 +25,9 @@ const server = http.createServer((req, res) => {
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const url = `http://127.0.0.1:${server.address().port}/`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const browser = await engines[engine].launch(engine === "chromium" ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] } : {});
+const launchOpts = { chromium: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] },
+  firefox: { firefoxUserPrefs: { "webgl.force-enabled": true, "webgl.disabled": false } } };
+const browser = await engines[engine].launch(launchOpts[engine] ?? {});
 const context = await browser.newContext({ viewport: { width: 720, height: 640 } });
 const page = await context.newPage();
 await page.addInitScript(() => {

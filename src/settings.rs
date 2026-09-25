@@ -440,6 +440,11 @@ impl SceneImage {
         image.data = None;
         image.asset_usage = RenderAssetUsages::default();
         image.texture_descriptor.usage |= TextureUsages::TEXTURE_BINDING;
+        // The world is redrawn into it every frame, so a resize has nothing
+        // worth keeping. Left on (as `new_target_texture` sets it), the resize
+        // copies the old texture on the GPU, which it lacks COPY_SRC for; that
+        // validation error stops Bevy rendering for good.
+        image.copy_on_resize = false;
         // Smooth rather than blocky when a lowered resolution is stretched.
         image.sampler = ImageSampler::linear();
         Self(images.add(image))
@@ -789,6 +794,17 @@ mod tests {
         // Already at the lowest preset: nothing to suggest.
         let mut low = LowFpsWatch::default();
         assert!(!low.observe(10.0, 60.0, Preset::Low));
+    }
+
+    #[test]
+    fn the_scene_image_can_be_resized_without_a_gpu_copy() {
+        // A copy on resize needs COPY_SRC, which a render target lacks here;
+        // the failed copy used to stop rendering at any scale below 100 %.
+        let mut images = Assets::<Image>::default();
+        let scene = SceneImage::new(&mut images);
+        let image = images.get(&scene.0).expect("just added");
+        assert!(!image.copy_on_resize);
+        assert!(image.data.is_none());
     }
 
     #[test]
