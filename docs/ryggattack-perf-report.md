@@ -581,7 +581,7 @@ What the numbers show:
 |---|---|---|
 | Builds (release wasm, LTO + `wasm-opt -Oz`) | **PASS** | run 36186128221, job `bundle` |
 | `cargo test --locked` | **PASS**, 63/63 (including the new `the_scene_image_can_be_resized_without_a_gpu_copy`) | job `test` |
-| `cargo clippy --all-targets` | **PASS**, 0 warnings | job `test` |
+| `cargo clippy --all-targets` | **PASS with notes**: builds; 6 style warnings (1 `too_many_arguments` in `run_detonations`, 5 `type_complexity` on UI/settings queries), no correctness lints. CI does not run clippy. | job `test`, `clippy.log` |
 | Runs in Chromium | **PASS** | all runs above |
 | Runs in Firefox | **PASS** (dev host, llvmpipe) | headless Firefox on the runner has no WebGL2; `main` fails there the same way |
 | Runs in Safari | **PASS as WebKit** | Playwright WebKit on Linux; real Safari (macOS) was not available |
