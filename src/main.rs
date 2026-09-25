@@ -51,6 +51,9 @@ fn main() {
         .add_plugins(settings::SettingsPlugin)
         .init_state::<AppState>()
         .add_systems(Startup, scene::setup)
+        // After the scene has built the forest; runs again whenever the forest
+        // setting changes.
+        .add_systems(PostUpdate, scenery::apply_forest_density)
         .add_systems(OnEnter(AppState::MainMenu), ui::spawn_main_menu)
         .add_systems(OnExit(AppState::MainMenu), ui::despawn_main_menu)
         .add_systems(OnEnter(AppState::Lobby), ui::spawn_lobby)

@@ -9,6 +9,12 @@ bevy = { version = "0.19.1", default-features = false, features = ["3d", "ui"] }
 # through the browser instead of panicking.
 web-time = "1.1"
 
+# The browser build keeps video settings in localStorage. Both crates are
+# already in the dependency tree through Bevy, so this compiles nothing new.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+
 [profile.dev]
 opt-level = 1
 
