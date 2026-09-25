@@ -4,7 +4,9 @@
 
 use bevy::prelude::*;
 
+use crate::batch::MaterialBatches;
 use crate::scene::ARENA_HALF_SIZE;
+use crate::settings::{ForestDensity, VideoSettings};
 use crate::tracks::{RailMap, SimpleRng};
 
 /// Anything a round reset sweeps away: props, wreckage, missiles, and effects.
@@ -275,13 +277,106 @@ fn overlaps(left: &Prop, right: &Prop) -> bool {
     left.position.distance_squared(right.position) < separation * separation
 }
 
+/// How far beyond the walls a blast can reach. Missiles never leave the
+/// arena; a missile's blast wrecks props a chain-blast radius away plus
+/// their own size, and each wrecked prop blasts again one smaller step
+/// further out. A test checks this covers the whole chain.
+pub(crate) const BLAST_REACH: f32 = 5.5;
+
+/// How far a spot on the ground lies outside the arena's walls.
+fn distance_outside_arena(position: Vec2) -> f32 {
+    (position.abs() - Vec2::splat(ARENA_HALF_SIZE))
+        .max(Vec2::ZERO)
+        .length()
+}
+
+impl Prop {
+    /// Whether any blast could ever reach this prop. The ones that cannot
+    /// are the backdrop, which never changes and is drawn as a few big meshes.
+    pub(crate) fn can_be_wrecked(&self) -> bool {
+        distance_outside_arena(self.position) <= BLAST_REACH
+    }
+}
+
+/// The part of the forest no blast reaches, welded into one mesh per material.
+#[derive(Component)]
+pub(crate) struct Backdrop;
+
+/// Every prop a blast can reach, each its own entity that can come apart.
 pub(crate) fn spawn_forest(commands: &mut Commands, forest: &Forest) {
-    for prop in &forest.props {
+    for prop in forest.props.iter().filter(|prop| prop.can_be_wrecked()) {
         spawn_prop(commands, &forest.assets, prop);
     }
 }
 
+/// The far woods. Every prop keeps its exact shape, place, and material; they
+/// are only drawn together. `Sparse` leaves out half of them.
+pub(crate) fn spawn_backdrop(
+    commands: &mut Commands,
+    meshes: &mut Assets<Mesh>,
+    forest: &Forest,
+    density: ForestDensity,
+) {
+    // Welded in patches rather than all at once, so that the patches out of
+    // view, and out of the shadow's reach, are still culled.
+    let mut patches: Vec<(IVec2, MaterialBatches)> = Vec::new();
+    let backdrop = forest
+        .props
+        .iter()
+        .filter(|prop| !prop.can_be_wrecked())
+        .enumerate()
+        .filter(|(index, _)| density == ForestDensity::Full || index % 2 == 0);
+    for (_, prop) in backdrop {
+        let cell = (prop.position / BACKDROP_PATCH).floor().as_ivec2();
+        let batches = match patches.iter().position(|(known, _)| *known == cell) {
+            Some(index) => &mut patches[index].1,
+            None => {
+                patches.push((cell, MaterialBatches::default()));
+                &mut patches.last_mut().expect("just pushed").1
+            }
+        };
+        let placement = Transform::from_xyz(prop.position.x, 0.0, prop.position.y)
+            .with_rotation(Quat::from_rotation_y(prop.yaw))
+            .with_scale(Vec3::splat(prop.scale));
+        for (mesh, material, transform) in parts(&forest.assets, prop) {
+            let Some(mesh) = meshes.get(mesh) else {
+                continue;
+            };
+            batches.add(material, mesh, placement * transform);
+        }
+    }
+    for (_, batches) in patches {
+        batches.spawn(commands, meshes, Backdrop);
+    }
+}
+
+/// Side of the square patches the backdrop is welded in.
+const BACKDROP_PATCH: f32 = 14.0;
+
+/// Grow the backdrop, and grow it again whenever the forest setting changes.
+pub(crate) fn apply_forest_density(
+    mut commands: Commands,
+    settings: Res<VideoSettings>,
+    forest: Option<Res<Forest>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    backdrop: Query<Entity, With<Backdrop>>,
+    mut grown: Local<Option<ForestDensity>>,
+) {
+    let Some(forest) = forest else {
+        return;
+    };
+    if *grown == Some(settings.forest) {
+        return;
+    }
+    for entity in &backdrop {
+        commands.entity(entity).despawn();
+    }
+    spawn_backdrop(&mut commands, &mut meshes, &forest, settings.forest);
+    *grown = Some(settings.forest);
+}
+
 /// Sweep away props, wreckage, and effects alike and grow the forest back.
+/// The backdrop is never touched, so it stays.
 pub(crate) fn rebuild_forest(
     commands: &mut Commands,
     forest: &Forest,
@@ -493,6 +588,43 @@ mod tests {
                 })
                 .count();
             assert!(outside >= OUTER_PROPS * 9 / 10);
+        }
+    }
+
+    #[test]
+    fn no_blast_reaches_the_backdrop() {
+        let widest_prop = [
+            PropKind::Pine,
+            PropKind::Birch,
+            PropKind::Bush,
+            PropKind::Rock,
+            PropKind::Stump,
+            PropKind::Fern,
+        ]
+        .map(PropKind::hit_radius)
+        .into_iter()
+        .fold(0.0, f32::max)
+            * 2.2;
+        // Every link of the chain that wrecks anything carries the blast one
+        // radius plus one prop further out.
+        let reach: f32 = crate::explosions::CHAIN_BLAST_RADII
+            .iter()
+            .filter(|radius| **radius > 0.0)
+            .map(|radius| radius + widest_prop)
+            .sum();
+        assert!(reach < BLAST_REACH, "{reach} >= {BLAST_REACH}");
+    }
+
+    #[test]
+    fn the_backdrop_is_most_of_the_forest_and_none_of_the_arena() {
+        for (_, props) in forests() {
+            let backdrop: Vec<_> = props.iter().filter(|prop| !prop.can_be_wrecked()).collect();
+            assert!(backdrop.len() > props.len() / 2);
+            assert!(backdrop.iter().all(|prop| {
+                prop.position.x.abs() > ARENA_HALF_SIZE + BLAST_REACH
+                    || prop.position.y.abs() > ARENA_HALF_SIZE + BLAST_REACH
+                    || distance_outside_arena(prop.position) > BLAST_REACH
+            }));
         }
     }
 

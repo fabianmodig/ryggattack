@@ -9,16 +9,17 @@ use bevy::light::NotShadowCaster;
 use bevy::prelude::*;
 
 use crate::scenery::{Scenery, Transient};
+use crate::settings::{EffectBudget, VideoSettings};
 use crate::tracks::SimpleRng;
 
 /// Ground radius a missile blast wrecks scenery in.
-const MISSILE_BLAST_RADIUS: f32 = 2.0;
+pub(crate) const MISSILE_BLAST_RADIUS: f32 = 2.0;
 
 /// A wrecked prop goes up with a blast of its own, smaller and after a beat,
 /// so the destruction spreads outwards instead of vanishing all at once. The
 /// last link only flashes, which is what keeps a blast from clearing the
 /// whole forest.
-const CHAIN_BLAST_RADII: [f32; 3] = [MISSILE_BLAST_RADIUS, 1.3, 0.0];
+pub(crate) const CHAIN_BLAST_RADII: [f32; 3] = [MISSILE_BLAST_RADIUS, 1.3, 0.0];
 
 const GRAVITY: f32 = 16.0;
 
@@ -31,10 +32,10 @@ const SCORCH_SECONDS: f32 = 8.0;
 const SCORCH_FADE: f32 = 3.0;
 
 /// Every surface a blast's light reaches pays for it on each frame, so the
-/// light stays close to the blast and only a few burn at once. Four carts
-/// spraying missiles set off a couple of dozen blasts a second, and lighting
-/// the whole arena from each of them was the single largest cost of a fight.
-const MAX_FLASHES: usize = 3;
+/// light stays close to the blast and only a few burn at once; the effects
+/// setting decides how many. Four carts spraying missiles set off a couple of
+/// dozen blasts a second, and lighting the whole arena from each of them was
+/// the single largest cost of a fight.
 const FLASH_RANGE: f32 = 6.0;
 
 /// A blast waiting for its fuse to run out.
@@ -204,10 +205,14 @@ pub(crate) fn run_detonations(
     mut rng: ResMut<EffectRng>,
     mut detonations: Query<(Entity, &mut Detonation)>,
     world: Surroundings,
+    settings: Res<VideoSettings>,
 ) {
+    let budget = settings.effects.budget();
     // Two blasts in one frame can reach the same prop; it only comes apart once.
     let mut wrecked = HashSet::new();
-    let mut flash_budget = MAX_FLASHES.saturating_sub(world.flashes.iter().count());
+    let mut flash_budget = budget
+        .max_flashes
+        .saturating_sub(world.flashes.iter().count());
 
     for (entity, mut detonation) in &mut detonations {
         detonation.fuse -= time.delta_secs();
@@ -223,6 +228,7 @@ pub(crate) fn run_detonations(
             &mut rng.0,
             detonation.position,
             detonation.chain,
+            &budget,
             &mut flash_budget,
         );
         if radius <= 0.0 {
@@ -304,16 +310,19 @@ fn burst(
     rng: &mut SimpleRng,
     position: Vec3,
     chain: usize,
+    budget: &EffectBudget,
     flash_budget: &mut usize,
 ) {
     let size = if chain == 0 { 1.0 } else { 0.55 };
     let scorch = chain == 0;
     let centre = position.with_y(position.y.max(0.45 * size));
-    for (offset, radius, delay) in [
+    // Largest first, so a lower setting keeps the main ball of fire.
+    let fireballs = [
         (Vec3::ZERO, 1.6, 0.0),
         (random_direction(rng) * 0.5 * size, 1.0, 0.04),
         (random_direction(rng) * 0.6 * size, 0.8, 0.09),
-    ] {
+    ];
+    for (offset, radius, delay) in fireballs.into_iter().take(budget.fireballs) {
         commands.spawn((
             Fireball {
                 age: -delay,
@@ -348,7 +357,7 @@ fn burst(
         ));
     }
 
-    let sparks = (14.0 * size) as usize;
+    let sparks = (budget.sparks * size) as usize;
     for _ in 0..sparks {
         let direction = random_direction(rng);
         let spread = rng.range(0.03, 0.09) * size.sqrt();
@@ -368,7 +377,7 @@ fn burst(
         ));
     }
 
-    for _ in 0..4 {
+    for _ in 0..budget.smoke_puffs {
         let offset = random_direction(rng) * 0.45 * size;
         puff(
             commands,

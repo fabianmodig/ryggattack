@@ -9,6 +9,7 @@ use crate::explosions::{self, EffectAssets};
 use crate::players::{PLAYER_COLORS, PLAYER_RADIUS, Player};
 use crate::scene::ARENA_HALF_SIZE;
 use crate::scenery::{Scenery, Transient};
+use crate::settings::VideoSettings;
 use crate::tracks::{RailFollower, RailMap, reset_cart};
 
 /// Radius a missile has to come within to strike something.
@@ -19,9 +20,6 @@ const MISSILE_SPEED: f32 = 13.0;
 const SHOT_COOLDOWN: f32 = 0.1625;
 
 const BACK_HIT_DOT_THRESHOLD: f32 = 0.45;
-
-/// Seconds between the smoke puffs a missile leaves behind.
-const TRAIL_INTERVAL: f32 = 0.03;
 
 #[derive(Component)]
 pub(crate) struct Projectile {
@@ -161,14 +159,17 @@ pub(crate) fn move_projectiles(
     mut commands: Commands,
     time: Res<Time>,
     effects: Res<EffectAssets>,
+    settings: Res<VideoSettings>,
     mut projectiles: Query<(Entity, &mut Projectile, &mut Transform)>,
 ) {
+    // Seconds between the smoke puffs a missile leaves behind.
+    let trail_interval = settings.effects.budget().trail_interval;
     for (entity, mut projectile, mut transform) in &mut projectiles {
         transform.translation += projectile.velocity * time.delta_secs();
         projectile.remaining_life -= time.delta_secs();
         projectile.trail -= time.delta_secs();
         if projectile.trail <= 0.0 {
-            projectile.trail = TRAIL_INTERVAL;
+            projectile.trail = trail_interval;
             let tail = transform.translation - projectile.velocity.normalize_or_zero() * 0.32;
             explosions::puff(&mut commands, &effects, tail, 0.07, 0.28, 0.45, 0.5);
         }

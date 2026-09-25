@@ -150,12 +150,12 @@ impl Effects {
 /// How thick the woods beyond the walls grow. Nothing inside the arena, or
 /// near enough to its walls to be blown up, is ever thinned out.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Forest {
+pub(crate) enum ForestDensity {
     Sparse,
     Full,
 }
 
-impl Cycle for Forest {
+impl Cycle for ForestDensity {
     const ALL: &'static [Self] = &[Self::Sparse, Self::Full];
 
     fn label(self) -> &'static str {
@@ -203,7 +203,7 @@ pub(crate) struct VideoSettings {
     pub(crate) anti_aliasing: bool,
     pub(crate) shadows: Shadows,
     pub(crate) effects: Effects,
-    pub(crate) forest: Forest,
+    pub(crate) forest: ForestDensity,
     pub(crate) show_fps: bool,
 }
 
@@ -221,7 +221,7 @@ impl VideoSettings {
                 anti_aliasing: true,
                 shadows: Shadows::High,
                 effects: Effects::High,
-                forest: Forest::Full,
+                forest: ForestDensity::Full,
                 show_fps: false,
             },
             Preset::Medium => Self {
@@ -229,7 +229,7 @@ impl VideoSettings {
                 anti_aliasing: false,
                 shadows: Shadows::Low,
                 effects: Effects::Medium,
-                forest: Forest::Full,
+                forest: ForestDensity::Full,
                 show_fps: false,
             },
             Preset::Low => Self {
@@ -237,7 +237,7 @@ impl VideoSettings {
                 anti_aliasing: false,
                 shadows: Shadows::Off,
                 effects: Effects::Low,
-                forest: Forest::Sparse,
+                forest: ForestDensity::Sparse,
                 show_fps: false,
             },
         }
@@ -657,7 +657,7 @@ mod tests {
             anti_aliasing: false,
             shadows: Shadows::Off,
             effects: Effects::Medium,
-            forest: Forest::Sparse,
+            forest: ForestDensity::Sparse,
             show_fps: true,
         };
         assert_eq!(VideoSettings::decode(&settings.encode()), settings);
