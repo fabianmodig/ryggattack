@@ -299,7 +299,7 @@ impl Prop {
 }
 
 /// The part of the forest no blast reaches, welded into one mesh per material.
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub(crate) struct Backdrop;
 
 /// Every prop a blast can reach, each its own entity that can come apart.
