@@ -7,7 +7,7 @@
 use bevy::asset::RenderAssetUsages;
 use bevy::camera::RenderTarget;
 use bevy::diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin};
-use bevy::image::{BevyDefault, ImageSampler};
+use bevy::image::ImageSampler;
 use bevy::light::DirectionalLightShadowMap;
 use bevy::prelude::*;
 use bevy::render::render_resource::{Extent3d, TextureFormat, TextureUsages};
@@ -392,7 +392,8 @@ impl SceneImage {
         let mut image = Image::new_target_texture(
             1,
             1,
-            TextureFormat::bevy_default(),
+            // The canvas's own format on WebGL2 and most desktops.
+            TextureFormat::Rgba8UnormSrgb,
             None,
         );
         // Only the GPU ever writes it. The asset stays in the main world too,

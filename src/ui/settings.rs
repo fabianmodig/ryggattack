@@ -88,7 +88,7 @@ pub(crate) enum SettingsUi {
 
 /// The text showing a row's current value.
 #[derive(Component)]
-struct SettingValue(SettingRow);
+pub(crate) struct SettingValue(SettingRow);
 
 pub(super) fn spawn_settings(commands: &mut Commands, origin: SettingsUi, settings: &VideoSettings) {
     commands
