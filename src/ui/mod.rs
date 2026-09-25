@@ -2,17 +2,21 @@
 
 mod lobby;
 mod nav;
+mod settings;
 
 pub(crate) use lobby::{
     LobbyLatch, despawn_lobby, lobby_input, lobby_shortcuts, refresh_lobby, spawn_lobby,
 };
 pub(crate) use nav::{MenuInput, StickLatch, gather_menu_input};
+pub(crate) use settings::{adjust_focused_setting, refresh_setting_values, settings_are_open};
 
 use bevy::prelude::*;
 
 use crate::game::{AppState, ROUND_SECONDS, Round};
 use crate::players::{Player, Roster};
+use crate::settings::VideoSettings;
 use nav::NavAxis;
+use settings::{SettingRow, SettingsUi, spawn_settings};
 
 /// The browser tab owns the page, so the web build cannot close itself and
 /// leaves out the affordances that would only freeze the canvas.
@@ -50,6 +54,9 @@ pub(crate) enum MenuAction {
     Exit,
     Resume,
     ReturnToMenu,
+    OpenSettings,
+    CloseSettings,
+    Setting(SettingRow),
 }
 
 pub(crate) fn spawn_hud(commands: &mut Commands) {
@@ -74,7 +81,23 @@ pub(crate) fn update_hud(
     round: Res<Round>,
     players: Query<&Player>,
     mut hud: Single<&mut Text, With<Hud>>,
+    mut shown: Local<Option<(u32, [u32; 4], bool)>>,
 ) {
+    let remaining = (ROUND_SECONDS - round.timer.elapsed_secs()).max(0.0).ceil() as u32;
+    let mut score_by_id = [0; 4];
+    for player in &players {
+        if let Some(score) = score_by_id.get_mut(player.id) {
+            *score = player.score;
+        }
+    }
+    // The text only changes about once a second. Rewriting it every frame
+    // marks it changed, and Bevy then reshapes and lays it out again.
+    let key = (remaining, score_by_id, round.finished);
+    if *shown == Some(key) {
+        return;
+    }
+    *shown = Some(key);
+
     let mut scores: Vec<(usize, u32)> = players.iter().map(|p| (p.id, p.score)).collect();
     scores.sort_by_key(|(id, _)| *id);
     let score_line = scores
@@ -82,7 +105,6 @@ pub(crate) fn update_hud(
         .map(|(id, score)| format!("P{}: {}", id + 1, score))
         .collect::<Vec<_>>()
         .join("   ");
-    let remaining = (ROUND_SECONDS - round.timer.elapsed_secs()).max(0.0).ceil() as u32;
 
     hud.0 = if round.finished {
         let winner = scores
@@ -99,6 +121,10 @@ pub(crate) fn update_hud(
 }
 
 pub(crate) fn spawn_main_menu(mut commands: Commands) {
+    main_menu(&mut commands);
+}
+
+fn main_menu(commands: &mut Commands) {
     commands
         .spawn((
             MainMenuUi,
@@ -134,8 +160,9 @@ pub(crate) fn spawn_main_menu(mut commands: Commands) {
                 TextColor(Color::srgb(0.72, 0.78, 0.90)),
             ));
             parent.spawn(menu_button("START", MenuAction::Start, 0));
+            parent.spawn(menu_button("SETTINGS", MenuAction::OpenSettings, 1));
             if CAN_EXIT {
-                parent.spawn(menu_button("EXIT", MenuAction::Exit, 1));
+                parent.spawn(menu_button("EXIT", MenuAction::Exit, 2));
             }
             parent.spawn((
                 Text::new(if CAN_EXIT {
@@ -193,7 +220,8 @@ fn spawn_pause_dialog(commands: &mut Commands) {
                         TextColor(Color::WHITE),
                     ));
                     panel.spawn(menu_button("RESUME", MenuAction::Resume, 0));
-                    panel.spawn(menu_button("RETURN TO MENU", MenuAction::ReturnToMenu, 1));
+                    panel.spawn(menu_button("SETTINGS", MenuAction::OpenSettings, 1));
+                    panel.spawn(menu_button("RETURN TO MENU", MenuAction::ReturnToMenu, 2));
                     panel.spawn((
                         Text::new("Up/Down or D-pad: choose   |   Escape or B: resume"),
                         TextFont {
@@ -304,17 +332,28 @@ pub(crate) fn update_menu_buttons(
     }
 }
 
+/// The screens a menu action opens or closes, gathered to keep the action
+/// handler's parameter list readable.
+#[derive(bevy::ecs::system::SystemParam)]
+pub(crate) struct Screens<'w, 's> {
+    pause_dialogs: Query<'w, 's, Entity, With<PauseDialogUi>>,
+    main_menus: Query<'w, 's, Entity, With<MainMenuUi>>,
+    settings: Query<'w, 's, (Entity, &'static SettingsUi)>,
+}
+
 /// Run the button the mouse clicked, or the one the highlight sits on when a
 /// device confirms. Both routes end in the same match, so a menu never gains a
 /// mouse-only option.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn handle_menu_actions(
     mut commands: Commands,
     input: Res<MenuInput>,
     focus: Res<MenuFocus>,
     actions: Query<&MenuAction>,
     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
-    pause_dialogs: Query<Entity, With<PauseDialogUi>>,
+    screens: Screens,
     mut pause: ResMut<PauseState>,
+    mut video: ResMut<VideoSettings>,
     roster: Res<Roster>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
@@ -346,11 +385,48 @@ pub(crate) fn handle_menu_actions(
         }
         MenuAction::Resume => {
             pause.0 = false;
-            for entity in &pause_dialogs {
+            for entity in &screens.pause_dialogs {
                 commands.entity(entity).despawn();
             }
         }
         MenuAction::ReturnToMenu => next_state.set(AppState::MainMenu),
+        MenuAction::OpenSettings => {
+            // Only one screen's buttons may exist at a time, so the screen
+            // underneath makes way and is rebuilt when settings close.
+            let origin = if screens.pause_dialogs.is_empty() {
+                SettingsUi::MainMenu
+            } else {
+                SettingsUi::Pause
+            };
+            for entity in screens.pause_dialogs.iter().chain(&screens.main_menus) {
+                commands.entity(entity).despawn();
+            }
+            spawn_settings(&mut commands, origin, &video);
+        }
+        MenuAction::CloseSettings => close_settings(&mut commands, &screens.settings),
+        MenuAction::Setting(row) => row.cycle(&mut video, 1),
+    }
+}
+
+/// Close the settings screen and bring back the one it was opened from.
+fn close_settings(commands: &mut Commands, open: &Query<(Entity, &SettingsUi)>) {
+    for (entity, origin) in open {
+        commands.entity(entity).despawn();
+        match origin {
+            SettingsUi::MainMenu => main_menu(commands),
+            SettingsUi::Pause => spawn_pause_dialog(commands),
+        }
+    }
+}
+
+/// Escape and the pad's east button back out of the settings screen.
+pub(crate) fn settings_shortcuts(
+    input: Res<MenuInput>,
+    mut commands: Commands,
+    open: Query<(Entity, &SettingsUi)>,
+) {
+    if input.cancel {
+        close_settings(&mut commands, &open);
     }
 }
 
@@ -393,7 +469,10 @@ pub(crate) fn toggle_pause_dialog(
     }
 }
 
-pub(crate) fn despawn_main_menu(mut commands: Commands, menus: Query<Entity, With<MainMenuUi>>) {
+pub(crate) fn despawn_main_menu(
+    mut commands: Commands,
+    menus: Query<Entity, Or<(With<MainMenuUi>, With<SettingsUi>)>>,
+) {
     for entity in &menus {
         commands.entity(entity).despawn();
     }
@@ -402,7 +481,7 @@ pub(crate) fn despawn_main_menu(mut commands: Commands, menus: Query<Entity, Wit
 pub(crate) fn close_pause_dialog(
     mut commands: Commands,
     mut pause: ResMut<PauseState>,
-    dialogs: Query<Entity, With<PauseDialogUi>>,
+    dialogs: Query<Entity, Or<(With<PauseDialogUi>, With<SettingsUi>)>>,
 ) {
     pause.0 = false;
     for entity in &dialogs {

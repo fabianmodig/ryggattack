@@ -4,6 +4,8 @@ use bevy::asset::RenderAssetUsages;
 use bevy::mesh::PrimitiveTopology;
 use bevy::prelude::*;
 
+use crate::batch::MaterialBatches;
+
 use super::map::{RailMap, rail_position};
 use super::path::{
     TRACK_CORNER_RADIUS, junction_connections, junction_directions, track_corner_pose,
@@ -22,7 +24,7 @@ pub(crate) fn spawn_tracks(
     materials: &mut Assets<StandardMaterial>,
     rail_map: &RailMap,
 ) {
-    let unit_cube = meshes.add(Cuboid::new(1.0, 1.0, 1.0));
+    let unit_cube = Mesh::from(Cuboid::new(1.0, 1.0, 1.0));
     let bed_material = materials.add(Color::srgb(0.24, 0.20, 0.17));
     let sleeper_material = materials.add(Color::srgb(0.35, 0.23, 0.13));
     let rail_material = materials.add(StandardMaterial {
@@ -32,9 +34,16 @@ pub(crate) fn spawn_tracks(
         ..default()
     });
 
+    // Nothing in the track ever moves or comes apart, so every piece is
+    // welded into one mesh per material: the same triangles in the same
+    // places, drawn in three calls instead of a few hundred (twice that with
+    // the shadow pass). On the web each draw costs the main thread two dozen
+    // WebGL calls.
+    let mut track = MaterialBatches::default();
+
     for &(start, end) in &rail_map.edges {
-        spawn_track_segment(
-            commands,
+        add_track_segment(
+            &mut track,
             &unit_cube,
             &bed_material,
             &sleeper_material,
@@ -49,8 +58,8 @@ pub(crate) fn spawn_tracks(
         for (from, to) in junction_connections(rail_map, node) {
             let directions = junction_directions(from, node, to);
             if directions[0].dot(directions[1]) < -0.99 {
-                spawn_track_segment(
-                    commands,
+                add_track_segment(
+                    &mut track,
                     &unit_cube,
                     &bed_material,
                     &sleeper_material,
@@ -78,11 +87,11 @@ pub(crate) fn spawn_tracks(
                     &rail_material,
                 ),
             ] {
-                commands.spawn((
-                    Mesh3d(meshes.add(track_corner_mesh(directions, radius, width))),
-                    MeshMaterial3d(material.clone()),
+                track.add(
+                    material,
+                    &track_corner_mesh(directions, radius, width),
                     Transform::from_translation(rail_position(node).with_y(elevation)),
-                ));
+                );
             }
             // Multiway junctions share straight sleepers underneath their
             // switches, rather than overlapping a fan of curved sleepers.
@@ -90,17 +99,19 @@ pub(crate) fn spawn_tracks(
                 for step in 0..=4 {
                     let (position, tangent) =
                         track_corner_pose(node, directions, step as f32 / 4.0);
-                    commands.spawn((
-                        Mesh3d(unit_cube.clone()),
-                        MeshMaterial3d(sleeper_material.clone()),
+                    track.add(
+                        &sleeper_material,
+                        &unit_cube,
                         Transform::from_translation(position.with_y(0.10))
                             .looking_to(tangent, Vec3::Y)
                             .with_scale(Vec3::new(1.05, 0.08, 0.11)),
-                    ));
+                    );
                 }
             }
         }
     }
+
+    track.spawn(commands, meshes, ());
 }
 
 fn track_corner_mesh(directions: [Vec3; 2], radius: f32, width: f32) -> Mesh {
@@ -156,9 +167,9 @@ fn track_corner_mesh(directions: [Vec3; 2], radius: f32, width: f32) -> Mesh {
     .with_inserted_attribute(Mesh::ATTRIBUTE_NORMAL, normals)
 }
 
-fn spawn_track_segment(
-    commands: &mut Commands,
-    mesh: &Handle<Mesh>,
+fn add_track_segment(
+    track: &mut MaterialBatches,
+    mesh: &Mesh,
     bed_material: &Handle<StandardMaterial>,
     sleeper_material: &Handle<StandardMaterial>,
     rail_material: &Handle<StandardMaterial>,
@@ -175,11 +186,11 @@ fn spawn_track_segment(
     } else {
         Vec3::new(0.82, 0.10, length)
     };
-    commands.spawn((
-        Mesh3d(mesh.clone()),
-        MeshMaterial3d(bed_material.clone()),
+    track.add(
+        bed_material,
+        mesh,
         Transform::from_xyz(midpoint.x, 0.02, midpoint.z).with_scale(bed_scale),
-    ));
+    );
 
     for side in [-RAIL_HALF_GAUGE, RAIL_HALF_GAUGE] {
         let across = if horizontal { Vec3::Z } else { Vec3::X };
@@ -190,11 +201,11 @@ fn spawn_track_segment(
         } else {
             Vec3::new(RAIL_WIDTH, 0.10, length)
         };
-        commands.spawn((
-            Mesh3d(mesh.clone()),
-            MeshMaterial3d(rail_material.clone()),
+        track.add(
+            rail_material,
+            mesh,
             Transform::from_translation(position).with_scale(scale),
-        ));
+        );
     }
 
     if !spawn_sleepers {
@@ -208,11 +219,11 @@ fn spawn_track_segment(
         } else {
             Vec3::new(1.05, 0.08, 0.11)
         };
-        commands.spawn((
-            Mesh3d(mesh.clone()),
-            MeshMaterial3d(sleeper_material.clone()),
+        track.add(
+            sleeper_material,
+            mesh,
             Transform::from_xyz(position.x, 0.10, position.z).with_scale(scale),
-        ));
+        );
     }
 }
 
