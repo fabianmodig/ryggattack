@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # Build the WebAssembly version of Ryggattack into dist/web/.
 #
-# Usage: scripts/build-web.sh [--debug | --profile <name>]
-#
-# `--profile web-dev` builds without LTO, for hosts short on memory; the
-# default release profile is what should be shipped.
+# Usage: scripts/build-web.sh [--debug]
 #
 # Requires the wasm32-unknown-unknown target and a wasm-bindgen CLI whose
 # version matches the wasm-bindgen crate in Cargo.lock.
@@ -15,20 +12,14 @@ project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$project_root"
 
 profile="release"
-while [ $# -gt 0 ]; do
-  case "$1" in
+for arg in "$@"; do
+  case "$arg" in
     --debug) profile="debug" ;;
-    --profile)
-      [ $# -ge 2 ] || { echo "--profile needs a name" >&2; exit 2; }
-      profile="$2"
-      shift
-      ;;
     *)
-      echo "unknown argument: $1" >&2
+      echo "unknown argument: $arg" >&2
       exit 2
       ;;
   esac
-  shift
 done
 
 out_dir="dist/web"
@@ -60,19 +51,17 @@ fi
 
 if [ "$profile" = "release" ]; then
   cargo build --release --target wasm32-unknown-unknown
-elif [ "$profile" = "debug" ]; then
-  cargo build --target wasm32-unknown-unknown
 else
-  cargo build --profile "$profile" --target wasm32-unknown-unknown
+  cargo build --target wasm32-unknown-unknown
 fi
 
 rm -rf "$out_dir"
 mkdir -p "$out_dir"
 
 bindgen_args=(--target web --no-typescript --out-dir "$out_dir")
-if [ "$profile" != "debug" ]; then
+if [ "$profile" = "release" ]; then
   # The symbol name section is roughly a third of the bundle and only feeds
-  # readable JavaScript stack traces, which an optimised build does not need.
+  # readable JavaScript stack traces, which a release build does not need.
   bindgen_args+=(--remove-name-section --remove-producers-section)
 fi
 

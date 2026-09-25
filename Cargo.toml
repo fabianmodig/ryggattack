@@ -24,21 +24,3 @@ opt-level = 3
 [profile.release]
 lto = "thin"
 codegen-units = 1
-
-# Lighter than release: no LTO and parallel codegen, so a wasm build fits in a
-# few GB of RAM. Good for iterating on web performance; ship with release.
-[profile.web-dev]
-inherits = "release"
-lto = false
-codegen-units = 16
-debug = false
-# opt-level 3 made rustc peak at ~2.6 GB on bevy_pbr and nearly OOM'd the
-# 4 GB build host. Level 2 is much lighter and still representative for perf.
-opt-level = 2
-
-# bevy_pbr alone still pushed rustc to ~2.7 GB at level 2, and past the
-# 4 GB host's headroom at level 1. It builds unoptimised, in small codegen
-# units, here; release keeps full optimisation.
-[profile.web-dev.package.bevy_pbr]
-opt-level = 0
-codegen-units = 64
