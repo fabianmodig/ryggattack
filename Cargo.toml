@@ -26,3 +26,6 @@ inherits = "release"
 lto = false
 codegen-units = 16
 debug = false
+# opt-level 3 made rustc peak at ~2.6 GB on bevy_pbr and nearly OOM'd the
+# 4 GB build host. Level 2 is much lighter and still representative for perf.
+opt-level = 2
