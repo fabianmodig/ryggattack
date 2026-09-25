@@ -1,12 +1,14 @@
 //! Startup scene assembly: camera, lighting, ground, tracks, forest, carts, and HUD.
 
-use bevy::light::{CascadeShadowConfigBuilder, DirectionalLightShadowMap};
+use bevy::light::CascadeShadowConfigBuilder;
 use bevy::prelude::*;
+use bevy::render::view::Msaa;
 
 use crate::combat::MissileAssets;
 use crate::explosions::{EffectAssets, EffectRng};
 use crate::players::spawn_players;
 use crate::scenery::{Forest, spawn_forest};
+use crate::settings::{Shadows, VideoSettings, WorldCamera};
 use crate::tracks::{RailMap, SimpleRng, spawn_tracks};
 use crate::ui::spawn_hud;
 
@@ -22,9 +24,9 @@ const FOG_COLOR: Color = Color::srgb(0.62, 0.72, 0.66);
 /// Shadows reach the same forty units, and no further: past that the woods
 /// are mist. One cascade at this size covers it, where Bevy's default of four
 /// cascades out to a hundred and fifty units rendered the whole forest four
-/// times a frame, which is what made an integrated GPU crawl.
+/// times a frame, which is what made an integrated GPU crawl. The size of the
+/// shadow map is a video setting.
 const SHADOW_DISTANCE: f32 = 40.0;
-const SHADOW_MAP_SIZE: usize = 1024;
 
 pub(crate) fn setup(
     mut commands: Commands,
