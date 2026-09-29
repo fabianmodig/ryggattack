@@ -219,6 +219,29 @@ shot into a thicket clears a patch of forest. Low growth such as bushes and
 ferns is flown over rather than struck, but still goes up in the blast. The
 forest grows back when a round starts or restarts.
 
+## Graphics quality
+
+There are no video settings to choose: the game adjusts its own detail to keep
+the frame rate high. It measures the frame rate every second and moves along
+seven quality levels, from 0 (half resolution, no shadows, lighter effects, a
+sparser forest outside the walls) to 6 (full resolution, full shadows and
+effects, 4x anti-aliasing), which is the game's full look.
+
+- It starts at the full look, or at the level the last visit ended on (the
+  browser remembers it), and steps down when the frame rate stays under
+  50 FPS, by two levels at once under 30 FPS.
+- After a few seconds at 57 FPS or more it tries the next level up. If that
+  makes the game slow again it steps back, and waits longer before the next
+  try, so the picture does not keep changing.
+- The seconds after loading, and a single long frame (a hidden tab, a load),
+  are not counted.
+- Only detail changes; nothing about how the game plays does.
+
+**F3** shows the frame rate and the current level, e.g. `60 FPS 16.7 ms Q6/6
+AUTO`. To fix the level instead, for comparing builds or taking screenshots,
+open the web build with `?quality=N` (e.g. `index.html?quality=0`), or set
+`RYGGATTACK_QUALITY=N` for the desktop build; the readout then says `FIXED`.
+
 ## Source layout
 
 The code is grouped by responsibility. Start with `src/main.rs` to see how the
@@ -235,6 +258,7 @@ application is configured and the order in which gameplay systems run.
 | `src/players/roster.rs` | Which device holds each of the four seats |
 | `src/players/visuals.rs` | Cart and rider models |
 | `src/combat.rs` | Missiles, what they strike, rear hits, and scoring |
+| `src/settings.rs` | Automatic graphics quality: the quality levels and the frame-rate governor |
 | `src/ui/mod.rs` | Main menu, pause dialog, and score display |
 | `src/ui/lobby.rs` | The join lobby and its seat cards |
 | `src/ui/nav.rs` | One reading of the menu keys, sticks, and buttons |

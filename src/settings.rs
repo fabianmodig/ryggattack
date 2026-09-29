@@ -1,8 +1,16 @@
-//! Video settings: what the player can turn down when the browser cannot keep
-//! up, the presets that set several at once, and the systems that apply them.
+//! Automatic graphics quality: the game picks how much detail to draw from
+//! how fast the browser is actually drawing it, so that the frame rate stays
+//! high without the player having to find a settings screen.
 //!
-//! The defaults are the game's full look. Everything here only ever trades
-//! away detail; none of it changes how the game plays.
+//! The detail knobs (resolution, anti-aliasing, shadows, effects, forest) are
+//! arranged into a ladder of [`QUALITY_LEVELS`], from the cheapest look up to
+//! the game's full look. A [`QualityGovernor`] watches the frame rate one
+//! window at a time: it steps down quickly when frames are slow, and steps up
+//! again only after the frame rate has been comfortably high for a while. A
+//! step up that makes the game slow again is taken back, and the next try
+//! waits longer, so it never keeps flickering between two levels.
+//!
+//! Nothing here changes how the game plays; it only trades away detail.
 
 use bevy::asset::RenderAssetUsages;
 use bevy::camera::RenderTarget;
@@ -14,26 +22,10 @@ use bevy::render::render_resource::{Extent3d, TextureFormat, TextureUsages};
 use bevy::render::view::Msaa;
 use bevy::window::{PrimaryWindow, WindowRef};
 
-/// Stepping through a setting's values from a menu row.
-pub(crate) trait Cycle: Sized + Copy + PartialEq + 'static {
-    const ALL: &'static [Self];
-
-    fn label(self) -> &'static str;
-
-    /// The next value along, wrapping at either end. `step` is `1` or `-1`.
-    fn cycled(self, step: i32) -> Self {
-        let index = Self::ALL
-            .iter()
-            .position(|value| *value == self)
-            .unwrap_or(0) as i32;
-        Self::ALL[(index + step).rem_euclid(Self::ALL.len() as i32) as usize]
-    }
-}
-
 /// How many of the canvas's pixels the 3D view is drawn at before it is
 /// stretched to fill it. Fill rate is what an integrated GPU runs out of
 /// first, especially on a high-DPI screen.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum RenderScale {
     Half,
     TwoThirds,
@@ -52,56 +44,19 @@ impl RenderScale {
     }
 }
 
-impl Cycle for RenderScale {
-    const ALL: &'static [Self] = &[Self::Half, Self::TwoThirds, Self::ThreeQuarters, Self::Full];
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::Half => "50%",
-            Self::TwoThirds => "67%",
-            Self::ThreeQuarters => "75%",
-            Self::Full => "100%",
-        }
-    }
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum Shadows {
     Off,
     Low,
     High,
 }
 
-impl Cycle for Shadows {
-    const ALL: &'static [Self] = &[Self::Off, Self::Low, Self::High];
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::Off => "OFF",
-            Self::Low => "LOW",
-            Self::High => "HIGH",
-        }
-    }
-}
-
 /// Fire, smoke, sparks, and the light a blast throws.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum Effects {
     Low,
     Medium,
     High,
-}
-
-impl Cycle for Effects {
-    const ALL: &'static [Self] = &[Self::Low, Self::Medium, Self::High];
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::Low => "LOW",
-            Self::Medium => "MEDIUM",
-            Self::High => "HIGH",
-        }
-    }
 }
 
 /// How much of a blast is drawn. `High` is the game's original look.
@@ -149,54 +104,14 @@ impl Effects {
 
 /// How thick the woods beyond the walls grow. Nothing inside the arena, or
 /// near enough to its walls to be blown up, is ever thinned out.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum ForestDensity {
     Sparse,
     Full,
 }
 
-impl Cycle for ForestDensity {
-    const ALL: &'static [Self] = &[Self::Sparse, Self::Full];
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::Sparse => "SPARSE",
-            Self::Full => "FULL",
-        }
-    }
-}
-
-impl Cycle for bool {
-    const ALL: &'static [Self] = &[false, true];
-
-    fn label(self) -> &'static str {
-        if self { "ON" } else { "OFF" }
-    }
-}
-
-/// A named bundle of settings, or `Custom` once any of them is changed alone.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Preset {
-    Low,
-    Medium,
-    High,
-    Custom,
-}
-
-impl Cycle for Preset {
-    /// `Custom` is where a preset ends up, not something to pick.
-    const ALL: &'static [Self] = &[Self::Low, Self::Medium, Self::High];
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::Low => "LOW",
-            Self::Medium => "MEDIUM",
-            Self::High => "HIGH",
-            Self::Custom => "CUSTOM",
-        }
-    }
-}
-
+/// What is currently drawn. Set only by the quality governor; the rest of the
+/// game reads it.
 #[derive(Resource, Clone, Copy, Debug, PartialEq)]
 pub(crate) struct VideoSettings {
     pub(crate) render_scale: RenderScale,
@@ -204,65 +119,76 @@ pub(crate) struct VideoSettings {
     pub(crate) shadows: Shadows,
     pub(crate) effects: Effects,
     pub(crate) forest: ForestDensity,
-    pub(crate) show_fps: bool,
 }
 
 impl Default for VideoSettings {
     fn default() -> Self {
-        Self::preset(Preset::High)
+        Self::level(TOP_LEVEL)
     }
 }
 
+/// The quality ladder, cheapest first. Each step up adds the detail that
+/// costs least for what it shows: resolution first (fill rate is what a weak
+/// GPU runs out of), then shadows, effects, the full forest, and last the
+/// anti-aliasing, which only smooths edges.
+const QUALITY_LEVELS: [VideoSettings; 7] = [
+    VideoSettings {
+        render_scale: RenderScale::Half,
+        anti_aliasing: false,
+        shadows: Shadows::Off,
+        effects: Effects::Low,
+        forest: ForestDensity::Sparse,
+    },
+    VideoSettings {
+        render_scale: RenderScale::TwoThirds,
+        anti_aliasing: false,
+        shadows: Shadows::Off,
+        effects: Effects::Low,
+        forest: ForestDensity::Sparse,
+    },
+    VideoSettings {
+        render_scale: RenderScale::ThreeQuarters,
+        anti_aliasing: false,
+        shadows: Shadows::Low,
+        effects: Effects::Medium,
+        forest: ForestDensity::Sparse,
+    },
+    VideoSettings {
+        render_scale: RenderScale::Full,
+        anti_aliasing: false,
+        shadows: Shadows::Low,
+        effects: Effects::Medium,
+        forest: ForestDensity::Full,
+    },
+    VideoSettings {
+        render_scale: RenderScale::Full,
+        anti_aliasing: false,
+        shadows: Shadows::High,
+        effects: Effects::Medium,
+        forest: ForestDensity::Full,
+    },
+    VideoSettings {
+        render_scale: RenderScale::Full,
+        anti_aliasing: false,
+        shadows: Shadows::High,
+        effects: Effects::High,
+        forest: ForestDensity::Full,
+    },
+    VideoSettings {
+        render_scale: RenderScale::Full,
+        anti_aliasing: true,
+        shadows: Shadows::High,
+        effects: Effects::High,
+        forest: ForestDensity::Full,
+    },
+];
+
+/// The game's full look.
+pub(crate) const TOP_LEVEL: usize = QUALITY_LEVELS.len() - 1;
+
 impl VideoSettings {
-    pub(crate) fn preset(preset: Preset) -> Self {
-        match preset {
-            Preset::High | Preset::Custom => Self {
-                render_scale: RenderScale::Full,
-                anti_aliasing: true,
-                shadows: Shadows::High,
-                effects: Effects::High,
-                forest: ForestDensity::Full,
-                show_fps: false,
-            },
-            Preset::Medium => Self {
-                render_scale: RenderScale::Full,
-                anti_aliasing: false,
-                shadows: Shadows::Low,
-                effects: Effects::Medium,
-                forest: ForestDensity::Full,
-                show_fps: false,
-            },
-            Preset::Low => Self {
-                render_scale: RenderScale::TwoThirds,
-                anti_aliasing: false,
-                shadows: Shadows::Off,
-                effects: Effects::Low,
-                forest: ForestDensity::Sparse,
-                show_fps: false,
-            },
-        }
-    }
-
-    /// Which preset these settings match. The FPS counter is not a quality
-    /// setting, so it never makes a preset custom.
-    pub(crate) fn matching_preset(&self) -> Preset {
-        [Preset::Low, Preset::Medium, Preset::High]
-            .into_iter()
-            .find(|&preset| {
-                Self {
-                    show_fps: self.show_fps,
-                    ..Self::preset(preset)
-                } == *self
-            })
-            .unwrap_or(Preset::Custom)
-    }
-
-    /// Switch to a preset, keeping the FPS counter as it was.
-    pub(crate) fn apply_preset(&mut self, preset: Preset) {
-        *self = Self {
-            show_fps: self.show_fps,
-            ..Self::preset(preset)
-        };
+    pub(crate) fn level(level: usize) -> Self {
+        QUALITY_LEVELS[level.min(TOP_LEVEL)]
     }
 
     fn shadow_map_size(&self) -> Option<usize> {
@@ -272,78 +198,197 @@ impl VideoSettings {
             Shadows::High => Some(1024),
         }
     }
+}
 
-    /// A compact, human-readable form for saving between visits.
-    fn encode(&self) -> String {
-        format!(
-            "scale={} aa={} shadows={} effects={} forest={} fps={}",
-            self.render_scale.label(),
-            self.anti_aliasing.label(),
-            self.shadows.label(),
-            self.effects.label(),
-            self.forest.label(),
-            self.show_fps.label(),
-        )
+/// Below this, averaged over a window, the game steps the quality down.
+const SLOW_FPS: f32 = 50.0;
+/// Below this a single window is enough to step down, and by two levels.
+const VERY_SLOW_FPS: f32 = 30.0;
+/// The frame rate a window has to keep for it to count towards stepping up.
+/// Just under 60, so a 60 Hz screen's vsync-capped rate counts.
+const SMOOTH_FPS: f32 = 57.0;
+/// Seconds of frames averaged into one decision.
+const WINDOW_SECONDS: f32 = 1.0;
+/// A frame longer than this is a hitch (the tab was hidden, an asset loaded,
+/// the forest was regrown), not a sign of steady load, and is left out of the
+/// frame-rate average...
+const HITCH_SECONDS: f32 = 0.25;
+/// ...unless this many come in a row: then the machine is simply that slow.
+const HITCHES_IN_A_ROW: u32 = 3;
+/// Smooth windows needed before the first try at a higher level.
+const FIRST_RAISE_WAIT: u32 = 4;
+/// The longest the governor waits between tries at a higher level.
+const MAX_RAISE_WAIT: u32 = 120;
+/// A slow window this soon after stepping up means the step up failed.
+const PROBE_WINDOWS: u32 = 4;
+
+/// Chooses the quality level from the measured frame rate.
+#[derive(Resource, Clone, Debug, PartialEq)]
+pub(crate) struct QualityGovernor {
+    pub(crate) level: usize,
+    /// A fixed level from the address or environment: measurements and
+    /// screenshots need a known look, so the governor then never moves.
+    pinned: bool,
+    frames: u32,
+    elapsed: f32,
+    /// Frames longer than [`HITCH_SECONDS`] in a row.
+    long_frames: u32,
+    slow_windows: u32,
+    smooth_windows: u32,
+    /// Smooth windows needed before the next step up.
+    raise_wait: u32,
+    /// Windows since the last step up, while that step is still on trial.
+    probe: Option<u32>,
+    /// Windows to ignore after a change, while it settles in.
+    settle: u32,
+}
+
+impl QualityGovernor {
+    pub(crate) fn new(level: usize, pinned: bool) -> Self {
+        Self {
+            level: level.min(TOP_LEVEL),
+            pinned,
+            frames: 0,
+            elapsed: 0.0,
+            long_frames: 0,
+            slow_windows: 0,
+            smooth_windows: 0,
+            raise_wait: FIRST_RAISE_WAIT,
+            probe: None,
+            // The first seconds after loading are always slow.
+            settle: 3,
+        }
     }
 
-    /// Read what `encode` wrote. Anything unknown or missing keeps its
-    /// default, so settings from an older build still load.
-    fn decode(text: &str) -> Self {
-        fn parse<T: Cycle>(value: &str) -> Option<T> {
-            T::ALL.iter().copied().find(|item| item.label() == value)
+    /// Feed one frame's duration. Returns the new level when it changes.
+    pub(crate) fn observe(&mut self, dt: f32) -> Option<usize> {
+        if self.pinned {
+            return None;
         }
-        let mut settings = Self::default();
-        for pair in text.split_whitespace() {
-            let Some((key, value)) = pair.split_once('=') else {
-                continue;
-            };
-            match key {
-                "scale" => settings.render_scale = parse(value).unwrap_or(settings.render_scale),
-                "aa" => settings.anti_aliasing = parse(value).unwrap_or(settings.anti_aliasing),
-                "shadows" => settings.shadows = parse(value).unwrap_or(settings.shadows),
-                "effects" => settings.effects = parse(value).unwrap_or(settings.effects),
-                "forest" => settings.forest = parse(value).unwrap_or(settings.forest),
-                "fps" => settings.show_fps = parse(value).unwrap_or(settings.show_fps),
-                _ => {}
+        if dt > HITCH_SECONDS {
+            self.long_frames += 1;
+            if self.long_frames < HITCHES_IN_A_ROW {
+                return None;
             }
+            // Not a hitch: every frame is this slow. Judge it as a window of
+            // its own, at the rate these frames came.
+            self.long_frames = 0;
+            self.frames = 0;
+            self.elapsed = 0.0;
+            return self.close_window(1.0 / dt);
         }
-        settings
+        self.long_frames = 0;
+        self.frames += 1;
+        self.elapsed += dt;
+        if self.elapsed < WINDOW_SECONDS {
+            return None;
+        }
+        let fps = self.frames as f32 / self.elapsed;
+        self.frames = 0;
+        self.elapsed = 0.0;
+        self.close_window(fps)
     }
 
-    /// The settings saved by an earlier visit, or the defaults.
-    pub(crate) fn load() -> Self {
-        storage::read().map_or_else(Self::default, |text| Self::decode(&text))
+    fn close_window(&mut self, fps: f32) -> Option<usize> {
+        if self.settle > 0 {
+            self.settle -= 1;
+            return None;
+        }
+        self.judge(fps)
     }
 
-    fn save(&self) {
-        storage::write(&self.encode());
+    /// Decide on one window's average frame rate.
+    fn judge(&mut self, fps: f32) -> Option<usize> {
+        if let Some(windows) = self.probe.as_mut() {
+            *windows += 1;
+        }
+        if fps < SLOW_FPS {
+            self.smooth_windows = 0;
+            self.slow_windows += 1;
+            let failed_probe = self.probe.is_some_and(|windows| windows <= PROBE_WINDOWS);
+            if failed_probe {
+                // That level is too much for this machine: back down at once
+                // and wait twice as long before trying it again.
+                self.raise_wait = (self.raise_wait * 2).min(MAX_RAISE_WAIT);
+                return self.step_down(1);
+            }
+            if fps < VERY_SLOW_FPS {
+                return self.step_down(2);
+            }
+            if self.slow_windows >= 2 {
+                return self.step_down(1);
+            }
+            return None;
+        }
+        self.slow_windows = 0;
+        if self.probe.is_some_and(|windows| windows > PROBE_WINDOWS) {
+            // The last step up held; the next one may come sooner again.
+            self.probe = None;
+            self.raise_wait = (self.raise_wait / 2).max(FIRST_RAISE_WAIT);
+        }
+        if fps >= SMOOTH_FPS {
+            self.smooth_windows += 1;
+            if self.smooth_windows >= self.raise_wait && self.level < TOP_LEVEL {
+                self.smooth_windows = 0;
+                self.probe = Some(0);
+                return self.change_to(self.level + 1);
+            }
+        } else {
+            self.smooth_windows = 0;
+        }
+        None
+    }
+
+    fn step_down(&mut self, levels: usize) -> Option<usize> {
+        self.slow_windows = 0;
+        self.probe = None;
+        self.change_to(self.level.saturating_sub(levels))
+    }
+
+    fn change_to(&mut self, level: usize) -> Option<usize> {
+        if level == self.level {
+            return None;
+        }
+        self.level = level;
+        self.settle = 1;
+        Some(level)
     }
 }
 
-/// The browser keeps settings in `localStorage`. The page's `window` object
-/// is reached through `js-sys` alone, which the game already links, so no
-/// extra browser bindings are compiled in for it.
+/// A level fixed from outside: `?quality=N` in the web build's address, or
+/// `RYGGATTACK_QUALITY=N` on the desktop. `N` is `0` (cheapest) to
+/// [`TOP_LEVEL`] (full look).
+fn pinned_level() -> Option<usize> {
+    storage::pinned()
+        .and_then(|text| text.trim().parse::<usize>().ok())
+        .map(|level| level.min(TOP_LEVEL))
+}
+
+/// The browser remembers the last level between visits in `localStorage`,
+/// so a slow machine starts where it left off instead of at the top. The
+/// page's `window` object is reached through `js-sys` alone, which the game
+/// already links, so no extra browser bindings are compiled in for it.
 #[cfg(target_arch = "wasm32")]
 mod storage {
     use js_sys::{Function, Reflect};
     use wasm_bindgen::JsValue;
 
-    const KEY: &str = "ryggattack.video";
+    const KEY: &str = "ryggattack.quality";
 
-    fn local_storage() -> Option<JsValue> {
-        Reflect::get(&js_sys::global(), &JsValue::from_str("localStorage"))
+    fn global(name: &str) -> Option<JsValue> {
+        Reflect::get(&js_sys::global(), &JsValue::from_str(name))
             .ok()
-            .filter(|storage| !storage.is_undefined() && !storage.is_null())
+            .filter(|value| !value.is_undefined() && !value.is_null())
     }
 
-    fn method(storage: &JsValue, name: &str) -> Option<Function> {
-        Reflect::get(storage, &JsValue::from_str(name))
+    fn method(target: &JsValue, name: &str) -> Option<Function> {
+        Reflect::get(target, &JsValue::from_str(name))
             .ok()
             .map(Function::from)
     }
 
     pub(super) fn read() -> Option<String> {
-        let storage = local_storage()?;
+        let storage = global("localStorage")?;
         method(&storage, "getItem")?
             .call1(&storage, &JsValue::from_str(KEY))
             .ok()?
@@ -351,17 +396,26 @@ mod storage {
     }
 
     pub(super) fn write(text: &str) {
-        // A private window can refuse storage; the settings then last until
+        // A private window can refuse storage; the level then lasts until
         // the tab closes, which is all that is lost.
-        if let Some(storage) = local_storage()
+        if let Some(storage) = global("localStorage")
             && let Some(set) = method(&storage, "setItem")
         {
             let _ = set.call2(&storage, &JsValue::from_str(KEY), &JsValue::from_str(text));
         }
     }
+
+    /// `N` from `?quality=N` in the page's address.
+    pub(super) fn pinned() -> Option<String> {
+        let location = global("location")?;
+        let search = Reflect::get(&location, &JsValue::from_str("search"))
+            .ok()?
+            .as_string()?;
+        super::query_value(&search, "quality").map(str::to_owned)
+    }
 }
 
-/// On the desktop the settings last for the session.
+/// On the desktop the level lasts for the session.
 #[cfg(not(target_arch = "wasm32"))]
 mod storage {
     pub(super) fn read() -> Option<String> {
@@ -369,6 +423,31 @@ mod storage {
     }
 
     pub(super) fn write(_text: &str) {}
+
+    pub(super) fn pinned() -> Option<String> {
+        std::env::var("RYGGATTACK_QUALITY").ok()
+    }
+}
+
+/// The value of `key` in a URL query string such as `?a=1&quality=3`.
+#[cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
+fn query_value<'a>(search: &'a str, key: &str) -> Option<&'a str> {
+    search
+        .trim_start_matches('?')
+        .split('&')
+        .filter_map(|pair| pair.split_once('='))
+        .find(|(name, _)| *name == key)
+        .map(|(_, value)| value)
+}
+
+/// The level to start at: a pinned one, else the one the last visit ended
+/// at, else the full look (a fast machine should never have to climb).
+fn starting_governor() -> QualityGovernor {
+    if let Some(level) = pinned_level() {
+        return QualityGovernor::new(level, true);
+    }
+    let saved = storage::read().and_then(|text| text.trim().parse::<usize>().ok());
+    QualityGovernor::new(saved.unwrap_or(TOP_LEVEL), false)
 }
 
 /// The camera that draws the world into [`SceneImage`].
@@ -379,47 +458,9 @@ pub(crate) struct WorldCamera;
 #[derive(Component)]
 struct SceneView;
 
+/// The frame-rate readout, toggled with F3.
 #[derive(Component)]
 struct FpsText;
-
-/// The note that suggests a lower quality when the frame rate stays low.
-#[derive(Component)]
-struct LowFpsHint;
-
-/// Below this frame rate, held for [`LOW_FPS_SECONDS`], the game suggests a
-/// lower preset. It suggests once per visit and never changes anything itself.
-const LOW_FPS: f64 = 45.0;
-const LOW_FPS_SECONDS: f32 = 10.0;
-/// How long the suggestion stays on screen.
-const HINT_SECONDS: f32 = 8.0;
-
-/// Tracks how long the frame rate has stayed low.
-#[derive(Resource, Default)]
-struct LowFpsWatch {
-    low_for: f32,
-    /// Counts down while the note is showing; `None` until it has shown.
-    showing: Option<f32>,
-}
-
-impl LowFpsWatch {
-    /// Feed one frame's smoothed FPS. Returns `true` on the frame the note
-    /// should appear.
-    fn observe(&mut self, fps: f64, dt: f32, preset: Preset) -> bool {
-        if self.showing.is_some() || preset == Preset::Low {
-            return false;
-        }
-        if fps < LOW_FPS {
-            self.low_for += dt;
-        } else {
-            self.low_for = 0.0;
-        }
-        if self.low_for >= LOW_FPS_SECONDS {
-            self.showing = Some(HINT_SECONDS);
-            return true;
-        }
-        false
-    }
-}
 
 /// The off-screen picture the world is drawn into, at the chosen fraction of
 /// the canvas's resolution, and stretched over the window by the UI.
@@ -465,8 +506,10 @@ pub(crate) struct SettingsPlugin;
 
 impl Plugin for SettingsPlugin {
     fn build(&self, app: &mut App) {
-        let settings = VideoSettings::load();
+        let governor = starting_governor();
+        let settings = VideoSettings::level(governor.level);
         app.insert_resource(settings)
+            .insert_resource(governor)
             .insert_resource(DirectionalLightShadowMap {
                 size: settings.shadow_map_size().unwrap_or(512),
             })
@@ -475,13 +518,14 @@ impl Plugin for SettingsPlugin {
             .add_systems(
                 PostUpdate,
                 (
+                    govern_quality,
                     fit_scene_image,
                     apply_settings.run_if(resource_changed::<VideoSettings>),
+                    toggle_fps,
                     update_fps,
-                    suggest_lower_quality,
-                ),
-            )
-            .init_resource::<LowFpsWatch>();
+                )
+                    .chain(),
+            );
     }
 }
 
@@ -528,64 +572,28 @@ fn spawn_scene_view(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         GlobalZIndex(1000),
         Visibility::Hidden,
     ));
-    commands.spawn((
-        LowFpsHint,
-        Text::new("Low frame rate: try a lower QUALITY under SETTINGS"),
-        TextFont {
-            font_size: FontSize::Px(18.0),
-            ..default()
-        },
-        TextColor(Color::srgb(0.95, 0.78, 0.24)),
-        TextShadow::default(),
-        Node {
-            position_type: PositionType::Absolute,
-            bottom: px(12),
-            right: px(12),
-            ..default()
-        },
-        GlobalZIndex(1000),
-        Visibility::Hidden,
-    ));
 }
 
-/// Suggest a lower preset once, when the frame rate has stayed under
-/// [`LOW_FPS`] for a while. The player decides; nothing changes on its own.
-fn suggest_lower_quality(
-    time: Res<Time>,
-    settings: Res<VideoSettings>,
-    diagnostics: Res<DiagnosticsStore>,
-    mut watch: ResMut<LowFpsWatch>,
-    mut hint: Single<&mut Visibility, With<LowFpsHint>>,
+/// Measure every frame, and move to the level the governor picks.
+fn govern_quality(
+    time: Res<Time<Real>>,
+    mut governor: ResMut<QualityGovernor>,
+    mut settings: ResMut<VideoSettings>,
 ) {
-    let dt = time.delta_secs();
-    if let Some(left) = watch.showing.as_mut()
-        && *left > 0.0
-    {
-        *left -= dt;
-        if *left <= 0.0 {
-            **hint = Visibility::Hidden;
-        }
-        return;
-    }
-    // The first seconds after loading are always slow; don't count them.
-    if time.elapsed_secs() < 5.0 {
-        return;
-    }
-    let Some(fps) = diagnostics
-        .get(&FrameTimeDiagnosticsPlugin::FPS)
-        .and_then(|fps| fps.smoothed())
-    else {
-        return;
-    };
-    if watch.observe(fps, dt, settings.matching_preset()) {
-        **hint = Visibility::Inherited;
+    if let Some(level) = governor.observe(time.delta_secs()) {
+        info!("Graphics quality {level}/{TOP_LEVEL}");
+        *settings = VideoSettings::level(level);
+        storage::write(&level.to_string());
     }
 }
 
 /// The size, in pixels, the world is drawn at for a canvas of `window`
 /// physical pixels.
 pub(crate) fn scaled_size(window: UVec2, scale: RenderScale) -> UVec2 {
-    (window.as_vec2() * scale.factor()).round().as_uvec2().max(UVec2::ONE)
+    (window.as_vec2() * scale.factor())
+        .round()
+        .as_uvec2()
+        .max(UVec2::ONE)
 }
 
 /// Keep the off-screen picture at the chosen fraction of the canvas size.
@@ -626,10 +634,9 @@ fn apply_settings(
     mut commands: Commands,
     world_cameras: Query<Entity, With<WorldCamera>>,
     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
-    mut views: Query<&mut Visibility, (With<SceneView>, Without<FpsText>)>,
+    mut views: Query<&mut Visibility, With<SceneView>>,
     mut lights: Query<&mut DirectionalLight>,
     mut shadow_map: ResMut<DirectionalLightShadowMap>,
-    mut fps: Query<&mut Visibility, (With<FpsText>, Without<SceneView>)>,
 ) {
     let scaled = settings.render_scale != RenderScale::Full;
     for camera in &world_cameras {
@@ -672,24 +679,29 @@ fn apply_settings(
     {
         shadow_map.size = size;
     }
+}
+
+/// F3 shows or hides the frame rate and the quality level.
+fn toggle_fps(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut fps: Query<&mut Visibility, (With<FpsText>, Without<SceneView>)>,
+) {
+    if !keys.just_pressed(KeyCode::F3) {
+        return;
+    }
     for mut visibility in &mut fps {
-        *visibility = if settings.show_fps {
-            Visibility::Inherited
-        } else {
-            Visibility::Hidden
+        *visibility = match *visibility {
+            Visibility::Hidden => Visibility::Inherited,
+            _ => Visibility::Hidden,
         };
     }
-    settings.save();
 }
 
 fn update_fps(
-    settings: Res<VideoSettings>,
+    governor: Res<QualityGovernor>,
     diagnostics: Res<DiagnosticsStore>,
-    mut text: Single<&mut Text, With<FpsText>>,
+    mut readouts: Query<(&mut Text, &Visibility), With<FpsText>>,
 ) {
-    if !settings.show_fps {
-        return;
-    }
     let Some(fps) = diagnostics
         .get(&FrameTimeDiagnosticsPlugin::FPS)
         .and_then(|fps| fps.smoothed())
@@ -700,78 +712,70 @@ fn update_fps(
         .get(&FrameTimeDiagnosticsPlugin::FRAME_TIME)
         .and_then(|time| time.smoothed())
         .unwrap_or(0.0);
-    text.0 = format!("{fps:.0} FPS  {frame_ms:.1} ms");
+    let mode = if governor.pinned { "FIXED" } else { "AUTO" };
+    for (mut text, visibility) in &mut readouts {
+        if *visibility == Visibility::Hidden {
+            continue;
+        }
+        text.0 = format!(
+            "{fps:.0} FPS  {frame_ms:.1} ms  Q{}/{TOP_LEVEL} {mode}",
+            governor.level
+        );
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    /// Run whole windows at `fps` through the governor; the level after each.
+    fn run(governor: &mut QualityGovernor, fps: f32, windows: usize) -> Vec<usize> {
+        let frames = (fps * WINDOW_SECONDS).ceil() as usize;
+        (0..windows)
+            .map(|_| {
+                for _ in 0..frames {
+                    governor.observe(1.0 / fps);
+                }
+                governor.level
+            })
+            .collect()
+    }
+
+    /// A governor past its start-up settling.
+    fn settled(level: usize) -> QualityGovernor {
+        let mut governor = QualityGovernor::new(level, false);
+        governor.settle = 0;
+        governor
+    }
+
     #[test]
-    fn the_defaults_are_the_full_look() {
+    fn the_default_is_the_full_look() {
         let settings = VideoSettings::default();
-        assert_eq!(settings.matching_preset(), Preset::High);
-        assert_eq!(settings.effects.budget(), Effects::High.budget());
+        assert_eq!(settings, QUALITY_LEVELS[TOP_LEVEL]);
+        assert!(settings.anti_aliasing);
         assert_eq!(settings.render_scale, RenderScale::Full);
+        assert_eq!(settings.shadows, Shadows::High);
+        assert_eq!(settings.effects, Effects::High);
+        assert_eq!(settings.forest, ForestDensity::Full);
     }
 
     #[test]
-    fn every_preset_is_recognised_and_a_lone_change_is_custom() {
-        for preset in [Preset::Low, Preset::Medium, Preset::High] {
-            let mut settings = VideoSettings::preset(preset);
-            assert_eq!(settings.matching_preset(), preset);
-            settings.show_fps = true;
-            assert_eq!(settings.matching_preset(), preset);
+    fn every_step_up_the_ladder_only_adds_detail() {
+        for pair in QUALITY_LEVELS.windows(2) {
+            let (lower, higher) = (pair[0], pair[1]);
+            assert_ne!(lower, higher, "two identical levels");
+            assert!(lower.render_scale <= higher.render_scale);
+            assert!(lower.anti_aliasing <= higher.anti_aliasing);
+            assert!(lower.shadows <= higher.shadows);
+            assert!(lower.effects <= higher.effects);
+            assert!(lower.forest <= higher.forest);
         }
-        let mut settings = VideoSettings::preset(Preset::High);
-        settings.shadows = Shadows::Low;
-        assert_eq!(settings.matching_preset(), Preset::Custom);
-    }
-
-    #[test]
-    fn applying_a_preset_keeps_the_fps_counter() {
-        let mut settings = VideoSettings {
-            show_fps: true,
-            ..default()
-        };
-        settings.apply_preset(Preset::Low);
-        assert!(settings.show_fps);
-        assert_eq!(settings.matching_preset(), Preset::Low);
-    }
-
-    #[test]
-    fn cycling_wraps_both_ways() {
-        assert_eq!(Shadows::High.cycled(1), Shadows::Off);
-        assert_eq!(Shadows::Off.cycled(-1), Shadows::High);
-        assert_eq!(RenderScale::Half.cycled(1), RenderScale::TwoThirds);
-        assert!(false.cycled(1));
-        // Custom is not in the list, so cycling from it starts over.
-        assert_eq!(Preset::Custom.cycled(1), Preset::Medium);
-    }
-
-    #[test]
-    fn saved_settings_round_trip_and_tolerate_junk() {
-        let settings = VideoSettings {
-            render_scale: RenderScale::ThreeQuarters,
-            anti_aliasing: false,
-            shadows: Shadows::Off,
-            effects: Effects::Medium,
-            forest: ForestDensity::Sparse,
-            show_fps: true,
-        };
-        assert_eq!(VideoSettings::decode(&settings.encode()), settings);
-        assert_eq!(
-            VideoSettings::decode("scale=13% bogus effects=LOW"),
-            VideoSettings {
-                effects: Effects::Low,
-                ..default()
-            }
-        );
     }
 
     #[test]
     fn lower_effects_never_draw_more() {
-        let [low, medium, high] = [Effects::Low, Effects::Medium, Effects::High].map(Effects::budget);
+        let [low, medium, high] =
+            [Effects::Low, Effects::Medium, Effects::High].map(Effects::budget);
         for (less, more) in [(low, medium), (medium, high)] {
             assert!(less.trail_interval >= more.trail_interval);
             assert!(less.fireballs <= more.fireballs);
@@ -782,18 +786,106 @@ mod tests {
     }
 
     #[test]
-    fn a_sustained_low_frame_rate_suggests_once() {
-        let mut watch = LowFpsWatch::default();
-        // A brief dip does not count.
-        assert!(!watch.observe(20.0, 5.0, Preset::High));
-        assert!(!watch.observe(60.0, 0.1, Preset::High));
-        assert!(!watch.observe(20.0, 5.0, Preset::High));
-        assert!(watch.observe(20.0, 5.0, Preset::High));
-        // Only once.
-        assert!(!watch.observe(20.0, 60.0, Preset::High));
-        // Already at the lowest preset: nothing to suggest.
-        let mut low = LowFpsWatch::default();
-        assert!(!low.observe(10.0, 60.0, Preset::Low));
+    fn a_smooth_frame_rate_keeps_the_full_look() {
+        let mut governor = settled(TOP_LEVEL);
+        assert!(
+            run(&mut governor, 60.0, 30)
+                .iter()
+                .all(|&level| level == TOP_LEVEL)
+        );
+    }
+
+    #[test]
+    fn a_slow_frame_rate_steps_down_until_it_is_smooth() {
+        let mut governor = settled(TOP_LEVEL);
+        // Somewhat slow: one level after two slow windows.
+        let levels = run(&mut governor, 45.0, 3);
+        assert_eq!(levels, vec![TOP_LEVEL, TOP_LEVEL - 1, TOP_LEVEL - 1]);
+        // Very slow: two levels at a time, down to the bottom and no further.
+        let levels = run(&mut governor, 10.0, 12);
+        assert_eq!(*levels.last().unwrap(), 0);
+        assert!(levels.windows(2).all(|pair| pair[1] <= pair[0]));
+    }
+
+    #[test]
+    fn the_start_up_seconds_do_not_count() {
+        let mut governor = QualityGovernor::new(TOP_LEVEL, false);
+        // Loading is slow; the first three windows are ignored.
+        assert!(
+            run(&mut governor, 10.0, 3)
+                .iter()
+                .all(|&level| level == TOP_LEVEL)
+        );
+        assert!(run(&mut governor, 10.0, 1)[0] < TOP_LEVEL);
+    }
+
+    #[test]
+    fn a_hitch_is_not_a_slow_frame_rate() {
+        let mut governor = settled(TOP_LEVEL);
+        for _ in 0..5 {
+            // One long frame (a hidden tab, a load) in otherwise smooth play.
+            governor.observe(2.0);
+            run(&mut governor, 60.0, 1);
+        }
+        assert_eq!(governor.level, TOP_LEVEL);
+    }
+
+    #[test]
+    fn a_machine_too_slow_for_whole_windows_still_steps_down() {
+        // Two frames a second (software rendering): every frame is longer
+        // than a hitch, but they come in a row, so they count.
+        let mut governor = QualityGovernor::new(TOP_LEVEL, false);
+        for _ in 0..40 {
+            governor.observe(0.5);
+        }
+        assert_eq!(governor.level, 0);
+    }
+
+    #[test]
+    fn a_smooth_frame_rate_steps_back_up() {
+        let mut governor = settled(0);
+        let levels = run(&mut governor, 60.0, 80);
+        assert_eq!(*levels.last().unwrap(), TOP_LEVEL);
+        assert!(levels.windows(2).all(|pair| pair[1] >= pair[0]));
+    }
+
+    #[test]
+    fn a_failed_step_up_is_taken_back_and_tried_less_often() {
+        // A machine that manages level 3 smoothly but not level 4.
+        let mut governor = settled(3);
+        let mut tries = Vec::new();
+        for window in 0..400 {
+            let fps = if governor.level >= 4 { 40.0 } else { 60.0 };
+            let before = governor.level;
+            run(&mut governor, fps, 1);
+            if governor.level > before {
+                tries.push(window);
+            }
+            assert!(governor.level <= 4);
+        }
+        assert!(tries.len() >= 3, "kept trying: {tries:?}");
+        let gaps: Vec<_> = tries.windows(2).map(|pair| pair[1] - pair[0]).collect();
+        assert!(
+            gaps.windows(2).all(|pair| pair[1] >= pair[0]),
+            "tries should grow further apart: {tries:?}"
+        );
+    }
+
+    #[test]
+    fn a_pinned_level_never_moves() {
+        let mut governor = QualityGovernor::new(2, true);
+        run(&mut governor, 5.0, 20);
+        run(&mut governor, 120.0, 200);
+        assert_eq!(governor.level, 2);
+        assert_eq!(QualityGovernor::new(99, true).level, TOP_LEVEL);
+    }
+
+    #[test]
+    fn the_level_is_read_from_the_address() {
+        assert_eq!(query_value("?quality=3", "quality"), Some("3"));
+        assert_eq!(query_value("?a=1&quality=0&b=2", "quality"), Some("0"));
+        assert_eq!(query_value("?qualityx=3", "quality"), None);
+        assert_eq!(query_value("", "quality"), None);
     }
 
     #[test]

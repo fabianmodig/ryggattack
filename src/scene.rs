@@ -25,7 +25,7 @@ const FOG_COLOR: Color = Color::srgb(0.62, 0.72, 0.66);
 /// are mist. One cascade at this size covers it, where Bevy's default of four
 /// cascades out to a hundred and fifty units rendered the whole forest four
 /// times a frame, which is what made an integrated GPU crawl. The size of the
-/// shadow map is a video setting.
+/// shadow map is chosen by the automatic quality.
 const SHADOW_DISTANCE: f32 = 40.0;
 
 pub(crate) fn setup(
@@ -40,7 +40,7 @@ pub(crate) fn setup(
     commands.spawn((
         Camera3d::default(),
         WorldCamera,
-        // Until the settings move the world into its own lowered-resolution
+        // Until the quality moves the world into its own lowered-resolution
         // picture, this camera draws straight into the canvas, UI included.
         IsDefaultUiCamera,
         if settings.anti_aliasing {

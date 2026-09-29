@@ -8,6 +8,14 @@ thin LTO and `wasm-opt -Oz`). The wasm is 39.3 MB, or 11.8 MB gzipped.
 `perf/web-video-settings` branch, where this report is committed, has already
 moved some of those lines.
 
+> **Later change:** the VIDEO SETTINGS screen and its presets described below
+> have since been replaced by automatic quality (see *Graphics quality* in
+> the README). The same detail knobs now form quality levels 0–6; the old
+> High preset is level 6, Medium is close to level 4 and Low to level 1. The
+> perf scripts take `--quality N` (sent as `?quality=N`) instead of
+> `--video`, and `scripts/perf/settings.mjs` is gone with the screen it
+> tested.
+
 ## 1. What the game is
 
 - **Engine:** Bevy 0.19.1 (Rust), compiled to `wasm32-unknown-unknown` via

@@ -360,7 +360,8 @@ pub(crate) fn spawn_backdrop(
 /// Side of the square patches the backdrop is welded in.
 const BACKDROP_PATCH: f32 = 14.0;
 
-/// Grow the backdrop, and grow it again whenever the forest setting changes.
+/// Grow the backdrop, and grow it again whenever the automatic quality
+/// changes the forest density.
 pub(crate) fn apply_forest_density(
     mut commands: Commands,
     settings: Res<VideoSettings>,

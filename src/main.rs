@@ -51,8 +51,8 @@ fn main() {
         .add_plugins(settings::SettingsPlugin)
         .init_state::<AppState>()
         .add_systems(Startup, scene::setup)
-        // After the scene has built the forest; runs again whenever the forest
-        // setting changes.
+        // After the scene has built the forest; runs again whenever the
+        // automatic quality changes the forest's density.
         .add_systems(PostUpdate, scenery::apply_forest_density)
         .add_systems(OnEnter(AppState::MainMenu), ui::spawn_main_menu)
         .add_systems(OnExit(AppState::MainMenu), ui::despawn_main_menu)
@@ -69,19 +69,10 @@ fn main() {
                 ui::navigate_menu,
                 // Ahead of the actions, so that Start opening the dialog and
                 // Start confirming a button in it stay one frame apart.
-                ui::toggle_pause_dialog
-                    .run_if(in_state(AppState::Playing))
-                    .run_if(not(ui::settings_are_open)),
+                ui::toggle_pause_dialog.run_if(in_state(AppState::Playing)),
                 ui::handle_menu_actions,
-                ui::adjust_focused_setting,
                 ui::update_menu_buttons,
-                ui::main_menu_shortcuts
-                    .run_if(in_state(AppState::MainMenu))
-                    .run_if(not(ui::settings_are_open)),
-                // Last, so that the Escape that closes the settings is not
-                // also read as closing the screen they return to.
-                ui::settings_shortcuts,
-                ui::refresh_setting_values,
+                ui::main_menu_shortcuts.run_if(in_state(AppState::MainMenu)),
             )
                 .chain()
                 .after(ui::gather_menu_input),

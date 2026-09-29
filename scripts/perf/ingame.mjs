@@ -3,7 +3,7 @@
 // state, then sample rAF intervals, WebGL call counts, and CDP metrics for an
 // idle and a firing window at each CPU throttle rate.
 // Usage: node ingame.mjs <dist> <label> [--width W --height H --throttle 1,4]
-//        [--browser chromium|firefox|webkit] [--video "<saved settings>"]
+//        [--browser chromium|firefox|webkit] [--quality N|auto]
 // CDP (main-thread time, CPU throttling) exists only in Chromium; the other
 // engines report the rAF and WebGL numbers at 1x only.
 import http from "node:http";
@@ -40,11 +40,12 @@ const context = await browser.newContext({ viewport: { width, height }, deviceSc
 if (!isChromium) throttles = [1];
 out_meta = { engine, dpr, ablate };
 const page = await context.newPage();
-// --video "<saved settings>" pre-seeds localStorage, e.g. the Low preset:
-//   "scale=67% aa=OFF shadows=OFF effects=LOW forest=SPARSE fps=OFF"
-const video = opt("video", "");
-out_meta.video = video || "default (High)";
-await page.addInitScript((video) => { if (video) localStorage.setItem("ryggattack.video", video); }, video);
+// --quality N pins the graphics quality to level N (0 = cheapest, 6 = full
+// look) through ?quality=N, so that runs measure a fixed look; the default
+// is the full look. --quality auto leaves the automatic quality running.
+const quality = opt("quality", "6");
+out_meta.quality = quality;
+const query = quality === "auto" ? "" : `?quality=${quality}`;
 // --pin-seed fixes Date.now, which seeds the map, so every run and build
 // plays on the same track and forest (as shots.mjs does).
 out_meta.pin_seed = args.includes("--pin-seed");
@@ -92,7 +93,7 @@ await page.addInitScript(() => {
 const shot = async (n) => { try { await page.screenshot({ path: path.join(outDir, `ig-${label}-${n}.png`), timeout: 90000 }); } catch { console.log("shot failed", n); } };
 const hold = async (key, ms = 3500) => { await page.keyboard.down(key); await sleep(ms); await page.keyboard.up(key); await sleep(2500); };
 
-await page.goto(`http://127.0.0.1:${server.address().port}/`);
+await page.goto(`http://127.0.0.1:${server.address().port}/${query}`);
 await page.waitForFunction(() => !document.getElementById("status"), null, { timeout: 180000 });
 await sleep(5000);
 await page.locator("#ryggattack-canvas").focus();
@@ -141,6 +142,6 @@ for (const rate of throttles) {
   await sleep(4000);
 }
 out.console_errors = errors;
-out.saved_video = await page.evaluate(() => localStorage.getItem("ryggattack.video"));
+out.saved_quality = await page.evaluate(() => localStorage.getItem("ryggattack.quality"));
 console.log("RESULTS " + JSON.stringify(out));
 await browser.close(); server.close();
