@@ -22,7 +22,7 @@ jobs:
     name: cargo test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: https://data.forgejo.org/actions/checkout@v4
 
       # Two Bevy dependencies resolve system libraries through pkg-config while
       # building: gilrs-core needs libudev and wayland-sys needs wayland-client.
@@ -30,16 +30,16 @@ jobs:
       # headers for those.
       - name: Install Linux build dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libudev-dev libwayland-dev
+          apt-get update
+          apt-get install -y --no-install-recommends libudev-dev libwayland-dev
 
       # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
       # than whatever the runner image happens to ship.
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: https://github.com/dtolnay/rust-toolchain@stable
 
       - name: Cache cargo registry and build artifacts
-        uses: Swatinem/rust-cache@v2
+        uses: https://github.com/Swatinem/rust-cache@v2.7.8
         with:
           # Compiling Bevy is nearly all of a cold run, and a failing test does
           # not invalidate it, so keep the dependency build either way.
@@ -54,7 +54,7 @@ jobs:
     name: web build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: https://data.forgejo.org/actions/checkout@v4
 
       # No apt step: targeting wasm32 skips the two build scripts that reach
       # for system libraries on Linux.
@@ -78,38 +78,11 @@ jobs:
       - name: Build the web bundle
         run: scripts/build-web.sh
 
-      # Pull requests stop at the build: only main is published.
-      - name: Package the bundle for Pages
+      # Pull requests stop at the build. Keep the main-branch bundle as a
+      # Forgejo artifact; deployment can be wired to the homelab separately.
+      - name: Upload the web bundle
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v5
+        uses: https://data.forgejo.org/actions/upload-artifact@v4
         with:
+          name: ryggattack-web
           path: dist/web
-
-  pages:
-    name: Deploy to GitHub Pages
-    needs: web
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    permissions:
-      # deploy-pages publishes as the Pages app and proves who it is with an
-      # OIDC token, so it needs both of these and nothing else.
-      pages: write
-      id-token: write
-
-    # Its own group, so two runs that both reached this point queue instead of
-    # racing each other onto the live site.
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-
-    # Recorded as a deployment of this environment, which is what puts the
-    # live URL on the repository page.
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-
-    steps:
-      - name: Deploy
-        id: deploy
-        uses: actions/deploy-pages@v5

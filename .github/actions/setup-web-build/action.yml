@@ -8,11 +8,11 @@ runs:
   steps:
     # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
     # than whatever the runner image happens to ship.
-    - uses: dtolnay/rust-toolchain@stable
+    - uses: https://github.com/dtolnay/rust-toolchain@stable
       with:
         targets: wasm32-unknown-unknown
 
-    - uses: Swatinem/rust-cache@v2
+    - uses: https://github.com/Swatinem/rust-cache@v2.7.8
       with:
         # One entry for every job that compiles this target, which is why the
         # configuration lives here: a release only starts from a warm cache if

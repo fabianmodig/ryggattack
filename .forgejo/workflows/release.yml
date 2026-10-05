@@ -1,7 +1,7 @@
 name: Release
 
 # A tag push is the release: it names the image that carries the same version.
-# The playable page tracks main instead, and is deployed from ci.yml.
+# The main-branch web bundle is retained as an artifact by ci.yml.
 on:
   push:
     tags: ["v*"]
@@ -20,19 +20,14 @@ jobs:
     name: Build and publish
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      # Publishing to this repository's namespace on ghcr.io.
-      packages: write
-
     steps:
-      - uses: actions/checkout@v5
+      - uses: https://data.forgejo.org/actions/checkout@v4
 
-      # ghcr.io rejects an upper-case path, which a repository name may carry.
+      # Registry paths must be lowercase.
       - name: Resolve the image name
         run: |
           repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
-          echo "IMAGE=ghcr.io/$repository/web" >> "$GITHUB_ENV"
+          echo "IMAGE=git.modig.online/$repository/web" >> "$GITHUB_ENV"
 
       # Shared with the web job in ci.yml, which builds the same target on
       # the default branch and so leaves the cargo cache this restores.
@@ -52,6 +47,11 @@ jobs:
       - name: Build the web bundle
         run: scripts/build-web.sh
 
+      - name: Install container tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends docker.io
+
       - name: Build the image
         run: |
           docker build \
@@ -65,19 +65,19 @@ jobs:
       # Find a broken image here rather than after it has been published.
       - name: Smoke-test the image
         run: |
-          docker run --rm --detach --name ryggattack-web \
-            --publish 8080:8080 "$IMAGE:$VERSION"
+          docker run --detach --name ryggattack-web "$IMAGE:$VERSION"
+          container_ip="$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ryggattack-web)"
 
           for _ in $(seq 30); do
-            if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+            if curl -fsS "http://${container_ip}:8080/" >/dev/null; then
               break
             fi
             sleep 1
           done
 
-          curl -fsS http://127.0.0.1:8080/ | grep -q ryggattack-canvas
+          curl -fsS "http://${container_ip}:8080/" | grep -q ryggattack-canvas
           type="$(curl -fsS -o /dev/null -w '%{content_type}' \
-            http://127.0.0.1:8080/ryggattack_bg.wasm)"
+            "http://${container_ip}:8080/ryggattack_bg.wasm")"
           case "$type" in
             application/wasm*) ;;
             *)
@@ -86,12 +86,12 @@ jobs:
               ;;
           esac
 
-          docker stop ryggattack-web
+          docker rm -f ryggattack-web
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Forgejo container registry
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" \
-            | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          echo "${{ secrets.PACKAGE_TOKEN }}" \
+            | docker login git.modig.online --username "${{ secrets.PACKAGE_USER }}" --password-stdin
 
       - name: Push the image
         run: |

@@ -104,29 +104,17 @@ that cargo does not install; the build says which of the two it produced.
 
 ### The playable build
 
-Every push to `main` deploys `dist/web/` to GitHub Pages, so the current state
-of the game is playable without installing anything:
-
-**<https://fabianmodig.github.io/ryggattack/>**
-
-The page follows `main` rather than the last release, which keeps what people
-try the same as what the repository says. Tags publish the container image
-below; they do not move the page.
-
-A cold visit loads about 39 MB of WebAssembly, which is most of a Bevy engine.
-Pages decides on its own whether to compress that — nothing here can set the
-response headers, which is why a release build shrinks the module itself.
-
-Pull requests build the bundle but deploy nothing. The deploy needs one
-setting no workflow can make for itself: under Settings → Pages, the build and
-deployment source has to be **GitHub Actions**.
+Every push to `main` builds `dist/web/` and stores it as the `ryggattack-web`
+Forgejo Actions artifact. Pull requests build the same bundle but do not
+publish an artifact. Deployment of the main-branch artifact can be connected
+to the homelab separately.
 
 ### The published container image
 
 Pushing a `v*` tag builds the bundle and publishes an image that serves it:
 
 ```sh
-docker run --rm -p 8080:8080 ghcr.io/fabianmodig/ryggattack/web:v0.1.0
+docker run --rm -p 8080:8080 git.modig.online/fabianmodig/ryggattack/web:v0.1.0
 ```
 
 The image is nginx on port 8080 with `dist/web/` as its document root, the
@@ -134,7 +122,7 @@ module and the glue stored pre-compressed, and `.wasm` answered as
 `application/wasm`. `latest` follows finished releases, so a pre-release such
 as `v0.2.0-rc1` publishes under its own name and moves nothing else.
 
-`.github/workflows/release.yml` builds the image, starts it and checks that it
+`.forgejo/workflows/release.yml` builds the image, starts it and checks that it
 really serves the page and the module, and pushes only then. Starting the
 workflow by hand publishes the branch name as the tag, which is a way to try a
 build without releasing it.
