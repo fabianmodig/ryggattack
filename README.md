@@ -104,9 +104,16 @@ that cargo does not install; the build says which of the two it produced.
 
 ### The playable build
 
-Pull requests build `dist/web/` in the `web build` job of `ci.yml` to check it,
-without publishing anything. Every push to `main` builds, smoke-tests and
-publishes the bundle as a container image instead (below).
+Every push to `main` deploys `dist/web/` to GitHub Pages, so the current state
+of the game is playable without installing anything:
+
+**<https://fabianmodig.github.io/ryggattack/>**
+
+The repository lives on `git.modig.online` and is push-mirrored to GitHub.
+`.github/workflows/pages.yml` runs only there: Forgejo ignores
+`.github/workflows` because `.forgejo/workflows` exists. Pull requests build
+`dist/web/` in the `web build` job of `ci.yml` on Forgejo, without publishing
+anything.
 
 ### The published container image
 
