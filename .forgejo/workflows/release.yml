@@ -1,10 +1,10 @@
 name: Release
 
-# A tag push is the release: it names the image that carries the same version.
-# The main-branch web bundle is retained as an artifact by ci.yml.
+# Every push to main is a release: the image is tagged with the commit it was
+# built from, and `latest` follows main. Nothing is built from tags.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -12,25 +12,27 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
-  # The tag being released, or the branch when this is started by hand.
-  VERSION: ${{ github.ref_name }}
 
 jobs:
   publish:
     name: Build and publish
     runs-on: ubuntu-latest
+    env:
+      PACKAGE_USER: ${{ secrets.PACKAGE_USER }}
+      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
 
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v4
 
       # Registry paths must be lowercase.
-      - name: Resolve the image name
+      - name: Resolve the image name and version
         run: |
           repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
           echo "IMAGE=git.modig.online/$repository/web" >> "$GITHUB_ENV"
+          echo "VERSION=sha-${GITHUB_SHA:0:7}" >> "$GITHUB_ENV"
 
-      # Shared with the web job in ci.yml, which builds the same target on
-      # the default branch and so leaves the cargo cache this restores.
+      # Shared with the web job in ci.yml, so pull requests restore the wasm32
+      # cargo cache this job leaves behind on main.
       - uses: ./.github/actions/setup-web-build
 
       # Only the release path installs this: it trims about a quarter off the
@@ -88,22 +90,17 @@ jobs:
 
           docker rm -f ryggattack-web
 
+      # Only main publishes; a manual run from another branch stops after the
+      # smoke test.
       - name: Log in to Forgejo container registry
+        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''
         run: |
-          echo "${{ secrets.PACKAGE_TOKEN }}" \
-            | docker login git.modig.online --username "${{ secrets.PACKAGE_USER }}" --password-stdin
+          printf '%s' "$PACKAGE_TOKEN" \
+            | docker login git.modig.online --username "$PACKAGE_USER" --password-stdin
 
       - name: Push the image
+        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''
         run: |
           docker push "$IMAGE:$VERSION"
-
-          # `latest` follows finished releases only, so a pre-release such as
-          # v0.2.0-rc1 and a manual run from a branch publish under their own
-          # name and move nothing else.
-          case "$VERSION" in
-            v*-*) ;;
-            v*)
-              docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
-              docker push "$IMAGE:latest"
-              ;;
-          esac
+          docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+          docker push "$IMAGE:latest"
