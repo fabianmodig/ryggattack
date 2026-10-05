@@ -82,7 +82,7 @@ jobs:
       # Forgejo artifact; deployment can be wired to the homelab separately.
       - name: Upload the web bundle
         if: github.ref == 'refs/heads/main'
-        uses: https://data.forgejo.org/actions/upload-artifact@v4
+        uses: https://data.forgejo.org/actions/upload-artifact@v3
         with:
           name: ryggattack-web
           path: dist/web
