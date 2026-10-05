@@ -53,6 +53,9 @@ jobs:
   web:
     name: web build
     runs-on: ubuntu-latest
+    # main builds, smoke-tests and publishes the same bundle in release.yml,
+    # so this job only checks pull requests and manual runs.
+    if: github.event_name != 'push'
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v4
 
@@ -60,29 +63,7 @@ jobs:
       # for system libraries on Linux.
       - uses: ./.github/actions/setup-web-build
 
-      # Only worth its couple of minutes on the build that gets published;
-      # a pull request is being checked, not downloaded by anyone.
-      - name: Install wasm-opt
-        if: github.ref == 'refs/heads/main'
-        env:
-          BINARYEN: version_131
-        run: |
-          curl -fsSL "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN/binaryen-$BINARYEN-x86_64-linux.tar.gz" \
-            | tar xz --strip-components=2 -C "$RUNNER_TEMP/bin" "binaryen-$BINARYEN/bin/wasm-opt"
-          wasm-opt --version
-
-      # Nothing else compiles this target, so without this job a broken web
-      # build would surface only once someone cut a release — and the release
-      # would start from a cold cache, since only the default branch can leave
-      # one behind for it.
+      # Without this job a broken web build would surface only after the merge,
+      # in release.yml.
       - name: Build the web bundle
         run: scripts/build-web.sh
-
-      # Pull requests stop at the build. Keep the main-branch bundle as a
-      # Forgejo artifact; deployment can be wired to the homelab separately.
-      - name: Upload the web bundle
-        if: github.ref == 'refs/heads/main'
-        uses: https://data.forgejo.org/actions/upload-artifact@v3
-        with:
-          name: ryggattack-web
-          path: dist/web

@@ -104,28 +104,29 @@ that cargo does not install; the build says which of the two it produced.
 
 ### The playable build
 
-Every push to `main` builds `dist/web/` and stores it as the `ryggattack-web`
-Forgejo Actions artifact. Pull requests build the same bundle but do not
-publish an artifact. Deployment of the main-branch artifact can be connected
-to the homelab separately.
+Pull requests build `dist/web/` in the `web build` job of `ci.yml` to check it,
+without publishing anything. Every push to `main` builds, smoke-tests and
+publishes the bundle as a container image instead (below).
 
 ### The published container image
 
-Pushing a `v*` tag builds the bundle and publishes an image that serves it:
+Every push to `main` builds the bundle and publishes an image that serves it,
+tagged with the commit it was built from and `latest`:
 
 ```sh
-docker run --rm -p 8080:8080 git.modig.online/fabianmodig/ryggattack/web:v0.1.0
+docker run --rm -p 8080:8080 git.modig.online/fabianmodig/ryggattack/web:latest
+docker run --rm -p 8080:8080 git.modig.online/fabianmodig/ryggattack/web:sha-<short-sha>
 ```
 
 The image is nginx on port 8080 with `dist/web/` as its document root, the
 module and the glue stored pre-compressed, and `.wasm` answered as
-`application/wasm`. `latest` follows finished releases, so a pre-release such
-as `v0.2.0-rc1` publishes under its own name and moves nothing else.
+`application/wasm`. Nothing is built from tags.
 
 `.forgejo/workflows/release.yml` builds the image, starts it and checks that it
-really serves the page and the module, and pushes only then. Starting the
-workflow by hand publishes the branch name as the tag, which is a way to try a
-build without releasing it.
+really serves the page and the module, and pushes only then. Pushing needs the
+`PACKAGE_USER` and `PACKAGE_TOKEN` Actions secrets. Starting the workflow by
+hand from another branch builds and smoke-tests the image without publishing
+it.
 
 The same image builds locally, from the repository root:
 
