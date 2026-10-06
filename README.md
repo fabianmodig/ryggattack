@@ -227,14 +227,25 @@ seven quality levels, from 0 (half resolution, no shadows, lighter effects, a
 sparser forest outside the walls) to 6 (full resolution, full shadows and
 effects, 4x anti-aliasing), which is the game's full look.
 
+- The target is the display cadence, capped at 60 FPS: the native build reads
+  the current monitor's refresh rate, and the browser samples the empty page's
+  `requestAnimationFrame` cadence **before** starting the game (normally under
+  a second, with a 1.5-second deadline). Slow game FPS never lowers its own
+  target. Missing, hidden, unstable or implausible calibration falls back to
+  60 FPS.
 - It starts at the full look, or at the level the last visit ended on (the
-  browser remembers it), and steps down when the frame rate stays under
-  50 FPS, by two levels at once under 30 FPS.
-- After a few seconds at 57 FPS or more it tries the next level up. If that
-  makes the game slow again it steps back, and waits longer before the next
-  try, so the picture does not keep changing.
-- The seconds after loading, and a single long frame (a hidden tab, a load),
-  are not counted.
+  browser remembers it), and steps down when the frame rate stays below
+  50/60 of the target; below half the target it drops two levels at once.
+  At a 60 FPS target these thresholds are still 50 and 30 FPS.
+- After a few seconds at 57/60 of the target or more it tries the next level
+  up. Thus 30/40 Hz displays can keep or recover full detail at their capped
+  cadence. If a higher level makes the game slow again it steps back, and
+  waits longer before the next try, so the picture does not keep changing.
+- The seconds after loading and isolated long frames are not counted. Hitches
+  recurring before a second of normal frames has passed count with their full
+  durations, even when fast frames separate them; a persistently slow machine
+  still steps down. Hidden browser tabs and invisible native windows suspend
+  measurement rather than count throttled background frames.
 - Only detail changes; nothing about how the game plays does.
 
 **F3** shows the frame rate and the current level, e.g. `60 FPS 16.7 ms Q6/6

@@ -13,7 +13,7 @@ const label = args[1];
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
 const width = Number(opt("width", "640")), height = Number(opt("height", "360"));
 const outDir = opt("out", ".");
-const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".html": "text/html", ".png": "image/png" };
+const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".mjs": "text/javascript", ".html": "text/html", ".png": "image/png" };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split("?")[0]); if (p.endsWith("/")) p += "index.html";
   fs.readFile(path.join(dist, p), (e, d) => { if (e) { res.writeHead(404); res.end(); return; }

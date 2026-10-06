@@ -20,7 +20,7 @@ const width = Number(opt("width", "320")), height = Number(opt("height", "180"))
 let throttles = opt("throttle", "1").split(",").map(Number);
 const secs = Number(opt("seconds", "15"));
 const outDir = path.dirname(new URL(import.meta.url).pathname);
-const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".html": "text/html", ".png": "image/png" };
+const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".mjs": "text/javascript", ".html": "text/html", ".png": "image/png" };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split("?")[0]); if (p.endsWith("/")) p += "index.html";
   fs.readFile(path.join(dist, p), (e, d) => { if (e) { res.writeHead(404); res.end(); return; }

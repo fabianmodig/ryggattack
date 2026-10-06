@@ -87,7 +87,7 @@ elif [ "$profile" = "release" ]; then
   echo "note: wasm-opt was not found, so the module keeps its full size."
 fi
 
-cp web/index.html "$out_dir/index.html"
+cp web/index.html web/refresh-rate.mjs "$out_dir/"
 if [ -d assets ]; then
   cp -R assets "$out_dir/assets"
 fi

@@ -8,7 +8,7 @@ const require = createRequire(process.env.PLAYWRIGHT_NODE_MODULES ?? import.meta
 const { chromium } = require("playwright");
 const dist = path.resolve(process.argv[2]);
 const fire = process.argv.includes("--fire");
-const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".html": "text/html", ".png": "image/png" };
+const types = { ".wasm": "application/wasm", ".js": "text/javascript", ".mjs": "text/javascript", ".html": "text/html", ".png": "image/png" };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split("?")[0]); if (p.endsWith("/")) p += "index.html";
   fs.readFile(path.join(dist, p), (e, d) => { if (e) { res.writeHead(404); res.end(); return; }

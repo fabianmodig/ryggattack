@@ -200,21 +200,18 @@ impl VideoSettings {
     }
 }
 
-/// Below this, averaged over a window, the game steps the quality down.
-const SLOW_FPS: f32 = 50.0;
-/// Below this a single window is enough to step down, and by two levels.
-const VERY_SLOW_FPS: f32 = 30.0;
-/// The frame rate a window has to keep for it to count towards stepping up.
-/// Just under 60, so a 60 Hz screen's vsync-capped rate counts.
-const SMOOTH_FPS: f32 = 57.0;
+/// Thresholds relative to an independently measured display cadence, capped
+/// at 60 Hz. Never infer the display rate from a slow game's frame rate.
+const DEFAULT_TARGET_FPS: f32 = 60.0;
+const SLOW_RATIO: f32 = 50.0 / 60.0;
+const VERY_SLOW_RATIO: f32 = 30.0 / 60.0;
+const SMOOTH_RATIO: f32 = 57.0 / 60.0;
 /// Seconds of frames averaged into one decision.
 const WINDOW_SECONDS: f32 = 1.0;
-/// A frame longer than this is a hitch (the tab was hidden, an asset loaded,
-/// the forest was regrown), not a sign of steady load, and is left out of the
-/// frame-rate average...
+/// Hold one long frame out of the average, in case it was an isolated load or
+/// hidden-tab gap. A second hitch before a second of normal frames makes both
+/// count, even when fast frames separate them.
 const HITCH_SECONDS: f32 = 0.25;
-/// ...unless this many come in a row: then the machine is simply that slow.
-const HITCHES_IN_A_ROW: u32 = 3;
 /// Smooth windows needed before the first try at a higher level.
 const FIRST_RAISE_WAIT: u32 = 4;
 /// The longest the governor waits between tries at a higher level.
@@ -229,10 +226,13 @@ pub(crate) struct QualityGovernor {
     /// A fixed level from the address or environment: measurements and
     /// screenshots need a known look, so the governor then never moves.
     pinned: bool,
+    target_fps: f32,
     frames: u32,
     elapsed: f32,
-    /// Frames longer than [`HITCH_SECONDS`] in a row.
-    long_frames: u32,
+    pending_hitch: f32,
+    /// Normal-frame time since the most recent hitch, independent of windows.
+    hitch_age: f32,
+    recurring_hitches: bool,
     slow_windows: u32,
     smooth_windows: u32,
     /// Smooth windows needed before the next step up.
@@ -248,9 +248,12 @@ impl QualityGovernor {
         Self {
             level: level.min(TOP_LEVEL),
             pinned,
+            target_fps: DEFAULT_TARGET_FPS,
             frames: 0,
             elapsed: 0.0,
-            long_frames: 0,
+            pending_hitch: 0.0,
+            hitch_age: 0.0,
+            recurring_hitches: false,
             slow_windows: 0,
             smooth_windows: 0,
             raise_wait: FIRST_RAISE_WAIT,
@@ -260,24 +263,56 @@ impl QualityGovernor {
         }
     }
 
+    /// Missing, implausible or throttled calibration data keeps the conservative
+    /// 60 Hz default. Native monitor data and pre-game browser cadence are the
+    /// only callers: gameplay throughput must not lower its own target.
+    fn set_refresh_rate(&mut self, hz: Option<f32>) {
+        let target = hz
+            .filter(|hz| hz.is_finite() && (20.0..=1000.0).contains(hz))
+            .unwrap_or(DEFAULT_TARGET_FPS)
+            .min(DEFAULT_TARGET_FPS);
+        if self.target_fps != target {
+            self.target_fps = target;
+            self.discard_samples();
+        }
+    }
+
+    fn discard_samples(&mut self) {
+        self.frames = 0;
+        self.elapsed = 0.0;
+        self.pending_hitch = 0.0;
+        self.hitch_age = 0.0;
+        self.recurring_hitches = false;
+        self.slow_windows = 0;
+        self.smooth_windows = 0;
+    }
+
     /// Feed one frame's duration. Returns the new level when it changes.
     pub(crate) fn observe(&mut self, dt: f32) -> Option<usize> {
-        if self.pinned {
+        if self.pinned || !dt.is_finite() || dt <= 0.0 {
             return None;
         }
         if dt > HITCH_SECONDS {
-            self.long_frames += 1;
-            if self.long_frames < HITCHES_IN_A_ROW {
+            self.hitch_age = 0.0;
+            if self.pending_hitch > 0.0 {
+                // Include the held frame as well as this one: ignoring every
+                // other hitch would still overestimate actual throughput.
+                self.frames += 1;
+                self.elapsed += self.pending_hitch;
+                self.pending_hitch = 0.0;
+                self.recurring_hitches = true;
+            } else if !self.recurring_hitches {
+                self.pending_hitch = dt;
                 return None;
             }
-            // Not a hitch: every frame is this slow. Judge it as a window of
-            // its own, at the rate these frames came.
-            self.long_frames = 0;
-            self.frames = 0;
-            self.elapsed = 0.0;
-            return self.close_window(1.0 / dt);
+        } else {
+            self.hitch_age += dt;
+            // A tolerance handles f32's sum of sixty 1/60-second samples.
+            if self.hitch_age >= WINDOW_SECONDS - 0.00001 {
+                self.pending_hitch = 0.0;
+                self.recurring_hitches = false;
+            }
         }
-        self.long_frames = 0;
         self.frames += 1;
         self.elapsed += dt;
         if self.elapsed < WINDOW_SECONDS {
@@ -302,7 +337,7 @@ impl QualityGovernor {
         if let Some(windows) = self.probe.as_mut() {
             *windows += 1;
         }
-        if fps < SLOW_FPS {
+        if fps < self.target_fps * SLOW_RATIO {
             self.smooth_windows = 0;
             self.slow_windows += 1;
             let failed_probe = self.probe.is_some_and(|windows| windows <= PROBE_WINDOWS);
@@ -312,7 +347,7 @@ impl QualityGovernor {
                 self.raise_wait = (self.raise_wait * 2).min(MAX_RAISE_WAIT);
                 return self.step_down(1);
             }
-            if fps < VERY_SLOW_FPS {
+            if fps < self.target_fps * VERY_SLOW_RATIO {
                 return self.step_down(2);
             }
             if self.slow_windows >= 2 {
@@ -326,7 +361,7 @@ impl QualityGovernor {
             self.probe = None;
             self.raise_wait = (self.raise_wait / 2).max(FIRST_RAISE_WAIT);
         }
-        if fps >= SMOOTH_FPS {
+        if fps >= self.target_fps * SMOOTH_RATIO {
             self.smooth_windows += 1;
             if self.smooth_windows >= self.raise_wait && self.level < TOP_LEVEL {
                 self.smooth_windows = 0;
@@ -375,6 +410,20 @@ mod storage {
 
     const KEY: &str = "ryggattack.quality";
 
+    /// The page measures this before `init()` starts any game/GPU work.
+    pub(super) fn refresh_rate() -> Option<f32> {
+        global("ryggattackRefreshRate")?
+            .as_f64()
+            .map(|hz| hz as f32)
+    }
+
+    pub(super) fn hidden() -> bool {
+        global("document")
+            .and_then(|doc| Reflect::get(&doc, &JsValue::from_str("hidden")).ok())
+            .and_then(|value| value.as_bool())
+            .unwrap_or(false)
+    }
+
     fn global(name: &str) -> Option<JsValue> {
         Reflect::get(&js_sys::global(), &JsValue::from_str(name))
             .ok()
@@ -418,6 +467,10 @@ mod storage {
 /// On the desktop the level lasts for the session.
 #[cfg(not(target_arch = "wasm32"))]
 mod storage {
+    pub(super) fn refresh_rate() -> Option<f32> {
+        None // The current Monitor becomes available after window creation.
+    }
+
     pub(super) fn read() -> Option<String> {
         None
     }
@@ -443,11 +496,14 @@ fn query_value<'a>(search: &'a str, key: &str) -> Option<&'a str> {
 /// The level to start at: a pinned one, else the one the last visit ended
 /// at, else the full look (a fast machine should never have to climb).
 fn starting_governor() -> QualityGovernor {
-    if let Some(level) = pinned_level() {
-        return QualityGovernor::new(level, true);
-    }
-    let saved = storage::read().and_then(|text| text.trim().parse::<usize>().ok());
-    QualityGovernor::new(saved.unwrap_or(TOP_LEVEL), false)
+    let mut governor = if let Some(level) = pinned_level() {
+        QualityGovernor::new(level, true)
+    } else {
+        let saved = storage::read().and_then(|text| text.trim().parse::<usize>().ok());
+        QualityGovernor::new(saved.unwrap_or(TOP_LEVEL), false)
+    };
+    governor.set_refresh_rate(storage::refresh_rate());
+    governor
 }
 
 /// The camera that draws the world into [`SceneImage`].
@@ -579,7 +635,30 @@ fn govern_quality(
     time: Res<Time<Real>>,
     mut governor: ResMut<QualityGovernor>,
     mut settings: ResMut<VideoSettings>,
+    #[cfg(not(target_arch = "wasm32"))] windows: Query<&Window, With<PrimaryWindow>>,
+    #[cfg(not(target_arch = "wasm32"))] on_monitors: Query<
+        &bevy::window::OnMonitor,
+        With<PrimaryWindow>,
+    >,
+    #[cfg(not(target_arch = "wasm32"))] monitors: Query<&bevy::window::Monitor>,
 ) {
+    #[cfg(not(target_arch = "wasm32"))]
+    governor.set_refresh_rate(
+        on_monitors
+            .iter()
+            .next()
+            .and_then(|on| monitors.get(on.0).ok())
+            .and_then(|monitor| monitor.refresh_rate_millihertz)
+            .map(|millihertz| millihertz as f32 / 1000.0),
+    );
+    #[cfg(not(target_arch = "wasm32"))]
+    let hidden = windows.iter().next().is_some_and(|window| !window.visible);
+    #[cfg(target_arch = "wasm32")]
+    let hidden = storage::hidden();
+    if hidden {
+        governor.discard_samples();
+        return;
+    }
     if let Some(level) = governor.observe(time.delta_secs()) {
         info!("Graphics quality {level}/{TOP_LEVEL}");
         *settings = VideoSettings::level(level);
@@ -785,6 +864,121 @@ mod tests {
         }
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
+    fn native_governor(refresh: Option<u32>, level: usize) -> App {
+        use bevy::window::{Monitor, OnMonitor};
+        let mut app = App::new();
+        app.insert_resource(QualityGovernor::new(level, false))
+            .insert_resource(VideoSettings::level(level))
+            .insert_resource(Time::<Real>::default())
+            .add_systems(Update, govern_quality);
+        let monitor = app
+            .world_mut()
+            .spawn(Monitor {
+                name: None,
+                physical_height: 720,
+                physical_width: 1280,
+                physical_position: IVec2::ZERO,
+                refresh_rate_millihertz: refresh,
+                scale_factor: 1.0,
+                video_modes: Vec::new(),
+            })
+            .id();
+        app.world_mut()
+            .spawn((Window::default(), PrimaryWindow, OnMonitor(monitor)));
+        app
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    fn native_frames(app: &mut App, fps: f32, seconds: usize) {
+        for _ in 0..(fps as usize * seconds) {
+            app.world_mut()
+                .resource_mut::<Time<Real>>()
+                .advance_by(std::time::Duration::from_secs_f32(1.0 / fps));
+            app.update();
+        }
+    }
+
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn native_low_refresh_keeps_full_quality_and_recovers_saved_low_quality() {
+        for hz in [30, 40] {
+            for start in [TOP_LEVEL, 0] {
+                let mut app = native_governor(Some(hz * 1000), start);
+                native_frames(&mut app, hz as f32, 80);
+                assert_eq!(
+                    app.world().resource::<QualityGovernor>().level,
+                    TOP_LEVEL,
+                    "{hz} Hz, starting Q{start}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn invisible_windows_do_not_drive_quality_decisions() {
+        let mut app = native_governor(Some(60_000), TOP_LEVEL);
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        app.world_mut().get_mut::<Window>(window).unwrap().visible = false;
+        native_frames(&mut app, 2.0, 30);
+        assert_eq!(app.world().resource::<QualityGovernor>().level, TOP_LEVEL);
+        app.world_mut().get_mut::<Window>(window).unwrap().visible = true;
+        native_frames(&mut app, 2.0, 30);
+        assert_eq!(
+            app.world().resource::<QualityGovernor>().level,
+            0,
+            "visible software-rendering speed still adapts"
+        );
+    }
+
+    #[test]
+    fn refresh_targets_are_validated_and_capped_without_using_game_fps() {
+        let mut governor = settled(TOP_LEVEL);
+        for (hint, target) in [
+            (Some(20.0), 20.0),
+            (Some(30.0), 30.0),
+            (Some(40.0), 40.0),
+            (Some(60.0), 60.0),
+            (Some(144.0), 60.0),
+            (Some(1000.0), 60.0),
+            (None, 60.0),
+            (Some(0.0), 60.0),
+            (Some(1.0), 60.0),
+            (Some(-30.0), 60.0),
+            (Some(f32::NAN), 60.0),
+            (Some(f32::INFINITY), 60.0),
+            (Some(1001.0), 60.0),
+        ] {
+            governor.set_refresh_rate(hint);
+            assert_eq!(governor.target_fps, target);
+        }
+        run(&mut governor, 30.0, 60);
+        assert_eq!(governor.target_fps, 60.0);
+        assert_eq!(governor.level, 0, "slow GPU is not a low-refresh monitor");
+    }
+
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn missing_or_implausible_monitor_rates_do_not_excuse_slow_rendering() {
+        for refresh in [None, Some(0), Some(1000), Some(60_000), Some(144_000)] {
+            let mut app = native_governor(refresh, TOP_LEVEL);
+            native_frames(&mut app, 30.0, 60);
+            assert_eq!(
+                app.world().resource::<QualityGovernor>().level,
+                0,
+                "monitor hint {refresh:?} must not be inferred from slow game FPS"
+            );
+        }
+        let mut app = native_governor(Some(144_000), TOP_LEVEL);
+        native_frames(&mut app, 60.0, 60);
+        assert_eq!(app.world().resource::<QualityGovernor>().level, TOP_LEVEL);
+    }
+
     #[test]
     fn a_smooth_frame_rate_keeps_the_full_look() {
         let mut governor = settled(TOP_LEVEL);
@@ -828,6 +1022,40 @@ mod tests {
             run(&mut governor, 60.0, 1);
         }
         assert_eq!(governor.level, TOP_LEVEL);
+    }
+
+    #[test]
+    fn recurring_alternating_hitches_reduce_quality() {
+        let mut governor = QualityGovernor::new(TOP_LEVEL, false);
+        for _ in 0..1800 {
+            governor.observe(0.3);
+            governor.observe(1.0 / 60.0);
+        }
+        assert_eq!(
+            governor.level, 0,
+            "recurring hitches are real slow throughput"
+        );
+    }
+
+    #[test]
+    fn recurring_alternating_hitches_cannot_raise_quality() {
+        let mut governor = QualityGovernor::new(0, false);
+        for _ in 0..1800 {
+            governor.observe(0.3);
+            governor.observe(1.0 / 60.0);
+            assert_eq!(governor.level, 0, "6.32 FPS is not smooth play");
+        }
+    }
+
+    #[test]
+    fn invalid_frame_durations_do_not_corrupt_measurements() {
+        let mut governor = settled(3);
+        governor.observe(1.0 / 60.0);
+        let before = governor.clone();
+        for dt in [0.0, -1.0, f32::NAN, f32::INFINITY] {
+            assert_eq!(governor.observe(dt), None);
+            assert_eq!(governor, before);
+        }
     }
 
     #[test]
