@@ -1,0 +1,97 @@
+name: Pages
+
+# Runs on GitHub only. This repository lives on git.modig.online and is
+# push-mirrored to GitHub, so every push to main there lands here and this
+# workflow deploys the playable build to GitHub Pages. Forgejo does not run it:
+# it ignores .github/workflows because .forgejo/workflows exists (and the job
+# condition below would skip it anyway).
+#
+# Self-contained on purpose: .github/actions/setup-web-build uses Forgejo's
+# fully qualified action URLs, which GitHub Actions does not accept.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  web:
+    name: web build
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
+      # than whatever the runner image happens to ship.
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: web
+          cache-on-failure: true
+
+      # The generated glue only works with the CLI of the version Cargo.lock
+      # pins, and the release tarball installs in seconds where building the
+      # CLI from source takes minutes.
+      - name: Install wasm-bindgen
+        run: |
+          version="$(scripts/wasm-bindgen-version.sh)"
+          release="wasm-bindgen-$version-x86_64-unknown-linux-musl"
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsSL "https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$version/$release.tar.gz" \
+            | tar xz --strip-components=1 -C "$RUNNER_TEMP/bin" "$release/wasm-bindgen"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      # Trims about a quarter off the module, which matters because Pages
+      # decides on its own whether to compress it.
+      - name: Install wasm-opt
+        env:
+          BINARYEN: version_131
+        run: |
+          curl -fsSL "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN/binaryen-$BINARYEN-x86_64-linux.tar.gz" \
+            | tar xz --strip-components=2 -C "$RUNNER_TEMP/bin" "binaryen-$BINARYEN/bin/wasm-opt"
+          wasm-opt --version
+
+      - name: Build the web bundle
+        run: scripts/build-web.sh
+
+      - name: Package the bundle for Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/web
+
+  pages:
+    name: Deploy to GitHub Pages
+    needs: web
+    runs-on: ubuntu-latest
+
+    # deploy-pages publishes as the Pages app and proves who it is with an
+    # OIDC token, so it needs both of these and nothing else.
+    permissions:
+      pages: write
+      id-token: write
+
+    # Its own group, so two runs that both reached this point queue instead of
+    # racing each other onto the live site.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    # Recorded as a deployment of this environment, which is what puts the
+    # live URL on the repository page.
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v5

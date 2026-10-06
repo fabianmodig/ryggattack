@@ -1,10 +1,10 @@
 name: Release
 
-# A tag push is the release: it names the image that carries the same version.
-# The playable page tracks main instead, and is deployed from ci.yml.
+# Every push to main is a release: the image is tagged with the commit it was
+# built from, and `latest` follows main. Nothing is built from tags.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -12,30 +12,27 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
-  # The tag being released, or the branch when this is started by hand.
-  VERSION: ${{ github.ref_name }}
 
 jobs:
   publish:
     name: Build and publish
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      # Publishing to this repository's namespace on ghcr.io.
-      packages: write
+    env:
+      PACKAGE_USER: ${{ secrets.PACKAGE_USER }}
+      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: https://data.forgejo.org/actions/checkout@v4
 
-      # ghcr.io rejects an upper-case path, which a repository name may carry.
-      - name: Resolve the image name
+      # Registry paths must be lowercase.
+      - name: Resolve the image name and version
         run: |
           repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
-          echo "IMAGE=ghcr.io/$repository/web" >> "$GITHUB_ENV"
+          echo "IMAGE=git.modig.online/$repository/web" >> "$GITHUB_ENV"
+          echo "VERSION=sha-${GITHUB_SHA:0:7}" >> "$GITHUB_ENV"
 
-      # Shared with the web job in ci.yml, which builds the same target on
-      # the default branch and so leaves the cargo cache this restores.
+      # Shared with the web job in ci.yml, so pull requests restore the wasm32
+      # cargo cache this job leaves behind on main.
       - uses: ./.github/actions/setup-web-build
 
       # Only the release path installs this: it trims about a quarter off the
@@ -52,6 +49,11 @@ jobs:
       - name: Build the web bundle
         run: scripts/build-web.sh
 
+      - name: Install container tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends docker.io
+
       - name: Build the image
         run: |
           docker build \
@@ -65,19 +67,19 @@ jobs:
       # Find a broken image here rather than after it has been published.
       - name: Smoke-test the image
         run: |
-          docker run --rm --detach --name ryggattack-web \
-            --publish 8080:8080 "$IMAGE:$VERSION"
+          docker run --detach --name ryggattack-web "$IMAGE:$VERSION"
+          container_ip="$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ryggattack-web)"
 
           for _ in $(seq 30); do
-            if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+            if curl -fsS "http://${container_ip}:8080/" >/dev/null; then
               break
             fi
             sleep 1
           done
 
-          curl -fsS http://127.0.0.1:8080/ | grep -q ryggattack-canvas
+          curl -fsS "http://${container_ip}:8080/" | grep -q ryggattack-canvas
           type="$(curl -fsS -o /dev/null -w '%{content_type}' \
-            http://127.0.0.1:8080/ryggattack_bg.wasm)"
+            "http://${container_ip}:8080/ryggattack_bg.wasm")"
           case "$type" in
             application/wasm*) ;;
             *)
@@ -86,24 +88,19 @@ jobs:
               ;;
           esac
 
-          docker stop ryggattack-web
+          docker rm -f ryggattack-web
 
-      - name: Log in to GitHub Container Registry
+      # Only main publishes; a manual run from another branch stops after the
+      # smoke test.
+      - name: Log in to Forgejo container registry
+        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" \
-            | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          printf '%s' "$PACKAGE_TOKEN" \
+            | docker login git.modig.online --username "$PACKAGE_USER" --password-stdin
 
       - name: Push the image
+        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''
         run: |
           docker push "$IMAGE:$VERSION"
-
-          # `latest` follows finished releases only, so a pre-release such as
-          # v0.2.0-rc1 and a manual run from a branch publish under their own
-          # name and move nothing else.
-          case "$VERSION" in
-            v*-*) ;;
-            v*)
-              docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
-              docker push "$IMAGE:latest"
-              ;;
-          esac
+          docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+          docker push "$IMAGE:latest"
