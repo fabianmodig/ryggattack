@@ -47,6 +47,9 @@ jobs:
           # A fixed key, so the entry does not change if the job is ever renamed.
           shared-key: test
 
+      - name: Test refresh-rate calibration
+        run: node --test scripts/refresh-rate.test.mjs
+
       - name: Run tests
         run: cargo test --locked
 
