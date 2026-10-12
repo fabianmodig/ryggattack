@@ -146,6 +146,8 @@ pub(crate) fn spawn_players(
         commands
             .spawn((
                 Player {
+                    active: true,
+                    alive: true,
                     id,
                     score: 0,
                     shot_cooldown: id as f32 * 0.12,

@@ -1,16 +1,17 @@
-//! Main menu, pause controls, and the score and timer HUD.
+//! Main menu, match settings, pause controls, and the round-wins HUD.
 
 mod lobby;
 mod nav;
 
 pub(crate) use lobby::{
-    LobbyLatch, despawn_lobby, lobby_input, lobby_shortcuts, refresh_lobby, spawn_lobby,
+    LobbyLatch, despawn_lobby, lobby_input, lobby_shortcuts, refresh_lobby, refresh_setting_labels,
+    spawn_lobby,
 };
 pub(crate) use nav::{MenuInput, StickLatch, gather_menu_input};
 
 use bevy::prelude::*;
 
-use crate::game::{AppState, ROUND_SECONDS, Round};
+use crate::game::{AppState, Round};
 use crate::players::{Player, Roster};
 use nav::NavAxis;
 
@@ -46,6 +47,9 @@ pub(crate) struct MenuFocus(Option<Entity>);
 pub(crate) enum MenuAction {
     Start,
     Launch,
+    CycleBots,
+    CycleTarget,
+    CycleArena,
     Back,
     Exit,
     Resume,
@@ -72,45 +76,246 @@ pub(crate) fn spawn_hud(commands: &mut Commands) {
 
 pub(crate) fn update_hud(
     round: Res<Round>,
+    settings: Res<crate::match_settings::MatchSettings>,
     players: Query<&Player>,
     mut hud: Single<&mut Text, With<Hud>>,
-    mut shown: Local<Option<(u32, [u32; 4], bool)>>,
 ) {
-    let remaining = (ROUND_SECONDS - round.timer.elapsed_secs()).max(0.0).ceil() as u32;
-    let mut score_by_id = [0; 4];
-    for player in &players {
-        if let Some(score) = score_by_id.get_mut(player.id) {
-            *score = player.score;
-        }
-    }
-    // The text only changes about once a second. Rewriting it every frame
-    // marks it changed, and Bevy then reshapes and lays it out again.
-    let key = (remaining, score_by_id, round.finished);
-    if *shown == Some(key) {
-        return;
-    }
-    *shown = Some(key);
-
-    let mut scores: Vec<(usize, u32)> = players.iter().map(|p| (p.id, p.score)).collect();
-    scores.sort_by_key(|(id, _)| *id);
-    let score_line = scores
+    let mut seats: Vec<&Player> = players.iter().filter(|p| p.active).collect();
+    seats.sort_by_key(|p| p.id);
+    let scores = seats
         .iter()
-        .map(|(id, score)| format!("P{}: {}", id + 1, score))
+        .map(|p| {
+            format!(
+                "P{}: {}{}",
+                p.id + 1,
+                round.wins[p.id],
+                if p.alive { "" } else { " (OUT)" }
+            )
+        })
         .collect::<Vec<_>>()
         .join("   ");
-
-    hud.0 = if round.finished {
-        let winner = scores
-            .iter()
-            .max_by_key(|(_, score)| *score)
-            .map(|(id, _)| id + 1)
-            .unwrap_or(1);
-        format!("TIME!  Player {winner} wins\n{score_line}\nPress R or gamepad Start to restart")
-    } else {
+    let status = if let Some(winner) = round.winner {
         format!(
-            "{remaining:02}s   {score_line}\nSteer at junctions  |  Fire to shoot  |  Hit opponents from behind"
+            "MATCH OVER - Player {} wins!\nR, gamepad Start, or click RESTART MATCH",
+            winner + 1
         )
+    } else if round.finished {
+        match round.round_winner {
+            Some(id) => format!("Player {} wins the round! Next round...", id + 1),
+            None => "DRAW - no point. Next round...".into(),
+        }
+    } else if seats.len() == 1 {
+        "SOLO PRACTICE - no scoring".into()
+    } else {
+        "ONE LIFE - only rear hits eliminate. Last standing earns one win.".into()
     };
+    let text = format!("FIRST TO {}   {scores}\n{status}", settings.wins_target);
+    if hud.0 != text {
+        hud.0 = text;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn action_app(action: MenuAction, mouse: bool, start: bool) -> App {
+        let mut app = App::new();
+        let button = app
+            .world_mut()
+            .spawn((
+                Button,
+                action,
+                if mouse {
+                    Interaction::Pressed
+                } else {
+                    Interaction::None
+                },
+            ))
+            .id();
+        let mut roster = Roster::default();
+        roster.join(crate::players::InputSource::Wasd);
+        app.insert_resource(roster)
+            .insert_resource(crate::match_settings::MatchSettings::default());
+        app.insert_resource(MenuFocus(Some(button)))
+            .insert_resource(MenuInput {
+                accept: !mouse && !start,
+                start,
+                ..default()
+            });
+        app.init_resource::<PauseState>()
+            .init_resource::<NextState<AppState>>();
+        app.add_systems(Update, handle_menu_actions);
+        app
+    }
+    #[test]
+    fn match_over_exposes_a_mouse_restart_control() {
+        let mut app = App::new();
+        app.insert_resource(Round {
+            winner: Some(1),
+            finished: true,
+            ..default()
+        });
+        app.add_systems(Update, sync_match_over_ui);
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query_filtered::<Entity, With<RestartButton>>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        app.world_mut().resource_mut::<Round>().winner = None;
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query_filtered::<Entity, With<RestartButton>>()
+                .iter(app.world())
+                .count(),
+            0
+        );
+    }
+    #[test]
+    fn arena_button_toggles_forest_and_volcano() {
+        let mut app = action_app(MenuAction::CycleArena, true, false);
+        app.update();
+        assert_eq!(
+            app.world()
+                .resource::<crate::match_settings::MatchSettings>()
+                .arena,
+            crate::match_settings::Arena::Volcano
+        );
+        app.world_mut().resource_mut::<MenuInput>().accept = true;
+        app.update();
+        assert_eq!(
+            app.world()
+                .resource::<crate::match_settings::MatchSettings>()
+                .arena,
+            crate::match_settings::Arena::Forest
+        );
+    }
+    #[test]
+    fn target_button_cycles_first_to_one_three_five_seven() {
+        let mut app = action_app(MenuAction::CycleTarget, false, false);
+        for target in [5, 7, 1, 3] {
+            app.update();
+            assert_eq!(
+                app.world()
+                    .resource::<crate::match_settings::MatchSettings>()
+                    .wins_target,
+                target
+            );
+        }
+    }
+    #[test]
+    fn bot_button_works_with_mouse_keyboard_and_gamepad() {
+        for (mouse, start) in [(true, false), (false, false), (false, true)] {
+            let mut app = action_app(MenuAction::CycleBots, mouse, start);
+            app.update();
+            assert_eq!(
+                app.world()
+                    .resource::<crate::match_settings::MatchSettings>()
+                    .bots,
+                0
+            );
+        }
+    }
+    #[test]
+    fn hud_status_text_is_ascii_in_every_round_state() {
+        for (seats, finished, round_winner, winner) in [
+            (1, false, None, None),
+            (2, false, None, None),
+            (2, true, Some(0), None),
+            (2, true, None, None),
+            (2, true, Some(0), Some(0)),
+        ] {
+            let mut app = App::new();
+            app.insert_resource(Round {
+                finished,
+                round_winner,
+                winner,
+                ..default()
+            })
+            .insert_resource(crate::match_settings::MatchSettings::default());
+            for id in 0..seats {
+                app.world_mut().spawn(Player {
+                    id,
+                    active: true,
+                    alive: true,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: None,
+                });
+            }
+            let hud = app.world_mut().spawn((Hud, Text::new(""))).id();
+            app.add_systems(Update, update_hud);
+            app.update();
+            let text = &app.world().get::<Text>(hud).unwrap().0;
+            assert!(text.is_ascii(), "unsupported HUD glyph: {text}");
+        }
+    }
+    #[test]
+    fn hud_shows_round_wins_instead_of_a_timer() {
+        let mut app = App::new();
+        app.insert_resource(Round::default())
+            .insert_resource(crate::match_settings::MatchSettings::default());
+        let hud = app.world_mut().spawn((Hud, Text::new(""))).id();
+        app.add_systems(Update, update_hud);
+        app.update();
+        assert!(
+            app.world()
+                .get::<Text>(hud)
+                .unwrap()
+                .0
+                .contains("FIRST TO 3")
+        );
+    }
+}
+
+#[derive(Component)]
+pub(crate) struct RestartButton;
+
+pub(crate) fn sync_match_over_ui(
+    mut commands: Commands,
+    round: Res<Round>,
+    buttons: Query<Entity, With<RestartButton>>,
+) {
+    if round.winner.is_some() && buttons.is_empty() {
+        commands.spawn((
+            RestartButton,
+            Button,
+            Node {
+                position_type: PositionType::Absolute,
+                bottom: px(30),
+                left: percent(38),
+                padding: UiRect::all(px(18)),
+                ..default()
+            },
+            BackgroundColor(Color::srgb(0.22, 0.34, 0.54)),
+            GlobalZIndex(90),
+            children![(
+                Text::new("RESTART MATCH"),
+                TextFont {
+                    font_size: FontSize::Px(26.0),
+                    ..default()
+                },
+                TextColor(Color::WHITE)
+            )],
+        ));
+    } else if round.winner.is_none() {
+        for entity in &buttons {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub(crate) fn despawn_match_over_ui(
+    mut commands: Commands,
+    buttons: Query<Entity, With<RestartButton>>,
+) {
+    for entity in &buttons {
+        commands.entity(entity).despawn();
+    }
 }
 
 pub(crate) fn spawn_main_menu(mut commands: Commands) {
@@ -343,6 +548,7 @@ pub(crate) fn handle_menu_actions(
     screens: Screens,
     mut pause: ResMut<PauseState>,
     roster: Res<Roster>,
+    mut settings: ResMut<crate::match_settings::MatchSettings>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     let clicked = buttons
@@ -361,6 +567,21 @@ pub(crate) fn handle_menu_actions(
     };
 
     match action {
+        MenuAction::CycleBots => settings.cycle_bots(roster.humans()),
+        MenuAction::CycleTarget => {
+            settings.wins_target = match settings.wins_target {
+                1 => 3,
+                3 => 5,
+                5 => 7,
+                _ => 1,
+            }
+        }
+        MenuAction::CycleArena => {
+            settings.arena = match settings.arena {
+                crate::match_settings::Arena::Forest => crate::match_settings::Arena::Volcano,
+                crate::match_settings::Arena::Volcano => crate::match_settings::Arena::Forest,
+            }
+        }
         MenuAction::Start => next_state.set(AppState::Lobby),
         MenuAction::Launch => {
             if roster.humans() > 0 {

@@ -1,9 +1,11 @@
 //! Application configuration and explicit system order.
 
+mod arena;
 mod batch;
 mod combat;
 mod explosions;
 mod game;
+mod match_settings;
 mod players;
 mod scene;
 mod scenery;
@@ -27,6 +29,7 @@ fn main() {
         .insert_resource(RailMap::random())
         .init_resource::<PauseState>()
         .init_resource::<Roster>()
+        .init_resource::<match_settings::MatchSettings>()
         .init_resource::<LobbyLatch>()
         .init_resource::<MenuInput>()
         .init_resource::<MenuFocus>()
@@ -53,13 +56,19 @@ fn main() {
         .add_systems(Startup, scene::setup)
         // After the scene has built the forest; runs again whenever the
         // automatic quality changes the forest's density.
-        .add_systems(PostUpdate, scenery::apply_forest_density)
+        .add_systems(
+            PostUpdate,
+            (arena::apply_arena, scenery::apply_forest_density).chain(),
+        )
         .add_systems(OnEnter(AppState::MainMenu), ui::spawn_main_menu)
         .add_systems(OnExit(AppState::MainMenu), ui::despawn_main_menu)
         .add_systems(OnEnter(AppState::Lobby), ui::spawn_lobby)
         .add_systems(OnExit(AppState::Lobby), ui::despawn_lobby)
         .add_systems(OnEnter(AppState::Playing), game::start_new_game)
-        .add_systems(OnExit(AppState::Playing), ui::close_pause_dialog)
+        .add_systems(
+            OnExit(AppState::Playing),
+            (ui::close_pause_dialog, ui::despawn_match_over_ui),
+        )
         // Every menu reads one frame of device-agnostic intent, so it is
         // gathered once, ahead of the screens that act on it.
         .add_systems(Update, ui::gather_menu_input)
@@ -79,7 +88,12 @@ fn main() {
         )
         .add_systems(
             Update,
-            (ui::lobby_input, ui::lobby_shortcuts, ui::refresh_lobby)
+            (
+                ui::lobby_input,
+                ui::lobby_shortcuts,
+                ui::refresh_lobby,
+                ui::refresh_setting_labels,
+            )
                 .chain()
                 .after(ui::gather_menu_input)
                 .run_if(in_state(AppState::Lobby)),
@@ -87,23 +101,24 @@ fn main() {
         .add_systems(
             Update,
             (
-                game::tick_round,
                 players::human_input,
                 players::bot_input,
                 players::move_players,
                 players::handle_player_collisions,
-                combat::fire_projectiles,
-                combat::move_projectiles,
-                combat::strike_scenery,
-                combat::detect_hits,
+                combat::fire_projectiles.run_if(game::round_is_live),
+                combat::move_projectiles.run_if(game::round_is_live),
+                combat::strike_scenery.run_if(game::round_is_live),
+                combat::detect_hits.run_if(game::round_is_live),
                 explosions::run_detonations,
                 explosions::animate_fireballs,
                 explosions::animate_smoke,
                 explosions::animate_flashes,
                 explosions::move_debris,
                 explosions::fade_scorches,
+                game::tick_round,
                 game::restart_round,
                 ui::update_hud,
+                ui::sync_match_over_ui,
             )
                 .chain()
                 .run_if(in_state(AppState::Playing))

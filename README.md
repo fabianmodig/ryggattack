@@ -7,16 +7,18 @@ idea: get behind another player and land a shot in their back.
 ## Current proof of concept
 
 - Up to four local players on WASD, the arrow keys, and gamepads
-- A join lobby where each device takes a seat, and bots fill the rest
+- A join lobby with adjustable 0–3 bots (capped by empty seats), a win target, and arena selection
 - A new procedurally generated railway map on every launch
 - Guaranteed connectivity, no dead ends, and additional random loops
 - Automatic movement with junction choices
 - Cart collisions reverse both players along their current rails
 - Menus driven by mouse, keyboard, or gamepad, and an in-game pause dialog
-- Low-poly 3D arena generated entirely in code, set in a forest that grows
-  back at the start of every round
+- Two code-generated arenas: forest and volcano (basalt, lava river/pools, and glowing craters)
 - Missiles that explode on impact and blow apart the trees around them
-- Rear-hit detection, scoring, 60-second rounds, and restart
+- One-life rear-hit elimination, one win for the last survivor, and automatic next rounds
+- Configurable first-to 1, 3, 5, or 7 wins (default 3); no round timer
+- Solo zero-bot practice without scoring; simultaneous all-dead rounds are draws
+- Exactly 500 ms fire cooldown
 - No external assets or visual editor
 
 ## Run it
@@ -175,7 +177,7 @@ Every seat steers the same way; only the buttons differ.
 | Select the highlighted button | Enter or Space | A / Cross, or Start |
 | Back / cancel | Escape | B / Circle |
 | Pause / resume | Escape | Start to pause, B or A on RESUME to resume |
-| Restart after a round | R | Start |
+| Restart after a match | R or click RESTART MATCH | Start |
 
 Every menu can equally be clicked with the mouse, driven with the keyboard, or
 driven with a gamepad; the three share one highlight, so hovering a button with
@@ -183,15 +185,18 @@ the mouse also moves the keyboard and gamepad selection there.
 
 START on the main menu opens the join lobby. Press **up** on a keyboard scheme
 or a gamepad to take a seat and **down** to leave it; seats are handed out in
-join order. Any seat still empty when the round begins is played by a bot, so
-one player against three bots still works. At least one player must join before
-the round can start.
+join order. **BOTS** cycles from zero to the number of empty seats, filling the
+lowest free seats first; the remaining seats say EMPTY and do not enter play.
+At least one human must join before START MATCH works. One human with zero bots
+starts unlimited solo practice: move and fire normally, but never score or
+automatically restart.
 
-Up and down are taken by joining and leaving in the lobby, so its two buttons
-sit side by side and the highlight moves **left and right** there instead of up
-and down. START ROUND starts out highlighted, so Enter, A, or Start begins the
-round as before, and Escape or B goes back to the main menu. The seating is kept
-when you restart a round or return to the menu.
+Up and down are taken by joining and leaving in the lobby. **Left/Right** (or
+A/D, gamepad D-pad/stick) moves the highlight through START MATCH, BOTS, FIRST TO,
+ARENA, and BACK. Enter, Space, gamepad A/Cross, or Start activates the highlighted
+button; mouse clicks do the same. BOTS cycles its count, FIRST TO cycles 3 → 5 →
+7 → 1 → 3, and ARENA toggles FOREST/VOLCANO. START MATCH starts out highlighted.
+Escape or B goes back. Seating and settings survive returning to the menu.
 
 If only one of the two keyboard seats is taken, that player can steer with WASD
 and the arrow keys interchangeably. Claiming both seats splits them into two
@@ -204,9 +209,23 @@ The carts move automatically and can only change direction at intersections.
 Hold a direction while approaching a junction to choose that branch. The route
 is selected on entry, and the cart follows it smoothly through the junction.
 Carts cannot make a 180-degree turn. The white marker shows the front and the red
-panel is the vulnerable rear target. A hit only scores when the missile is
-travelling in approximately the same direction as the target—the attacker is
-behind them. Scored-on players respawn on their starting rail.
+panel is the vulnerable rear target. A missile travelling in approximately the
+same direction as its target eliminates it immediately. Front and side hits
+explode but do not eliminate. Eliminated carts are hidden and cannot steer,
+move, collide, be hit again, or fire.
+
+The last standing cart earns **one round win**, regardless of how many opponents
+it hit. After 1.5 seconds the next round begins automatically, restoring carts
+and scenery and clearing missiles/effects while preserving round wins. If
+everyone dies in the same frame, it is a draw: restart without awarding a point.
+Reaching the selected win target ends the match and displays the winner. Press
+R, gamepad Start, or click RESTART MATCH to start a new match with zero wins.
+There is no 60-second timer.
+
+Volcano uses dark basalt, warm lighting and fog, a lava river outside the walls,
+small ground-level pools between rails, and three volcanoes behind the arena.
+Lava is visual scenery, not a damage hazard. Neither arena changes the railway
+or rear-hit rules. The selected theme survives automatic quality rebuilds.
 
 Missiles explode on whatever they meet first: a cart, a wall, or one of the
 trees that stand between the rails. A blast wrecks the scenery around it, and
@@ -257,14 +276,16 @@ application is configured and the order in which gameplay systems run.
 | File | Responsibility |
 | --- | --- |
 | `src/main.rs` | Application setup and system scheduling |
-| `src/game.rs` | Game states, round timer, start, and restart |
+| `src/game.rs` | Elimination, first-to scoring, automatic rounds, and match restart |
+| `src/match_settings.rs` | Bot count, win target, and arena configuration |
+| `src/arena.rs` | Forest/volcano ground, lighting, lava, and volcano landmarks |
 | `src/scene.rs` | Assemble the camera, lighting, ground, tracks, forest, carts, and HUD |
 | `src/scenery.rs` | Where every tree, bush, and rock stands, and how the forest grows back |
 | `src/explosions.rs` | Blasts, the wreckage they make of the scenery, and the chain reaction |
 | `src/players/mod.rs` | Player state, device and bot input, movement, and collisions |
 | `src/players/roster.rs` | Which device holds each of the four seats |
 | `src/players/visuals.rs` | Cart and rider models |
-| `src/combat.rs` | Missiles, what they strike, rear hits, and scoring |
+| `src/combat.rs` | 500 ms missile cooldown, impacts, and rear-hit elimination |
 | `src/settings.rs` | Automatic graphics quality: the quality levels and the frame-rate governor |
 | `src/ui/mod.rs` | Main menu, pause dialog, and score display |
 | `src/ui/lobby.rs` | The join lobby and its seat cards |
@@ -282,6 +303,39 @@ that bundle into the image a tag push publishes.
 the game. Tuning constants live with the feature they control. Tests live
 alongside the code they check; run them with `cargo test` inside the development
 environment. Use `cargo fmt` to format changes.
+
+### Gameplay verification
+
+`cargo test --locked` exercises the actual Bevy ECS systems for rear-hit
+elimination, simultaneous hits, 499/500 ms firing boundaries, dead-cart movement,
+round restoration, automatic continuation, and mouse restart. Pure tests check
+bot-seat limits, solo practice, draws, win targets, and the input-agnostic lobby
+settings. Arena tests rebuild quality and switch back to forest, checking that
+volcano decorations remain and lava pools stay clear of rails.
+
+```sh
+cargo test --locked
+cargo clippy --all-targets
+node --test scripts/refresh-rate.test.mjs
+scripts/build-web.sh
+# Playwright must be available; PLAYWRIGHT_NODE_MODULES can point at its package.
+node scripts/perf/shots.mjs dist/web volcano --width 1280 --height 720 \
+  --bots 0 --target 5 --arena volcano --quality 0 --out verification
+```
+
+The screenshot script captures lobby, selected settings, and gameplay. Use
+`--arena forest --bots 1` to check the original theme and a two-cart match.
+`scripts/timed-check.py LABEL COMMAND...` stores exact output in
+`verification/LABEL.log` and wall-clock timings in `verification/timings.tsv`.
+The optional wasm-opt pass can be omitted for local builds by filtering its
+installation directory from PATH while keeping wasm-bindgen reachable.
+
+When using the user-local Rust environment, source
+`~/.local/share/rust-dev-env.sh` in **each build command's shell**. That script
+appends a native-library flag, so clear an already inherited RUSTFLAGS first to
+avoid changing Cargo's cache key on every run. Worktrees must set
+CARGO_TARGET_DIR and symlink their `target` to the shared target directory:
+`build-web.sh` reads the WASM through the relative `target/` path.
 
 ## Near-term roadmap
 

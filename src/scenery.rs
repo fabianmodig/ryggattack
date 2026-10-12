@@ -98,6 +98,7 @@ pub(crate) struct Prop {
 pub(crate) struct Forest {
     pub(crate) props: Vec<Prop>,
     assets: ForestAssets,
+    pub(crate) arena: crate::match_settings::Arena,
 }
 
 struct ForestAssets {
@@ -149,6 +150,28 @@ const OUTER_KINDS: [(PropKind, u64); 6] = [
 ];
 
 impl Forest {
+    fn themed_prop(&self, mut prop: Prop) -> Prop {
+        if self.arena == crate::match_settings::Arena::Volcano {
+            prop.kind = PropKind::Rock;
+            prop.scale = prop.scale.min(1.5);
+        }
+        prop
+    }
+    pub(crate) fn set_arena(
+        &mut self,
+        arena: crate::match_settings::Arena,
+        materials: &mut Assets<StandardMaterial>,
+    ) {
+        self.arena = arena;
+        if let Some(mut material) = materials.get_mut(&self.assets.rock) {
+            material.base_color = if arena == crate::match_settings::Arena::Volcano {
+                Color::srgb(0.12, 0.11, 0.14)
+            } else {
+                Color::srgb(0.45, 0.46, 0.44)
+            };
+        }
+    }
+
     pub(crate) fn new(
         meshes: &mut Assets<Mesh>,
         materials: &mut Assets<StandardMaterial>,
@@ -161,6 +184,7 @@ impl Forest {
         };
         Self {
             props: layout(rail_map),
+            arena: crate::match_settings::Arena::Forest,
             assets: ForestAssets {
                 // Bevy's default of 32 sides is far finer than a trunk a few
                 // pixels wide or a pine tier seen from twenty units off can
@@ -312,7 +336,8 @@ pub(crate) struct Backdrop;
 /// Every prop a blast can reach, each its own entity that can come apart.
 pub(crate) fn spawn_forest(commands: &mut Commands, forest: &Forest) {
     for prop in forest.props.iter().filter(|prop| prop.can_be_wrecked()) {
-        spawn_prop(commands, &forest.assets, prop);
+        let prop = forest.themed_prop(*prop);
+        spawn_prop(commands, &forest.assets, &prop);
     }
 }
 
@@ -334,6 +359,7 @@ pub(crate) fn spawn_backdrop(
         .enumerate()
         .filter(|(index, _)| density == ForestDensity::Full || index % 2 == 0);
     for (_, prop) in backdrop {
+        let prop = forest.themed_prop(*prop);
         let cell = (prop.position / BACKDROP_PATCH).floor().as_ivec2();
         let batches = match patches.iter().position(|(known, _)| *known == cell) {
             Some(index) => &mut patches[index].1,
@@ -345,7 +371,7 @@ pub(crate) fn spawn_backdrop(
         let placement = Transform::from_xyz(prop.position.x, 0.0, prop.position.y)
             .with_rotation(Quat::from_rotation_y(prop.yaw))
             .with_scale(Vec3::splat(prop.scale));
-        for (mesh, material, transform) in parts(&forest.assets, prop) {
+        for (mesh, material, transform) in parts(&forest.assets, &prop) {
             let Some(mesh) = meshes.get(mesh) else {
                 continue;
             };
@@ -368,19 +394,19 @@ pub(crate) fn apply_forest_density(
     forest: Option<Res<Forest>>,
     mut meshes: ResMut<Assets<Mesh>>,
     backdrop: Query<Entity, With<Backdrop>>,
-    mut grown: Local<Option<ForestDensity>>,
+    mut grown: Local<Option<(ForestDensity, crate::match_settings::Arena)>>,
 ) {
     let Some(forest) = forest else {
         return;
     };
-    if *grown == Some(settings.forest) {
+    if *grown == Some((settings.forest, forest.arena)) {
         return;
     }
     for entity in &backdrop {
         commands.entity(entity).despawn();
     }
     spawn_backdrop(&mut commands, &mut meshes, &forest, settings.forest);
-    *grown = Some(settings.forest);
+    *grown = Some((settings.forest, forest.arena));
 }
 
 /// Sweep away props, wreckage, and effects alike and grow the forest back.

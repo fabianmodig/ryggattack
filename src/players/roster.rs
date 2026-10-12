@@ -20,6 +20,19 @@ pub(crate) struct Roster {
 }
 
 impl Roster {
+    pub(crate) fn active_seats(&self, mut bots: usize) -> [bool; 4] {
+        self.seats.map(|seat| {
+            if seat.is_some() {
+                true
+            } else if bots > 0 {
+                bots -= 1;
+                true
+            } else {
+                false
+            }
+        })
+    }
+
     pub(crate) fn seat(&self, id: usize) -> Option<InputSource> {
         self.seats.get(id).copied().flatten()
     }
@@ -72,6 +85,15 @@ mod tests {
 
     fn pad(index: u32) -> InputSource {
         InputSource::Pad(Entity::from_raw_u32(index).expect("valid entity index"))
+    }
+
+    #[test]
+    fn selected_bots_fill_only_available_seats() {
+        let mut roster = Roster::default();
+        roster.join(InputSource::Wasd);
+        assert_eq!(roster.active_seats(0), [true, false, false, false]);
+        assert_eq!(roster.active_seats(1), [true, true, false, false]);
+        assert_eq!(roster.active_seats(9), [true; 4]);
     }
 
     #[test]

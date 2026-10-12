@@ -92,6 +92,7 @@ pub(crate) fn setup(
     commands.spawn((
         Mesh3d(unit_cube.clone()),
         MeshMaterial3d(arena_floor),
+        crate::arena::Ground(true),
         Transform::from_xyz(0.0, -0.1, 0.0).with_scale(Vec3::new(
             ARENA_HALF_SIZE * 2.0,
             0.2,
@@ -110,6 +111,7 @@ pub(crate) fn setup(
     commands.spawn((
         Mesh3d(unit_cube.clone()),
         MeshMaterial3d(forest_floor),
+        crate::arena::Ground(false),
         Transform::from_xyz(0.0, -0.12, -8.0).with_scale(Vec3::new(GROUND_SIZE, 0.2, GROUND_SIZE)),
         NotShadowCaster,
     ));

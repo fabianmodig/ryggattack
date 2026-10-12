@@ -29,10 +29,12 @@ pub(crate) const PLAYER_COLORS: [Color; 4] = [
 #[derive(Component)]
 pub(crate) struct Player {
     pub(crate) id: usize,
+    pub(crate) active: bool,
+    pub(crate) alive: bool,
     pub(crate) score: u32,
     pub(crate) shot_cooldown: f32,
     pub(crate) wants_to_fire: bool,
-    /// The device driving this cart, or `None` for a bot. Derived from
+    /// The device driving this cart, or `None` for a bot/inactive seat. Derived from
     /// [`Roster`] once per round in `game::reset_round`.
     pub(crate) input: Option<InputSource>,
 }
@@ -75,6 +77,11 @@ pub(crate) fn human_input(
     mut players: Query<(&mut Player, &mut RailFollower)>,
 ) {
     for (mut player, mut rail) in &mut players {
+        if !player.active || !player.alive {
+            player.wants_to_fire = false;
+            rail.requested_turn = Vec3::ZERO;
+            continue;
+        }
         let Some(source) = player.input else {
             continue;
         };
@@ -163,6 +170,7 @@ pub(crate) fn bot_input(
 ) {
     let snapshots: Vec<(usize, Vec3, Vec3)> = players
         .iter()
+        .filter(|(player, _, _)| player.active && player.alive)
         .map(|(player, _, transform)| {
             (
                 player.id,
@@ -173,7 +181,7 @@ pub(crate) fn bot_input(
         .collect();
 
     for (mut bot, mut rail, transform) in &mut players {
-        if bot.input.is_some() {
+        if !bot.active || !bot.alive || bot.input.is_some() {
             continue;
         }
         if round.finished {
@@ -182,12 +190,17 @@ pub(crate) fn bot_input(
             continue;
         }
 
-        let target_id = (bot.id + 1) % snapshots.len();
         let Some((_, target_position, target_forward)) = snapshots
             .iter()
-            .find(|(snapshot_id, _, _)| *snapshot_id == target_id)
+            .filter(|(snapshot_id, _, _)| *snapshot_id != bot.id)
+            .min_by(|a, b| {
+                a.1.distance_squared(transform.translation)
+                    .total_cmp(&b.1.distance_squared(transform.translation))
+            })
             .copied()
         else {
+            bot.wants_to_fire = false;
+            rail.requested_turn = Vec3::ZERO;
             continue;
         };
         let ambush_point = target_position - target_forward * 3.1;
@@ -205,13 +218,16 @@ pub(crate) fn move_players(
     time: Res<Time>,
     round: Res<Round>,
     rail_map: Res<RailMap>,
-    mut players: Query<(&mut RailFollower, &mut Transform), With<Player>>,
+    mut players: Query<(&Player, &mut RailFollower, &mut Transform)>,
 ) {
     if round.finished {
         return;
     }
 
-    for (mut rail, mut transform) in &mut players {
+    for (player, mut rail, mut transform) in &mut players {
+        if !player.active || !player.alive {
+            continue;
+        }
         advance_cart(&rail_map, &mut rail, PLAYER_SPEED * time.delta_secs());
         let (position, direction) = track_pose(rail.path, rail.progress);
         transform.translation = position;
@@ -222,24 +238,30 @@ pub(crate) fn move_players(
 pub(crate) fn handle_player_collisions(
     time: Res<Time>,
     round: Res<Round>,
-    mut players: Query<(&mut RailFollower, &mut Transform), With<Player>>,
+    mut players: Query<(&Player, &mut RailFollower, &mut Transform)>,
 ) {
     if round.finished {
         return;
     }
 
-    for (mut rail, _) in &mut players {
+    for (player, mut rail, _) in &mut players {
+        if !player.active || !player.alive {
+            continue;
+        }
         rail.collision_cooldown = (rail.collision_cooldown - time.delta_secs()).max(0.0);
     }
 
     let mut pairs = players.iter_combinations_mut();
     while let Some(
         [
-            (mut left_rail, mut left_transform),
-            (mut right_rail, mut right_transform),
+            (left, mut left_rail, mut left_transform),
+            (right, mut right_rail, mut right_transform),
         ],
     ) = pairs.fetch_next()
     {
+        if !left.active || !left.alive || !right.active || !right.alive {
+            continue;
+        }
         if left_rail.collision_cooldown > 0.0 || right_rail.collision_cooldown > 0.0 {
             continue;
         }
@@ -276,6 +298,43 @@ mod tests {
 
     fn read(keys: &ButtonInput<KeyCode>, source: InputSource, roster: &Roster) -> (Vec3, bool) {
         read_keys(keys, keyboard_schemes(source, roster))
+    }
+
+    #[test]
+    fn eliminated_carts_do_not_move() {
+        let mut app = App::new();
+        app.insert_resource(RailMap::random())
+            .insert_resource(Round::default());
+        let mut time = Time::<()>::default();
+        time.advance_by(std::time::Duration::from_secs(1));
+        app.insert_resource(time);
+        let cart = app
+            .world_mut()
+            .spawn((
+                Player {
+                    id: 0,
+                    active: true,
+                    alive: false,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: None,
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+                Transform::default(),
+            ))
+            .id();
+        app.add_systems(Update, move_players);
+        app.update();
+        assert_eq!(
+            app.world().get::<Transform>(cart).unwrap().translation,
+            Vec3::ZERO
+        );
     }
 
     #[test]

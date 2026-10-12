@@ -10,14 +10,15 @@ use crate::players::{PLAYER_COLORS, PLAYER_RADIUS, Player};
 use crate::scene::ARENA_HALF_SIZE;
 use crate::scenery::{Scenery, Transient};
 use crate::settings::VideoSettings;
-use crate::tracks::{RailFollower, RailMap, reset_cart};
+#[cfg(test)]
+use crate::tracks::{RailFollower, RailMap};
 
 /// Radius a missile has to come within to strike something.
 const MISSILE_RADIUS: f32 = 0.18;
 
 const MISSILE_SPEED: f32 = 13.0;
 
-const SHOT_COOLDOWN: f32 = 0.1625;
+const SHOT_COOLDOWN: f32 = 0.5;
 
 const BACK_HIT_DOT_THRESHOLD: f32 = 0.45;
 
@@ -95,7 +96,7 @@ pub(crate) fn fire_projectiles(
 ) {
     for (mut player, transform) in &mut players {
         player.shot_cooldown = (player.shot_cooldown - time.delta_secs()).max(0.0);
-        if !player.wants_to_fire || player.shot_cooldown > 0.0 {
+        if !player.active || !player.alive || !player.wants_to_fire || player.shot_cooldown > 0.0 {
             continue;
         }
 
@@ -220,13 +221,13 @@ pub(crate) fn strike_scenery(
 
 pub(crate) fn detect_hits(
     mut commands: Commands,
-    rail_map: Res<RailMap>,
     projectiles: Query<(Entity, &Projectile, &Transform), Without<Player>>,
-    mut players: Query<(&mut Player, &mut RailFollower, &mut Transform), Without<Projectile>>,
+    mut players: Query<(&mut Player, &Transform, &mut Visibility), Without<Projectile>>,
 ) {
     let player_snapshots: Vec<(usize, Vec3, Vec3)> = players
         .iter()
-        .map(|(player, _, transform)| {
+        .filter(|(player, _, _)| player.active && player.alive)
+        .map(|(player, transform, _)| {
             (
                 player.id,
                 transform.translation,
@@ -260,14 +261,12 @@ pub(crate) fn detect_hits(
         commands.entity(entity).despawn();
     }
 
-    for (owner_id, target_id) in hits {
-        for (mut player, mut rail, mut transform) in &mut players {
-            if player.id == owner_id {
-                player.score += 1;
-            }
+    for (_, target_id) in hits {
+        for (mut player, _, mut visibility) in &mut players {
             if player.id == target_id {
-                reset_cart(&rail_map, target_id, &mut rail, &mut transform);
-                player.shot_cooldown = 0.5;
+                player.alive = false;
+                player.wants_to_fire = false;
+                *visibility = Visibility::Hidden;
             }
         }
     }
@@ -283,6 +282,165 @@ fn is_rear_hit(shot_direction: Vec3, target_forward: Vec3) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn simultaneous_rear_hits_eliminate_both_before_round_resolution() {
+        let mut app = App::new();
+        for id in 0..2 {
+            app.world_mut().spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: true,
+                    input: None,
+                },
+                Transform::default(),
+                Visibility::Inherited,
+            ));
+            app.world_mut().spawn((
+                Projectile {
+                    owner: id,
+                    velocity: Vec3::NEG_Z,
+                    remaining_life: 1.0,
+                    trail: 0.0,
+                },
+                Transform::default(),
+            ));
+        }
+        app.add_systems(Update, detect_hits);
+        app.update();
+        assert!(
+            app.world_mut()
+                .query::<&Player>()
+                .iter(app.world())
+                .all(|p| !p.alive && !p.wants_to_fire)
+        );
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            0
+        );
+    }
+
+    #[test]
+    fn held_fire_obeys_500ms_boundary_and_dead_carts_cannot_shoot() {
+        let mut app = App::new();
+        let assets = MissileAssets::new(&mut Assets::default(), &mut Assets::default());
+        app.insert_resource(assets)
+            .insert_resource(Time::<()>::default());
+        let cart = app
+            .world_mut()
+            .spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id: 0,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: true,
+                    input: None,
+                },
+                Transform::default(),
+            ))
+            .id();
+        app.add_systems(Update, fire_projectiles);
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_millis(499));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_millis(1));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            2
+        );
+        app.world_mut().get_mut::<Player>(cart).unwrap().alive = false;
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_secs(1));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            2
+        );
+    }
+
+    #[test]
+    fn rear_hit_hides_target_without_awarding_a_hit_point() {
+        let mut app = App::new();
+        app.insert_resource(RailMap::random());
+        let target = app
+            .world_mut()
+            .spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id: 1,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: None,
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+                Transform::default(),
+                Visibility::Inherited,
+            ))
+            .id();
+        app.world_mut().spawn((
+            Projectile {
+                owner: 0,
+                velocity: Vec3::NEG_Z,
+                remaining_life: 1.0,
+                trail: 0.0,
+            },
+            Transform::default(),
+        ));
+        app.add_systems(Update, detect_hits);
+        app.update();
+        assert_eq!(
+            *app.world().get::<Visibility>(target).unwrap(),
+            Visibility::Hidden
+        );
+        assert_eq!(app.world().get::<Player>(target).unwrap().score, 0);
+    }
+
+    #[test]
+    fn fire_cooldown_is_exactly_half_a_second() {
+        assert_eq!(SHOT_COOLDOWN, 0.5);
+    }
 
     #[test]
     fn a_shot_travelling_with_the_target_is_a_rear_hit() {

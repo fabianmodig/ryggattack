@@ -88,7 +88,7 @@ pub(crate) fn spawn_lobby(mut commands: Commands, mut latch: ResMut<LobbyLatch>)
                 TextShadow::default(),
             ));
             parent.spawn((
-                Text::new("UP to join   |   DOWN to leave   |   empty seats become bots"),
+                Text::new("UP to join   |   DOWN to leave   |   choose bots, win target and arena"),
                 TextFont {
                     font_size: FontSize::Px(20.0),
                     ..default()
@@ -106,6 +106,17 @@ pub(crate) fn spawn_lobby(mut commands: Commands, mut latch: ResMut<LobbyLatch>)
                         row.spawn(seat_card(id));
                     }
                 });
+            parent
+                .spawn(Node {
+                    flex_direction: FlexDirection::Row,
+                    column_gap: px(18),
+                    ..default()
+                })
+                .with_children(|row| {
+                    row.spawn(menu_button("BOTS: 3", MenuAction::CycleBots, 1));
+                    row.spawn(menu_button("FIRST TO: 3", MenuAction::CycleTarget, 2));
+                    row.spawn(menu_button("ARENA: FOREST", MenuAction::CycleArena, 3));
+                });
             // Side by side, because up and down claim and release seats here
             // and the highlight steps sideways instead.
             parent
@@ -115,8 +126,8 @@ pub(crate) fn spawn_lobby(mut commands: Commands, mut latch: ResMut<LobbyLatch>)
                     ..default()
                 })
                 .with_children(|row| {
-                    row.spawn(menu_button("START ROUND", MenuAction::Launch, 0));
-                    row.spawn(menu_button("BACK", MenuAction::Back, 1));
+                    row.spawn(menu_button("START MATCH", MenuAction::Launch, 0));
+                    row.spawn(menu_button("BACK", MenuAction::Back, 4));
                 });
             parent.spawn((
                 LobbyHint,
@@ -218,14 +229,20 @@ pub(crate) fn lobby_shortcuts(input: Res<MenuInput>, mut next_state: ResMut<Next
 
 pub(crate) fn refresh_lobby(
     roster: Res<Roster>,
+    mut settings: ResMut<crate::match_settings::MatchSettings>,
     pads: Query<(Entity, &Gamepad, Option<&Name>)>,
     mut labels: Query<(&SeatLabel, &mut Text, &mut TextColor), Without<LobbyHint>>,
     mut cards: Query<(&SeatCard, &mut BackgroundColor)>,
     mut hints: Query<&mut Text, With<LobbyHint>>,
 ) {
+    settings.bots = settings.bots.min(4 - roster.humans());
+    let active = roster.active_seats(settings.bots);
     for (label, mut text, mut color) in &mut labels {
         let (caption, tint) = match roster.seat(label.0) {
-            None => ("BOT".to_string(), Color::srgb(0.45, 0.50, 0.60)),
+            None => (
+                (if active[label.0] { "BOT" } else { "EMPTY" }).to_string(),
+                Color::srgb(0.45, 0.50, 0.60),
+            ),
             Some(InputSource::Wasd) => ("WASD".to_string(), Color::WHITE),
             Some(InputSource::Arrows) => ("ARROWS".to_string(), Color::WHITE),
             Some(InputSource::Pad(entity)) => (pad_name(&pads, entity), Color::WHITE),
@@ -247,6 +264,34 @@ pub(crate) fn refresh_lobby(
         } else {
             "Left/Right: choose   |   Enter, A, or Start: select   |   Escape or B: back".into()
         };
+    }
+}
+
+pub(crate) fn refresh_setting_labels(
+    settings: Res<crate::match_settings::MatchSettings>,
+    buttons: Query<(&MenuAction, &Children)>,
+    mut texts: Query<&mut Text>,
+) {
+    for (action, children) in &buttons {
+        let caption = match action {
+            MenuAction::CycleBots => format!("BOTS: {}", settings.bots),
+            MenuAction::CycleTarget => format!("FIRST TO: {}", settings.wins_target),
+            MenuAction::CycleArena => format!(
+                "ARENA: {}",
+                match settings.arena {
+                    crate::match_settings::Arena::Forest => "FOREST",
+                    crate::match_settings::Arena::Volcano => "VOLCANO",
+                }
+            ),
+            _ => continue,
+        };
+        for child in children.iter() {
+            if let Ok(mut text) = texts.get_mut(child)
+                && text.0 != caption
+            {
+                text.0 = caption.clone();
+            }
+        }
     }
 }
 
@@ -293,6 +338,60 @@ fn pad_intent(pad: &Gamepad) -> i8 {
 mod tests {
     use super::*;
 
+    #[test]
+    fn setting_labels_follow_selected_values() {
+        let mut app = App::new();
+        app.init_resource::<LobbyLatch>();
+        app.insert_resource(crate::match_settings::MatchSettings {
+            bots: 0,
+            wins_target: 5,
+            arena: crate::match_settings::Arena::Volcano,
+        });
+        app.add_systems(Startup, spawn_lobby)
+            .add_systems(Update, refresh_setting_labels);
+        app.update();
+        let captions: Vec<String> = app
+            .world_mut()
+            .query::<&Text>()
+            .iter(app.world())
+            .map(|t| t.0.clone())
+            .collect();
+        for wanted in ["BOTS: 0", "FIRST TO: 5", "ARENA: VOLCANO"] {
+            assert!(captions.contains(&wanted.to_string()), "missing {wanted}");
+        }
+    }
+    #[test]
+    fn unused_seat_is_labelled_empty_when_bots_are_zero() {
+        let mut app = App::new();
+        let mut roster = Roster::default();
+        roster.join(InputSource::Wasd);
+        app.insert_resource(roster)
+            .insert_resource(crate::match_settings::MatchSettings {
+                bots: 0,
+                ..default()
+            });
+        let label = app
+            .world_mut()
+            .spawn((SeatLabel(1), Text::new("BOT"), TextColor(Color::WHITE)))
+            .id();
+        app.add_systems(Update, refresh_lobby);
+        app.update();
+        assert_eq!(app.world().get::<Text>(label).unwrap().0, "EMPTY");
+    }
+    #[test]
+    fn lobby_exposes_all_match_settings() {
+        let mut app = App::new();
+        app.init_resource::<LobbyLatch>();
+        app.add_systems(Startup, spawn_lobby);
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&MenuAction>()
+                .iter(app.world())
+                .count(),
+            5
+        );
+    }
     #[test]
     fn a_held_direction_only_fires_once() {
         let mut latch = LobbyLatch::default();

@@ -37,7 +37,23 @@ await sleep(8000);
 await page.locator("#ryggattack-canvas").focus();
 await hold("Enter");   // START -> lobby
 await shot("lobby");
-await hold("w");       // WASD takes seat 1
+await hold("w");       // WASD takes seat 1; START MATCH remains highlighted
+// Lobby navigation order: START MATCH, BOTS, FIRST TO, ARENA, BACK.
+const bots = Number(opt("bots", "3"));
+if (!Number.isInteger(bots) || bots < 0 || bots > 3) throw new Error("--bots must be 0..3");
+await hold("ArrowRight");
+for (let n = 0; n < (bots + 1) % 4; n++) await hold("Enter");
+await hold("ArrowRight");
+const targets = [3, 5, 7, 1];
+const target = Number(opt("target", "3"));
+if (!targets.includes(target)) throw new Error("--target must be 1, 3, 5, or 7");
+for (let n = 0; n < targets.indexOf(target); n++) await hold("Enter");
+await hold("ArrowRight");
+const arena = opt("arena", "forest");
+if (!["forest", "volcano"].includes(arena)) throw new Error("--arena must be forest or volcano");
+if (arena === "volcano") await hold("Enter");
+await shot("settings");
+for (let n = 0; n < 3; n++) await hold("ArrowLeft");
 await hold("Enter", 6000);
 await sleep(6000);
 await shot("playing");
