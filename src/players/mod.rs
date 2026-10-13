@@ -218,6 +218,7 @@ pub(crate) fn move_players(
     time: Res<Time>,
     round: Res<Round>,
     rail_map: Res<RailMap>,
+    powerups: Option<Res<crate::powerups::Powerups>>,
     mut players: Query<(&Player, &mut RailFollower, &mut Transform)>,
 ) {
     if round.finished {
@@ -228,7 +229,14 @@ pub(crate) fn move_players(
         if !player.active || !player.alive {
             continue;
         }
-        advance_cart(&rail_map, &mut rail, PLAYER_SPEED * time.delta_secs());
+        let multiplier = powerups
+            .as_ref()
+            .map_or(1.0, |p| p.buffs[player.id].multiplier());
+        advance_cart(
+            &rail_map,
+            &mut rail,
+            PLAYER_SPEED * multiplier * time.delta_secs(),
+        );
         let (position, direction) = track_pose(rail.path, rail.progress);
         transform.translation = position;
         transform.look_at(position + direction, Vec3::Y);
@@ -287,6 +295,53 @@ fn axis(keys: &ButtonInput<KeyCode>, negative: KeyCode, positive: KeyCode) -> f3
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn boosted_movement_is_twenty_five_percent_faster_for_humans_and_bots() {
+        for input in [None, Some(InputSource::Wasd)] {
+            let mut app = App::new();
+            let mut powerups = crate::powerups::Powerups::default();
+            powerups.buffs[0].grant(crate::powerups::Kind::Speed);
+            let mut time = Time::<()>::default();
+            time.advance_by(std::time::Duration::from_millis(100));
+            app.insert_resource(time)
+                .insert_resource(powerups)
+                .insert_resource(Round::default())
+                .insert_resource(RailMap::from_seed(42));
+            let cart = app
+                .world_mut()
+                .spawn((
+                    Player {
+                        id: 0,
+                        active: true,
+                        alive: true,
+                        score: 0,
+                        shot_cooldown: 0.0,
+                        wants_to_fire: false,
+                        input,
+                    },
+                    RailFollower {
+                        path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                        progress: 0.0,
+                        requested_turn: Vec3::ZERO,
+                        collision_cooldown: 0.0,
+                    },
+                    Transform::default(),
+                ))
+                .id();
+            app.add_systems(Update, move_players);
+            app.update();
+            assert!(
+                (app.world()
+                    .get::<Transform>(cart)
+                    .unwrap()
+                    .translation
+                    .distance(track_pose(crate::tracks::RailPath::Edge { from: 0, to: 1 }, 0.0).0)
+                    - 0.525)
+                    .abs()
+                    < 0.0001
+            );
+        }
+    }
 
     fn seated(sources: &[InputSource]) -> Roster {
         let mut roster = Roster::default();

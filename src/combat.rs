@@ -221,6 +221,7 @@ pub(crate) fn strike_scenery(
 
 pub(crate) fn detect_hits(
     mut commands: Commands,
+    powerups: Option<Res<crate::powerups::Powerups>>,
     projectiles: Query<(Entity, &Projectile, &Transform), Without<Player>>,
     mut players: Query<(&mut Player, &Transform, &mut Visibility), Without<Projectile>>,
 ) {
@@ -251,7 +252,10 @@ pub(crate) fn detect_hits(
             consumed.insert(projectile_entity);
             explosions::detonate(&mut commands, projectile_transform.translation);
             let shot_direction = projectile.velocity.normalize_or_zero();
-            if is_rear_hit(shot_direction, *target_forward) {
+            let all_hits = powerups
+                .as_ref()
+                .is_some_and(|p| p.buffs[projectile.owner].all_hits > 0.0);
+            if all_hits || is_rear_hit(shot_direction, *target_forward) {
                 hits.push((projectile.owner, *target_id));
             }
         }
@@ -282,6 +286,50 @@ fn is_rear_hit(shot_direction: Vec3, target_forward: Vec3) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn all_hits_buff_belongs_to_attacker_and_never_hits_self() {
+        for direction in [Vec3::Z, Vec3::X] {
+            for owner in [0, 1] {
+                for buffed in [0, 1] {
+                    let mut app = App::new();
+                    let mut powerups = crate::powerups::Powerups::default();
+                    powerups.buffs[buffed].grant(crate::powerups::Kind::AllHits);
+                    app.insert_resource(powerups);
+                    let target = app
+                        .world_mut()
+                        .spawn((
+                            Player {
+                                id: 1,
+                                active: true,
+                                alive: true,
+                                score: 0,
+                                shot_cooldown: 0.0,
+                                wants_to_fire: false,
+                                input: None,
+                            },
+                            Transform::default(),
+                            Visibility::Inherited,
+                        ))
+                        .id();
+                    app.world_mut().spawn((
+                        Projectile {
+                            owner,
+                            velocity: direction,
+                            remaining_life: 1.0,
+                            trail: 0.0,
+                        },
+                        Transform::default(),
+                    ));
+                    app.add_systems(Update, detect_hits);
+                    app.update();
+                    assert_eq!(
+                        !app.world().get::<Player>(target).unwrap().alive,
+                        owner == 0 && buffed == 0
+                    );
+                }
+            }
+        }
+    }
 
     #[test]
     fn simultaneous_rear_hits_eliminate_both_before_round_resolution() {

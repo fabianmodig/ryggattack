@@ -19,6 +19,7 @@ idea: get behind another player and land a shot in their back.
 - Configurable first-to 1, 3, 5, or 7 wins (default 3); no round timer
 - Solo zero-bot practice without scoring; simultaneous all-dead rounds are draws
 - Exactly 500 ms fire cooldown
+- Random rail powerups: +25% speed or all-side elimination, with active-effect HUD timers
 - No external assets or visual editor
 
 ## Run it
@@ -211,7 +212,7 @@ is selected on entry, and the cart follows it smoothly through the junction.
 Carts cannot make a 180-degree turn. The white marker shows the front and the red
 panel is the vulnerable rear target. A missile travelling in approximately the
 same direction as its target eliminates it immediately. Front and side hits
-explode but do not eliminate. Eliminated carts are hidden and cannot steer,
+explode but do not eliminate unless the attacker has ALL HITS. Eliminated carts are hidden and cannot steer,
 move, collide, be hit again, or fire.
 
 The last standing cart earns **one round win**, regardless of how many opponents
@@ -221,6 +222,23 @@ everyone dies in the same frame, it is a draw: restart without awarding a point.
 Reaching the selected win target ends the match and displays the winner. Press
 R, gamepad Start, or click RESTART MATCH to start a new match with zero wins.
 There is no 60-second timer.
+
+### Rail powerups
+
+The first pickup appears after **30 seconds of active round play**; subsequent
+pickups appear at random intervals of **5–20 seconds** on existing straight rails.
+Drive over a pickup to collect it; human and bot carts follow the same rules.
+
+- **Yellow cube — SPEED:** automatic movement is **25% faster** for 10 seconds.
+- **Pink ring — ALL HITS:** your missiles eliminate opponents from **any side**
+  for 10 seconds, not just from behind. It never allows hitting yourself and
+  does not change the 500 ms firing cooldown or scenery/wall impacts.
+
+Collecting the same type refreshes its 10-second duration without stacking;
+both types can be active together. The HUD shows each cart's active effects and
+remaining seconds. Pausing freezes drops and effects; finished-round transitions
+do not advance them. Every new round or match removes uncollected pickups,
+clears effects and restarts the initial 30-second delay.
 
 Volcano uses dark basalt, warm lighting and fog, a lava river outside the walls,
 small ground-level pools between rails, and three volcanoes behind the arena.
@@ -286,6 +304,7 @@ application is configured and the order in which gameplay systems run.
 | `src/players/roster.rs` | Which device holds each of the four seats |
 | `src/players/visuals.rs` | Cart and rider models |
 | `src/combat.rs` | 500 ms missile cooldown, impacts, and rear-hit elimination |
+| `src/powerups.rs` | Rail pickups, active-round drop timing, and temporary per-seat buffs |
 | `src/settings.rs` | Automatic graphics quality: the quality levels and the frame-rate governor |
 | `src/ui/mod.rs` | Main menu, pause dialog, and score display |
 | `src/ui/lobby.rs` | The join lobby and its seat cards |
@@ -321,10 +340,16 @@ scripts/build-web.sh
 # Playwright must be available; PLAYWRIGHT_NODE_MODULES can point at its package.
 node scripts/perf/shots.mjs dist/web volcano --width 1280 --height 720 \
   --bots 0 --target 5 --arena volcano --quality 0 --out verification
+# Longer, real-input pickup playtest (software-rendered frames need more wall time):
+node scripts/perf/powerups.mjs dist/web verification forest
 ```
 
 The screenshot script captures lobby, selected settings, and gameplay. Use
 `--arena forest --bots 1` to check the original theme and a two-cart match.
+The powerup script steers a solo cart through multiple rail routes, pauses and
+resumes, fires, captures successive pickup/HUD screenshots, and fails on browser
+errors. It never injects pickups or buffs; inspect its images alongside the ECS
+tests for timing, collection, both effects, and reset semantics.
 `scripts/timed-check.py LABEL COMMAND...` stores exact output in
 `verification/LABEL.log` and wall-clock timings in `verification/timings.tsv`.
 The optional wasm-opt pass can be omitted for local builds by filtering its

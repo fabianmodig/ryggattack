@@ -77,6 +77,7 @@ pub(crate) fn spawn_hud(commands: &mut Commands) {
 pub(crate) fn update_hud(
     round: Res<Round>,
     settings: Res<crate::match_settings::MatchSettings>,
+    powerups: Option<Res<crate::powerups::Powerups>>,
     players: Query<&Player>,
     mut hud: Single<&mut Text, With<Hud>>,
 ) {
@@ -85,15 +86,25 @@ pub(crate) fn update_hud(
     let scores = seats
         .iter()
         .map(|p| {
+            let buffs = powerups
+                .as_ref()
+                .map_or(default(), |powerups| powerups.buffs[p.id]);
+            let mut effects = String::new();
+            if p.alive && buffs.speed > 0.0 {
+                effects.push_str(&format!(" [SPEED +25% {:.0}s]", buffs.speed.ceil()));
+            }
+            if p.alive && buffs.all_hits > 0.0 {
+                effects.push_str(&format!(" [ALL HITS {:.0}s]", buffs.all_hits.ceil()));
+            }
             format!(
-                "P{}: {}{}",
+                "P{}: {}{}{effects}",
                 p.id + 1,
                 round.wins[p.id],
                 if p.alive { "" } else { " (OUT)" }
             )
         })
         .collect::<Vec<_>>()
-        .join("   ");
+        .join("\n");
     let status = if let Some(winner) = round.winner {
         format!(
             "MATCH OVER - Player {} wins!\nR, gamepad Start, or click RESTART MATCH",
@@ -107,9 +118,12 @@ pub(crate) fn update_hud(
     } else if seats.len() == 1 {
         "SOLO PRACTICE - no scoring".into()
     } else {
-        "ONE LIFE - only rear hits eliminate. Last standing earns one win.".into()
+        "ONE LIFE - rear hits eliminate (ALL HITS: any side). Last standing wins.".into()
     };
-    let text = format!("FIRST TO {}   {scores}\n{status}", settings.wins_target);
+    let text = format!(
+        "FIRST TO {}   {scores}\n{status}\nRail drops: yellow = SPEED +25%, pink = ALL HITS (10s)",
+        settings.wins_target
+    );
     if hud.0 != text {
         hud.0 = text;
     }
@@ -118,6 +132,38 @@ pub(crate) fn update_hud(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn hud_shows_coexisting_buffs_and_hides_expired_effects() {
+        let mut app = App::new();
+        let mut powerups = crate::powerups::Powerups::default();
+        powerups.buffs[0].grant(crate::powerups::Kind::Speed);
+        powerups.buffs[0].grant(crate::powerups::Kind::AllHits);
+        app.insert_resource(powerups)
+            .insert_resource(Round::default())
+            .insert_resource(crate::match_settings::MatchSettings::default());
+        app.world_mut().spawn(Player {
+            id: 0,
+            active: true,
+            alive: true,
+            score: 0,
+            shot_cooldown: 0.0,
+            wants_to_fire: false,
+            input: None,
+        });
+        let hud = app.world_mut().spawn((Hud, Text::new(""))).id();
+        app.add_systems(Update, update_hud);
+        app.update();
+        let text = &app.world().get::<Text>(hud).unwrap().0;
+        assert!(text.contains("SPEED +25% 10s"));
+        assert!(text.contains("ALL HITS 10s"));
+        app.world_mut()
+            .resource_mut::<crate::powerups::Powerups>()
+            .buffs[0] = default();
+        app.update();
+        let text = &app.world().get::<Text>(hud).unwrap().0;
+        assert!(!text.contains("[SPEED +25%"));
+        assert!(!text.contains("ALL HITS 10s"));
+    }
     fn action_app(action: MenuAction, mouse: bool, start: bool) -> App {
         let mut app = App::new();
         let button = app

@@ -86,6 +86,12 @@ impl RailMap {
         }
     }
 
+    /// Pick an existing straight rail, away from junction curves.
+    pub(crate) fn random_drop_position(&self, rng: &mut SimpleRng) -> Vec3 {
+        let (from, to) = self.edges[rng.index(self.edges.len())];
+        (rail_position(from) + rail_position(to)) * 0.5
+    }
+
     pub(crate) fn starting_route(&self, id: usize) -> (usize, usize) {
         const STARTS: [usize; 4] = [0, 24, 20, 4];
         let from = STARTS[id % STARTS.len()];
