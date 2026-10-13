@@ -96,6 +96,7 @@ mod tests {
 pub(crate) struct RoundReset<'w, 's> {
     commands: Commands<'w, 's>,
     round: ResMut<'w, Round>,
+    powerups: ResMut<'w, crate::powerups::Powerups>,
     roster: Res<'w, Roster>,
     settings: Res<'w, MatchSettings>,
     rail_map: Res<'w, RailMap>,
@@ -121,6 +122,7 @@ impl RoundReset<'_, '_> {
     fn apply(&mut self, new_match: bool) {
         let wins = if new_match { [0; 4] } else { self.round.wins };
         *self.round = Round { wins, ..default() };
+        self.powerups.reset();
         let active = self.roster.active_seats(self.settings.bots);
         for (mut player, mut rail, mut transform, mut visibility) in self.players.iter_mut() {
             player.active = active[player.id];
@@ -154,6 +156,7 @@ mod reset_tests {
         let map = RailMap::random();
         let forest = Forest::new(&mut Assets::default(), &mut Assets::default(), &map);
         app.insert_resource(map)
+            .init_resource::<crate::powerups::Powerups>()
             .insert_resource(forest)
             .insert_resource(Roster::default())
             .insert_resource(crate::match_settings::MatchSettings::default())
@@ -176,7 +179,20 @@ mod reset_tests {
         let mut app = App::new();
         let map = RailMap::random();
         let forest = Forest::new(&mut Assets::default(), &mut Assets::default(), &map);
-        app.insert_resource(map).insert_resource(forest);
+        app.init_resource::<crate::powerups::Powerups>()
+            .insert_resource(map)
+            .insert_resource(forest);
+        let mut drops = crate::powerups::Powerups::default();
+        drops.until_drop = 2.0;
+        drops.buffs[0].grant(crate::powerups::Kind::Speed);
+        app.insert_resource(drops);
+        let drop = app
+            .world_mut()
+            .spawn((
+                crate::powerups::Pickup(crate::powerups::Kind::AllHits),
+                Transient,
+            ))
+            .id();
         let mut roster = Roster::default();
         roster.join(crate::players::InputSource::Wasd);
         roster.join(crate::players::InputSource::Arrows);
@@ -217,6 +233,17 @@ mod reset_tests {
         app.update();
         assert!(!app.world().resource::<Round>().finished);
         assert_eq!(app.world().resource::<Round>().wins, [1, 0, 0, 0]);
+        assert_eq!(
+            app.world()
+                .resource::<crate::powerups::Powerups>()
+                .until_drop,
+            30.0
+        );
+        assert_eq!(
+            app.world().resource::<crate::powerups::Powerups>().buffs[0].speed,
+            0.0
+        );
+        assert!(app.world().get_entity(drop).is_err());
         assert!(
             app.world_mut()
                 .query::<&Player>()
@@ -229,7 +256,20 @@ mod reset_tests {
         let mut app = App::new();
         let map = RailMap::random();
         let forest = Forest::new(&mut Assets::default(), &mut Assets::default(), &map);
-        app.insert_resource(map).insert_resource(forest);
+        app.init_resource::<crate::powerups::Powerups>()
+            .insert_resource(map)
+            .insert_resource(forest);
+        let mut drops = crate::powerups::Powerups::default();
+        drops.until_drop = 2.0;
+        drops.buffs[0].grant(crate::powerups::Kind::Speed);
+        app.insert_resource(drops);
+        let drop = app
+            .world_mut()
+            .spawn((
+                crate::powerups::Pickup(crate::powerups::Kind::AllHits),
+                Transient,
+            ))
+            .id();
         let mut roster = Roster::default();
         roster.join(crate::players::InputSource::Wasd);
         app.insert_resource(roster);
@@ -265,6 +305,17 @@ mod reset_tests {
         let missile = app.world_mut().spawn(Transient).id();
         app.add_systems(Update, next_round);
         app.update();
+        assert_eq!(
+            app.world()
+                .resource::<crate::powerups::Powerups>()
+                .until_drop,
+            30.0
+        );
+        assert_eq!(
+            app.world().resource::<crate::powerups::Powerups>().buffs[0].speed,
+            0.0
+        );
+        assert!(app.world().get_entity(drop).is_err());
         assert_eq!(app.world().resource::<Round>().wins[0], 2);
         let player = app.world().get::<Player>(cart).unwrap();
         assert!(player.active && player.alive);

@@ -7,6 +7,7 @@ mod explosions;
 mod game;
 mod match_settings;
 mod players;
+mod powerups;
 mod scene;
 mod scenery;
 mod settings;
@@ -26,6 +27,7 @@ fn main() {
         // The fog colour, so that anything past the tree line fades into it.
         .insert_resource(ClearColor(Color::srgb(0.62, 0.72, 0.66)))
         .insert_resource(Round::default())
+        .init_resource::<powerups::Powerups>()
         .insert_resource(RailMap::random())
         .init_resource::<PauseState>()
         .init_resource::<Roster>()
@@ -103,8 +105,10 @@ fn main() {
             (
                 players::human_input,
                 players::bot_input,
+                powerups::tick_and_drop.run_if(game::round_is_live),
                 players::move_players,
                 players::handle_player_collisions,
+                powerups::collect.run_if(game::round_is_live),
                 combat::fire_projectiles.run_if(game::round_is_live),
                 combat::move_projectiles.run_if(game::round_is_live),
                 combat::strike_scenery.run_if(game::round_is_live),
@@ -122,6 +126,7 @@ fn main() {
             )
                 .chain()
                 .run_if(in_state(AppState::Playing))
+                .after(ui::handle_menu_actions)
                 .run_if(ui::gameplay_is_running),
         )
         .run();

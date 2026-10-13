@@ -46,12 +46,16 @@ impl MeshBatch {
         let matrix = transform.to_matrix();
         let scale_recip = transform.scale.recip();
         for (index, position) in positions.iter().enumerate() {
-            self.positions
-                .push(matrix.transform_point3(Vec3::from_array(*position)).to_array());
+            self.positions.push(
+                matrix
+                    .transform_point3(Vec3::from_array(*position))
+                    .to_array(),
+            );
             let normal = normals.map_or(Vec3::Y, |normals| Vec3::from_array(normals[index]));
             // Normals take the inverse scale, so that a squashed sphere still
             // shades as a squashed sphere, then the rotation.
-            let normal = (transform.rotation * (normal * scale_recip).normalize_or(normal)).to_array();
+            let normal =
+                (transform.rotation * (normal * scale_recip).normalize_or(normal)).to_array();
             self.normals.push(normal);
             self.uvs.push(uvs.map_or([0.0, 0.0], |uvs| uvs[index]));
         }
@@ -167,7 +171,11 @@ mod tests {
         assert_eq!(merged_indices.len(), indices * 2);
         assert!(merged_indices[indices..].iter().all(|&i| i >= vertices));
         let second = &positions(&merged)[vertices..];
-        assert!(second.iter().all(|p| (p.x.abs() - 10.0).abs() <= 1.0 + 1e-5));
+        assert!(
+            second
+                .iter()
+                .all(|p| (p.x.abs() - 10.0).abs() <= 1.0 + 1e-5)
+        );
         assert!(second.iter().any(|p| (p.x - 11.0).abs() < 1e-5));
     }
 
