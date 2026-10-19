@@ -287,6 +287,59 @@ fn is_rear_hit(shot_direction: Vec3, target_forward: Vec3) -> bool {
 mod tests {
     use super::*;
     #[test]
+    fn shared_headless_tick_resolves_rear_hit_before_match_scoring() {
+        use crate::headless::{Simulation, SimulationConfig, TICK_DURATION};
+        use crate::tracks::{RailPath, track_pose};
+        let mut simulation = Simulation::new(SimulationConfig {
+            human_seats: [true, true, false, false],
+            bots: 0,
+            wins_target: 1,
+            ..default()
+        })
+        .unwrap();
+        let path = RailPath::Edge { from: 0, to: 1 };
+        let world = simulation.app.world_mut();
+        for (player, mut rail, mut transform) in world
+            .query::<(&Player, &mut RailFollower, &mut Transform)>()
+            .iter_mut(world)
+        {
+            rail.path = path;
+            rail.progress = if player.id == 1 { 0.8 } else { 0.0 };
+            let (position, forward) = track_pose(path, rail.progress);
+            *transform = Transform::from_translation(position).looking_to(forward, Vec3::Y);
+        }
+        let edge_length = track_pose(path, 0.0).0.distance(track_pose(path, 1.0).0);
+        let (position, forward) =
+            track_pose(path, 0.8 + 4.2 * TICK_DURATION.as_secs_f32() / edge_length);
+        world.spawn((
+            Projectile {
+                owner: 0,
+                velocity: forward * MISSILE_SPEED,
+                remaining_life: 1.0,
+                trail: 0.0,
+            },
+            Transform::from_translation(
+                position - forward * MISSILE_SPEED * TICK_DURATION.as_secs_f32(),
+            ),
+            Transient,
+        ));
+        simulation.step();
+        let snapshot = simulation.snapshot();
+        assert!(!snapshot.carts[1].alive);
+        assert_eq!(snapshot.wins, [1, 0, 0, 0]);
+        assert_eq!(snapshot.winner, Some(0));
+        assert!(snapshot.round_finished);
+        for _ in 0..128 {
+            simulation.step();
+        }
+        assert_eq!(
+            simulation.snapshot().wins,
+            [1, 0, 0, 0],
+            "match winner stops scoring"
+        );
+    }
+
+    #[test]
     fn all_hits_buff_belongs_to_attacker_and_never_hits_self() {
         for direction in [Vec3::Z, Vec3::X] {
             for owner in [0, 1] {

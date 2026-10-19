@@ -11,7 +11,7 @@ idea: get behind another player and land a shot in their back.
 - A new procedurally generated railway map on every launch
 - Guaranteed connectivity, no dead ends, and additional random loops
 - Automatic movement with junction choices
-- Cart collisions reverse both players along their current rails
+- Rear-end cart collisions nudge only the front cart forward along its rails; head-on and side impacts still reverse both carts
 - Menus driven by mouse, keyboard, or gamepad, and an in-game pause dialog
 - Two code-generated arenas: forest and volcano (basalt, lava river/pools, and glowing craters)
 - Missiles that explode on impact and blow apart the trees around them
@@ -21,6 +21,24 @@ idea: get behind another player and land a shot in their back.
 - Exactly 500 ms fire cooldown
 - Random rail powerups: +25% speed or all-side elimination, with active-effect HUD timers
 - No external assets or visual editor
+
+## Shared simulation / headless foundation
+
+The offline native/WASM client and `ryggattack-headless` now run the same
+64 Hz gameplay chain. The windowless harness accepts steering/fire intent and
+exercises real rails, bots, collisions, missiles, destructible scenery,
+powerups, wins, and round resets without a display:
+
+```sh
+cargo run --locked --bin ryggattack-headless -- --seed 42 --ticks 2048 --bots 0 --fire
+python3 scripts/headless-smoke.py
+```
+
+This is the first shared-simulation milestone for issue #6, **not online play**.
+Rendering dependencies and CPU-side visual construction are still coupled to
+some gameplay systems. See [the foundation notes](docs/online-foundation.md)
+for the reusable Rust API, tests, evidence, review risks, and remaining work.
+`cargo run` continues to open the ordinary offline game.
 
 ## Run it
 
@@ -288,12 +306,17 @@ open the web build with `?quality=N` (e.g. `index.html?quality=0`), or set
 
 ## Source layout
 
-The code is grouped by responsibility. Start with `src/main.rs` to see how the
-application is configured and the order in which gameplay systems run.
+The code is grouped by responsibility. Start with `src/lib.rs` for client
+configuration and `src/simulation.rs` for the single shared gameplay order.
+`src/main.rs` is the offline client entry point.
 
 | File | Responsibility |
 | --- | --- |
-| `src/main.rs` | Application setup and system scheduling |
+| `src/main.rs` / `src/lib.rs` | Client entry point / application setup |
+| `src/simulation.rs` | Shared fixed gameplay chain and separate presentation animation |
+| `src/input.rs` | Device-independent held steering/fire intent and tick application |
+| `src/headless.rs` | Windowless shared-gameplay harness, configuration, diagnostics |
+| `src/bin/ryggattack-headless.rs` | Bounded no-display command-line runner |
 | `src/game.rs` | Elimination, first-to scoring, automatic rounds, and match restart |
 | `src/match_settings.rs` | Bot count, win target, and arena configuration |
 | `src/arena.rs` | Forest/volcano ground, lighting, lava, and volcano landmarks |
@@ -334,6 +357,7 @@ volcano decorations remain and lava pools stay clear of rails.
 
 ```sh
 cargo test --locked
+python3 scripts/headless-smoke.py
 cargo clippy --all-targets
 node --test scripts/refresh-rate.test.mjs
 scripts/build-web.sh
@@ -343,6 +367,15 @@ node scripts/perf/shots.mjs dist/web volcano --width 1280 --height 720 \
 # Longer, real-input pickup playtest (software-rendered frames need more wall time):
 node scripts/perf/powerups.mjs dist/web verification forest
 ```
+
+`scripts/perf/foundation.mjs` additionally drives a real solo round with steering
+and fire, verifies pixel-identical paused screenshots, resumes, and checks
+browser errors. Run it with the same Playwright setup, passing `dist/web` and
+an output directory. The foundation tests also compare 4/64 FPS frame
+partitions, external-seat input and restoration, seeded pickup replay,
+full-tick rear-hit scoring, exact held-fire cooldown ticks, sub-tick local fire
+taps, and suppression of paused/finished input. The browser harness probes its
+own static-file path boundary before starting Chromium.
 
 The screenshot script captures lobby, selected settings, and gameplay. Use
 `--arena forest --bots 1` to check the original theme and a two-cart match.

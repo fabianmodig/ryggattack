@@ -2,6 +2,7 @@
 name = "ryggattack"
 version = "0.1.0"
 edition = "2024"
+default-run = "ryggattack"
 
 [dependencies]
 bevy = { version = "0.19.1", default-features = false, features = ["3d", "ui"] }

@@ -34,6 +34,7 @@ pub(crate) fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
     rail_map: Res<RailMap>,
     settings: Res<VideoSettings>,
+    match_settings: Res<crate::match_settings::MatchSettings>,
 ) {
     info!("Generated railway map with seed {}", rail_map.seed);
 
@@ -148,13 +149,31 @@ pub(crate) fn setup(
         ));
     }
 
-    let forest = Forest::new(&mut meshes, &mut materials, &rail_map);
-    spawn_forest(&mut commands, &forest);
-    commands.insert_resource(forest);
-    commands.insert_resource(EffectAssets::new(&mut meshes, &mut materials));
-    commands.insert_resource(EffectRng(SimpleRng::new(rail_map.seed.rotate_left(17))));
-    commands.insert_resource(MissileAssets::new(&mut meshes, &mut materials));
-
-    spawn_players(&mut commands, &mut meshes, &mut materials, &rail_map);
+    setup_gameplay(
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        &rail_map,
+        match_settings.arena,
+    );
     spawn_hud(&mut commands);
+}
+
+/// CPU-side gameplay world, also used without render/window plugins. Visual
+/// asset construction remains here during the first extraction milestone.
+pub(crate) fn setup_gameplay(
+    commands: &mut Commands,
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
+    rail_map: &RailMap,
+    arena: crate::match_settings::Arena,
+) {
+    let mut forest = Forest::new(meshes, materials, rail_map);
+    forest.set_arena(arena, materials);
+    spawn_forest(commands, &forest);
+    commands.insert_resource(forest);
+    commands.insert_resource(EffectAssets::new(meshes, materials));
+    commands.insert_resource(EffectRng(SimpleRng::new(rail_map.seed.rotate_left(17))));
+    commands.insert_resource(MissileAssets::new(meshes, materials));
+    spawn_players(commands, meshes, materials, rail_map);
 }

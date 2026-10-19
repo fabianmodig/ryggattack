@@ -1,0 +1,332 @@
+===== red-input (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 9.77s
+     Running unittests src/main.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-3b47b9ea253c6495)
+
+running 1 test
+test players::tests::device_input_does_not_mutate_authoritative_cart_before_a_tick ... FAILED
+
+failures:
+
+---- players::tests::device_input_does_not_mutate_authoritative_cart_before_a_tick stdout ----
+
+thread 'players::tests::device_input_does_not_mutate_authoritative_cart_before_a_tick' (664874) panicked at src/players/mod.rs:315:9:
+device polling must publish intent, not change authoritative state
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::device_input_does_not_mutate_authoritative_cart_before_a_tick
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--bin ryggattack`
+
+TIMING red-input: 9.870 s; exit=101
+
+===== red-fixed (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 27.94s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test simulation::tests::presentation_updates_cannot_move_authoritative_carts ... FAILED
+
+failures:
+
+---- simulation::tests::presentation_updates_cannot_move_authoritative_carts stdout ----
+
+thread 'simulation::tests::presentation_updates_cannot_move_authoritative_carts' (667170) panicked at src/simulation.rs:91:9:
+assertion `left == right` failed: render frames must not advance gameplay
+  left: [(0, Vec3(-6.1, 0.62, -7.0)), (1, Vec3(6.1, 0.62, 7.0)), (2, Vec3(-7.0, 0.62, 6.1)), (3, Vec3(7.0, 0.62, -6.1))]
+ right: [(0, Vec3(-1.8999999, 0.62, -7.0)), (1, Vec3(1.8999999, 0.62, 7.0)), (2, Vec3(-7.0, 0.62, 1.8999999)), (3, Vec3(5.0137167, 0.62, -3.5))]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    simulation::tests::presentation_updates_cannot_move_authoritative_carts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 109 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-fixed: 28.039 s; exit=101
+
+===== red-external (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 13.09s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test simulation::tests::external_intent_is_not_replaced_by_bot_ai ... FAILED
+
+failures:
+
+---- simulation::tests::external_intent_is_not_replaced_by_bot_ai stdout ----
+
+thread 'simulation::tests::external_intent_is_not_replaced_by_bot_ai' (669034) panicked at src/simulation.rs:95:9:
+assertion `left == right` failed: device-free seats must not be treated as bots
+  left: Vec3(-0.055470023, 0.0, 0.99846035)
+ right: Vec3(0.0, 0.0, -1.0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    simulation::tests::external_intent_is_not_replaced_by_bot_ai
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 110 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-external: 13.174 s; exit=101
+
+===== red-external-reset (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 22.35s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test simulation::tests::device_free_seat_survives_round_reset_with_no_local_devices ... FAILED
+
+failures:
+
+---- simulation::tests::device_free_seat_survives_round_reset_with_no_local_devices stdout ----
+
+thread 'simulation::tests::device_free_seat_survives_round_reset_with_no_local_devices' (671717) panicked at src/simulation.rs:93:9:
+assertion `left == right` failed: external humans count before filling bot seats
+  left: [0]
+ right: [0, 3]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    simulation::tests::device_free_seat_survives_round_reset_with_no_local_devices
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 111 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-external-reset: 22.466 s; exit=101
+
+===== red-headless (observed before its implementation) =====
+Traceback (most recent call last):
+  File "/home/hermes/src/ryggattack-online/scripts/headless-smoke.py", line 15, in <module>
+    assert result.returncode == 0, result.stderr
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: error: no bin target named `ryggattack-headless` in default-run packages
+help: available bin targets:
+    ryggattack
+
+
+TIMING red-headless: 0.568 s; exit=1
+
+===== red-invalid-input (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 8.63s
+     Running tests/shared_simulation.rs (/home/hermes/src/ryggattack/target/debug/deps/shared_simulation-e41890f5a7e5b9a6)
+
+running 1 test
+test rejects_invalid_or_uncontrolled_input_without_changing_state ... FAILED
+
+failures:
+
+---- rejects_invalid_or_uncontrolled_input_without_changing_state stdout ----
+
+thread 'rejects_invalid_or_uncontrolled_input_without_changing_state' (679449) panicked at tests/shared_simulation.rs:12:9:
+seat=1 horizontal=0 vertical=0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    rejects_invalid_or_uncontrolled_input_without_changing_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `--test shared_simulation`
+
+TIMING red-invalid-input: 8.821 s; exit=101
+
+===== red-config (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 8.75s
+     Running tests/shared_simulation.rs (/home/hermes/src/ryggattack/target/debug/deps/shared_simulation-e41890f5a7e5b9a6)
+
+running 1 test
+test rejects_unsupported_match_configuration_before_startup ... FAILED
+
+failures:
+
+---- rejects_unsupported_match_configuration_before_startup stdout ----
+
+thread 'rejects_unsupported_match_configuration_before_startup' (680021) panicked at tests/shared_simulation.rs:11:9:
+SimulationConfig { seed: 42, human_seats: [true, false, false, false], bots: 4, wins_target: 3, arena: Forest }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    rejects_unsupported_match_configuration_before_startup
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test shared_simulation`
+
+TIMING red-config: 8.850 s; exit=101
+
+===== red-seed (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 9.85s
+     Running tests/shared_simulation.rs (/home/hermes/src/ryggattack/target/debug/deps/shared_simulation-e41890f5a7e5b9a6)
+
+running 1 test
+test seed_replays_pickup_randomness_after_the_first_thirty_seconds ... FAILED
+
+failures:
+
+---- seed_replays_pickup_randomness_after_the_first_thirty_seconds stdout ----
+
+thread 'seed_replays_pickup_randomness_after_the_first_thirty_seconds' (680919) panicked at tests/shared_simulation.rs:12:13:
+assertion `left == right` failed: tick 1920
+  left: Snapshot { tick: 1920, carts: [CartSnapshot { id: 0, active: true, alive: true, position: [7.0, 0.62, -2.62345], forward: [-0.0, -0.0, 1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 1, active: false, alive: false, position: [6.1, 0.62, 7.0], forward: [-0.99999994, -0.0, -0.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 2, active: false, alive: false, position: [-7.0, 0.62, 6.1], forward: [-0.0, -0.0, -1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 3, active: false, alive: false, position: [7.0, 0.62, -6.1], forward: [-0.0, -0.0, 1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }], wins: [0, 0, 0, 0], winner: None, round_finished: false, transition: 0.0, projectiles: 0, pickups: 1, scenery: 138, until_drop: 7.596456 }
+ right: Snapshot { tick: 1920, carts: [CartSnapshot { id: 0, active: true, alive: true, position: [7.0, 0.62, -2.62345], forward: [-0.0, -0.0, 1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 1, active: false, alive: false, position: [6.1, 0.62, 7.0], forward: [-0.99999994, -0.0, -0.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 2, active: false, alive: false, position: [-7.0, 0.62, 6.1], forward: [-0.0, -0.0, -1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }, CartSnapshot { id: 3, active: false, alive: false, position: [7.0, 0.62, -6.1], forward: [-0.0, -0.0, 1.0], shot_cooldown: 0.0, speed_seconds: 0.0, all_hits_seconds: 0.0 }], wins: [0, 0, 0, 0], winner: None, round_finished: false, transition: 0.0, projectiles: 0, pickups: 1, scenery: 138, until_drop: 8.382694 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    seed_replays_pickup_randomness_after_the_first_thirty_seconds
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.73s
+
+error: test failed, to rerun pass `--test shared_simulation`
+
+TIMING red-seed: 10.719 s; exit=101
+
+===== red-arena (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 05s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test headless::tests::volcano_uses_the_existing_themed_scenery_colliders ... FAILED
+
+failures:
+
+---- headless::tests::volcano_uses_the_existing_themed_scenery_colliders stdout ----
+
+thread 'headless::tests::volcano_uses_the_existing_themed_scenery_colliders' (682351) panicked at src/headless.rs:151:9:
+assertion `left == right` failed
+  left: Forest
+ right: Volcano
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    headless::tests::volcano_uses_the_existing_themed_scenery_colliders
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 112 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-arena: 65.823 s; exit=101
+
+===== red-fixed-clock (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 18.12s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test headless::tests::explicit_step_advances_both_fixed_and_generic_game_clocks ... FAILED
+
+failures:
+
+---- headless::tests::explicit_step_advances_both_fixed_and_generic_game_clocks stdout ----
+
+thread 'headless::tests::explicit_step_advances_both_fixed_and_generic_game_clocks' (694322) panicked at src/headless.rs:207:9:
+assertion `left == right` failed
+  left: 0ns
+ right: 15.625ms
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    headless::tests::explicit_step_advances_both_fixed_and_generic_game_clocks
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 118 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-fixed-clock: 18.188 s; exit=101
+
+===== red-static-path (observed before its implementation) =====
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: unsafe static-file path /%2e%2e/%2e%2e/Cargo.toml
+
+200 !== 403
+
+    at file:///home/hermes/src/ryggattack-online/scripts/perf/foundation.mjs:34:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 403,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.3
+
+TIMING red-static-path: 0.304 s; exit=1
+
+===== red-local-tap (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 10.80s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost ... FAILED
+
+failures:
+
+---- players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost stdout ----
+
+thread 'players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost' (700327) panicked at src/players/mod.rs:321:9:
+the local adapter must retain a sampled tap until a tick consumes it
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 119 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-local-tap: 10.858 s; exit=101
+
+===== red-paused-input (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.08s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished ... FAILED
+
+failures:
+
+---- players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished stdout ----
+
+thread 'players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished' (701318) panicked at src/players/mod.rs:323:13:
+paused=true: menu or finished-round fire must not leak into gameplay
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 120 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-paused-input: 4.130 s; exit=101

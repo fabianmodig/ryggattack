@@ -1,0 +1,34 @@
+{
+  "ship-headless-two-player": {
+    "snapshots": 129,
+    "final_tick": 8192,
+    "final_wins": [
+      0,
+      3,
+      0,
+      0
+    ],
+    "minimum_alive": 1,
+    "scoring_observed": true,
+    "initial_scenery": 138,
+    "minimum_scenery": 120,
+    "matches_pre_local_adapter_fix": true,
+    "timing": "TIMING ship-headless-two-player: 1.558 s; exit=0"
+  },
+  "ship-headless-bots": {
+    "snapshots": 129,
+    "final_tick": 8192,
+    "final_wins": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "minimum_alive": 2,
+    "scoring_observed": false,
+    "initial_scenery": 138,
+    "minimum_scenery": 112,
+    "matches_pre_local_adapter_fix": true,
+    "timing": "TIMING ship-headless-bots: 2.158 s; exit=0"
+  }
+}

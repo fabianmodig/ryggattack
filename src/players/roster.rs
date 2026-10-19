@@ -20,9 +20,17 @@ pub(crate) struct Roster {
 }
 
 impl Roster {
-    pub(crate) fn active_seats(&self, mut bots: usize) -> [bool; 4] {
-        self.seats.map(|seat| {
-            if seat.is_some() {
+    pub(crate) fn active_seats(&self, bots: usize) -> [bool; 4] {
+        self.active_seats_with_external(bots, [false; 4])
+    }
+
+    pub(crate) fn active_seats_with_external(
+        &self,
+        mut bots: usize,
+        external: [bool; 4],
+    ) -> [bool; 4] {
+        std::array::from_fn(|id| {
+            if self.seats[id].is_some() || external[id] {
                 true
             } else if bots > 0 {
                 bots -= 1;

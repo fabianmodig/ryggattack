@@ -15,6 +15,11 @@ impl Default for Powerups {
             .duration_since(web_time::UNIX_EPOCH)
             .unwrap_or_default();
         let seed = duration.as_secs() ^ (duration.subsec_nanos() as u64).rotate_left(32);
+        Self::from_seed(seed)
+    }
+}
+impl Powerups {
+    pub(crate) fn from_seed(seed: u64) -> Self {
         Self {
             until_drop: 30.0,
             buffs: [Buffs::default(); 4],
