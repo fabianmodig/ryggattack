@@ -1,5 +1,5 @@
 {
-  "headless-two-player": {
+  "ship-headless-two-player": {
     "snapshots": 129,
     "final_tick": 8192,
     "final_wins": [
@@ -12,9 +12,10 @@
     "scoring_observed": true,
     "initial_scenery": 138,
     "minimum_scenery": 120,
-    "timing": "TIMING headless-two-player: 2.470 s; exit=0"
+    "matches_pre_local_adapter_fix": true,
+    "timing": "TIMING ship-headless-two-player: 1.558 s; exit=0"
   },
-  "headless-match": {
+  "ship-headless-bots": {
     "snapshots": 129,
     "final_tick": 8192,
     "final_wins": [
@@ -27,6 +28,7 @@
     "scoring_observed": false,
     "initial_scenery": 138,
     "minimum_scenery": 112,
-    "timing": "TIMING headless-match: 1.222 s; exit=0"
+    "matches_pre_local_adapter_fix": true,
+    "timing": "TIMING ship-headless-bots: 2.158 s; exit=0"
   }
 }

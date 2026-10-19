@@ -73,14 +73,23 @@ pub(crate) fn human_input(
     keys: Res<ButtonInput<KeyCode>>,
     pads: Query<&Gamepad>,
     roster: Res<Roster>,
+    round: Res<Round>,
+    pause: Option<Res<crate::ui::PauseState>>,
     mut inputs: ResMut<crate::input::SeatInputs>,
     players: Query<&Player>,
 ) {
+    let running = !round.finished && pause.is_none_or(crate::ui::gameplay_is_running);
     for player in &players {
         let Some(source) = player.input else {
             continue;
         };
+        if !running || !player.active || !player.alive {
+            inputs.intents[player.id] = default();
+            inputs.local_fire_pending[player.id] = false;
+            continue;
+        }
         let (turn, fire) = read_source(source, &roster, &keys, &pads);
+        inputs.local_fire_pending[player.id] |= fire;
         inputs.intents[player.id] = crate::input::ControlIntent {
             horizontal: turn.x,
             vertical: -turn.z,
@@ -297,6 +306,97 @@ fn axis(keys: &ButtonInput<KeyCode>, negative: KeyCode, positive: KeyCode) -> f3
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn local_input_does_not_buffer_actions_while_paused_or_round_finished() {
+        use bevy::ecs::system::RunSystemOnce;
+        for paused in [true, false] {
+            let mut app = App::new();
+            let mut keys = ButtonInput::<KeyCode>::default();
+            keys.press(KeyCode::Space);
+            app.insert_resource(keys)
+                .insert_resource(seated(&[InputSource::Wasd]))
+                .init_resource::<crate::input::SeatInputs>()
+                .init_resource::<crate::ui::PauseState>()
+                .insert_resource(Round {
+                    finished: !paused,
+                    ..default()
+                });
+            app.world_mut().spawn(Player {
+                id: 0,
+                active: true,
+                alive: true,
+                score: 0,
+                shot_cooldown: 0.0,
+                wants_to_fire: false,
+                input: Some(InputSource::Wasd),
+            });
+            if paused {
+                app.insert_resource(crate::ui::MenuInput {
+                    cancel: true,
+                    ..default()
+                });
+                app.world_mut()
+                    .run_system_once(crate::ui::toggle_pause_dialog)
+                    .unwrap();
+            }
+            app.add_systems(Update, human_input);
+            app.update();
+            let inputs = app.world().resource::<crate::input::SeatInputs>();
+            assert!(
+                !inputs.intents[0].fire && !inputs.local_fire_pending[0],
+                "paused={paused}: menu or finished-round fire must not leak into gameplay"
+            );
+        }
+    }
+
+    #[test]
+    fn a_local_fire_tap_between_ticks_is_consumed_once_not_lost() {
+        let mut app = App::new();
+        let mut keys = ButtonInput::<KeyCode>::default();
+        keys.press(KeyCode::Space);
+        app.insert_resource(keys)
+            .insert_resource(seated(&[InputSource::Wasd]))
+            .init_resource::<crate::input::SeatInputs>()
+            .init_resource::<Round>();
+        let cart = app
+            .world_mut()
+            .spawn((
+                Player {
+                    id: 0,
+                    active: true,
+                    alive: true,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: Some(InputSource::Wasd),
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+            ))
+            .id();
+        app.add_systems(Update, human_input);
+        app.update(); // A render frame with a press, but no simulation tick.
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .release(KeyCode::Space);
+        app.update(); // Release can arrive before the next fixed tick at high refresh.
+        app.add_systems(PostUpdate, crate::input::apply_inputs);
+        app.update();
+        assert!(
+            app.world().get::<Player>(cart).unwrap().wants_to_fire,
+            "the local adapter must retain a sampled tap until a tick consumes it"
+        );
+        app.update();
+        assert!(
+            !app.world().get::<Player>(cart).unwrap().wants_to_fire,
+            "a released tap must not turn into held fire"
+        );
+    }
+
     #[test]
     fn shared_fixed_tick_reverses_two_colliding_live_carts() {
         use crate::headless::{Simulation, SimulationConfig};

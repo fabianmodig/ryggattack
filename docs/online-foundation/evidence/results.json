@@ -1,10 +1,10 @@
 {
   "baseline_tests": 108,
-  "final_tests": 124,
-  "observed_red_cases": 10,
-  "pause_sha256": "5ab98ae8dbea02444465a0db9e1c25443e6bea2c4ff49a2d935e6139a73b603d",
-  "pause_bytes": 220810,
-  "artifacts": [
+  "final_tests": 126,
+  "added_rust_tests": 18,
+  "observed_red_cases": 13,
+  "playtested_source_commit": "3f452b169dc0cecb459da363705ac38473513f4a",
+  "playtested_artifacts": [
     {
       "path": "dist/web/ryggattack_bg.wasm",
       "bytes": 39559025,
@@ -14,6 +14,44 @@
       "path": "dist/web/ryggattack.js",
       "bytes": 108889,
       "sha256": "9f604d96974bc92e9e8e0fc0398f46f8d0b62ba2cfd33c1912138ce7de24df0b"
+    }
+  ],
+  "final_wasm_browser_replayed": false,
+  "post_playtest_source_changes": [
+    "src/input.rs: retain one sampled local fire press until a tick consumes it",
+    "src/players/mod.rs: sample into local latch; neutralize paused/finished/dead/inactive input; two regression tests"
+  ],
+  "post_playtest_source_blobs": {
+    "src/input.rs": {
+      "playtested": "09fa896ff6f73cf67ea133f3ecabc013c0b76730",
+      "shipping": "aa401337475179ff468a2a152ea25096f85228bd"
+    },
+    "src/players/mod.rs": {
+      "playtested": "2d03a30d680640a30e49f4dda8e44bf6f3750821",
+      "shipping": "3ae46696cdf440aa6d8c8841114317d58dff3e5a"
+    }
+  },
+  "pause_sha256": "6177b23070cd0598e767e87a4dec61ef80b4c8c13da334e974978561baeb2151",
+  "pause_bytes": 212940,
+  "timed_commands": 59,
+  "static_scan": {
+    "scope": "complete final milestone staged added source/script/test/Cargo/Forgejo lines vs a878e5b",
+    "added_lines_scanned": 1373,
+    "diff_chars": 64709,
+    "findings": [],
+    "independent_review": "pending parent review; no independent-approval claim",
+    "path_boundary": "actual 200 before guard; guarded full browser run checks encoded traversal 403 and malformed/NUL 400"
+  },
+  "artifacts": [
+    {
+      "path": "dist/web/ryggattack_bg.wasm",
+      "bytes": 39559261,
+      "sha256": "203b259b406b7e1073b446119b2c26c4e12370756a0587ac4962242453420644"
+    },
+    {
+      "path": "dist/web/ryggattack.js",
+      "bytes": 108889,
+      "sha256": "96654eeb2609c141d3cc79896bee784b07ee17e23399a7b9a4fb70088500d665"
     }
   ]
 }

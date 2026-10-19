@@ -31,7 +31,12 @@ simulation choice for this milestone, **not** a committed network send rate.
 
 `input::ControlIntent` contains two steering axes and held fire — never a
 position, hit, or score. Local keyboard/gamepad polling only publishes intent;
-it no longer changes cart state. The fixed chain applies it. A separate
+it no longer changes cart state. The fixed chain applies it. A local sampled
+fire tap is retained until one tick consumes it, even if press and release
+arrive in separate render frames before that tick. Paused/finished/dead/empty
+local input is neutralized instead of buffering actions into resumed play.
+The external API still replaces held intent; it is not a remote action queue.
+A separate
 external-seat mask lets the headless caller own a seat without inventing a
 keyboard/gamepad entity. Neutral intent keeps the seat human-controlled; it
 does not activate bot AI. Bots fill free seats using the same roster policy
@@ -127,7 +132,11 @@ headless arena selection being ignored, and the explicit runner leaving
 the fixed clock and installs its generic view, matching Bevy fixed-schedule
 clock semantics. Existing-rule characterization tests
 also cover exact cooldown ticks, the full rear-hit → match-scoring chain,
-render-cadence invariance, and local pause.
+render-cadence invariance, and local pause. Late self-review added observed-red
+regressions for a sub-tick local fire tap being lost and paused/finished input
+being buffered; both now pass. The new browser harness also has a real HTTP
+path-boundary regression (encoded traversal was served before the guard),
+with traversal and malformed-path rejection checked before Chromium starts.
 
 Re-run:
 
@@ -151,11 +160,18 @@ Gameplay now uses small discrete steps rather than render-sized deltas;
 missile/collision timing will be more finely sampled. Remote interpolation is
 not implemented, so high-refresh displays may expose fixed-step cart motion.
 
-Final verification passed **124 Rust tests**, both native binaries, the full
-release web build including wasm-opt, and real Chromium SwiftShader play in
-forest and volcano. Solo pause/resume and two independent keyboard seats were
-visually reviewed. The no-display runner naturally completed a one-human,
-one-bot match through three wins and automatic round restoration.
+Final native/headless verification passed **126 Rust tests**, both native
+binaries, and the latest full release web build including wasm-opt. The
+no-display runner naturally completed a one-human, one-bot match through three
+wins and automatic round restoration.
+
+Full Chromium SwiftShader play in forest/volcano, solo pause/resume, and two
+independent keyboard seats covers source commit
+`3f452b169dc0cecb459da363705ac38473513f4a`. The later local tap/pause fixes in
+`src/input.rs` and `src/players/mod.rs` have the complete native/headless tests
+and fresh WASM build, but **were not graphically replayed afterward**. Review
+that narrow post-playtest delta explicitly; the evidence index and results
+metadata preserve the exact source/artifact boundary.
 
 See the [committed evidence index](online-foundation/evidence/README.md) for
 exact commands/timings, observed failures, actual logs/state changes, screenshot

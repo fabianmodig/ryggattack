@@ -373,7 +373,9 @@ and fire, verifies pixel-identical paused screenshots, resumes, and checks
 browser errors. Run it with the same Playwright setup, passing `dist/web` and
 an output directory. The foundation tests also compare 4/64 FPS frame
 partitions, external-seat input and restoration, seeded pickup replay,
-full-tick rear-hit scoring, and exact held-fire cooldown ticks.
+full-tick rear-hit scoring, exact held-fire cooldown ticks, sub-tick local fire
+taps, and suppression of paused/finished input. The browser harness probes its
+own static-file path boundary before starting Chromium.
 
 The screenshot script captures lobby, selected settings, and gameplay. Use
 `--arena forest --bots 1` to check the original theme and a two-cart match.

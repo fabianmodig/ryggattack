@@ -15,10 +15,13 @@ pub(crate) struct SeatInputs {
     /// Non-device controlled seats (for the headless caller). Local seats are
     /// still selected by the offline roster; an empty intent is neutral, not a bot.
     pub(crate) external: [bool; 4],
+    /// The local frame adapter retains a sampled press until one tick observes it.
+    /// External submitters still replace held intent; no remote action queue is implied.
+    pub(crate) local_fire_pending: [bool; 4],
 }
 
 pub(crate) fn apply_inputs(
-    inputs: Res<SeatInputs>,
+    mut inputs: ResMut<SeatInputs>,
     round: Res<crate::game::Round>,
     mut players: Query<(
         &mut crate::players::Player,
@@ -26,6 +29,7 @@ pub(crate) fn apply_inputs(
     )>,
 ) {
     for (mut player, mut rail) in &mut players {
+        let local_fire = std::mem::take(&mut inputs.local_fire_pending[player.id]);
         if !player.active || !player.alive || round.finished {
             player.wants_to_fire = false;
             rail.requested_turn = Vec3::ZERO;
@@ -33,7 +37,7 @@ pub(crate) fn apply_inputs(
             let intent = inputs.intents[player.id];
             rail.requested_turn =
                 Vec3::new(intent.horizontal, 0.0, -intent.vertical).normalize_or_zero();
-            player.wants_to_fire = intent.fire;
+            player.wants_to_fire = intent.fire || local_fire;
         }
     }
 }

@@ -255,3 +255,78 @@ test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 118 filtered out
 error: test failed, to rerun pass `--lib`
 
 TIMING red-fixed-clock: 18.188 s; exit=101
+
+===== red-static-path (observed before its implementation) =====
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: unsafe static-file path /%2e%2e/%2e%2e/Cargo.toml
+
+200 !== 403
+
+    at file:///home/hermes/src/ryggattack-online/scripts/perf/foundation.mjs:34:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 403,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.3
+
+TIMING red-static-path: 0.304 s; exit=1
+
+===== red-local-tap (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 10.80s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost ... FAILED
+
+failures:
+
+---- players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost stdout ----
+
+thread 'players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost' (700327) panicked at src/players/mod.rs:321:9:
+the local adapter must retain a sampled tap until a tick consumes it
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 119 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-local-tap: 10.858 s; exit=101
+
+===== red-paused-input (observed before its implementation) =====
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.08s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-60c1d455eb10e687)
+
+running 1 test
+test players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished ... FAILED
+
+failures:
+
+---- players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished stdout ----
+
+thread 'players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished' (701318) panicked at src/players/mod.rs:323:13:
+paused=true: menu or finished-round fire must not leak into gameplay
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 120 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING red-paused-input: 4.130 s; exit=101

@@ -4,28 +4,44 @@ All results below are local executions in `/home/hermes/src/ryggattack-online`,
 branch `feat/online-simulation-foundation`, based on `a878e5b`.
 No remote CI, PR, push, merge, image publication, or deployment was performed.
 
+## Exact graphical coverage boundary
+
+The full guarded Chromium run (246.403 seconds) covers source commit
+`3f452b169dc0cecb459da363705ac38473513f4a`. Forest solo pause/resume,
+two keyboard humans, static-path rejection, and volcano captures were reviewed.
+
+**After that playtest**, only two runtime source files changed:
+`src/input.rs` adds a one-tick local fire latch, and `src/players/mod.rs`
+neutralizes paused/finished input and samples that latch (plus two regression
+tests). Those fixes passed the complete 126-test Rust suite, actual headless
+matches, native builds, clippy/fmt, and a fresh full WASM build. **The newest
+WASM was not graphically replayed after these narrow input fixes.** This is
+explicitly a remaining review/coverage boundary, not a claim that the final
+commit received the earlier full graphical playtest. `results.json` records
+both artifact hashes and before/after source blob IDs.
+
 ## Measured results
 
 | Command / check | Elapsed seconds | Result |
 | --- | ---: | --- |
 | Clean baseline `cargo test --locked`, two-job retry | 275.888 | 108 pass |
-| Final `cargo test --locked` | 42.096 | 119 unit + 5 integration = 124 pass |
-| `cargo build --locked --bins` | 0.854 | Both native executables build; cached after tests |
-| `cargo clippy --locked --all-targets` | 2.303 | Pass, four unchanged-source warnings |
-| `cargo fmt --all -- --check` | 0.138 | Pass |
-| `node --test scripts/refresh-rate.test.mjs` | 0.255 | 10 pass |
-| `python3 scripts/headless-smoke.py` (the CI command) | 3.282 | Real no-display solo and complete two-cart match pass |
-| Final `scripts/build-web.sh`, including wasm-opt | 179.136 | Release WASM + JS + assets produced |
+| Final `cargo test --locked` | 43.895 | 121 unit + 5 integration = 126 pass |
+| `cargo build --locked --bins` | 0.644 | Both native executables build; cached after tests |
+| `cargo clippy --locked --all-targets` | 2.731 | Pass, four unchanged-source warnings |
+| `cargo fmt --all -- --check` | 0.132 | Pass |
+| `node --test scripts/refresh-rate.test.mjs` | 0.258 | 10 pass |
+| `python3 scripts/headless-smoke.py` (the CI command) | 3.078 | Real no-display solo and complete two-cart match pass |
+| Final `scripts/build-web.sh`, including wasm-opt | 178.284 | Release WASM + JS + assets produced |
 | Initial cold web build, including wasm-opt | 449.782 | Pass |
-| `foundation.mjs dist/web verification/browser` | 302.692 | Real keyboard play, identical paused pixels, resume, two keyboard seats, no browser errors |
+| `foundation.mjs dist/web verification/browser-final` | 246.403 | Pre-local-latch source: real keyboard play, identical paused pixels, resume, two keyboard seats, no browser errors |
 | `shots.mjs`, volcano / one bot / first-to-five | 207.803 | Settings and gameplay screenshots captured and visually reviewed |
 
 Rust commands sourced `~/.local/share/rust-dev-env.sh` after clearing inherited
 RUSTFLAGS/LIBRARY_PATH, used the shared CARGO_TARGET_DIR and target symlink, and
 ran one cargo build at a time. Browser commands used the existing Playwright
-installation with Chromium SwiftShader, 960×540, pinned quality 0. Browser runs
-were concurrent with each other, not with Rust compilation; these timings are
-verification wall times, **not performance benchmarks**.
+installation with Chromium SwiftShader, 960×540, pinned quality 0. Some earlier
+browser runs shared CPU with other local verification. These
+are verification wall times, **not performance benchmarks**.
 
 The first foreground baseline exceeded its 420-second tool window with no
 completed result. A subsequent tracked uncapped baseline suffered an OOM
@@ -64,11 +80,11 @@ Images were inspected, not accepted solely because a script exited zero:
 
 - `two-keyboard-lobby.png`: P1 WASD, P2 ARROWS, zero bots, forest, first to three.
 - `two-keyboard-playing.png`: two carts and the two-player elimination HUD.
-- `two-keyboard-firing.png`: both carts and a visible orange blast/smoke at the
-  lower-right wall while Space remained held.
+- `two-keyboard-firing.png`: both carts, with smoke/scorch near the lower-right
+  wall while Space remained held. No visible missile is asserted from this still.
 - `paused.png`: actual PAUSED overlay, RESUME and RETURN TO MENU over gameplay.
   The later paused screenshot has identical bytes; the raw duplicate stays in
-  `verification/browser/paused-later.png`. Hash is in `results.json`.
+  `verification/browser-final/paused-later.png`. Hash is in `results.json`.
 - `volcano-playing.png`: basalt/lava scene, carts, and first-to-five two-player HUD.
   The original settings screenshot confirms one WASD human and one bot.
 
@@ -83,12 +99,14 @@ no-display execution cover powerup rules separately.
 
 ## Files
 
-- `tdd-red.txt`: ten observed pre-implementation missing-behavior failures.
+- `tdd-red.txt`: thirteen observed pre-implementation failures, including the
+  two local input regressions and the new loopback test server's path boundary.
 - `verification.txt`: final test/build/lint/smoke/browser outputs.
 - `baseline.txt`: unchanged-baseline OOM and successful retry outputs.
 - `commands.tsv`: every recorded command, elapsed time, exit status, and failure notes.
-- `timings.tsv`: raw timing rows with a header (44 recorded commands).
-- `results.json`: parsed test total, pause hash, and final WASM/JS hashes and sizes.
+- `timings.tsv`: raw timing rows with a header (59 recorded commands).
+- `results.json`: parsed test total, pause hash, pre-playtest/current artifact
+  hashes, exact graphical source commit, post-playtest source blobs, and static scan.
 - `browser.json`: actual console and pause assertion result.
 - `headless-selected.jsonl` / `headless-probes.json`: actual runner evidence.
 - `changed-files.txt`: exact repository file manifest for this milestone.
