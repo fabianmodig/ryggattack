@@ -98,6 +98,7 @@ pub(crate) struct RoundReset<'w, 's> {
     round: ResMut<'w, Round>,
     powerups: ResMut<'w, crate::powerups::Powerups>,
     roster: Res<'w, Roster>,
+    inputs: Option<Res<'w, crate::input::SeatInputs>>,
     settings: Res<'w, MatchSettings>,
     rail_map: Res<'w, RailMap>,
     forest: Res<'w, Forest>,
@@ -123,7 +124,13 @@ impl RoundReset<'_, '_> {
         let wins = if new_match { [0; 4] } else { self.round.wins };
         *self.round = Round { wins, ..default() };
         self.powerups.reset();
-        let active = self.roster.active_seats(self.settings.bots);
+        let active = self.inputs.as_ref().map_or_else(
+            || self.roster.active_seats(self.settings.bots),
+            |inputs| {
+                self.roster
+                    .active_seats_with_external(self.settings.bots, inputs.external)
+            },
+        );
         for (mut player, mut rail, mut transform, mut visibility) in self.players.iter_mut() {
             player.active = active[player.id];
             player.alive = player.active;

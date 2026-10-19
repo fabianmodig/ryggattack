@@ -50,9 +50,9 @@ if [ "$expected" != "$actual" ]; then
 fi
 
 if [ "$profile" = "release" ]; then
-  cargo build --release --target wasm32-unknown-unknown
+  cargo build --release --bin ryggattack --target wasm32-unknown-unknown
 else
-  cargo build --target wasm32-unknown-unknown
+  cargo build --bin ryggattack --target wasm32-unknown-unknown
 fi
 
 rm -rf "$out_dir"

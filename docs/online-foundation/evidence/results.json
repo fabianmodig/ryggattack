@@ -1,0 +1,19 @@
+{
+  "baseline_tests": 108,
+  "final_tests": 124,
+  "observed_red_cases": 10,
+  "pause_sha256": "5ab98ae8dbea02444465a0db9e1c25443e6bea2c4ff49a2d935e6139a73b603d",
+  "pause_bytes": 220810,
+  "artifacts": [
+    {
+      "path": "dist/web/ryggattack_bg.wasm",
+      "bytes": 39559025,
+      "sha256": "a95ed82ed190c34651fa47a7b19a78067859fbe7ee864682ea7c496605832656"
+    },
+    {
+      "path": "dist/web/ryggattack.js",
+      "bytes": 108889,
+      "sha256": "9f604d96974bc92e9e8e0fc0398f46f8d0b62ba2cfd33c1912138ce7de24df0b"
+    }
+  ]
+}

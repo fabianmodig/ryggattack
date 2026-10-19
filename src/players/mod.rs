@@ -73,22 +73,19 @@ pub(crate) fn human_input(
     keys: Res<ButtonInput<KeyCode>>,
     pads: Query<&Gamepad>,
     roster: Res<Roster>,
-    round: Res<Round>,
-    mut players: Query<(&mut Player, &mut RailFollower)>,
+    mut inputs: ResMut<crate::input::SeatInputs>,
+    players: Query<&Player>,
 ) {
-    for (mut player, mut rail) in &mut players {
-        if !player.active || !player.alive {
-            player.wants_to_fire = false;
-            rail.requested_turn = Vec3::ZERO;
-            continue;
-        }
+    for player in &players {
         let Some(source) = player.input else {
             continue;
         };
-
         let (turn, fire) = read_source(source, &roster, &keys, &pads);
-        rail.requested_turn = if round.finished { Vec3::ZERO } else { turn };
-        player.wants_to_fire = !round.finished && fire;
+        inputs.intents[player.id] = crate::input::ControlIntent {
+            horizontal: turn.x,
+            vertical: -turn.z,
+            fire,
+        };
     }
 }
 
@@ -166,6 +163,7 @@ fn turn_from_axes(x: f32, up: f32) -> Vec3 {
 
 pub(crate) fn bot_input(
     round: Res<Round>,
+    inputs: Option<Res<crate::input::SeatInputs>>,
     mut players: Query<(&mut Player, &mut RailFollower, &Transform)>,
 ) {
     let snapshots: Vec<(usize, Vec3, Vec3)> = players
@@ -181,7 +179,11 @@ pub(crate) fn bot_input(
         .collect();
 
     for (mut bot, mut rail, transform) in &mut players {
-        if !bot.active || !bot.alive || bot.input.is_some() {
+        if !bot.active
+            || !bot.alive
+            || bot.input.is_some()
+            || inputs.as_ref().is_some_and(|i| i.external[bot.id])
+        {
             continue;
         }
         if round.finished {
@@ -295,6 +297,101 @@ fn axis(keys: &ButtonInput<KeyCode>, negative: KeyCode, positive: KeyCode) -> f3
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn shared_fixed_tick_reverses_two_colliding_live_carts() {
+        use crate::headless::{Simulation, SimulationConfig};
+        use crate::tracks::RailPath;
+        let mut simulation = Simulation::new(SimulationConfig {
+            human_seats: [true, true, false, false],
+            bots: 0,
+            ..default()
+        })
+        .unwrap();
+        let world = simulation.app.world_mut();
+        let path = RailPath::Edge { from: 0, to: 1 };
+        for (player, mut rail, mut transform) in world
+            .query::<(&Player, &mut RailFollower, &mut Transform)>()
+            .iter_mut(world)
+        {
+            if !player.active {
+                continue;
+            }
+            rail.path = path;
+            rail.progress = player.id as f32 * 0.5;
+            let (position, forward) = track_pose(path, rail.progress);
+            *transform = Transform::from_translation(position).looking_to(forward, Vec3::Y);
+        }
+        simulation.step();
+        let world = simulation.app.world_mut();
+        for (player, rail, transform) in world
+            .query::<(&Player, &RailFollower, &Transform)>()
+            .iter(world)
+        {
+            if !player.active {
+                continue;
+            }
+            assert_eq!(rail.path, RailPath::Edge { from: 1, to: 0 });
+            assert_eq!(rail.collision_cooldown, PLAYER_COLLISION_COOLDOWN);
+            assert!(transform.forward().dot(Vec3::NEG_X) > 0.99);
+        }
+    }
+
+    #[test]
+    fn device_input_does_not_mutate_authoritative_cart_before_a_tick() {
+        let mut app = App::new();
+        let mut keys = ButtonInput::<KeyCode>::default();
+        keys.press(KeyCode::KeyW);
+        keys.press(KeyCode::Space);
+        app.insert_resource(keys)
+            .insert_resource(seated(&[InputSource::Wasd]))
+            .init_resource::<crate::input::SeatInputs>()
+            .init_resource::<Round>();
+        let cart = app
+            .world_mut()
+            .spawn((
+                Player {
+                    id: 0,
+                    active: true,
+                    alive: true,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: Some(InputSource::Wasd),
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+            ))
+            .id();
+        app.add_systems(Update, human_input);
+        app.update();
+        assert!(
+            !app.world().get::<Player>(cart).unwrap().wants_to_fire,
+            "device polling must publish intent, not change authoritative state"
+        );
+        assert_eq!(
+            app.world()
+                .get::<RailFollower>(cart)
+                .unwrap()
+                .requested_turn,
+            Vec3::ZERO
+        );
+        assert!(app.world().resource::<crate::input::SeatInputs>().intents[0].fire);
+        app.add_systems(PostUpdate, crate::input::apply_inputs);
+        app.update();
+        assert!(app.world().get::<Player>(cart).unwrap().wants_to_fire);
+        assert_eq!(
+            app.world()
+                .get::<RailFollower>(cart)
+                .unwrap()
+                .requested_turn,
+            Vec3::NEG_Z
+        );
+    }
+
     #[test]
     fn boosted_movement_is_twenty_five_percent_faster_for_humans_and_bots() {
         for input in [None, Some(InputSource::Wasd)] {

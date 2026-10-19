@@ -1,0 +1,45 @@
+label	seconds	exit	command	note
+baseline-test	192.384	101	cargo test --locked	unchanged baseline; OOM SIGKILL at 8 GiB/no swap
+baseline-retry	275.888	0	CARGO_BUILD_JOBS=2 cargo test --locked	unchanged baseline; two-job retry; 108 tests pass
+red-input	9.870	101	cargo test --locked device_input_does_not_mutate_authoritative_cart_before_a_tick	expected missing-behavior failure before implementation
+green-input	3.027	101	cargo test --locked	intermediate E0599: Bevy tuple exceeded 20 systems; then fixed by nesting chain
+green-input-retry	11.658	0	cargo test --locked	-
+red-fixed	28.039	101	cargo test --locked presentation_updates_cannot_move_authoritative_carts	expected missing-behavior failure before implementation
+green-fixed	16.392	0	cargo test --locked	-
+red-external	13.174	101	cargo test --locked external_intent_is_not_replaced_by_bot_ai	expected missing-behavior failure before implementation
+green-external	20.757	0	cargo test --locked external_intent_is_not_replaced_by_bot_ai	-
+red-external-reset	22.466	101	cargo test --locked device_free_seat_survives_round_reset_with_no_local_devices	expected missing-behavior failure before implementation
+green-external-reset	25.292	0	cargo test --locked	-
+red-headless	0.568	1	python3 scripts/headless-smoke.py	expected missing-behavior failure before implementation
+green-headless	20.553	0	python3 scripts/headless-smoke.py	-
+red-invalid-input	8.821	101	cargo test --locked --test shared_simulation	expected missing-behavior failure before implementation
+green-invalid-input	20.896	0	cargo test --locked --test shared_simulation	-
+red-config	8.850	101	cargo test --locked --test shared_simulation rejects_unsupported	expected missing-behavior failure before implementation
+green-config	38.527	0	cargo test --locked --test shared_simulation	-
+red-seed	10.719	101	cargo test --locked --test shared_simulation seed_replays	expected missing-behavior failure before implementation
+green-seed	49.154	0	cargo test --locked --test shared_simulation	-
+red-arena	65.823	101	cargo test --locked volcano_uses_the_existing_themed_scenery_colliders	expected missing-behavior failure before implementation
+green-arena	65.320	0	cargo test --locked volcano_uses_the_existing_themed_scenery_colliders	-
+regression-test	48.417	0	cargo test --locked	-
+format	0.206	0	cargo fmt --all	-
+clippy	144.431	101	cargo clippy --locked --all-targets -- -D warnings	strict lint failed on four warnings in unchanged source files
+native-build	20.138	0	cargo build --locked --bins	-
+clippy-baseline-warnings	3.667	0	cargo clippy --locked --all-targets	-
+refresh-rate	0.263	0	node --test scripts/refresh-rate.test.mjs	-
+fmt-check	0.154	0	cargo fmt --all -- --check	-
+web-build	449.782	0	scripts/build-web.sh	-
+red-fixed-clock	18.188	101	cargo test --locked --lib explicit_step_advances_both_fixed_and_generic_game_clocks	expected missing-behavior failure before implementation
+final-format	0.160	0	cargo fmt --all	-
+final-test	42.096	0	cargo test --locked	-
+final-native-build	0.854	0	cargo build --locked --bins	-
+final-clippy	2.303	0	cargo clippy --locked --all-targets	passes with the same four warnings; no new warnings
+final-fmt-check	0.138	0	cargo fmt --all -- --check	-
+final-refresh-rate	0.255	0	node --test scripts/refresh-rate.test.mjs	-
+final-headless-smoke	0.366	0	python3 scripts/headless-smoke.py target/debug/ryggattack-headless	-
+headless-match	1.222	0	target/debug/ryggattack-headless --ticks 8192 --seed 42 --bots 3 --fire	-
+headless-two-player	2.470	0	target/debug/ryggattack-headless --ticks 8192 --seed 42 --bots 1 --fire	-
+final-web-build	179.136	0	scripts/build-web.sh	-
+final-headless-smoke-expanded	1.337	0	python3 scripts/headless-smoke.py target/debug/ryggattack-headless	-
+ci-headless-smoke	3.282	0	python3 scripts/headless-smoke.py	-
+browser-volcano	207.803	0	node scripts/perf/shots.mjs dist/web foundation-volcano --width 960 --height 540 --bots 1 --target 5 --arena volcano --quality 0 --out verification/volcano	-
+browser-foundation	302.692	0	node scripts/perf/foundation.mjs dist/web verification/browser	-
