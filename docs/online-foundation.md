@@ -11,7 +11,7 @@ The native/WASM client and the windowless executable link the same library.
 existing gameplay systems:
 
 1. Apply device-independent held intent; run the existing bot AI.
-2. Tick/drop powerups; move carts on the procedural rails; reverse collisions.
+2. Tick/drop powerups; move carts on the procedural rails; resolve cart collisions.
 3. Collect pickups; fire and move missiles; resolve scenery impacts and rear hits.
 4. Run destructible-scenery detonation chains; resolve wins and round transitions.
 
@@ -26,6 +26,23 @@ factory is deliberate, so headless destruction cannot silently skip props.
 The explicit tick is **64 Hz / 15,625 microseconds**. This exactly representable
 interval also divides the existing 500 ms cooldown into 32 ticks. This is a
 simulation choice for this milestone, **not** a committed network send rate.
+
+### Cart collision rule
+
+Within the existing 1.05-unit contact distance, a rear-end contact means two
+carts on the same directed rail path (ordered by progress), or on consecutive
+paths selected by the rear cart's current junction intent. This uses actual
+route continuity rather than an approximate heading cone, so bends and
+edge/junction seams work while crossing/diverging routes remain side impacts.
+Only the front cart advances an extra **0.4 rail units**: less than half a cart
+length, a small bump rather than a launch. `advance_cart` carries that distance
+through bends/junctions and the transform is refreshed from `track_pose`.
+Neither cart is reversed or has its steering cleared by a rear-end bump.
+An exact overlap on one directed path uses the higher seat ID as the front,
+independent of query ordering. Both carts receive the existing 0.35-second
+cooldown; inactive/eliminated carts are ignored. Head-on and side impacts keep
+the existing two-cart reversal behavior. This is shared offline/headless
+behavior, not a new online-only rule.
 
 ### Input boundary
 
@@ -159,6 +176,14 @@ must remain a frame-edge operation (not be repeated by catch-up ticks).
 Gameplay now uses small discrete steps rather than render-sized deltas;
 missile/collision timing will be more finely sampled. Remote interpolation is
 not implemented, so high-refresh displays may expose fixed-step cart motion.
+
+### Rear-end collision follow-up
+
+The rear-end correction adds five shared-pipeline regressions; the final native
+suite passes 126 library and five integration tests. Observed RED → GREEN
+failures, exact tested source/artifact hashes, timings, and limitations are in
+[the focused collision evidence](online-foundation/evidence/rear-end-collisions.md).
+The earlier verification history below describes the foundation before this fix.
 
 Final native/headless verification passed **126 Rust tests**, both native
 binaries, and the latest full release web build including wasm-opt. The

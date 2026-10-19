@@ -11,7 +11,7 @@ idea: get behind another player and land a shot in their back.
 - A new procedurally generated railway map on every launch
 - Guaranteed connectivity, no dead ends, and additional random loops
 - Automatic movement with junction choices
-- Cart collisions reverse both players along their current rails
+- Rear-end cart collisions nudge only the front cart forward along its rails; head-on and side impacts still reverse both carts
 - Menus driven by mouse, keyboard, or gamepad, and an in-game pause dialog
 - Two code-generated arenas: forest and volcano (basalt, lava river/pools, and glowing craters)
 - Missiles that explode on impact and blow apart the trees around them
