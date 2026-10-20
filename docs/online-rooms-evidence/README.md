@@ -40,6 +40,8 @@ Online scenery is still simple collider proxies rather than offline forest/volca
 
 `rooms-ui.test.mjs`, `server-banner.test.mjs` and `git diff --check` passed too. The test-only review additions were exercised after the runtime replay without changing runtime source. Gate logs and the complete timing history are under `logs/`.
 
+The first Forgejo run failed before Cargo: the refresh-rate unit harness strips module imports from the page and did not supply the newly imported `installRoomControls`. This was reproduced locally (8/10 pass, two ReferenceErrors). Its isolated VM now supplies that separately-tested UI dependency and asserts installation exactly once; all ten existing calibration/fallback assertions pass (0.236s). This is a test-harness-only correction; browser/runtime source and tested artifacts are unchanged. The manifest's verification-source hash reflects this correction.
+
 ## Review and limitations
 
 Two independent read-only reviews found no blocking backend or client/lifecycle defect. Their coverage suggestions were addressed by making host-election integration failure explicit and adding malformed-lobby/local-identity rejection cases. These are test-only changes after the replay; no runtime source changed.

@@ -40,16 +40,21 @@ async function startPage(hz) {
   const clock = environment();
   const window = { addEventListener() {} };
   const starts = [];
+  let roomInstalls = 0;
   const source = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1]
     .replace(/^\s*import .*;$/gm, "");
   const startup = vm.runInNewContext(`(async () => {${source}})()`, {
     ...clock.env, window,
+    // Imported room UI is tested separately and by real browser replay. This
+    // VM isolates calibration/startup, but still verifies installation is wired.
+    installRoomControls: () => { roomInstalls++; },
     calibrateRefreshRate: () => calibrateRefreshRate(clock.env),
     init: async () => starts.push(window.ryggattackRefreshRate),
   });
   assert.equal(starts.length, 0, "game must not run during refresh calibration");
   for (let frame = 0; frame <= 30; frame++) clock.frame(frame * 1000 / hz);
   await startup;
+  assert.equal(roomInstalls, 1, "room controls install once before game startup");
   assert.equal(starts.length, 1);
   assert.ok(Math.abs(starts[0] - Math.min(hz, 60)) < 0.1,
     `init received ${starts[0]} Hz instead of ${Math.min(hz, 60)}`);
@@ -73,13 +78,18 @@ test("page still starts wasm if calibration unexpectedly rejects", async () => {
   const clock = environment();
   const window = { addEventListener() {} };
   const starts = [];
+  let roomInstalls = 0;
   const source = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1]
     .replace(/^\s*import .*;$/gm, "");
   await vm.runInNewContext(`(async () => {${source}})()`, {
     ...clock.env, window,
+    // Imported room UI is tested separately and by real browser replay. This
+    // VM isolates calibration/startup, but still verifies installation is wired.
+    installRoomControls: () => { roomInstalls++; },
     calibrateRefreshRate: async () => { throw new Error("calibration unavailable"); },
     init: async () => starts.push(window.ryggattackRefreshRate),
   });
+  assert.equal(roomInstalls, 1);
   assert.deepEqual(starts, [null]);
 });
 

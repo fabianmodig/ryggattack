@@ -213,8 +213,8 @@
       "bytes": 7492
     },
     "scripts/refresh-rate.test.mjs": {
-      "sha256": "0e7c7ccb251b1cde5386b594de7f51c10f281231ff39397266143539916d3603",
-      "bytes": 5957
+      "sha256": "509016d08f2bad83e42cefbe16ebf3848931c53b808158b56c0ea8a20fdaacdd",
+      "bytes": 6545
     },
     "scripts/rooms-load.mjs": {
       "sha256": "fe2d0ccee6c775c45c2fa756da30157b96cc420fbdc8299201c4686ab45e0e32",
