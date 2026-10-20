@@ -23,6 +23,8 @@ const digest = x => crypto.createHash('sha256').update(JSON.stringify(canonical(
 assert.equal(digest({x:0.62}),digest({x:0.6200000047683716}));
 assert.notEqual(digest({x:0.62}),digest({x:0.63}));
 const evidence = {artifact:Object.fromEntries(['index.html','rooms.mjs','ryggattack.js','ryggattack_bg.wasm'].map(f=>[f,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')])),clients:[],errors:[],checks:[],delay_ms_each_direction:75};
+const secrets=new Set();
+function publicIdentity(w){ if(w.credential)secrets.add(w.credential); const {credential,...safe}=w; return safe; }
 const clients = [];
 function client(name) {
   const c={name,seat:null,frames:0,hashes:new Map(),inputs:[],rtts:[],sent:new Map(),shots:0,explosions:0,eliminated:0,rounds:0,moved:false,turns:false,initial:null,last:null}; clients.push(c); return c;
@@ -106,7 +108,7 @@ try {
       ws.on('close',()=>c.events.push(['close',performance.now()]));
       ws.on('socketerror',e=>c.events.push(['error',performance.now(),String(e)]));
       ws.on('framesent',({payload})=>{try{const m=JSON.parse(payload);if(m.Hello)c.events.push(['hello',performance.now()]);if(m.Input){const i={...m.Input,at:performance.now()}; c.inputs.push(i);c.sent.set(i.sequence,i.at);}}catch{}});
-      ws.on('framereceived',({payload})=>{try{const m=JSON.parse(payload);if(m.Welcome){c.seat=m.Welcome.seat;c.identity=m.Welcome;}if(m.Lobby){c.lobby=m.Lobby;(c.lobbies??=[]).push(m.Lobby);}if(m.State)frame(c,m.State);if(m.Error)evidence.errors.push(`${name}: ${m.Error}`);}catch(e){evidence.errors.push(`${name} parse: ${e.message}`);}});
+      ws.on('framereceived',({payload})=>{try{const m=JSON.parse(payload);if(m.Welcome){c.seat=m.Welcome.seat;c.identity=publicIdentity(m.Welcome);}if(m.Lobby){c.lobby=m.Lobby;(c.lobbies??=[]).push(m.Lobby);}if(m.State)frame(c,m.State);if(m.Error)evidence.errors.push(`${name}: ${m.Error}`);}catch(e){evidence.errors.push(`${name} parse: ${e.message}`);}});
     });
     await page.bringToFront();
     await page.goto(`http://127.0.0.1:${staticServer.address().port}/?quality=0`);
@@ -144,7 +146,7 @@ try {
   // A second room uses a transport-only device, not a third software renderer.
   const isolated=new WebSocket(address);
   let isolatedLobby;
-  isolated.addEventListener('open',()=>isolated.send(JSON.stringify({Hello:{version:2,name:'Isolated'}})));
+  isolated.addEventListener('open',()=>isolated.send(JSON.stringify({Hello:{version:3,name:'Isolated'}})));
   isolated.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Lobby)isolatedLobby=m.Lobby;});
   await until(()=>isolatedLobby,'isolated room');assert.notEqual(isolatedLobby.id,roomID);assert.equal(isolatedLobby.humans.length,1);
   evidence.room={id:roomID,code:roomCode,share,isolated_id:isolatedLobby.id};
@@ -269,7 +271,7 @@ try {
   evidence.shared_tick_range=[common[0],common.at(-1)];
   if(!await a.page.locator('#online-entry').evaluate(e=>e.open))await a.page.locator('#online-entry summary').click();
   await a.page.locator('#leave-room').click();
-  await until(()=>b.lobby.humans.length===1&&b.lobby.host===b.identity.participant,'deliberate leave elects earliest remaining human');
+  await until(()=>b.lobby.humans.filter(h=>h.connected).length===1&&b.lobby.host===b.identity.participant,'deliberate leave elects earliest remaining human');
   await a.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom).status.includes('Left room'),null,{timeout:60000});
   await a.page.close();a.page=null;
   // Reuse the real share link after freeing a renderer. It prefills the code
@@ -277,7 +279,7 @@ try {
   const linkPage=await (await browser.newContext({viewport:{width:640,height:480}})).newPage();
   linkPage.on('pageerror',e=>evidence.errors.push(`share-link: ${e.message}`));
   let linkedIdentity;
-  linkPage.on('websocket',ws=>ws.on('framereceived',({payload})=>{const m=JSON.parse(payload);if(m.Welcome)linkedIdentity=m.Welcome;}));
+  linkPage.on('websocket',ws=>ws.on('framereceived',({payload})=>{const m=JSON.parse(payload);if(m.Welcome)linkedIdentity=publicIdentity(m.Welcome);}));
   await linkPage.goto(share+'&name=LinkGuest');
   await linkPage.waitForFunction(()=>globalThis.ryggattackRoom&&JSON.parse(globalThis.ryggattackRoom).lobby?.humans.some(h=>h.name==='LinkGuest'),null,{timeout:90000});
   assert.equal(await linkPage.locator('#room-code').inputValue(),roomCode);
@@ -331,6 +333,8 @@ try {
   evidence.server_log=serverLog;
   evidence.server_overruns=(serverLog.match(/tick overrun/g)||[]).length;
   for(const c of clients){const sorted=c.rtts.sort((a,b)=>a-b);const hz=c.last_observed&&c.first_observed?(c.last_observed.tick-c.first_observed.tick)/((c.last_observed.at_ms-c.first_observed.at_ms)/1000):null;evidence.clients.push({name:c.name,events:c.events,seat:c.seat,frames:c.frames,first_observed:c.first_observed,last_observed:c.last_observed,observed_server_hz:hz,simulated_to_wall_ratio:hz/64,projectile_observations:c.shots,explosion_observations:c.explosions,eliminated_frames:c.eliminated,round_finished_frames:c.rounds,moved:c.moved,turns:c.turns,input_count:c.inputs.length,wire_ack_rtt_median_ms:sorted[Math.floor(sorted.length/2)],wire_ack_rtt_p95_ms:sorted[Math.floor(sorted.length*.95)],last_tick:c.last?.tick,wins:c.last?.wins});}
+  assert([...secrets].every(t=>!JSON.stringify(evidence).includes(t)),'private credential leaked into runtime evidence');
+  evidence.credential_negative_scan=true;
   fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));
   await browser?.close();probe?.kill();server?.kill();for(const s of sockets)s.destroy();proxy?.close();staticServer.close();
 }

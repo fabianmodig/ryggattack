@@ -51,6 +51,8 @@ fn welcome(edges: Vec<(usize, usize)>) -> ServerMessage {
         seat: 0,
         room: 1,
         participant: 1,
+        code: "0123456789abcdef0123".into(),
+        credential: "a".repeat(64),
         edges,
     }
 }
@@ -63,6 +65,8 @@ fn room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay
             seat: 0,
             room: 7,
             participant: 9,
+            code: "0123456789abcdef0123".into(),
+            credential: "a".repeat(64),
             edges: grid(),
         },
         ServerMessage::Lobby(lobby),
@@ -77,6 +81,28 @@ fn malformed_lobbies_and_identity_mismatches_never_reach_presentation() {
     let good = Lobby::new(1, "0123456789abcdef0123".into(), 1, "Ada".into());
     type Mutation = (&'static str, Box<dyn Fn(&mut Lobby)>);
     let cases: Vec<Mutation> = vec![
+        (
+            "invalid reservation",
+            Box::new(|l| l.humans[0].reconnect_seconds = Some(61)),
+        ),
+        (
+            "disconnected host",
+            Box::new(|l| {
+                l.humans[0].connected = false;
+                l.humans[0].reconnect_seconds = Some(60);
+            }),
+        ),
+        (
+            "missing reservation",
+            Box::new(|l| {
+                l.join(2, "second".into()).unwrap();
+                l.humans[1].connected = false;
+            }),
+        ),
+        (
+            "wrong invite identity",
+            Box::new(|l| l.code = "a".repeat(20)),
+        ),
         ("wrong room", Box::new(|l| l.id = 2)),
         (
             "wrong local participant",
@@ -119,6 +145,8 @@ fn malformed_lobbies_and_identity_mismatches_never_reach_presentation() {
                         name: "guest".into(),
                         seat: i as usize,
                         ready: false,
+                        connected: true,
+                        reconnect_seconds: None,
                     });
                 }
             }),

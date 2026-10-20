@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict';
-import {joinUrl, settingsCommand, installRoomControls} from '../web/rooms.mjs';
+import fs from 'node:fs';
+const html=fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8');
+assert(!html.includes('No reconnect reservations yet.'),'entry UI must not deny implemented reconnect');
+assert.match(html,/60.*wall.*second/i,'entry explains wall-clock reservation');
+import {joinUrl, settingsCommand, installRoomControls, participantStatus} from '../web/rooms.mjs';
+assert.equal(participantStatus({connected:false,reconnect_seconds:59},'Running'),'Bot takeover · reserved 59s');
+assert.equal(participantStatus({connected:false,reconnect_seconds:12},'Lobby'),'Disconnected · reserved 12s');
+assert.equal(participantStatus({connected:true,ready:false},'Running'),'playing');
+assert.equal(participantStatus({connected:true,ready:true},'Lobby'),'ready');
 const code='0123456789abcdef0123';
 const link=new URL(joinUrl('https://game.example/play/?name=Old&quality=0','ws://127.0.0.1:8787',code));
 assert.equal(link.searchParams.get('room'),code);

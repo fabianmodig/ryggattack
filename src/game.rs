@@ -127,8 +127,10 @@ impl RoundReset<'_, '_> {
         let active = self.inputs.as_ref().map_or_else(
             || self.roster.active_seats(self.settings.bots),
             |inputs| {
-                self.roster
-                    .active_seats_with_external(self.settings.bots, inputs.external)
+                inputs.occupied.unwrap_or_else(|| {
+                    self.roster
+                        .active_seats_with_external(self.settings.bots, inputs.external)
+                })
             },
         );
         for (mut player, mut rail, mut transform, mut visibility) in self.players.iter_mut() {

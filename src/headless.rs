@@ -101,6 +101,9 @@ impl Simulation {
             .add_plugins((SimulationPlugin, PresentationPlugin))
             .insert_resource(SeatInputs {
                 external: config.human_seats,
+                occupied: Some(
+                    Roster::default().active_seats_with_external(config.bots, config.human_seats),
+                ),
                 ..default()
             })
             .add_systems(Startup, setup);
@@ -133,6 +136,33 @@ impl Simulation {
             return Err("seat is not externally controlled");
         }
         inputs.intents[seat] = intent;
+        Ok(())
+    }
+
+    /// Change only the controller, never character identity, lifetime or buffs.
+    pub fn set_external(&mut self, seat: usize, external: bool) -> Result<(), &'static str> {
+        let world = self.app.world_mut();
+        {
+            let mut inputs = world.resource_mut::<SeatInputs>();
+            if !inputs
+                .occupied
+                .is_some_and(|a| a.get(seat).copied().unwrap_or(false))
+            {
+                return Err("inactive seat");
+            }
+            inputs.external[seat] = external;
+            inputs.intents[seat] = ControlIntent::default();
+            inputs.local_fire_pending[seat] = false;
+        }
+        for (mut p, mut rail) in world
+            .query::<(&mut Player, &mut crate::tracks::RailFollower)>()
+            .iter_mut(world)
+        {
+            if p.id == seat {
+                p.wants_to_fire = false;
+                rail.requested_turn = Vec3::ZERO;
+            }
+        }
         Ok(())
     }
 
@@ -218,6 +248,7 @@ impl Simulation {
         bodies.sort_by_key(|body| body.id);
         Frame {
             tick: snap.tick,
+            simulation_tick: snap.tick,
             ack: [0; 4],
             names: Default::default(),
             carts: snap.carts,
@@ -305,6 +336,47 @@ mod tests {
         );
     }
 
+    #[test]
+    fn control_switch_preserves_character_buffs_and_active_roster() {
+        let mut sim = Simulation::new(SimulationConfig {
+            human_seats: [true, true, false, false],
+            bots: 0,
+            ..Default::default()
+        })
+        .unwrap();
+        sim.app.world_mut().resource_mut::<Powerups>().buffs[0].speed = 5.;
+        let before = sim.snapshot();
+        sim.set_external(0, false).unwrap();
+        assert_eq!(
+            sim.snapshot(),
+            before,
+            "role switch must not respawn or advance clocks"
+        );
+        assert!(sim.submit(0, ControlIntent::default()).is_err());
+        sim.step();
+        let world = sim.app.world_mut();
+        assert!(
+            world
+                .query::<(&Player, &crate::tracks::RailFollower)>()
+                .iter(world)
+                .any(|(p, r)| p.id == 0 && r.requested_turn != Vec3::ZERO),
+            "real bot AI chooses a target turn"
+        );
+        sim.set_external(0, true).unwrap();
+        sim.submit(0, ControlIntent::default()).unwrap();
+        sim.app
+            .world_mut()
+            .run_system_once(crate::game::start_new_game)
+            .unwrap();
+        assert_eq!(
+            sim.snapshot()
+                .carts
+                .iter()
+                .map(|c| c.active)
+                .collect::<Vec<_>>(),
+            vec![true, true, false, false]
+        );
+    }
     #[test]
     fn automatic_round_restoration_reuses_external_seats_and_existing_gameplay_reset() {
         let mut simulation = Simulation::new(SimulationConfig {
