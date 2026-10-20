@@ -1,0 +1,17 @@
+file:///home/hermes/src/ryggattack-deployment/scripts/production-smoke.mjs:12
+ const urls=external?{ws:external,management:process.env.PRODUCTION_MANAGEMENT}:await new Promise((resolve,reject)=>{let text='';child.stdout.on('data',b=>{text+=b;const ws=text.match(/ws:\/\/0.0.0.0:(\d+)/),m=text.match(/management.*127.0.0.1:(\d+)/);if(ws&&m)resolve({ws:`ws://127.0.0.1:${ws[1]}/ws`,management:`http://127.0.0.1:${m[1]}`});});child.once('exit',code=>reject(Error(`production startup exited ${code}: ${log}`)));setTimeout(()=>reject(Error(`production startup timeout: ${log}`)),10000).unref();});
+                                                                                                                                                                                                                                                                                                                                                                                        ^
+
+Error: production startup exited 101: 
+thread 'main' (946820) panicked at src/bin/ryggattack-server.rs:7:52:
+bind loopback development service: Custom { kind: Other, error: "development server must bind loopback" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+    at ChildProcess.<anonymous> (file:///home/hermes/src/ryggattack-deployment/scripts/production-smoke.mjs:12:377)
+    at Object.onceWrapper (node:events:634:26)
+    at ChildProcess.emit (node:events:519:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+
+Node.js v22.23.3
+
+TIMING phase5-production-red: 0.144 s; exit=1

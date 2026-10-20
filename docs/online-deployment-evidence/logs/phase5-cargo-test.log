@@ -1,0 +1,276 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 45s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-8f418b78cc4a5146)
+
+running 157 tests
+test combat::tests::a_missile_past_the_wall_blows_up_on_it ... ok
+test combat::tests::a_shot_travelling_with_the_target_is_a_rear_hit ... ok
+test batch::tests::normals_stay_unit_length_under_squash_and_rotation ... ok
+test batch::tests::copies_are_placed_and_indexed_after_each_other ... ok
+test combat::tests::fire_cooldown_is_exactly_half_a_second ... ok
+test combat::tests::frontal_and_side_hits_do_not_score ... ok
+test batch::tests::batches_split_by_material ... ok
+test combat::tests::held_fire_obeys_500ms_boundary_and_dead_carts_cannot_shoot ... ok
+test arena::tests::a_crater_is_in_frame_while_volcano_footprints_stay_outside_rails ... ok
+test explosions::tests::a_bounce_reverses_and_damps_the_fall_but_not_a_rise ... ok
+test combat::tests::rear_hit_hides_target_without_awarding_a_hit_point ... ok
+test explosions::tests::random_directions_are_unit_length ... ok
+test explosions::tests::stages_cover_the_whole_animation_without_running_past_the_last ... ok
+test explosions::tests::the_chain_always_ends ... ok
+test combat::tests::simultaneous_rear_hits_eliminate_both_before_round_resolution ... ok
+test game::reset_tests::mouse_restart_clears_match_wins ... ok
+test game::tests::all_dead_is_a_draw_not_a_point ... ok
+test game::tests::first_to_target_stops_the_match ... ok
+test game::tests::last_standing_wins_exactly_once ... ok
+test game::tests::solo_practice_never_finishes ... ok
+test game::reset_tests::elimination_automatically_starts_next_round ... ok
+test game::reset_tests::next_round_restores_seating_and_preserves_wins ... ok
+test arena::tests::volcano_selection_builds_a_distinct_environment ... ok
+test headless::tests::explicit_step_advances_both_fixed_and_generic_game_clocks ... ok
+test match_settings::tests::bot_selector_includes_zero_and_caps_at_empty_seats ... ok
+test match_settings::tests::default_match_is_first_to_three_with_three_bots ... ok
+test net_client::resilience_tests::restored_welcome_clears_retry_command_notice ... ok
+test headless::tests::control_switch_preserves_character_buffs_and_active_roster ... ok
+test net_client::resilience_tests::retries_are_bounded_and_leave_disables_reconnect ... ok
+test net_client::resilience_tests::terminal_identity_mismatches_revoke_claim_close_transport_and_clear_notice ... ok
+test net_client::resilience_tests::stored_claim_is_private_scoped_and_validated ... ok
+test combat::tests::all_hits_buff_belongs_to_attacker_and_never_hits_self ... ok
+test online::tests::development_entry_requires_explicit_address_and_preserves_offline_default ... ok
+test online::tests::invalid_invite_is_visible_in_the_entry_ui_instead_of_exiting_before_hud ... ok
+test online::tests::lobby_keys_use_server_identity_and_explicit_commands ... ok
+test online::tests::menu_blur_and_form_focus_suppress_gameplay_without_pausing ... ok
+test headless::tests::volcano_uses_the_existing_themed_scenery_colliders ... ok
+test online::tests::native_code_entry_creates_a_validated_join_adapter_after_deliberate_leave ... ok
+test online::tests::socket_polling_waits_until_initial_presentations_have_yielded ... ok
+test players::roster::tests::a_fifth_source_cannot_join ... ok
+test players::roster::tests::a_source_cannot_hold_two_seats ... ok
+test players::roster::tests::disconnected_pads_lose_their_seat_but_keyboards_keep_theirs ... ok
+test players::roster::tests::empty_seats_are_bots ... ok
+test players::roster::tests::joining_fills_seats_in_order ... ok
+test players::roster::tests::leaving_frees_the_seat_for_the_next_joiner ... ok
+test players::roster::tests::selected_bots_fill_only_available_seats ... ok
+test players::tests::a_claimed_arrows_seat_stops_the_fallback ... ok
+test online::tests::native_room_switch_preserves_ground_and_removes_old_cart_roots ... ok
+test players::tests::a_lone_keyboard_player_can_use_either_scheme ... ok
+test players::tests::a_local_fire_tap_between_ticks_is_consumed_once_not_lost ... ok
+test players::tests::boosted_movement_is_twenty_five_percent_faster_for_humans_and_bots ... ok
+test players::tests::diagonals_are_normalized ... ok
+test players::tests::each_keyboard_seat_has_its_own_fire_key ... ok
+test players::tests::device_input_does_not_mutate_authoritative_cart_before_a_tick ... ok
+test players::tests::eliminated_carts_do_not_move ... ok
+test online::tests::lobby_boundary_removes_old_match_replicas_before_ids_can_restart ... ok
+test online::tests::client_only_renders_server_state_and_removes_destroyed_bodies ... ok
+test players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished ... ok
+test headless::tests::automatic_round_restoration_reuses_external_seats_and_existing_gameplay_reset ... ok
+test players::tests::shared_fixed_tick_rear_end_pushes_only_front_without_reversing ... ok
+test combat::tests::shared_headless_tick_resolves_rear_hit_before_match_scoring ... ok
+test players::tests::up_steers_towards_negative_z_on_every_scheme ... ok
+test players::tests::wasd_and_arrows_produce_the_same_direction ... ok
+test players::tests::shared_fixed_tick_reverses_two_colliding_live_carts ... ok
+test players::visuals::tests::a_cart_welds_into_one_mesh_per_material ... ok
+test powerups::tests::first_drop_at_thirty_seconds_then_random_five_to_twenty ... ok
+test powerups::tests::finished_round_and_pause_freeze_drops_and_buffs ... ok
+test powerups::tests::round_reset_keeps_random_sequence_instead_of_replaying_seed_one ... ok
+test powerups::tests::speed_is_non_stacking_refreshes_and_expires_while_buffs_coexist ... ok
+test powerups::tests::real_drop_spawns_on_rail_and_is_collected_once_by_live_cart ... ok
+test players::tests::shared_fixed_tick_rear_end_ignores_inactive_dead_and_cooling_carts ... ok
+test rooms::resilience_tests::disconnect_reserves_identity_cancels_countdown_and_elects_connected_host ... ok
+test rooms::resilience_tests::fresh_join_elects_host_after_last_human_deliberately_leaves ... ok
+test rooms::resilience_tests::fresh_join_elects_host_without_taking_reserved_identity_or_restoring_former_host ... ok
+test scenery::tests::no_blast_reaches_the_backdrop ... ok
+test powerups::tests::swept_pickup_has_one_stable_winner_and_ignores_dead_or_empty_seats ... ok
+test scenery::tests::props_inside_the_walls_keep_clear_of_the_rails ... ok
+test scenery::tests::only_low_growth_stands_between_the_camera_and_the_near_wall ... ok
+test scenery::tests::props_never_overlap ... ok
+test scenery::tests::the_same_map_grows_the_same_forest ... ok
+test server::tests::disconnect_pauses_exact_clocks_and_expires_at_wall_deadline ... ok
+test server::tests::expired_takeover_remains_active_across_rounds_but_releases_to_configured_lobby_bots ... ok
+test server::tests::injected_wall_clock_expires_idle_lobbies_and_retained_empty_rooms_without_ticks ... ok
+test scenery::tests::the_woods_beyond_the_walls_are_dense ... ok
+test scenery::tests::the_backdrop_is_most_of_the_forest_and_none_of_the_arena ... ok
+test server::tests::private_claim_rotates_supersedes_and_never_respawns ... ok
+test server::tests::raw_empty_continuation_flood_has_bounded_tick_work ... ok
+test server::tests::reclaim_before_boundary_keeps_eliminated_character_buffs_and_resumes_exactly_once ... ok
+test server::tests::long_match_completion_starts_a_fresh_lobby_idle_window ... ok
+test server::tests::reconnect_expiry_and_bot_controls_are_isolated_between_running_rooms ... ok
+test players::tests::shared_fixed_tick_diverging_junction_routes_remain_side_impacts ... ok
+test server::tests::silent_running_connection_times_out_and_reserves_its_seat ... ok
+test server::tests::victory_displays_then_returns_same_lobby_with_settings_and_cleared_readiness ... ok
+test server::tests::wire_progress_preserves_fragment_deadline_across_ping_and_buffered_messages ... ok
+test settings::tests::a_failed_step_up_is_taken_back_and_tried_less_often ... ok
+test settings::tests::a_hitch_is_not_a_slow_frame_rate ... ok
+test settings::tests::a_machine_too_slow_for_whole_windows_still_steps_down ... ok
+test settings::tests::a_pinned_level_never_moves ... ok
+test settings::tests::a_slow_frame_rate_steps_down_until_it_is_smooth ... ok
+test settings::tests::a_smooth_frame_rate_keeps_the_full_look ... ok
+test settings::tests::a_smooth_frame_rate_steps_back_up ... ok
+test settings::tests::every_step_up_the_ladder_only_adds_detail ... ok
+test settings::tests::invalid_frame_durations_do_not_corrupt_measurements ... ok
+test settings::tests::invisible_windows_do_not_drive_quality_decisions ... ok
+test settings::tests::lower_effects_never_draw_more ... ok
+test server::tests::shared_adapter_fresh_invitation_join_elects_host_in_retained_lobby ... ok
+test players::tests::shared_fixed_tick_rear_end_crosses_bends_and_route_seams_without_reversal ... ok
+test settings::tests::recurring_alternating_hitches_cannot_raise_quality ... ok
+test settings::tests::recurring_alternating_hitches_reduce_quality ... ok
+test settings::tests::refresh_targets_are_validated_and_capped_without_using_game_fps ... ok
+test settings::tests::the_default_is_the_full_look ... ok
+test settings::tests::the_level_is_read_from_the_address ... ok
+test settings::tests::the_scene_image_can_be_resized_without_a_gpu_copy ... ok
+test settings::tests::the_scene_is_drawn_at_the_chosen_fraction ... ok
+test settings::tests::the_start_up_seconds_do_not_count ... ok
+test simulation::tests::device_free_seat_survives_round_reset_with_no_local_devices ... ok
+test simulation::tests::external_intent_is_not_replaced_by_bot_ai ... ok
+test simulation::tests::fixed_gameplay_is_identical_at_four_and_sixty_four_render_frames_per_second ... ok
+test simulation::tests::local_pause_gates_the_shared_fixed_pipeline_before_movement_and_drops ... ok
+test simulation::tests::presentation_updates_cannot_move_authoritative_carts ... ok
+test tracks::map::tests::different_seeds_produce_different_maps ... ok
+test tracks::map::tests::distance_to_track_measures_to_the_nearest_rail ... ok
+test tracks::map::tests::generated_maps_are_connected_and_have_no_dead_ends ... ok
+test tracks::map::tests::random_floats_stay_in_range_and_repeat_for_a_seed ... ok
+test tracks::path::tests::a_requested_turn_is_taken_at_a_junction ... ok
+test tracks::path::tests::cart_motion_is_continuous_and_reversible_on_every_path ... ok
+test tracks::path::tests::carts_cannot_reverse_at_a_junction ... ok
+test tracks::path::tests::every_junction_route_joins_its_entrance_and_exit_smoothly ... ok
+test tracks::path::tests::movement_carries_remaining_distance_across_multiple_paths ... ok
+test tracks::path::tests::reversing_a_cart_preserves_position_and_flips_its_route ... ok
+test tracks::path::tests::turn_is_chosen_at_junction_entry_and_kept_until_exit ... ok
+test tracks::render::tests::curves_join_straight_tracks_tangentially_in_every_orientation ... ok
+test ui::lobby::tests::a_held_direction_only_fires_once ... ok
+test ui::lobby::tests::down_reports_a_leave_edge ... ok
+test ui::lobby::tests::lobby_exposes_all_match_settings ... ok
+test ui::lobby::tests::setting_labels_follow_selected_values ... ok
+test ui::lobby::tests::unplugged_devices_are_forgotten ... ok
+test ui::lobby::tests::unused_seat_is_labelled_empty_when_bots_are_zero ... ok
+test ui::nav::tests::a_held_stick_steps_once ... ok
+test ui::nav::tests::a_stick_only_counts_past_the_threshold ... ok
+test ui::nav::tests::each_axis_steps_towards_the_last_button ... ok
+test ui::nav::tests::opposite_directions_cancel_out ... ok
+test ui::nav::tests::start_confirms_like_the_south_button ... ok
+test ui::nav::tests::the_two_axes_latch_independently ... ok
+test ui::nav::tests::unplugged_pads_are_forgotten ... ok
+test ui::tests::arena_button_toggles_forest_and_volcano ... ok
+test ui::tests::bot_button_works_with_mouse_keyboard_and_gamepad ... ok
+test ui::tests::hud_shows_coexisting_buffs_and_hides_expired_effects ... ok
+test ui::tests::hud_shows_round_wins_instead_of_a_timer ... ok
+test ui::tests::hud_status_text_is_ascii_in_every_round_state ... ok
+test ui::tests::match_over_exposes_a_mouse_restart_control ... ok
+test ui::tests::target_button_cycles_first_to_one_three_five_seven ... ok
+test settings::tests::native_low_refresh_keeps_full_quality_and_recovers_saved_low_quality ... ok
+test settings::tests::missing_or_implausible_monitor_rates_do_not_excuse_slow_rendering ... ok
+test server::tests::real_adapter_sees_injected_empty_room_expiry_without_waiting_sixty_seconds ... ok
+test players::tests::shared_fixed_tick_rear_end_on_bends_and_overlaps_has_one_bounded_push ... ok
+test server::tests::shared_adapter_automatically_reconnects_same_seat_with_neutral_sequence ... ok
+
+test result: ok. 157 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.16s
+
+     Running unittests src/main.rs (target/debug/deps/ryggattack-856d2162b74b560c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/ryggattack-headless.rs (target/debug/deps/ryggattack_headless-be1b2270885b4ebf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/ryggattack-net-probe.rs (target/debug/deps/ryggattack_net_probe-d50fd8a620daf111)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/ryggattack-server.rs (target/debug/deps/ryggattack_server-0ae7f95c129b5599)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/net_client.rs (target/debug/deps/net_client-d34bdde4a3d4f09d)
+
+running 4 tests
+test room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay ... ok
+test malicious_backend_topologies_fail_before_renderer ... ok
+test malicious_backend_states_are_rejected_and_cart_order_is_canonical ... ok
+test malformed_lobbies_and_identity_mismatches_never_reach_presentation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.02s
+
+     Running tests/network.rs (target/debug/deps/network-4d951342f06fcaee)
+
+running 4 tests
+test credentials_never_appear_in_debug_diagnostics ... ok
+test reconnect_requires_private_bounded_credential_and_current_version ... ok
+test protocol_rejects_unknown_fields_nonfinite_axes_and_versions ... ok
+test replication_includes_explicit_map_and_stable_visual_ids_and_powerup_positions ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/resilience_server.rs (target/debug/deps/resilience_server-b03094c683cbefc7)
+
+running 1 test
+test real_sockets_reconnect_rotate_reject_cross_room_and_supersede_old_input_and_leave ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running tests/room_completion_fixture.rs (target/debug/deps/room_completion_fixture-cb2ed95770956799)
+
+running 1 test
+test first_to_one_seed_three_reaches_real_victory_under_sampled_inputs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.81s
+
+     Running tests/rooms.rs (target/debug/deps/rooms-b8e46f300c1b7433)
+
+running 3 tests
+test private_lobby_replaces_bots_without_using_names_as_identity ... ok
+test readiness_countdown_resets_and_match_locks_roster_until_same_lobby_returns ... ok
+test solo_zero_bots_stays_offline_practice ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rooms_protocol.rs (target/debug/deps/rooms_protocol-e433b2306bce25d1)
+
+running 1 test
+test room_join_is_versioned_and_bounded ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rooms_server.rs (target/debug/deps/rooms_server-42d4e7d5868f475c)
+
+running 1 test
+test actual_rooms_isolate_ids_rosters_permissions_countdown_and_running_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+     Running tests/server.rs (target/debug/deps/server-69022ba15fac78a1)
+
+running 5 tests
+test service_refuses_unprotected_non_loopback_binding ... ok
+test upgrade_allows_only_exact_development_origins_and_native_no_origin ... ok
+test admitted_fragment_trickle_is_disconnected_while_healthy_ticks_advance ... ok
+test fragmented_hello_trickle_expires_absolute_admission_deadline ... ok
+test real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnected_seat ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.94s
+
+     Running tests/shared_simulation.rs (target/debug/deps/shared_simulation-85173501e75cf7f3)
+
+running 5 tests
+test rejects_unsupported_match_configuration_before_startup ... ok
+test bot_count_is_capped_by_external_humans_not_added_on_top ... ok
+test rejects_invalid_or_uncontrolled_input_without_changing_state ... ok
+test held_intent_obeys_half_second_cooldown_on_exact_ticks ... ok
+test seed_replays_pickup_randomness_after_the_first_thirty_seconds ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+   Doc-tests ryggattack
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+TIMING phase5-cargo-test: 138.726 s; exit=0

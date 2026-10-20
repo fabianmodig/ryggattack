@@ -1,0 +1,28 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+warning: direct cast of function item into an integer
+ --> src/bin/ryggattack-server.rs:8:45
+  |
+8 |         if libc::signal(libc::SIGTERM, stop as libc::sighandler_t) == libc::SIG_ERR
+  |                                             ^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(function_casts_as_integer)]` on by default
+help: first cast to a pointer `as *const ()`
+  |
+8 |         if libc::signal(libc::SIGTERM, stop as *const () as libc::sighandler_t) == libc::SIG_ERR
+  |                                             ++++++++++++
+
+warning: direct cast of function item into an integer
+ --> src/bin/ryggattack-server.rs:9:48
+  |
+9 |             || libc::signal(libc::SIGINT, stop as libc::sighandler_t) == libc::SIG_ERR {
+  |                                                ^^^^^^^^^^^^^^^^^^^^^
+  |
+help: first cast to a pointer `as *const ()`
+  |
+9 |             || libc::signal(libc::SIGINT, stop as *const () as libc::sighandler_t) == libc::SIG_ERR {
+  |                                                ++++++++++++
+
+warning: `ryggattack` (bin "ryggattack-server") generated 2 warnings (run `cargo fix --bin "ryggattack-server" -p ryggattack` to apply 2 suggestions)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 29.81s
+
+TIMING phase5-server-build: 29.913 s; exit=0

@@ -1,0 +1,13 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.31s
+     Running tests/net_client.rs (target/debug/deps/net_client-d34bdde4a3d4f09d)
+
+running 4 tests
+test room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay ... ok
+test malicious_backend_topologies_fail_before_renderer ... ok
+test malicious_backend_states_are_rejected_and_cart_order_is_canonical ... ok
+test malformed_lobbies_and_identity_mismatches_never_reach_presentation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.01s
+
+
+TIMING phase5-recovery-test-9: 4.438 s; exit=0

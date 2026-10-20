@@ -1,0 +1,14 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.30s
+     Running tests/server.rs (target/debug/deps/server-69022ba15fac78a1)
+
+running 5 tests
+test service_refuses_unprotected_non_loopback_binding ... ok
+test upgrade_allows_only_exact_development_origins_and_native_no_origin ... ok
+test admitted_fragment_trickle_is_disconnected_while_healthy_ticks_advance ... ok
+test fragmented_hello_trickle_expires_absolute_admission_deadline ... ok
+test real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnected_seat ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.99s
+
+
+TIMING phase5-recovery-test-13: 22.396 s; exit=0

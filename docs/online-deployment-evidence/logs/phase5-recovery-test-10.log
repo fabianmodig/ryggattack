@@ -1,0 +1,11 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.31s
+     Running tests/management.rs (target/debug/deps/management-e080e7ab410b6df4)
+
+running 2 tests
+test metrics_are_aggregate_only_and_unknown_routes_are_not_probes ... ok
+test readiness_fails_before_first_tick_after_stall_and_during_shutdown ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+TIMING phase5-recovery-test-10: 0.480 s; exit=0

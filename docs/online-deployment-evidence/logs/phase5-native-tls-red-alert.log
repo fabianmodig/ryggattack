@@ -1,0 +1,18 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: native TLS must send a certificate-rejection alert, got []
+    at file:///home/hermes/src/ryggattack-deployment/scripts/native-tls.test.mjs:16:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.3
+
+TIMING phase5-native-tls-red-alert: 2.202 s; exit=1

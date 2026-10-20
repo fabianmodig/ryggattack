@@ -1,0 +1,14 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.34s
+     Running tests/shared_simulation.rs (target/debug/deps/shared_simulation-85173501e75cf7f3)
+
+running 5 tests
+test rejects_unsupported_match_configuration_before_startup ... ok
+test bot_count_is_capped_by_external_humans_not_added_on_top ... ok
+test rejects_invalid_or_uncontrolled_input_without_changing_state ... ok
+test held_intent_obeys_half_second_cooldown_on_exact_ticks ... ok
+test seed_replays_pickup_randomness_after_the_first_thirty_seconds ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+
+TIMING phase5-recovery-test-14: 1.112 s; exit=0

@@ -1,0 +1,3 @@
+Native shared adapter supports WSS and fails closed on an untrusted local TLS certificate
+
+TIMING phase5-verified-native-tls: 2.108 s; exit=0

@@ -1,0 +1,21 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 21.23s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-8f418b78cc4a5146)
+
+running 1 test
+
+thread 'server::tests::silent_running_connection_times_out_and_reserves_its_seat' (949817) panicked at src/server.rs:1336:9:
+silent active socket must expire
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test server::tests::silent_running_connection_times_out_and_reserves_its_seat ... FAILED
+
+failures:
+
+failures:
+    server::tests::silent_running_connection_times_out_and_reserves_its_seat
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 156 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING phase5-idle-red: 21.364 s; exit=101

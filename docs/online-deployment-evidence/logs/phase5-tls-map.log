@@ -1,0 +1,7 @@
+{
+  url: 'https://ryggattack.modig.online/',
+  text: 'local mapping fixture',
+  mapped_port: 43099
+}
+
+TIMING phase5-tls-map: 0.973 s; exit=0

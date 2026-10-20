@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 5.41s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-8f418b78cc4a5146)
+
+running 1 test
+test server::tests::silent_running_connection_times_out_and_reserves_its_seat ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 156 filtered out; finished in 0.01s
+
+
+TIMING phase5-idle-green: 5.473 s; exit=0

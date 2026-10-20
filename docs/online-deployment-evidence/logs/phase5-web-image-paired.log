@@ -1,0 +1,38 @@
+STEP 1/12: FROM nginx:1.30-alpine
+STEP 2/12: LABEL org.opencontainers.image.title="Ryggattack (web)"       org.opencontainers.image.description="The Ryggattack WebAssembly build, served by nginx"
+--> Using cache d634153a30ddfd8b66da4b5ef2a86152a46863b6b28c1ff2251a65622cc76ea5
+--> d634153a30dd
+STEP 3/12: RUN nginx -V 2>&1 | grep -q -- --with-http_gzip_static_module
+--> Using cache 8d7f9484ba089af89702043ab301343a203dbbe8e63b58d04701d03565e0c1ce
+--> 8d7f9484ba08
+STEP 4/12: COPY --chmod=0644 web/nginx-main.conf /etc/nginx/nginx.conf
+--> Using cache dac9fbd68007d5232e037c01a35c23a37c589a10759c21b38153247dcaf81908
+--> dac9fbd68007
+STEP 5/12: COPY --chmod=0644 web/nginx.conf /etc/nginx/conf.d/default.conf
+--> Using cache 62dcb513af19d0e253a413446845f98740878871917b99b9e6301997c153b6e5
+--> 62dcb513af19
+STEP 6/12: COPY dist/web /usr/share/nginx/html
+--> Using cache b73a3cfae3f2b40b07fe54840d826024f65c079328e3e92fc9c4fa525d338354
+--> b73a3cfae3f2
+STEP 7/12: RUN chmod -R a+rX /usr/share/nginx/html     && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz     && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz     && nginx -t     && rm -f /tmp/nginx.pid
+--> Using cache 24a8a5be5d82d33b2422585e5fc318ba690a3c0d4edb793a7422f4544bfa094c
+--> 24a8a5be5d82
+STEP 8/12: USER 101:101
+--> Using cache 9eae0de78bab621b42de97c9d262cfb94e4d28b83b48e6ad672d53cb4b8751ff
+--> 9eae0de78bab
+STEP 9/12: ENTRYPOINT ["nginx"]
+--> Using cache 38320d70d1d903901e0d44172f83e32da72c49cbbd887204a948a7803ad01438
+--> 38320d70d1d9
+STEP 10/12: CMD ["-g", "daemon off;"]
+--> Using cache 389486fb0576463529a2cd6f7d446b661b8440926b844cb08d714399effb18c3
+--> 389486fb0576
+STEP 11/12: EXPOSE 8080
+--> Using cache 31bbd743b8ccd5c3a69ccc6dbdcbe9666cc0781a988afcc44d95904bca64e8dc
+--> 31bbd743b8cc
+STEP 12/12: LABEL "org.opencontainers.image.revision"="7ce74a3da89eff726e81a2417b271726b7add98a" "org.opencontainers.image.version"="sha-7ce74a3" "org.opencontainers.image.source"="https://git.modig.online/fabianmodig/ryggattack"
+COMMIT git.modig.online/fabianmodig/ryggattack/web:sha-7ce74a3
+--> 2ad188584f1a
+Successfully tagged git.modig.online/fabianmodig/ryggattack/web:sha-7ce74a3
+2ad188584f1ab181c25686aabf2468d330ca772aed6028a4bdcb40c7d98eed5e
+
+TIMING phase5-web-image-paired: 0.697 s; exit=0

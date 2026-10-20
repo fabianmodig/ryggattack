@@ -1,0 +1,18 @@
+TAP version 13
+# Subtest: status waits tolerate only unpublished initialization and require the actual expected status
+ok 1 - status waits tolerate only unpublished initialization and require the actual expected status
+  ---
+  duration_ms: 1.58181
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86.774178
+
+TIMING phase5-source-harness: 0.140 s; exit=0

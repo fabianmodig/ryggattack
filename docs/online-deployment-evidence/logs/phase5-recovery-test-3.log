@@ -1,0 +1,9 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.32s
+     Running unittests src/bin/ryggattack-net-probe.rs (target/debug/deps/ryggattack_net_probe-d50fd8a620daf111)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+TIMING phase5-recovery-test-3: 0.439 s; exit=0

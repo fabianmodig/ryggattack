@@ -1,0 +1,10 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.32s
+     Running tests/resilience_server.rs (target/debug/deps/resilience_server-b03094c683cbefc7)
+
+running 1 test
+test real_sockets_reconnect_rotate_reject_cross_room_and_supersede_old_input_and_leave ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.70s
+
+
+TIMING phase5-recovery-test-8: 1.133 s; exit=0
