@@ -19,13 +19,18 @@ LABEL org.opencontainers.image.title="Ryggattack (web)" \
 # that serves the pre-compressed bundle.
 RUN nginx -V 2>&1 | grep -q -- --with-http_gzip_static_module
 
-COPY web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chmod=0644 web/nginx-main.conf /etc/nginx/nginx.conf
+COPY --chmod=0644 web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY dist/web /usr/share/nginx/html
 
 # Roughly 50 MB of WebAssembly gzips to 15 MB. Doing it once at build time
 # beats doing it on every download. `gzip -k` is not in busybox, hence `-c`.
-RUN gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz \
+RUN chmod -R a+rX /usr/share/nginx/html \
+    && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz \
     && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz \
     && nginx -t
 
+USER 101:101
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]
 EXPOSE 8080

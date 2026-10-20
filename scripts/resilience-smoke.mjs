@@ -189,7 +189,7 @@ try{
  assert.equal(evidence.errors.length,0,JSON.stringify(evidence.errors));
 }catch(e){evidence.failure=String(e.stack??e);evidence.failure_clients=[];for(const c of clients)if(c.page)try{evidence.failure_clients.push({name:c.name,input_tail:c.inputs.slice(-12),handshakes:c.handshakes,dom:await c.page.evaluate(()=>({active:document.activeElement?.id,focused:document.hasFocus(),state:globalThis.ryggattackRoom,presented:globalThis.ryggattackOnline}))});await c.page.screenshot({path:path.join(out,c.name+'-failure.png'),timeout:30000});}catch{}throw e;
 }finally{
- evidence.server_log=serverLog;evidence.server_overruns=serverLog.split('tick overrun').length-1;
+ evidence.server_log=serverLog;evidence.server_overruns=serverLog.split('tick_overrun').length-1;
  evidence.clients=clients.map(c=>({name:c.name,welcomes:c.welcomes,latest_lobby:c.lobby,latest_frame:c.last,frames:c.frames.length,inputs:c.inputs.length}));
  const text=JSON.stringify(evidence,null,2);assert([...secrets].every(t=>!text.includes(t)),'credential leaked into evidence');
  evidence.credential_negative_scan=true;fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));

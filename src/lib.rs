@@ -18,6 +18,8 @@ mod scene;
 mod scenery;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod server;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod management;
 mod settings;
 mod simulation;
 mod tracks;

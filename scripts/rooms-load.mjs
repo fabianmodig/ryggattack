@@ -30,14 +30,14 @@ try {
    await until(()=>error,'room capacity rejection');assert(error.includes('capacity'));extra.close();
   }
   // Measure only a steady window after admission/simulation construction.
-  await sleep(1000);const starts=clients.map(c=>c.last),before=log.split('tick overrun').length-1;
+  await sleep(1000);const starts=clients.map(c=>c.last),before=log.split('tick_overrun').length-1;
   const cpu=fs.readFileSync(`/proc/${server.pid}/stat`,'utf8').split(' ');
   const begin=performance.now();await sleep(20000);const elapsed=(performance.now()-begin)/1000;
   const cpuEnd=fs.readFileSync(`/proc/${server.pid}/stat`,'utf8').split(' ');
   const hz=clients.map((c,i)=>(c.last.tick-starts[i].tick)/((c.last.at-starts[i].at)/1000));
   assert(clients.every(c=>c.ws.readyState===WebSocket.OPEN),'load sockets remain admitted');
   assert(hz.every(v=>Number.isFinite(v)&&v>0),'all room clocks advance');
-  results.push({rooms:count,humans:count,bots:count*3,wall_seconds:elapsed,observed_hz:hz,minimum_hz:Math.min(...hz),minimum_simulated_to_wall_ratio:Math.min(...hz)/64,overruns_during_window:log.split('tick overrun').length-1-before,cpu_ticks:Number(cpuEnd[13])+Number(cpuEnd[14])-Number(cpu[13])-Number(cpu[14])});
+  results.push({rooms:count,humans:count,bots:count*3,wall_seconds:elapsed,observed_hz:hz,minimum_hz:Math.min(...hz),minimum_simulated_to_wall_ratio:Math.min(...hz)/64,overruns_during_window:log.split('tick_overrun').length-1-before,cpu_ticks:Number(cpuEnd[13])+Number(cpuEnd[14])-Number(cpu[13])-Number(cpu[14])});
  }
  console.log(JSON.stringify({results,server_log:log},null,2));
  fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify({results,server_log:log},null,2));

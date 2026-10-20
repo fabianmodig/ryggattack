@@ -331,7 +331,7 @@ try {
   throw error;
 } finally {
   evidence.server_log=serverLog;
-  evidence.server_overruns=(serverLog.match(/tick overrun/g)||[]).length;
+  evidence.server_overruns=(serverLog.match(/tick_overrun/g)||[]).length;
   for(const c of clients){const sorted=c.rtts.sort((a,b)=>a-b);const hz=c.last_observed&&c.first_observed?(c.last_observed.tick-c.first_observed.tick)/((c.last_observed.at_ms-c.first_observed.at_ms)/1000):null;evidence.clients.push({name:c.name,events:c.events,seat:c.seat,frames:c.frames,first_observed:c.first_observed,last_observed:c.last_observed,observed_server_hz:hz,simulated_to_wall_ratio:hz/64,projectile_observations:c.shots,explosion_observations:c.explosions,eliminated_frames:c.eliminated,round_finished_frames:c.rounds,moved:c.moved,turns:c.turns,input_count:c.inputs.length,wire_ack_rtt_median_ms:sorted[Math.floor(sorted.length/2)],wire_ack_rtt_p95_ms:sorted[Math.floor(sorted.length*.95)],last_tick:c.last?.tick,wins:c.last?.wins});}
   assert([...secrets].every(t=>!JSON.stringify(evidence).includes(t)),'private credential leaked into runtime evidence');
   evidence.credential_negative_scan=true;
