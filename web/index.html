@@ -52,20 +52,36 @@
   <body>
     <div id="game"><canvas id="ryggattack-canvas" tabindex="0"></canvas></div>
     <div id="status">Loading Ryggattack…</div>
-    <details id="online-entry" style="position:absolute;right:12px;bottom:12px;padding:10px;background:#17212e;z-index:5">
-      <summary>Online development match</summary>
+    <details id="online-entry" style="position:absolute;right:12px;bottom:12px;padding:10px;background:#17212e;z-index:5;max-height:85vh;overflow:auto;max-width:90vw;font-size:13px">
+      <summary>Private online rooms</summary>
       <form method="get" style="display:grid;gap:8px;padding-top:8px">
-        <label>Backend <input name="online" value="ws://127.0.0.1:8787" required aria-label="Backend address"></label>
-        <label>Name <input name="name" value="Player" maxlength="24" required aria-label="Player name"></label>
-        <button type="submit">Connect (reloads game)</button>
-        <small>Local development only. No rooms or reconnect yet.</small>
+        <label>Backend <input id="backend" name="online" value="ws://127.0.0.1:8787" required aria-label="Backend address"></label>
+        <label>Name <input id="player-name" name="name" value="Player" maxlength="24" required aria-label="Player name"></label>
+        <label>Room code <input id="room-code" name="room" maxlength="20" pattern="[a-f0-9]{20}" aria-label="Room code"></label>
+        <button id="create-room" type="submit">Create private room</button>
+        <button id="join-room" type="submit">Join room</button>
+        <small>Loopback development backend. No reconnect reservations yet.</small>
         <a href="?">Offline / leave online</a>
       </form>
+      <section id="room-controls" hidden>
+        <pre id="room-info" style="white-space:pre-wrap"></pre>
+        <label>Share link <input id="share-room" readonly aria-label="Share link"></label><button id="copy-room">Copy link</button>
+        <div id="room-settings">
+          <label>Arena <select id="arena-room" aria-label="Room arena"><option>Forest</option><option>Volcano</option></select></label>
+          <label>First to <select id="target-room" aria-label="Win target"><option>1</option><option selected>3</option><option>5</option><option>7</option></select></label>
+          <label>Bots <input id="bots-room" type="number" min="0" max="3" value="3" aria-label="Bot count"></label>
+          <button id="apply-room">Apply host settings</button>
+        </div>
+        <button id="ready-room">Ready</button><button id="leave-room">Leave room</button>
+      </section>
+      <p id="room-notice" role="status"></p>
     </details>
 
     <script type="module">
       import init from "./ryggattack.js";
       import { calibrateRefreshRate } from "./refresh-rate.mjs";
+      import { installRoomControls } from "./rooms.mjs";
+      installRoomControls();
 
       const status = document.getElementById("status");
       const canvas = document.getElementById("ryggattack-canvas");

@@ -49,9 +49,113 @@ fn welcome(edges: Vec<(usize, usize)>) -> ServerMessage {
     ServerMessage::Welcome {
         version: VERSION,
         seat: 0,
+        room: 1,
+        participant: 1,
         edges,
     }
 }
+#[test]
+fn room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay() {
+    let lobby = ryggattack::rooms::Lobby::new(7, "0123456789abcdef0123".into(), 9, "Ada".into());
+    let client = backend(vec![
+        ServerMessage::Welcome {
+            version: VERSION,
+            seat: 0,
+            room: 7,
+            participant: 9,
+            edges: grid(),
+        },
+        ServerMessage::Lobby(lobby),
+    ]);
+    assert_eq!(client.participant, Some(9));
+    assert_eq!(client.lobby.as_ref().unwrap().id, 7);
+    assert!(client.frame.is_none());
+}
+#[test]
+fn malformed_lobbies_and_identity_mismatches_never_reach_presentation() {
+    use ryggattack::rooms::{Human, Lobby, Phase};
+    let good = Lobby::new(1, "0123456789abcdef0123".into(), 1, "Ada".into());
+    type Mutation = (&'static str, Box<dyn Fn(&mut Lobby)>);
+    let cases: Vec<Mutation> = vec![
+        ("wrong room", Box::new(|l| l.id = 2)),
+        (
+            "wrong local participant",
+            Box::new(|l| {
+                l.host = 2;
+                l.humans[0].id = 2;
+            }),
+        ),
+        ("wrong local seat", Box::new(|l| l.humans[0].seat = 1)),
+        ("invalid code", Box::new(|l| l.code = "not-a-code".into())),
+        ("empty roster", Box::new(|l| l.humans.clear())),
+        ("missing host", Box::new(|l| l.host = 99)),
+        (
+            "duplicate identity",
+            Box::new(|l| {
+                l.settings.bots = 0;
+                let mut h = l.humans[0].clone();
+                h.seat = 1;
+                l.humans.push(h);
+            }),
+        ),
+        (
+            "duplicate seat",
+            Box::new(|l| {
+                l.settings.bots = 0;
+                let mut h = l.humans[0].clone();
+                h.id = 2;
+                l.humans.push(h);
+            }),
+        ),
+        ("out-of-range seat", Box::new(|l| l.humans[0].seat = 4)),
+        ("invalid name", Box::new(|l| l.humans[0].name = "\n".into())),
+        (
+            "over capacity",
+            Box::new(|l| {
+                l.settings.bots = 0;
+                for i in 1..5 {
+                    l.humans.push(Human {
+                        id: i + 1,
+                        name: "guest".into(),
+                        seat: i as usize,
+                        ready: false,
+                    });
+                }
+            }),
+        ),
+        ("invalid settings", Box::new(|l| l.settings.wins_target = 0)),
+        (
+            "countdown zero",
+            Box::new(|l| {
+                l.humans[0].ready = true;
+                l.phase = Phase::Countdown { ticks_left: 0 };
+            }),
+        ),
+        (
+            "countdown too long",
+            Box::new(|l| {
+                l.humans[0].ready = true;
+                l.phase = Phase::Countdown { ticks_left: 129 };
+            }),
+        ),
+        (
+            "unready countdown",
+            Box::new(|l| l.phase = Phase::Countdown { ticks_left: 128 }),
+        ),
+    ];
+    for (name, mutate) in cases {
+        let mut lobby = good.clone();
+        mutate(&mut lobby);
+        let client = backend(vec![welcome(grid()), ServerMessage::Lobby(lobby)]);
+        assert_eq!(client.status, "Invalid server protocol", "accepted {name}");
+        assert!(
+            client.lobby.is_none(),
+            "invalid lobby reached presentation: {name}"
+        );
+        assert!(client.frame.is_none());
+    }
+}
+
 #[test]
 fn malicious_backend_states_are_rejected_and_cart_order_is_canonical() {
     let mut sim =

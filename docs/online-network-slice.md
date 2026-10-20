@@ -1,5 +1,10 @@
 # Issue #6, phase 2: authoritative networking vertical slice
 
+**Historical phase-2 design/evidence.** Current room behavior and commands are
+in [phase 3](online-rooms.md); protocol v1 and continuous public-seat joining
+below are not the current implementation. Original evidence folders remain
+historical rather than being relabeled for the new source.
+
 This is a **loopback-only development match**, not the private-room release.
 The room/lobby/reconnect/deployment acceptance criteria in issue #6 remain open.
 No infrastructure, CI publication, or deployed service is changed here.

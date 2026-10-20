@@ -1,5 +1,5 @@
-//! Localhost-only development service: one continuously running four-seat match.
-//! No public auth, rooms, reconnect, deployment, or asset-free server claim.
+//! Loopback-only private-room service over the existing authoritative simulation.
+//! No public auth, reconnect, deployment, or asset-free server claim.
 use crate::{
     headless::{Simulation, SimulationConfig, TICK_DURATION},
     input::ControlIntent,
@@ -160,10 +160,17 @@ impl Write for Transport {
 }
 struct Peer {
     socket: WebSocket<Transport>,
-    name: String,
+    participant: u64,
     sequence: u64,
     last_input: Instant,
     budget: usize,
+}
+struct Room {
+    lobby: crate::rooms::Lobby,
+    peers: [Option<Peer>; 4],
+    simulation: Option<Simulation>,
+    victory_ticks: u32,
+    idle_ticks: u64,
 }
 pub struct Server {
     origins: Arc<Vec<String>>,
@@ -171,10 +178,9 @@ pub struct Server {
     pending: Arc<AtomicUsize>,
     tx: mpsc::SyncSender<(WebSocket<Transport>, String)>,
     rx: Receiver<(WebSocket<Transport>, String)>,
-    peers: [Option<Peer>; 4],
-    simulation: Simulation,
+    rooms: Vec<Room>,
+    next_id: u64,
     ticks: u64,
-    victory_ticks: u32,
 }
 impl Server {
     pub fn bind(address: &str) -> std::io::Result<Self> {
@@ -220,15 +226,9 @@ impl Server {
             pending: Arc::new(AtomicUsize::new(0)),
             tx,
             rx,
-            peers: Default::default(),
-            simulation: Simulation::new(SimulationConfig {
-                human_seats: [true; 4],
-                bots: 0,
-                ..Default::default()
-            })
-            .unwrap(),
+            rooms: Vec::new(),
+            next_id: 1,
             ticks: 0,
-            victory_ticks: 0,
         })
     }
     pub fn local_addr(&self) -> SocketAddr {
@@ -335,41 +335,100 @@ impl Server {
             });
         }
         while let Ok((mut socket, text)) = self.rx.try_recv() {
-            let Ok(ClientMessage::Hello { name, .. }) = decode_client(&text) else {
+            let Ok(ClientMessage::Hello { name, room, .. }) = decode_client(&text) else {
                 continue;
             };
-            if let Some(seat) = self.peers.iter().position(Option::is_none) {
-                let welcome = ServerMessage::Welcome {
-                    version: VERSION,
-                    seat,
-                    edges: self.simulation.network_edges(),
-                };
-                if socket
-                    .send(Message::text(serde_json::to_string(&welcome).unwrap()))
-                    .is_ok()
-                {
-                    self.peers[seat] = Some(Peer {
-                        socket,
-                        name,
-                        sequence: 0,
-                        last_input: Instant::now(),
-                        budget: 0,
-                    });
-                }
+            self.next_id += 1;
+            let participant = self.next_id;
+            let admission = if let Some(code) = room {
+                self.rooms
+                    .iter()
+                    .position(|r| r.lobby.code == code)
+                    .ok_or("room not found")
+                    .and_then(|index| {
+                        self.rooms[index]
+                            .lobby
+                            .join(participant, name.clone())
+                            .map(|seat| (index, seat))
+                    })
+            } else if self.rooms.len() >= 16 {
+                Err("room capacity reached; try later")
             } else {
-                let _ = socket.send(Message::text(
-                    serde_json::to_string(&ServerMessage::Error("development match full".into()))
-                        .unwrap(),
-                ));
+                // 80 bits of OS randomness: room codes grant entry, not identity.
+                let mut bytes = [0u8; 10];
+                std::fs::File::open("/dev/urandom")
+                    .and_then(|mut f| f.read_exact(&mut bytes))
+                    .expect("OS random source");
+                let code = bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
+                self.next_id += 1;
+                self.rooms.push(Room {
+                    lobby: crate::rooms::Lobby::new(self.next_id, code, participant, name),
+                    peers: Default::default(),
+                    simulation: None,
+                    victory_ticks: 0,
+                    idle_ticks: 0,
+                });
+                Ok((self.rooms.len() - 1, 0))
+            };
+            match admission {
+                Ok((index, seat)) => {
+                    let room = &mut self.rooms[index];
+                    // Topology is fixed for a room across matches; generated only when starting.
+                    let welcome = ServerMessage::Welcome {
+                        version: VERSION,
+                        seat,
+                        room: room.lobby.id,
+                        participant,
+                        edges: crate::tracks::RailMap::from_seed(room.lobby.id).edges,
+                    };
+                    if send(&mut socket, &welcome) {
+                        room.peers[seat] = Some(Peer {
+                            socket,
+                            participant,
+                            sequence: 0,
+                            last_input: Instant::now(),
+                            budget: 0,
+                        });
+                        room.idle_ticks = 0;
+                    } else {
+                        room.lobby.leave(participant);
+                    }
+                }
+                Err(error) => {
+                    send(&mut socket, &ServerMessage::Error(error.into()));
+                }
             }
         }
+        self.ticks += 1;
+        for room in &mut self.rooms {
+            room.tick(self.ticks);
+        }
+        self.rooms
+            .retain(|r| !r.lobby.humans.is_empty() && r.idle_ticks < 30 * 60 * 64);
+    }
+}
+fn send(socket: &mut WebSocket<Transport>, message: &ServerMessage) -> bool {
+    let text = serde_json::to_string(message).unwrap();
+    assert!(text.len() <= MAX_STATE_BYTES, "replication budget exceeded");
+    socket.send(Message::text(text)).is_ok()
+}
+impl Room {
+    fn remove(&mut self, seat: usize) {
+        if let Some(peer) = self.peers[seat].take() {
+            self.lobby.leave(peer.participant);
+            if let Some(sim) = &mut self.simulation {
+                let _ = sim.submit(seat, ControlIntent::default());
+            }
+        }
+    }
+    fn tick(&mut self, tick: u64) {
+        use crate::rooms::Phase;
+        self.idle_ticks += 1;
         for seat in 0..4 {
             let mut remove = false;
             if let Some(peer) = self.peers[seat].as_mut() {
                 peer.budget = 0;
-                // Also bound work *inside* read(): empty non-FIN fragments never
-                // reach the completed-message budget. At most 1KiB new wire bytes
-                // and four nonblocking reads per peer/tick, plus a 1KiB buffer.
+                // Keep byte/read quotas BELOW tungstenite, including empty fragments.
                 peer.socket.get_mut().quota = Some((MAX_INPUT_BYTES, 4));
                 loop {
                     if peer
@@ -385,38 +444,58 @@ impl Server {
                     match peer.socket.read() {
                         Ok(Message::Text(text)) => {
                             peer.budget += 1;
-                            let result = decode_client(&text);
-                            if peer.budget > 8 || !matches!(result, Ok(ClientMessage::Input { .. }))
-                            {
-                                let _ = peer.socket.send(Message::text(
-                                    serde_json::to_string(&ServerMessage::Error(
-                                        "invalid input or rate exceeded".into(),
-                                    ))
-                                    .unwrap(),
-                                ));
+                            if peer.budget > 8 {
                                 remove = true;
                                 break;
                             }
-                            if let Ok(ClientMessage::Input {
-                                sequence,
-                                horizontal,
-                                vertical,
-                                fire,
-                            }) = result
-                                && sequence > peer.sequence
-                            {
-                                peer.sequence = sequence;
-                                peer.last_input = Instant::now();
-                                self.simulation
-                                    .submit(
-                                        seat,
-                                        ControlIntent {
-                                            horizontal,
-                                            vertical,
-                                            fire,
-                                        },
-                                    )
-                                    .unwrap();
+                            let result = match decode_client(&text) {
+                                Ok(ClientMessage::Input {
+                                    sequence,
+                                    horizontal,
+                                    vertical,
+                                    fire,
+                                }) => {
+                                    if sequence > peer.sequence {
+                                        peer.sequence = sequence;
+                                        peer.last_input = Instant::now();
+                                        if let Some(sim) = &mut self.simulation {
+                                            let _ = sim.submit(
+                                                seat,
+                                                ControlIntent {
+                                                    horizontal,
+                                                    vertical,
+                                                    fire,
+                                                },
+                                            );
+                                        }
+                                    }
+                                    Ok(())
+                                }
+                                Ok(ClientMessage::Ready(ready)) => {
+                                    self.idle_ticks = 0;
+                                    self.lobby.ready(peer.participant, ready)
+                                }
+                                Ok(ClientMessage::Configure(settings)) => {
+                                    self.idle_ticks = 0;
+                                    self.lobby.configure(peer.participant, settings)
+                                }
+                                Ok(ClientMessage::Leave) => {
+                                    remove = true;
+                                    break;
+                                }
+                                _ => {
+                                    send(
+                                        &mut peer.socket,
+                                        &ServerMessage::Error(
+                                            "invalid input or rate exceeded".into(),
+                                        ),
+                                    );
+                                    remove = true;
+                                    break;
+                                }
+                            };
+                            if let Err(error) = result {
+                                send(&mut peer.socket, &ServerMessage::Notice(error.into()));
                             }
                         }
                         Ok(Message::Close(_)) => {
@@ -433,9 +512,7 @@ impl Server {
                             remove = true;
                             break;
                         }
-                        Err(tungstenite::Error::Io(err))
-                            if err.kind() == std::io::ErrorKind::WouldBlock =>
-                        {
+                        Err(tungstenite::Error::Io(e)) if e.kind() == io::ErrorKind::WouldBlock => {
                             break;
                         }
                         Err(_) => {
@@ -453,65 +530,74 @@ impl Server {
                 {
                     remove = true;
                 }
-                if peer.last_input.elapsed() > Duration::from_secs(1) {
-                    let _ = self.simulation.submit(seat, ControlIntent::default());
+                if peer.last_input.elapsed() > Duration::from_secs(1)
+                    && let Some(sim) = &mut self.simulation
+                {
+                    let _ = sim.submit(seat, ControlIntent::default());
                 }
             }
             if remove {
-                self.peers[seat] = None;
-                self.simulation
-                    .submit(seat, ControlIntent::default())
-                    .unwrap();
+                self.remove(seat);
             }
         }
-        self.simulation.step();
-        // Online service policy only: offline keeps its explicit restart UI.
-        // Reuse the shared fresh-game reset, retaining seats, topology, tick and
-        // monotonic replication IDs rather than constructing another Simulation.
-        if self
-            .simulation
-            .app
-            .world()
-            .resource::<crate::game::Round>()
-            .winner
-            .is_some()
-        {
-            self.victory_ticks += 1;
-            if self.victory_ticks >= 3 * crate::simulation::TICK_HZ {
-                use bevy::ecs::system::RunSystemOnce;
-                self.simulation
-                    .app
-                    .world_mut()
-                    .run_system_once(crate::game::start_new_game)
-                    .unwrap();
+        if self.lobby.advance() {
+            let mut human_seats = [false; 4];
+            for h in &self.lobby.humans {
+                human_seats[h.seat] = true;
+            }
+            self.simulation = Some(
+                Simulation::new(SimulationConfig {
+                    seed: self.lobby.id,
+                    human_seats,
+                    bots: self.lobby.settings.bots,
+                    wins_target: self.lobby.settings.wins_target,
+                    arena: self.lobby.settings.arena,
+                })
+                .unwrap(),
+            );
+        }
+        if let Some(sim) = &mut self.simulation {
+            self.idle_ticks = 0;
+            sim.step();
+            if sim.snapshot().winner.is_some() {
+                self.victory_ticks += 1;
+            } else {
                 self.victory_ticks = 0;
             }
-        } else {
-            self.victory_ticks = 0;
-        }
-        self.ticks += 1;
-        if self.ticks.is_multiple_of(4) {
-            let mut frame = self.simulation.network_frame();
-            for seat in 0..4 {
-                if let Some(peer) = &self.peers[seat] {
-                    frame.ack[seat] = peer.sequence;
-                    frame.names[seat] = Some(peer.name.clone());
-                }
+            if self.victory_ticks >= 3 * 64 {
+                self.simulation = None;
+                self.victory_ticks = 0;
+                self.lobby.finish();
             }
-            let text = serde_json::to_string(&ServerMessage::State(frame)).unwrap();
-            assert!(text.len() <= MAX_STATE_BYTES, "replication budget exceeded");
+        }
+        if tick.is_multiple_of(4) {
+            let lobby = ServerMessage::Lobby(self.lobby.clone());
+            let frame = self.simulation.as_mut().map(|sim| {
+                let mut f = sim.network_frame();
+                f.tick = tick;
+                for h in &self.lobby.humans {
+                    f.names[h.seat] = Some(h.name.clone());
+                }
+                for (seat, peer) in self.peers.iter().enumerate() {
+                    if let Some(p) = peer {
+                        f.ack[seat] = p.sequence;
+                    }
+                }
+                ServerMessage::State(f)
+            });
+            // Lobbies stay inert; only running matches send gameplay frames.
+            // The adapter does not await gameplay acknowledgements in a lobby.
             for seat in 0..4 {
                 if let Some(peer) = self.peers[seat].as_mut() {
-                    // A slow socket is dropped instead of accumulating snapshots.
-                    if peer.socket.send(Message::text(text.clone())).is_err() {
-                        self.peers[seat] = None;
-                        self.simulation
-                            .submit(seat, ControlIntent::default())
-                            .unwrap();
+                    let healthy = send(&mut peer.socket, &lobby)
+                        && frame.as_ref().is_none_or(|f| send(&mut peer.socket, f));
+                    if !healthy {
+                        self.remove(seat);
                     }
                 }
             }
         }
+        debug_assert!(self.lobby.phase != Phase::Running || self.simulation.is_some());
     }
 }
 
@@ -547,11 +633,24 @@ mod tests {
         wire.observe(&[0x81, 0xff, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]);
         assert!(wire.since.is_none());
     }
+    fn fixture() -> Room {
+        Room {
+            lobby: crate::rooms::Lobby::new(1, "0123456789abcdef0123".into(), 1, "host".into()),
+            peers: Default::default(),
+            simulation: None,
+            victory_ticks: 0,
+            idle_ticks: 0,
+        }
+    }
     #[test]
-    fn victory_displays_then_fresh_match_accepts_new_native_client() {
-        let mut server = Server::bind("127.0.0.1:0").unwrap();
+    fn victory_displays_then_returns_same_lobby_with_settings_and_cleared_readiness() {
+        let mut room = fixture();
+        room.lobby.ready(1, true).unwrap();
+        for t in 1..=128 {
+            room.tick(t);
+        }
         {
-            let world = server.simulation.app.world_mut();
+            let world = room.simulation.as_mut().unwrap().app.world_mut();
             world.resource_mut::<crate::game::Round>().wins = [2, 0, 0, 0];
             for mut player in world.query::<&mut crate::players::Player>().iter_mut(world) {
                 if player.id != 0 {
@@ -559,47 +658,36 @@ mod tests {
                 }
             }
         }
+        room.tick(129);
+        assert_eq!(room.simulation.as_mut().unwrap().snapshot().winner, Some(0));
+        for t in 130..=256 {
+            room.tick(t);
+        }
+        assert_eq!(room.simulation.as_mut().unwrap().snapshot().winner, Some(0));
+        for t in 257..=384 {
+            room.tick(t);
+        }
+        assert!(room.simulation.is_none());
+        assert_eq!(room.lobby.id, 1);
+        assert_eq!(room.lobby.host, 1);
+        assert_eq!(room.lobby.settings.bots, 3);
+        assert_eq!(room.lobby.phase, crate::rooms::Phase::Lobby);
+        assert!(!room.lobby.humans[0].ready);
+        room.lobby.join(2, "next".into()).unwrap();
+    }
+    #[test]
+    fn explicit_ticks_expire_idle_lobbies_and_remove_empty_rooms() {
+        let mut server = Server::bind("127.0.0.1:0").unwrap();
+        let mut idle = fixture();
+        idle.idle_ticks = 30 * 60 * 64 - 1;
+        server.rooms.push(idle);
         server.tick();
-        assert_eq!(server.simulation.snapshot().winner, Some(0));
-        for _ in 0..128 {
-            server.tick();
-        }
-        assert_eq!(
-            server.simulation.snapshot().winner,
-            Some(0),
-            "result must remain visible"
-        );
-        for _ in 0..128 {
-            server.tick();
-        }
-        let snapshot = server.simulation.snapshot();
-        assert_eq!(
-            snapshot.winner, None,
-            "continuous service froze at first match victory"
-        );
-        assert_eq!(snapshot.wins, [0; 4]);
-        assert!(snapshot.carts.iter().all(|c| c.alive));
-        let mut client = crate::net_client::NetworkClient::connect(
-            &format!("ws://{}", server.local_addr()),
-            "next match",
-        )
-        .unwrap();
-        for _ in 0..300 {
-            client.pump(ControlIntent::default());
-            server.tick();
-            if client.frame.as_ref().is_some_and(|f| f.ack[0] > 0) {
-                break;
-            }
-            std::thread::sleep(Duration::from_millis(2));
-        }
-        let frame = client.frame.unwrap();
-        assert!(frame.tick > snapshot.tick);
-        assert_eq!(frame.winner, None);
-        assert_eq!(frame.wins, [0; 4]);
-        assert!(
-            frame.ack[0] > 0,
-            "new client must control its assigned seat after restart"
-        );
+        assert!(server.rooms.is_empty());
+        let mut empty = fixture();
+        empty.lobby.leave(1);
+        server.rooms.push(empty);
+        server.tick();
+        assert!(server.rooms.is_empty());
     }
     #[test]
     fn raw_empty_continuation_flood_has_bounded_tick_work() {
@@ -619,9 +707,10 @@ mod tests {
             tungstenite::protocol::Role::Server,
             None,
         );
-        server.peers[0] = Some(Peer {
+        server.rooms.push(fixture());
+        server.rooms[0].peers[0] = Some(Peer {
             socket,
-            name: "attacker".into(),
+            participant: 1,
             sequence: 0,
             last_input: Instant::now(),
             budget: 0,
@@ -639,7 +728,7 @@ mod tests {
             "fragment flood stalled tick"
         );
         assert_eq!(server.ticks, 1);
-        let remaining = server.peers[0]
+        let remaining = server.rooms[0].peers[0]
             .as_ref()
             .unwrap()
             .socket

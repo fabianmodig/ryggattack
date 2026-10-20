@@ -1,7 +1,7 @@
 //! Match configuration, independent of adaptive video quality.
 use bevy::prelude::*;
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Arena {
     #[default]
     Forest,

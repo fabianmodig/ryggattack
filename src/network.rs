@@ -1,8 +1,14 @@
 //! Versioned development protocol. Connection ownership, never a client seat field,
-//! determines authority. This slice deliberately has no rooms or reconnect claims.
+//! determines authority. Private lobbies are supported; reconnect is not.
 use serde::{Deserialize, Serialize};
-pub const VERSION: u32 = 1;
+pub const VERSION: u32 = 2;
 pub const MAX_INPUT_BYTES: usize = 1024;
+pub fn valid_code(code: &str) -> bool {
+    code.len() == 20
+        && code
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
 pub const MAX_STATE_BYTES: usize = 256 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -11,6 +17,8 @@ pub enum ClientMessage {
     Hello {
         version: u32,
         name: String,
+        /// None creates a private room; a code joins an existing lobby.
+        room: Option<String>,
     },
     Input {
         sequence: u64,
@@ -18,6 +26,9 @@ pub enum ClientMessage {
         vertical: f32,
         fire: bool,
     },
+    Ready(bool),
+    Configure(crate::rooms::RoomSettings),
+    Leave,
 }
 pub fn decode_client(text: &str) -> Result<ClientMessage, &'static str> {
     if text.len() > MAX_INPUT_BYTES {
@@ -25,7 +36,14 @@ pub fn decode_client(text: &str) -> Result<ClientMessage, &'static str> {
     }
     let msg: ClientMessage = serde_json::from_str(text).map_err(|_| "invalid protocol")?;
     match &msg {
-        ClientMessage::Hello { version, name } => {
+        ClientMessage::Hello {
+            version,
+            name,
+            room,
+        } => {
+            if room.as_ref().is_some_and(|code| !valid_code(code)) {
+                return Err("invalid room code");
+            }
             if *version != VERSION {
                 return Err("incompatible protocol");
             }
@@ -36,6 +54,12 @@ pub fn decode_client(text: &str) -> Result<ClientMessage, &'static str> {
                 return Err("invalid name (1..24 characters)");
             }
         }
+        ClientMessage::Configure(settings) => {
+            if !settings.valid(1) {
+                return Err("invalid room settings");
+            }
+        }
+        ClientMessage::Ready(_) | ClientMessage::Leave => {}
         ClientMessage::Input {
             horizontal,
             vertical,
@@ -79,8 +103,13 @@ pub enum ServerMessage {
     Welcome {
         version: u32,
         seat: usize,
+        room: u64,
+        participant: u64,
         edges: Vec<(usize, usize)>,
     },
     State(Frame),
+    Lobby(crate::rooms::Lobby),
+    /// A recoverable lobby command rejection, not a transport failure.
+    Notice(String),
     Error(String),
 }

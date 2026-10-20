@@ -11,10 +11,13 @@ fn main() {
         .unwrap_or_else(|| "15".into())
         .parse()
         .expect("seconds");
-    let mut client = NetworkClient::connect(&address, "Native probe").expect("connect");
+    let room = std::env::args().nth(3);
+    let mut client =
+        NetworkClient::connect_room(&address, "Native probe", room.as_deref()).expect("connect");
     let start = Instant::now();
     let mut tick = 0;
     let mut samples = Vec::new();
+    let mut previous_lobby = String::new();
     while start.elapsed() < Duration::from_secs(seconds) {
         client.pump(ControlIntent {
             horizontal: if start.elapsed().as_secs().is_multiple_of(2) {
@@ -25,6 +28,26 @@ fn main() {
             vertical: 0.,
             fire: true,
         });
+        if let Some(lobby) = &client.lobby {
+            let text = serde_json::to_string(lobby).unwrap();
+            if text != previous_lobby {
+                println!(
+                    "{}",
+                    serde_json::json!({"lobby":lobby,"participant":client.participant})
+                );
+                previous_lobby = text;
+                if lobby.phase == ryggattack::rooms::Phase::Lobby
+                    && lobby
+                        .humans
+                        .iter()
+                        .any(|h| Some(h.id) == client.participant && !h.ready)
+                {
+                    client
+                        .command(ryggattack::network::ClientMessage::Ready(true))
+                        .expect("ready");
+                }
+            }
+        }
         if let Some(frame) = &client.frame
             && frame.tick != tick
         {

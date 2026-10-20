@@ -14,7 +14,7 @@ function maskedFrame(opcode, fin, payload=Buffer.alloc(0)) {
 }
 try {
   const port=await new Promise((resolve,reject)=>{let s='';server.stdout.on('data',b=>{s+=b;const m=s.match(/ws:\/\/127.0.0.1:(\d+)/);if(m)resolve(+m[1]);});server.on('error',reject);setTimeout(()=>reject(Error('startup timeout')),5000).unref();});
-  async function open(version=1) {
+  async function open(version=2) {
     const ws=new WebSocket(`ws://127.0.0.1:${port}`);sockets.push(ws);
     const messages=[];let closed=false;
     ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));
@@ -27,6 +27,7 @@ try {
   }
   const half=net.connect(port,'127.0.0.1');
   const a=await open();const welcome=await a.until(m=>m.Welcome);assert.equal(welcome.Welcome.seat,0);half.destroy();results.push('half-open upgrade does not stall admission');
+  a.ws.send(JSON.stringify({Ready:true}));await a.until(m=>m.State);
   a.ws.send(JSON.stringify({Input:{sequence:9,horizontal:0,vertical:1,fire:true}}));
   await a.until(m=>m.State?.ack[0]===9);
   const count=a.messages.length;
@@ -42,16 +43,17 @@ try {
   ]) {
     const c=await open();await c.until(m=>m.Welcome);c.ws.send(payload);await c.until(m=>m.Error||m.closed);c.ws.close();await sleep(80);results.push(`${name} rejected`);
   }
-  const bad=await open(2);await bad.until(m=>m.Error);bad.ws.close();results.push('incompatible version rejected');
+  const bad=await open(3);await bad.until(m=>m.Error);bad.ws.close();results.push('incompatible version rejected');
   const flood=await open();await flood.until(m=>m.Welcome);
   for(let sequence=1;sequence<=100;sequence++)flood.ws.send(JSON.stringify({Input:{sequence,horizontal:0,vertical:0,fire:false}}));
   await flood.until(m=>m.Error||m.closed);results.push('input flood disconnected');flood.ws.close();await sleep(100);
-  const last=await open();await last.until(m=>m.Welcome);await last.until(m=>m.State?.tick>0);results.push('healthy client after abuse receives advancing state');last.ws.close();await sleep(100);
+  const last=await open();await last.until(m=>m.Welcome);last.ws.send(JSON.stringify({Ready:true}));await last.until(m=>m.State?.tick>0);results.push('healthy client after abuse receives advancing state');last.ws.close();await sleep(100);
   // Raw masked RFC6455 frames, not a completed-message WebSocket API: empty
   // continuation floods must not hide inside tungstenite.read indefinitely.
   async function raw(origin) {
     const socket=net.connect(port,'127.0.0.1');rawSockets.push(socket);
-    const state={socket,closed:false,header:''};
+    const state={socket,closed:false,header:'',received:''};
+    socket.on('data',d=>{state.received=(state.received+d.toString()).slice(-65536);});
     socket.on('error',()=>{});socket.on('close',()=>state.closed=true);
     let header=Buffer.alloc(0), done=false;
     const response=new Promise((resolve,reject)=>{
@@ -63,13 +65,13 @@ try {
   }
   async function untilClosed(c) {const end=performance.now()+2500;while(!c.closed&&performance.now()<end)await sleep(5);assert(c.closed,'raw attacker not disconnected by absolute fragment deadline');}
   const denied=await raw('https://evil.example');assert(denied.header.startsWith('HTTP/1.1 403'));results.push('raw foreign Origin rejected before upgrade');
-  const healthy=await open();await healthy.until(m=>m.Welcome);
+  const healthy=await open();await healthy.until(m=>m.Welcome);healthy.ws.send(JSON.stringify({Ready:true}));await healthy.until(m=>m.State);
   async function admitted(origin) {
     const c=await raw(origin);assert(c.header.startsWith('HTTP/1.1 101'));
     const count=healthy.messages.length;
-    c.socket.write(maskedFrame(1,true,Buffer.from(JSON.stringify({Hello:{version:1,name:'Raw attacker'}}))));
+    c.socket.write(maskedFrame(1,true,Buffer.from(JSON.stringify({Hello:{version:2,name:'Raw attacker'}}))));
     const end=performance.now()+2500;
-    while(!healthy.messages.slice(count).some(m=>m.State?.names[1]==='Raw attacker')){assert(performance.now()<end,'raw attacker not admitted');await sleep(5);}
+    while(!c.received.includes('Raw attacker')){assert(performance.now()<end,'raw attacker not admitted');await sleep(5);}
     return c;
   }
   const allowed=await admitted('http://127.0.0.1:8000');allowed.socket.destroy();await sleep(100);results.push('raw exact allowed Origin admitted alongside native no-Origin client');

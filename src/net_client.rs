@@ -99,10 +99,40 @@ fn valid_frame(frame: &Frame) -> bool {
             && bounded(&body.scale, 0., 128.)
     })
 }
+fn valid_lobby(lobby: &crate::rooms::Lobby) -> bool {
+    use crate::rooms::Phase;
+    let valid_name = |s: &str| {
+        !s.trim().is_empty() && s.chars().count() <= 24 && !s.chars().any(char::is_control)
+    };
+    let mut ids = std::collections::HashSet::new();
+    let mut seats = std::collections::HashSet::new();
+    lobby.id > 0
+        && valid_code(&lobby.code)
+        && !lobby.humans.is_empty()
+        && lobby.humans.len() <= 4
+        && lobby.settings.valid(lobby.humans.len())
+        && lobby.humans.iter().any(|h| h.id == lobby.host)
+        && lobby.humans.iter().all(|h| {
+            h.id > 0
+                && h.seat < 4
+                && ids.insert(h.id)
+                && seats.insert(h.seat)
+                && valid_name(&h.name)
+        })
+        && match lobby.phase {
+            Phase::Countdown { ticks_left } => {
+                (1..=128).contains(&ticks_left) && lobby.humans.iter().all(|h| h.ready)
+            }
+            _ => true,
+        }
+}
+type Welcome = (usize, u64, u64, Vec<(usize, usize)>);
 #[derive(Default)]
 struct Inbox {
     opened: bool,
-    welcome: Option<(usize, Vec<(usize, usize)>)>,
+    welcome: Option<Welcome>,
+    lobby: Option<crate::rooms::Lobby>,
+    notice: Option<String>,
     frame: Option<Frame>,
     error: Option<String>,
 }
@@ -111,6 +141,11 @@ pub struct NetworkClient {
     address: String,
     inbox: Arc<Mutex<Inbox>>,
     name: String,
+    room_code: Option<String>,
+    pub participant: Option<u64>,
+    pub room: Option<u64>,
+    pub lobby: Option<crate::rooms::Lobby>,
+    pub notice: String,
     pub seat: Option<usize>,
     pub edges: Option<Vec<(usize, usize)>>,
     pub frame: Option<Frame>,
@@ -125,10 +160,14 @@ pub struct NetworkClient {
 }
 impl NetworkClient {
     pub fn connect(address: &str, name: &str) -> Result<Self, String> {
+        Self::connect_room(address, name, None)
+    }
+    pub fn connect_room(address: &str, name: &str, room: Option<&str>) -> Result<Self, String> {
         decode_client(
             &serde_json::to_string(&ClientMessage::Hello {
                 version: VERSION,
                 name: name.into(),
+                room: room.map(str::to_owned),
             })
             .unwrap(),
         )
@@ -137,6 +176,11 @@ impl NetworkClient {
         let now = Instant::now();
         Ok(Self {
             sender: None,
+            room_code: room.map(str::to_owned),
+            participant: None,
+            room: None,
+            lobby: None,
+            notice: String::new(),
             address: address.into(),
             inbox,
             name: name.into(),
@@ -152,6 +196,39 @@ impl NetworkClient {
             acknowledged: true,
             failed: false,
         })
+    }
+    pub fn command(&mut self, command: ClientMessage) -> Result<(), String> {
+        if self.failed || self.seat.is_none() {
+            return Err("not connected".into());
+        }
+        if matches!(
+            command,
+            ClientMessage::Hello { .. } | ClientMessage::Input { .. }
+        ) {
+            return Err("not a lobby command".into());
+        }
+        let text = serde_json::to_string(&command).unwrap();
+        decode_client(&text).map_err(str::to_owned)?;
+        self.sender
+            .as_mut()
+            .ok_or("not connected")?
+            .send(ewebsock::WsMessage::Text(text));
+        self.notice.clear();
+        Ok(())
+    }
+    pub fn leave(&mut self) {
+        let _ = self.command(ClientMessage::Leave);
+        if let Some(sender) = &mut self.sender {
+            sender.close();
+        }
+        self.failed = true;
+        self.seat = None;
+        self.participant = None;
+        self.room = None;
+        self.lobby = None;
+        self.frame = None;
+        self.previous = None;
+        self.status = "Left room; create or join another".into();
     }
     fn open(address: &str, mailbox: Arc<Mutex<Inbox>>) -> Result<ewebsock::WsSender, String> {
         let options = ewebsock::Options {
@@ -176,14 +253,27 @@ impl NetworkClient {
                                 version,
                                 seat,
                                 edges,
-                            }) if version == VERSION && seat < 4 && valid_topology(&edges) => {
-                                inbox.welcome = Some((seat, edges))
+                                room,
+                                participant,
+                            }) if version == VERSION
+                                && seat < 4
+                                && room > 0
+                                && participant > 0
+                                && valid_topology(&edges) =>
+                            {
+                                inbox.welcome = Some((seat, room, participant, edges))
                             }
                             Some(ServerMessage::State(mut frame)) if valid_frame(&frame) => {
                                 frame.carts.sort_unstable_by_key(|cart| cart.id);
                                 inbox.frame = Some(frame)
                             }
                             Some(ServerMessage::Error(err)) => inbox.error = Some(err),
+                            Some(ServerMessage::Lobby(lobby)) if valid_lobby(&lobby) => {
+                                inbox.lobby = Some(lobby)
+                            }
+                            Some(ServerMessage::Notice(notice)) if notice.len() <= 256 => {
+                                inbox.notice = Some(notice)
+                            }
                             _ => inbox.error = Some("Invalid server protocol".into()),
                         }
                     }
@@ -192,7 +282,7 @@ impl NetworkClient {
                     }
                     ewebsock::WsEvent::Closed => {
                         inbox.error =
-                            Some("Disconnected; reload/relaunch to join a free seat".into())
+                            Some("Disconnected; join a lobby again as a new participant".into())
                     }
                     _ => {}
                 }
@@ -239,17 +329,47 @@ impl NetworkClient {
                 serde_json::to_string(&ClientMessage::Hello {
                     version: VERSION,
                     name: self.name.clone(),
+                    room: self.room_code.clone(),
                 })
                 .unwrap(),
             ));
             self.status = "Waiting for seat…".into();
         }
-        if let Some((seat, edges)) = inbox.welcome {
+        if let Some((seat, room, participant, edges)) = inbox.welcome {
             self.seat = Some(seat);
+            self.room = Some(room);
+            self.participant = Some(participant);
             self.edges = Some(edges);
             self.status = format!("Online — seat {}", seat + 1);
         }
-        if let Some(frame) = inbox.frame {
+        if let Some(notice) = inbox.notice {
+            self.notice = notice;
+        }
+        if let Some(lobby) = inbox.lobby {
+            if Some(lobby.id) != self.room
+                || !lobby
+                    .humans
+                    .iter()
+                    .any(|h| Some(h.id) == self.participant && Some(h.seat) == self.seat)
+            {
+                self.failed = true;
+                self.status = "Invalid server protocol".into();
+                sender.close();
+                return false;
+            }
+            if lobby.phase != crate::rooms::Phase::Running {
+                self.frame = None;
+                self.previous = None;
+                self.acknowledged = true;
+            }
+            self.lobby = Some(lobby);
+            self.received = Instant::now();
+        }
+        let running = self
+            .lobby
+            .as_ref()
+            .is_none_or(|l| l.phase == crate::rooms::Phase::Running);
+        if let Some(frame) = inbox.frame.filter(|_| running) {
             if let Some(seat) = self.seat
                 && !self.acknowledged
                 && frame.ack[seat] >= self.sequence
@@ -268,10 +388,11 @@ impl NetworkClient {
         {
             self.failed = true;
             sender.close();
-            self.status = "Server timeout; reload/relaunch to reconnect".into();
+            self.status = "Server timeout; leave and join a lobby again".into();
             return false;
         }
         if self.seat.is_some()
+            && running
             && self.acknowledged
             && (self.sequence == 0 || self.sent.elapsed() >= Duration::from_millis(62))
         {
