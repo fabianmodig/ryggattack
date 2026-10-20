@@ -39,30 +39,47 @@ and CPU-side visual construction remain coupled to some gameplay systems.
 See [the foundation notes](docs/online-foundation.md) for the reusable Rust API.
 `cargo run` continues to open the ordinary offline game.
 
-## Online development slice (issue #6, phase 2)
+## Private online rooms (issue #6, phase 3)
 
-A loopback-only WebSocket server now runs the same authoritative gameplay,
-with one seat per native or browser connection. This is **not yet private
-rooms, ready/lobby flow, reconnect, or a public/deployable backend**.
+The loopback-only WebSocket service runs isolated authoritative rooms, one
+human seat per connected device, with up to four humans plus bots total.
+Names are anonymous display labels, not identities. Create a room and share
+its 20-character unguessable code/link; joining a lobby can replace a bot.
 
 ```sh
 cargo run --locked --bin ryggattack-server -- 127.0.0.1:8787
-# In another terminal:
+# Creates a room; its HUD shows the code:
 cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ada
+# Join that room from another native client:
+cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ben --room <code>
 ```
 
-Build/serve the browser bundle as below, then use **Online development match**
-or the `?online=ws%3A%2F%2F127.0.0.1%3A8787&name=Ada` query. Without that opt-in,
-offline play is unchanged. Online Escape suppresses your input but does not
-pause the server. Existing carts/rails are reused; other replicated visuals
-are development proxies. See [networking slice notes](docs/online-network-slice.md)
-for protocol/queue bounds, browser/native verification, controls and important
-limitations. Do not reverse-proxy this unauthenticated development service.
-The server permits browser origins `http://127.0.0.1:8000` and
-`http://localhost:8000` by default. If serving on port 8080 as below, launch it
-with `RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080`.
-Native clients without Origin remain allowed. Each victory displays for three
-server seconds, then a fresh match starts without losing connected seats.
+Build/serve the browser bundle as below, then expand **Private online rooms**
+to create/join. A shared `?online=...&room=...` link prefills the code and joins
+as a new participant; it does not grant ownership of a previous player's seat.
+Native online controls: **R** ready/unready; host **B** bots, **T** win target,
+**V** arena; **L** deliberately leaves. After leaving, **F2** creates a room,
+or type a code (Backspace edits) and press **Enter** to join. The launch name
+comes from `--name`. Browser controls also expose explicit buttons/settings
+and a selectable share link. Both show the host and every human's readiness.
+
+All humans must ready up for a two-second server countdown. Joining, unreadying
+or disconnecting cancels it; changing host settings clears readiness. Bots
+run the actual shared AI and do not ready up. One human with bots works;
+zero-bot solo practice remains offline. New joins are locked during a match,
+even if a seat is free. A victory displays for three server seconds, then
+returns connected players to the **same lobby**, preserving its settings and
+clearing readiness. Disconnects remove lobby participants and elect the
+oldest connected human as host. No reconnect/reservation/bot-takeover or
+public/deployable backend is claimed; those remain later issue #6 work.
+
+Without the online opt-in, offline play is unchanged. Online Escape suppresses
+your input rather than pausing the server. Replicated visuals remain development
+proxies. See [room protocol and limits](docs/online-rooms.md). Do not reverse-proxy
+this unauthenticated development service. Browser origins default to exactly
+`http://127.0.0.1:8000` and `http://localhost:8000`. For port 8080, set
+`RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080` on the
+server. Native clients without Origin remain allowed.
 
 ## Run it
 

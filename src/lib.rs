@@ -13,6 +13,7 @@ pub mod network;
 mod online;
 mod players;
 mod powerups;
+pub mod rooms;
 mod scene;
 mod scenery;
 #[cfg(not(target_arch = "wasm32"))]

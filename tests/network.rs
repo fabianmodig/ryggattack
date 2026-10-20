@@ -76,6 +76,7 @@ fn protocol_rejects_unknown_fields_nonfinite_axes_and_versions() {
         let text = serde_json::to_string(&ClientMessage::Hello {
             version: VERSION,
             name: name.into(),
+            room: None,
         })
         .unwrap();
         assert!(decode_client(&text).is_err());

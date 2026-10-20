@@ -1,0 +1,8 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-rooms)
+    Finished `release` profile [optimized] target(s) in 1m 58s
+wasm-opt: 53 MB -> 39 MB
+
+Built dist/web. Serve it with:
+  python3 -m http.server 8080 --directory dist/web
+
+TIMING phase3-web-release9: 184.275 s; exit=0

@@ -1,0 +1,298 @@
+{
+  "recorded_at": "2026-10-20T12:23:41.358959+00:00",
+  "base": "8cc323d9c51a24242d1b781dc1a26d03c417e42f",
+  "runtime_source": {
+    "Cargo.toml": {
+      "sha256": "3c8b69cb102988b62349dddcea7b8dc84695cf014f07aa8d0b7eb5e1036dc3ea",
+      "bytes": 956
+    },
+    "Cargo.lock": {
+      "sha256": "738c0c9efd77863ab3b0d8b0945bca7562d0e83d624b4f0c6733a06bbef3efd1",
+      "bytes": 147942
+    },
+    "src/arena.rs": {
+      "sha256": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+      "bytes": 11457
+    },
+    "src/batch.rs": {
+      "sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "bytes": 7669
+    },
+    "src/bin/ryggattack-headless.rs": {
+      "sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "bytes": 2164
+    },
+    "src/bin/ryggattack-net-probe.rs": {
+      "sha256": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "bytes": 2657
+    },
+    "src/bin/ryggattack-server.rs": {
+      "sha256": "aaa9d122c1f1bba70a252dee087e6a1f240ab56acfa03f2006cb4045266af64a",
+      "bytes": 473
+    },
+    "src/combat.rs": {
+      "sha256": "b40d7b5bc04d9703ddfc7f112b0698483104a91fdb294013f226253956e54a10",
+      "bytes": 19212
+    },
+    "src/explosions.rs": {
+      "sha256": "95f638ac4ed283893061e53bbfd5b269a24bf209b6c3c3e240cbea4b363d929c",
+      "bytes": 19316
+    },
+    "src/game.rs": {
+      "sha256": "512ca7fc7cbc1e1fc77e71b5170d93851aea7411b0eb98e4e99040273c44c39f",
+      "bytes": 12863
+    },
+    "src/headless.rs": {
+      "sha256": "90c12571e120a2b0d88ff656dd2480332f4baab4e11109c1bb884f7439b16915",
+      "bytes": 12752
+    },
+    "src/input.rs": {
+      "sha256": "89e15dce7a5bbce5c989c9b30a4fc4032f1593f625a435e2fa731298a1d1f6fd",
+      "bytes": 1686
+    },
+    "src/lib.rs": {
+      "sha256": "a03e972dd04bab8456996912f33801d6613d1723c0cb205af859d8f48b77588c",
+      "bytes": 4809
+    },
+    "src/main.rs": {
+      "sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "bytes": 44
+    },
+    "src/match_settings.rs": {
+      "sha256": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "bytes": 1486
+    },
+    "src/net_client.rs": {
+      "sha256": "1a538898f5a0ee5d852eb4c072ab3bf3fd080818b12ec29742d19747194ac5ea",
+      "bytes": 15250
+    },
+    "src/network.rs": {
+      "sha256": "cf0f854cb8c8530ad75a4ed325b6abb70309d0268b55accb7387fbe5c47cf906",
+      "bytes": 3358
+    },
+    "src/online.rs": {
+      "sha256": "e7128baaf6f8c9d4fa36f43f01a9134dbf61399d01219d7783d12b492a086f51",
+      "bytes": 26852
+    },
+    "src/players/mod.rs": {
+      "sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "bytes": 38902
+    },
+    "src/players/roster.rs": {
+      "sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "bytes": 5073
+    },
+    "src/players/visuals.rs": {
+      "sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "bytes": 9219
+    },
+    "src/powerups.rs": {
+      "sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "bytes": 12546
+    },
+    "src/rooms.rs": {
+      "sha256": "313530af7cba92045cd69a3d9edb8f989abcac734c6bbc79fac5e5ecc868fd43",
+      "bytes": 4244
+    },
+    "src/scene.rs": {
+      "sha256": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+      "bytes": 6271
+    },
+    "src/scenery.rs": {
+      "sha256": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+      "bytes": 22370
+    },
+    "src/server.rs": {
+      "sha256": "fa8d1270f797e4e0a6ef75dd95161407acc1c003ee2fe3fdb44dddb15a6a240f",
+      "bytes": 29019
+    },
+    "src/settings.rs": {
+      "sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "bytes": 38787
+    },
+    "src/simulation.rs": {
+      "sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "bytes": 8797
+    },
+    "src/tracks/map.rs": {
+      "sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "bytes": 9218
+    },
+    "src/tracks/mod.rs": {
+      "sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "bytes": 316
+    },
+    "src/tracks/path.rs": {
+      "sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "bytes": 13199
+    },
+    "src/tracks/render.rs": {
+      "sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "bytes": 10271
+    },
+    "src/ui/lobby.rs": {
+      "sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "bytes": 13758
+    },
+    "src/ui/mod.rs": {
+      "sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "bytes": 22938
+    },
+    "src/ui/nav.rs": {
+      "sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "bytes": 7277
+    },
+    "web/Dockerfile": {
+      "sha256": "38ec75dd52d76b99e6cece7c0d7412404b04fd4581172e32229009caa983eae9",
+      "bytes": 1253
+    },
+    "web/index.html": {
+      "sha256": "b488e110d58ab8033e3cbbb2367612bbb4364b0f5a9cc673d311dfe6dac323f7",
+      "bytes": 4538
+    },
+    "web/nginx.conf": {
+      "sha256": "05f7bfeaa87e53af4f402c979edf6cceea2ad53e665145510c5165fe01b1faf2",
+      "bytes": 1178
+    },
+    "web/refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "web/rooms.mjs": {
+      "sha256": "49a7749e957907274473049cede47f1374a1bed753fbad006a1a53af16030d24",
+      "bytes": 3133
+    }
+  },
+  "verification_source": {
+    "tests/net_client.rs": {
+      "sha256": "129182ad9e3267e7275c9e831c4ab7abd3506d1c1bf720decaeb60cff54c40b7",
+      "bytes": 8904
+    },
+    "tests/network.rs": {
+      "sha256": "60a38ae0f4afc5e5f98f21031b66f7102751911b1b0183d629d797f8bdef6d3c",
+      "bytes": 2691
+    },
+    "tests/room_completion_fixture.rs": {
+      "sha256": "ff69f0d001ede02509b214fe4ba404bf1b21588290518f1a80e2720243278806",
+      "bytes": 2527
+    },
+    "tests/rooms.rs": {
+      "sha256": "ecb0df142f913de3464c9d4c1579e173649414001a7c5d3b16f3eba3bcc4f841",
+      "bytes": 2492
+    },
+    "tests/rooms_protocol.rs": {
+      "sha256": "0f5afb7857454be2d4672153949dd3f54ec0ad768a80cc9a1f61e1705af935ff",
+      "bytes": 623
+    },
+    "tests/rooms_server.rs": {
+      "sha256": "2dc0b9b25a5b97f195d7838144178086c3721c79dd64a33d8299f6089fc86891",
+      "bytes": 4056
+    },
+    "tests/server.rs": {
+      "sha256": "91f4ed9c099a314e0825dfe2f830f7e99e8e5721d89ca4fb6d3af1e4f2d27882",
+      "bytes": 14027
+    },
+    "tests/shared_simulation.rs": {
+      "sha256": "42a7f166f5e64468b89bd3e2ec9de70bf9b2258e6ef1decdf79edaef255535e0",
+      "bytes": 3821
+    },
+    "scripts/build-web.sh": {
+      "sha256": "6719221f3602530e590f0b5fc5fc0ff8cf8b892ef7f872a2901cd88ec98531c0",
+      "bytes": 3323
+    },
+    "scripts/headless-smoke.py": {
+      "sha256": "f87e1e794c77deb2a695355175faa18463e09711adb463f75ae65f0d3ef869d9",
+      "bytes": 2551
+    },
+    "scripts/network-smoke.mjs": {
+      "sha256": "cd01d7ab75f7eb77086139c66483817d3dbbae99721cb8fd87186f9d29006dbb",
+      "bytes": 28214
+    },
+    "scripts/network-sockets.mjs": {
+      "sha256": "42d26e9f63cdddc2853019896344c24600553f9be725e7487f2dc612d82b97e7",
+      "bytes": 7492
+    },
+    "scripts/refresh-rate.test.mjs": {
+      "sha256": "509016d08f2bad83e42cefbe16ebf3848931c53b808158b56c0ea8a20fdaacdd",
+      "bytes": 6545
+    },
+    "scripts/rooms-load.mjs": {
+      "sha256": "fe2d0ccee6c775c45c2fa756da30157b96cc420fbdc8299201c4686ab45e0e32",
+      "bytes": 3373
+    },
+    "scripts/rooms-ui.test.mjs": {
+      "sha256": "6f952e5b80a3f6af3999d0b5c46788b7d642d97d7a5744a358896af4b6fd6c95",
+      "bytes": 1598
+    },
+    "scripts/server-banner.test.mjs": {
+      "sha256": "98bb11344c2c9a5b6cea5446fbbba7edd59b0cd39cf4350df5f2fb3f57576731",
+      "bytes": 641
+    },
+    "scripts/timed-check.py": {
+      "sha256": "a171ec33a3f9607acdf40e0f13c7b1eb576dfacbe09a3e875ff4567d90abce0e",
+      "bytes": 751
+    },
+    "scripts/wasm-bindgen-version.sh": {
+      "sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+      "bytes": 547
+    }
+  },
+  "web_artifact": {
+    "assets/players/cart-riders.png": {
+      "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "bytes": 1165424
+    },
+    "assets/players/riders.png": {
+      "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "bytes": 1118713
+    },
+    "index.html": {
+      "sha256": "b488e110d58ab8033e3cbbb2367612bbb4364b0f5a9cc673d311dfe6dac323f7",
+      "bytes": 4538
+    },
+    "refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "rooms.mjs": {
+      "sha256": "49a7749e957907274473049cede47f1374a1bed753fbad006a1a53af16030d24",
+      "bytes": 3133
+    },
+    "ryggattack.js": {
+      "sha256": "f58794109bd2e87e9c524aee12face18b9e448a0bd001805d6a28bfefff2bc76",
+      "bytes": 116516
+    },
+    "ryggattack_bg.wasm": {
+      "sha256": "c2c1ad59a1c22493219cae432de16f884478c325fa58c5dc7ada9a8e540fec20",
+      "bytes": 39767245
+    }
+  },
+  "native_binaries": {
+    "ryggattack": {
+      "sha256": "bc2134647c8b4d6b787e7b0a7bcbb9e6b3f0d928f2647f37d7c4ca3c791709b1",
+      "bytes": 1880980584
+    },
+    "ryggattack-server": {
+      "sha256": "18099311485cd7c50433ddaa16de07761abd076c45a5f939870e9569607ee26a",
+      "bytes": 1780885688
+    },
+    "ryggattack-net-probe": {
+      "sha256": "81433fdf81d1512f4c6456a2ef88dd803bad1445cc2204acaeea72c95f6da568",
+      "bytes": 1778672952
+    },
+    "ryggattack-headless": {
+      "sha256": "2c600b37872607dc4235c583c4417f9950a0fc7a0335033504dad67fe9206345",
+      "bytes": 1780282408
+    }
+  },
+  "results": {
+    "results.json": {
+      "sha256": "53fe338d32a909d5425bef71c1bdebc1a4c4cf5b9bd55759842eb4fde474437e",
+      "bytes": 8047
+    },
+    "load.json": {
+      "sha256": "75c067dfacfe0557b99116f3b5a3f23f44dd76b72860ee3bc17a34859d7b95f2",
+      "bytes": 1087
+    }
+  }
+}

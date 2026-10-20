@@ -6,7 +6,7 @@ fn main() {
     let server =
         ryggattack::server::Server::bind(&address).expect("bind loopback development service");
     println!(
-        "Ryggattack development WebSocket service ws://{} (no rooms/auth/reconnect)",
+        "Ryggattack development WebSocket service ws://{} (private rooms; no auth/reconnect)",
         server.local_addr()
     );
     server.run();

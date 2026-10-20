@@ -1,0 +1,104 @@
+TAP version 13
+# Subtest: perf servers serve the calibration module with a JavaScript MIME type
+ok 1 - perf servers serve the calibration module with a JavaScript MIME type
+  ---
+  duration_ms: 2.974879
+  type: 'test'
+  ...
+# Subtest: page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+not ok 2 - page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+  ---
+  duration_ms: 1.990909
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-rooms/scripts/refresh-rate.test.mjs:68:1'
+  failureType: 'testCodeFailure'
+  error: 'installRoomControls is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    evalmachine.<anonymous>:4:7
+    evalmachine.<anonymous>:33:7
+    Script.runInContext (node:vm:149:12)
+    Script.runInNewContext (node:vm:154:17)
+    Object.runInNewContext (node:vm:310:38)
+    startPage (file:///home/hermes/src/ryggattack-rooms/scripts/refresh-rate.test.mjs:45:22)
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-rooms/scripts/refresh-rate.test.mjs:69:41)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+  ...
+# Subtest: page still starts wasm if calibration unexpectedly rejects
+not ok 3 - page still starts wasm if calibration unexpectedly rejects
+  ---
+  duration_ms: 0.70312
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-rooms/scripts/refresh-rate.test.mjs:72:1'
+  failureType: 'testCodeFailure'
+  error: 'installRoomControls is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    evalmachine.<anonymous>:4:7
+    evalmachine.<anonymous>:33:7
+    Script.runInContext (node:vm:149:12)
+    Script.runInNewContext (node:vm:154:17)
+    Object.runInNewContext (node:vm:310:38)
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-rooms/scripts/refresh-rate.test.mjs:78:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+  ...
+# Subtest: hidden pages discard calibration without scheduling rAF
+ok 4 - hidden pages discard calibration without scheduling rAF
+  ---
+  duration_ms: 0.258345
+  type: 'test'
+  ...
+# Subtest: missing or failing rAF resolves null instead of blocking startup
+ok 5 - missing or failing rAF resolves null instead of blocking startup
+  ---
+  duration_ms: 0.269595
+  type: 'test'
+  ...
+# Subtest: stalled or incomplete calibration has a bounded timeout and cleanup
+ok 6 - stalled or incomplete calibration has a bounded timeout and cleanup
+  ---
+  duration_ms: 0.257691
+  type: 'test'
+  ...
+# Subtest: visibility changes invalidate partially measured cadence
+ok 7 - visibility changes invalidate partially measured cadence
+  ---
+  duration_ms: 0.174389
+  type: 'test'
+  ...
+# Subtest: implausible or invalid timestamps never become tiny or invalid targets
+ok 8 - implausible or invalid timestamps never become tiny or invalid targets
+  ---
+  duration_ms: 0.676006
+  type: 'test'
+  ...
+# Subtest: one scheduling hitch does not lower an otherwise stable 40 Hz target
+ok 9 - one scheduling hitch does not lower an otherwise stable 40 Hz target
+  ---
+  duration_ms: 0.36871
+  type: 'test'
+  ...
+# Subtest: unstable throttled cadence is not accepted as a low-refresh display
+ok 10 - unstable throttled cadence is not accepted as a low-refresh display
+  ---
+  duration_ms: 0.353964
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 8
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123.825324
+
+TIMING phase3-refresh-ci-red: 0.311 s; exit=1

@@ -11,6 +11,7 @@ use std::{
     time::Duration,
 };
 use tungstenite::{Message, connect};
+thread_local! { static ROOM: std::cell::RefCell<Option<String>> = const { std::cell::RefCell::new(None) }; }
 fn hello(
     ws: &mut tungstenite::WebSocket<tungstenite::stream::MaybeTlsStream<std::net::TcpStream>>,
     version: u32,
@@ -19,6 +20,7 @@ fn hello(
         serde_json::to_string(&ClientMessage::Hello {
             version,
             name: "test".into(),
+            room: ROOM.with(|c| c.borrow().clone()),
         })
         .unwrap(),
     ))
@@ -34,7 +36,18 @@ fn read(
     }
     loop {
         if let Message::Text(s) = ws.read().unwrap() {
-            return serde_json::from_str(&s).unwrap();
+            let message: ServerMessage = serde_json::from_str(&s).unwrap();
+            if matches!(message, ServerMessage::Welcome { .. }) {
+                loop {
+                    if let Message::Text(text) = ws.read().unwrap()
+                        && let ServerMessage::Lobby(lobby) = serde_json::from_str(&text).unwrap()
+                    {
+                        ROOM.with(|c| *c.borrow_mut() = Some(lobby.code));
+                        break;
+                    }
+                }
+            }
+            return message;
         }
     }
 }
@@ -80,6 +93,7 @@ fn upgrade_allows_only_exact_development_origins_and_native_no_origin() {
                 .headers_mut()
                 .insert("Origin", origin.parse().unwrap());
         }
+        ROOM.with(|c| *c.borrow_mut() = None);
         let (mut socket, _) = connect(request).unwrap();
         hello(&mut socket, VERSION);
         assert!(matches!(read(&mut socket), ServerMessage::Welcome { .. }));
@@ -171,7 +185,7 @@ fn admitted_fragment_trickle_is_disconnected_while_healthy_ticks_advance() {
     let mut attacker = raw_upgrade(addr);
     wire_text(
         &mut attacker,
-        r#"{"Hello":{"version":1,"name":"fragmenter"}}"#,
+        r#"{"Hello":{"version":2,"name":"fragmenter"}}"#,
     );
     std::thread::sleep(Duration::from_millis(100));
     // Drain Welcome/state before beginning an incomplete message.
@@ -181,8 +195,10 @@ fn admitted_fragment_trickle_is_disconnected_while_healthy_ticks_advance() {
     hello(&mut healthy, VERSION);
     assert!(matches!(
         read(&mut healthy),
-        ServerMessage::Welcome { seat: 1, .. }
+        ServerMessage::Welcome { seat: 0, .. }
     ));
+    healthy.send(Message::text(r#"{"Ready":true}"#)).unwrap();
+    while !matches!(read(&mut healthy), ServerMessage::State(_)) {}
     attacker.write_all(&[0x01, 0x80, 0, 0, 0, 0]).unwrap();
     let start = std::time::Instant::now();
     let mut closed = false;
@@ -252,6 +268,13 @@ fn real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnec
         );
         std::thread::sleep(Duration::from_millis(5));
     }
+    delayed.command(ClientMessage::Ready(true)).unwrap();
+    let start = std::time::Instant::now();
+    while delayed.frame.as_ref().is_none_or(|f| f.ack[0] == 0) {
+        delayed.pump(Default::default());
+        assert!(start.elapsed() < Duration::from_secs(5));
+        std::thread::sleep(Duration::from_millis(5));
+    }
     // Fresh acknowledged state can arrive while rendering is stalled. Consuming
     // it late must not be mistaken for a dead server solely due to send age.
     std::thread::sleep(Duration::from_secs(6));
@@ -276,6 +299,9 @@ fn real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnec
         read(&mut b),
         ServerMessage::Welcome { seat: 1, .. }
     ));
+    a.send(Message::text(r#"{"Ready":true}"#)).unwrap();
+    b.send(Message::text(r#"{"Ready":true}"#)).unwrap();
+    while !matches!(read(&mut b), ServerMessage::State(_)) {}
     a.send(Message::text(
         r#"{"Input":{"sequence":7,"horizontal":0,"vertical":1,"fire":true}}"#,
     ))
@@ -311,6 +337,7 @@ fn real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnec
     b.close(None).unwrap();
     drop(b);
     std::thread::sleep(Duration::from_millis(100));
+    ROOM.with(|c| *c.borrow_mut() = None);
     let (mut c, _) = connect(&addr).unwrap();
     hello(&mut c, VERSION + 1);
     assert!(matches!(read(&mut c), ServerMessage::Error(_)));
@@ -321,10 +348,14 @@ fn real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnec
         read(&mut d),
         ServerMessage::Welcome { seat: 0, .. }
     ));
-    let mut client =
-        ryggattack::net_client::NetworkClient::connect(&addr, "native adapter").unwrap();
+    let mut client = ryggattack::net_client::NetworkClient::connect_room(
+        &addr,
+        "native adapter",
+        ROOM.with(|c| c.borrow().clone()).as_deref(),
+    )
+    .unwrap();
     let deadline = std::time::Instant::now() + Duration::from_secs(5);
-    while client.seat.is_none() || client.frame.as_ref().is_none_or(|f| f.ack[1] == 0) {
+    while client.seat.is_none() || client.lobby.is_none() {
         assert!(
             std::time::Instant::now() < deadline,
             "adapter handshake/input timed out: {}",
@@ -337,7 +368,7 @@ fn real_sockets_assign_distinct_seats_reject_invalid_input_and_release_disconnec
         std::thread::sleep(Duration::from_millis(5));
     }
     assert_eq!(client.seat, Some(1));
-    assert!(client.rtt_ms.is_some());
+    assert_eq!(client.lobby.as_ref().unwrap().humans.len(), 2);
     let (mut e, _) = connect(&addr).unwrap();
     hello(&mut e, VERSION);
     assert!(matches!(
