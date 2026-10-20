@@ -2,7 +2,10 @@
 
 This is a **working shared-gameplay/headless harness**, not an online release,
 not a room service, and not the completed presentation extraction. Refs #6.
-The issue's online requirements are unchanged.
+The issue's online requirements are unchanged. This document records milestone 1;
+[phase 2 networking notes](online-network-slice.md) describe the subsequently
+added loopback service, presentation-only online client and real cross-client
+verification. The extraction limitations below still apply to the harness.
 
 ## What is shared now
 

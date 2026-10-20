@@ -1,0 +1,124 @@
+{
+  "artifact": {
+    "index.html": "db4028b63a58d38321c32e2d1d6ee1f3f61467b8d7b099809e39820ad288a8a0",
+    "ryggattack.js": "03c9df87dd1b5391c5de6f27d59306ee0956705ed9d4af6822b1115149173ba0",
+    "ryggattack_bg.wasm": "47de1663fa3aaa66095d51ff69192f66d73732864cfbdf0ec2aa62c7390b4748"
+  },
+  "clients": [
+    {
+      "name": "BrowserA",
+      "events": [
+        [
+          "socket",
+          2642.853456
+        ],
+        [
+          "hello",
+          2650.414423
+        ]
+      ],
+      "seat": 0,
+      "frames": 2338,
+      "projectile_observations": 2688,
+      "explosion_observations": 13111,
+      "eliminated_frames": 542,
+      "round_finished_frames": 24,
+      "moved": true,
+      "turns": true,
+      "input_count": 192,
+      "wire_ack_rtt_median_ms": 182.54045199999973,
+      "wire_ack_rtt_p95_ms": 208.7894929999993,
+      "last_tick": 9496,
+      "wins": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "BrowserB",
+      "events": [
+        [
+          "socket",
+          37303.729645
+        ],
+        [
+          "hello",
+          37309.19226
+        ]
+      ],
+      "seat": 1,
+      "frames": 1892,
+      "projectile_observations": 2688,
+      "explosion_observations": 13140,
+      "eliminated_frames": 651,
+      "round_finished_frames": 24,
+      "moved": true,
+      "turns": true,
+      "input_count": 129,
+      "wire_ack_rtt_median_ms": 179.30494399999588,
+      "wire_ack_rtt_p95_ms": 207.701562000002,
+      "last_tick": 9932,
+      "wins": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "native",
+      "seat": 2,
+      "frames": 1754,
+      "projectile_observations": 2687,
+      "explosion_observations": 13109,
+      "eliminated_frames": 541,
+      "round_finished_frames": 24,
+      "moved": true,
+      "turns": true,
+      "input_count": 0,
+      "last_tick": 9492,
+      "wins": [
+        0,
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "two actual Bevy WASM clients",
+    "native shared adapter crossplay",
+    "75ms each-way TCP delay",
+    "authoritative snapshots identical at same tick",
+    "keyboard steering and fire",
+    "menu neutral input/server advances",
+    "form focus neutral input",
+    "canvas blur clears held fire",
+    "offline launch/lobby/game/pause screenshots",
+    "raw traversal/malformed-path rejection"
+  ],
+  "delay_ms_each_direction": 75,
+  "native_summary": {
+    "last_tick": 9492,
+    "median_ack_rtt_ms": 188.18560200000002,
+    "samples": 1752,
+    "seat": 2,
+    "status": "Online \u2014 seat 3"
+  },
+  "shared_identical_ticks": 1754,
+  "shared_tick_range": [
+    2480,
+    9492
+  ],
+  "offline_lifecycle": {
+    "url": "http://127.0.0.1:36303/?quality=0",
+    "title": "Ryggattack",
+    "ready": "complete",
+    "canvases": 1,
+    "iframes": 0
+  },
+  "server_log": ""
+}

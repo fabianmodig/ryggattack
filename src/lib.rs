@@ -8,10 +8,15 @@ mod game;
 pub mod headless;
 pub mod input;
 mod match_settings;
+pub mod net_client;
+pub mod network;
+mod online;
 mod players;
 mod powerups;
 mod scene;
 mod scenery;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod server;
 mod settings;
 mod simulation;
 mod tracks;
@@ -26,6 +31,10 @@ use tracks::RailMap;
 use ui::{LobbyLatch, MenuFocus, MenuInput, PauseState, StickLatch};
 
 pub fn run_client() {
+    if let Some((address, name)) = online::entry() {
+        online::run(address, name);
+        return;
+    }
     App::new()
         // The fog colour, so that anything past the tree line fades into it.
         .insert_resource(ClearColor(Color::srgb(0.62, 0.72, 0.66)))

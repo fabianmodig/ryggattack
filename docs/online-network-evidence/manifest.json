@@ -1,0 +1,208 @@
+{
+  "recorded_at": "2026-10-20T05:28:29.175628+00:00",
+  "runtime_source": {
+    "Cargo.toml": {
+      "sha256": "3c8b69cb102988b62349dddcea7b8dc84695cf014f07aa8d0b7eb5e1036dc3ea",
+      "bytes": 956
+    },
+    "Cargo.lock": {
+      "sha256": "738c0c9efd77863ab3b0d8b0945bca7562d0e83d624b4f0c6733a06bbef3efd1",
+      "bytes": 147942
+    },
+    "src/arena.rs": {
+      "sha256": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+      "bytes": 11457
+    },
+    "src/batch.rs": {
+      "sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "bytes": 7669
+    },
+    "src/bin/ryggattack-headless.rs": {
+      "sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "bytes": 2164
+    },
+    "src/bin/ryggattack-net-probe.rs": {
+      "sha256": "3bbaee9e8be81c022ca29784a8928a1b382029c39dcc6a6263d533e7d9fa4a6d",
+      "bytes": 1749
+    },
+    "src/bin/ryggattack-server.rs": {
+      "sha256": "a0602b131ad0f8b64bab068d85a8803a81767d20dcb6f5d9f072f3bbe80e46a2",
+      "bytes": 464
+    },
+    "src/combat.rs": {
+      "sha256": "b40d7b5bc04d9703ddfc7f112b0698483104a91fdb294013f226253956e54a10",
+      "bytes": 19212
+    },
+    "src/explosions.rs": {
+      "sha256": "95f638ac4ed283893061e53bbfd5b269a24bf209b6c3c3e240cbea4b363d929c",
+      "bytes": 19316
+    },
+    "src/game.rs": {
+      "sha256": "512ca7fc7cbc1e1fc77e71b5170d93851aea7411b0eb98e4e99040273c44c39f",
+      "bytes": 12863
+    },
+    "src/headless.rs": {
+      "sha256": "90c12571e120a2b0d88ff656dd2480332f4baab4e11109c1bb884f7439b16915",
+      "bytes": 12752
+    },
+    "src/input.rs": {
+      "sha256": "89e15dce7a5bbce5c989c9b30a4fc4032f1593f625a435e2fa731298a1d1f6fd",
+      "bytes": 1686
+    },
+    "src/lib.rs": {
+      "sha256": "d34da0ad2d3a822c320c6ebfebb1c0f4bf1d03d91e601d7fc002993a22ed5b4d",
+      "bytes": 4794
+    },
+    "src/main.rs": {
+      "sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "bytes": 44
+    },
+    "src/match_settings.rs": {
+      "sha256": "562d486807f9fcdabd3e4a12ac4e636d16c723f7a7dc48a35d77f8b000d87fe4",
+      "bytes": 1448
+    },
+    "src/net_client.rs": {
+      "sha256": "3480540a67709b908b8d579a958b63074ae85527a28f6ed503f6378667cb08af",
+      "bytes": 7753
+    },
+    "src/network.rs": {
+      "sha256": "5806ae84eee0c996ffbc408a0d9e12269527909b9ec18ad79c1dbc7f12729e95",
+      "bytes": 2448
+    },
+    "src/online.rs": {
+      "sha256": "a514dfa5b3e89fdc1740621df36440ac0057c86d7df2266d54094eea88f973ad",
+      "bytes": 14298
+    },
+    "src/players/mod.rs": {
+      "sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "bytes": 38902
+    },
+    "src/players/roster.rs": {
+      "sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "bytes": 5073
+    },
+    "src/players/visuals.rs": {
+      "sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "bytes": 9219
+    },
+    "src/powerups.rs": {
+      "sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "bytes": 12546
+    },
+    "src/scene.rs": {
+      "sha256": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+      "bytes": 6271
+    },
+    "src/scenery.rs": {
+      "sha256": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+      "bytes": 22370
+    },
+    "src/server.rs": {
+      "sha256": "0f982d9f81bddaba0afa1f6499ae4bd8dfc7ec1584bdb327d02de78e7b16757e",
+      "bytes": 10769
+    },
+    "src/settings.rs": {
+      "sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "bytes": 38787
+    },
+    "src/simulation.rs": {
+      "sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "bytes": 8797
+    },
+    "src/tracks/map.rs": {
+      "sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "bytes": 9218
+    },
+    "src/tracks/mod.rs": {
+      "sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "bytes": 316
+    },
+    "src/tracks/path.rs": {
+      "sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "bytes": 13199
+    },
+    "src/tracks/render.rs": {
+      "sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "bytes": 10271
+    },
+    "src/ui/lobby.rs": {
+      "sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "bytes": 13758
+    },
+    "src/ui/mod.rs": {
+      "sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "bytes": 22938
+    },
+    "src/ui/nav.rs": {
+      "sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "bytes": 7277
+    },
+    "web/index.html": {
+      "sha256": "db4028b63a58d38321c32e2d1d6ee1f3f61467b8d7b099809e39820ad288a8a0",
+      "bytes": 3222
+    },
+    "web/refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "scripts/build-web.sh": {
+      "sha256": "c74e61eea193d11a2851ff36ca8b338bfdf2e3faaba7bfc85a4181d2633b2e2b",
+      "bytes": 3309
+    },
+    "scripts/wasm-bindgen-version.sh": {
+      "sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+      "bytes": 547
+    }
+  },
+  "web_artifact": {
+    "assets/players/cart-riders.png": {
+      "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "bytes": 1165424
+    },
+    "assets/players/riders.png": {
+      "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "bytes": 1118713
+    },
+    "index.html": {
+      "sha256": "db4028b63a58d38321c32e2d1d6ee1f3f61467b8d7b099809e39820ad288a8a0",
+      "bytes": 3222
+    },
+    "refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "ryggattack.js": {
+      "sha256": "03c9df87dd1b5391c5de6f27d59306ee0956705ed9d4af6822b1115149173ba0",
+      "bytes": 116516
+    },
+    "ryggattack_bg.wasm": {
+      "sha256": "47de1663fa3aaa66095d51ff69192f66d73732864cfbdf0ec2aa62c7390b4748",
+      "bytes": 39696278
+    }
+  },
+  "native_binaries": {
+    "ryggattack": {
+      "sha256": "beef358c554299837e161244f01501499a23d114f9f6f515ef3e2efb199d145d",
+      "bytes": 1878358904
+    },
+    "ryggattack-server": {
+      "sha256": "7a0d52cf27e3b194b8ad70f855f5b3b7bde7150669cba224d18551d07dd93347",
+      "bytes": 1778910592
+    },
+    "ryggattack-net-probe": {
+      "sha256": "aca605111f53d9ef5ece504e36221417d4da3bb5fe3c421bce68ff29ad66ea64",
+      "bytes": 1775910472
+    },
+    "ryggattack-headless": {
+      "sha256": "96c12951b90411276122b668d219621436b1a64340c0df46b10b5a748fe6d763",
+      "bytes": 1777818400
+    }
+  },
+  "tools": {
+    "rustc --version": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo --version": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "wasm-bindgen --version": "wasm-bindgen 0.2.128",
+    "wasm-opt --version": "wasm-opt version 131 (version_131)",
+    "node --version": "v22.23.3"
+  }
+}

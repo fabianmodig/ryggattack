@@ -34,11 +34,30 @@ cargo run --locked --bin ryggattack-headless -- --seed 42 --ticks 2048 --bots 0 
 python3 scripts/headless-smoke.py
 ```
 
-This is the first shared-simulation milestone for issue #6, **not online play**.
-Rendering dependencies and CPU-side visual construction are still coupled to
-some gameplay systems. See [the foundation notes](docs/online-foundation.md)
-for the reusable Rust API, tests, evidence, review risks, and remaining work.
+This is the shared-simulation foundation for issue #6. Rendering dependencies
+and CPU-side visual construction remain coupled to some gameplay systems.
+See [the foundation notes](docs/online-foundation.md) for the reusable Rust API.
 `cargo run` continues to open the ordinary offline game.
+
+## Online development slice (issue #6, phase 2)
+
+A loopback-only WebSocket server now runs the same authoritative gameplay,
+with one seat per native or browser connection. This is **not yet private
+rooms, ready/lobby flow, reconnect, or a public/deployable backend**.
+
+```sh
+cargo run --locked --bin ryggattack-server -- 127.0.0.1:8787
+# In another terminal:
+cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ada
+```
+
+Build/serve the browser bundle as below, then use **Online development match**
+or the `?online=ws%3A%2F%2F127.0.0.1%3A8787&name=Ada` query. Without that opt-in,
+offline play is unchanged. Online Escape suppresses your input but does not
+pause the server. Existing carts/rails are reused; other replicated visuals
+are development proxies. See [networking slice notes](docs/online-network-slice.md)
+for protocol/queue bounds, browser/native verification, controls and important
+limitations. Do not reverse-proxy this unauthenticated development service.
 
 ## Run it
 
