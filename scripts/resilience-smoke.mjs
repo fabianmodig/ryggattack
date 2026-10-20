@@ -152,7 +152,9 @@ try{
  evidence.checks.push('same browser tab never sends another endpoint/room claim; original private identity still reclaims');
  // A real process restart destroys all memory, so retry fails visibly, never
  // silently creates a new room and never advertises persistence.
- outage=true;const fixedPort=port;const dead=server;dead.kill();await new Promise(r=>dead.once('exit',r));await startServer(fixedPort);
+ // A hard crash bypasses the new graceful SIGTERM notification so this still
+ // exercises stale-claim rejection after abrupt loss of all in-memory rooms.
+ outage=true;const fixedPort=port;const dead=server;dead.kill('SIGKILL');await new Promise(r=>dead.once('exit',r));await startServer(fixedPort);
  await until(()=>a.error?.includes('backend restarted'),'restart clear terminal feedback');
  await a.page.waitForFunction(roomStatusHas,'backend restarted',{timeout:90000});
  await a.page.screenshot({path:path.join(out,'backend-restarted.png'),timeout:180000});

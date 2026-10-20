@@ -24,6 +24,9 @@ try {
  ws.send(JSON.stringify({Hello:{version:3,name:'Production probe'}}));
  for(let i=0;i<100&&!messages.some(m=>m.Welcome);i++)await sleep(20);
  assert(messages.some(m=>m.Welcome),'production admits room');
+ ws.send(JSON.stringify({Ready:true}));
+ for(let i=0;i<200&&!messages.some(m=>m.State);i++)await sleep(20);
+ assert(messages.some(m=>m.State),'real production room starts shared simulation before health/shutdown tests');
  const health=await fetch(urls.management+'/healthz');assert.equal(health.status,200);
  assert.equal((await fetch(urls.management+'/readyz')).status,200);
  const metrics=await (await fetch(urls.management+'/metrics')).text();
@@ -35,6 +38,11 @@ try {
   guesses.push(await new Promise((resolve,reject)=>{attempt.addEventListener('open',()=>attempt.send(JSON.stringify({Hello:{version:3,name:'Guess',room:'00000000000000000000'}})));attempt.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error){resolve(m.Error);attempt.close();}});attempt.addEventListener('error',reject);setTimeout(()=>reject(Error('guess timeout')),3000).unref();}));
  }
  assert(guesses.some(s=>s.includes('rate limit')),'anonymous room-code guessing is globally rate limited');
+ // Real spoofed proxy headers must not create a new admission identity/budget.
+ for(const ip of ['192.0.2.1','192.0.2.2']){
+  const u=new URL(urls.ws),s=net.connect(+u.port,u.hostname);sockets.push(s);
+  await new Promise((resolve,reject)=>{let bytes='',sent=false;s.on('error',reject);s.on('data',b=>{bytes=(bytes+b.toString()).slice(-8192);if(!sent&&bytes.includes('\r\n\r\n')){assert.match(bytes,/101/);sent=true;const payload=Buffer.from(JSON.stringify({Hello:{version:3,name:'Proxy guess',room:'00000000000000000000'}})),mask=[1,2,3,4];assert(payload.length<126);s.write(Buffer.concat([Buffer.from([129,128|payload.length,...mask]),Buffer.from(payload.map((v,i)=>v^mask[i%4]))]));}if(bytes.includes('global admission rate limit')){s.destroy();resolve();}});s.write(`GET /ws HTTP/1.1\r\nHost: ${u.host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nX-Forwarded-For: ${ip}\r\nForwarded: for=${ip};proto=https\r\n\r\n`);setTimeout(()=>reject(Error('spoofed forwarded headers bypassed global admission limit')),3000).unref();});
+ }
  const creations=[];
  for(let i=0;i<16;i++){
   const attempt=new WebSocket(urls.ws);sockets.push(attempt);
@@ -43,5 +51,5 @@ try {
  assert(creations.at(-1).includes('rate limit'),'anonymous room creation is globally rate limited');
  assert.equal((await fetch(urls.management+'/readyz')).status,200,'abuse does not stall authoritative tick');
  if(child){const start=performance.now();const exit=new Promise(r=>child.once('exit',(code,signal)=>r({code,signal})));child.kill('SIGTERM');const result=await exit;assert.equal(result.code,0);assert(performance.now()-start<2000,'bounded shutdown');await sleep(50);assert(messages.some(m=>m.Error?.includes('backend restarting')),'clear restart message');assert(!log.includes(messages.find(m=>m.Welcome).Welcome.credential),'safe logs');}
- console.log(JSON.stringify({checks:['explicit production bind','exact HTTPS Origin and native policy','only /ws upgrades','private health/readiness and aggregate metrics','anonymous creation/code guessing globally rate limited without stalling tick',...(child?['SIGTERM notifies connected clients and exits cleanly within 2s']:[])],logs:log},null,2));
+ console.log(JSON.stringify({checks:['explicit production bind','exact HTTPS Origin and native policy','only /ws upgrades','private health/readiness and aggregate metrics','anonymous creation/code guessing globally rate limited without stalling tick','spoofed Forwarded/X-Forwarded-For cannot evade global limits',...(child?['SIGTERM notifies connected clients and exits cleanly within 2s']:[])],logs:log},null,2));
 } finally {for(const s of sockets){if(s instanceof net.Socket)s.destroy();else s.close();}child?.kill('SIGKILL');}

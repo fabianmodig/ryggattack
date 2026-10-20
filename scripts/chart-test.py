@@ -44,4 +44,25 @@ assert len(images)==2 and all(i.endswith(':sha-1234567') for i in images)
 for value in ['latest','sha-bad','']:
     if not value: continue
     assert subprocess.run(['helm','template','bad','charts/ryggattack','--set','image.tag='+value],capture_output=True).returncode!=0
-print('Helm public/private, hardening, probes and paired immutable-image contract passed')
+# Publication and migration are configuration contracts too: no branch may
+# accidentally gain package/repository writes, and the chart follows BOTH images.
+with open('.forgejo/workflows/release.yml') as file:
+    release=yaml.safe_load(file)
+assert 'permissions' not in release
+assert release['env']['DOCKER_BUILDKIT']=='1'
+steps=release['jobs']['publish']['steps']
+for name in ['Log in to Forgejo container registry','Publish paired images before changing desired deployment','Commit paired chart appVersion after successful publication']:
+    step=next(s for s in steps if s.get('name')==name)
+    assert "github.ref == 'refs/heads/main'" in step['if']
+    assert "env.PACKAGE_USER != ''" in step['if'] and "env.PACKAGE_TOKEN != ''" in step['if']
+publish=next(i for i,s in enumerate(steps) if s.get('name')=='Publish paired images before changing desired deployment')
+commit=next(i for i,s in enumerate(steps) if s.get('name')=='Commit paired chart appVersion after successful publication')
+assert publish<commit
+assert 'for component in web server' in steps[publish]['run']
+assert '[skip ci]' in steps[commit]['run']
+assert 'git push origin HEAD:main' in steps[commit]['run']
+with open('.github/workflows/pages.yml') as file:
+    pages=yaml.safe_load(file)
+assert any(s.get('with',{}).get('path')=='dist/pages' for s in pages['jobs']['web']['steps'])
+assert not any('scripts/build-web.sh' in s.get('run','') for s in pages['jobs']['web']['steps'])
+print('Helm public/private, hardening, probes, paired immutable publication and Pages migration contracts passed')

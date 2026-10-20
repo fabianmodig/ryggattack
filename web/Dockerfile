@@ -28,7 +28,8 @@ COPY dist/web /usr/share/nginx/html
 RUN chmod -R a+rX /usr/share/nginx/html \
     && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz \
     && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz \
-    && nginx -t
+    && nginx -t \
+    && rm -f /tmp/nginx.pid
 
 USER 101:101
 ENTRYPOINT ["nginx"]

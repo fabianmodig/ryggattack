@@ -10,6 +10,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 env:
   CARGO_TERM_COLOR: always
+  DOCKER_BUILDKIT: "1"
 jobs:
   publish:
     name: Build and publish paired web/backend
@@ -31,7 +32,7 @@ jobs:
       - name: Install build and container tools
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3
+          apt-get install -y --no-install-recommends docker.io docker-buildx libudev-dev libwayland-dev python3
       - name: Install wasm-opt
         env:
           BINARYEN: version_131

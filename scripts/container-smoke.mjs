@@ -14,7 +14,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 try {
  await cli('run','-d','--name',names.web,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--tmpfs','/tmp:rw,noexec,nosuid,size=16m','-p','127.0.0.1::8080',web);
  await cli('run','-d','--name',names.server,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','-e','RYGGATTACK_MODE=production','-e','RYGGATTACK_ALLOWED_ORIGINS=https://ryggattack.modig.online','-e','RYGGATTACK_MANAGEMENT_BIND=0.0.0.0:8788','-p','127.0.0.1::8787','-p','127.0.0.1::8788',server);
- const url=async(name,port)=>'http://'+(await cli('port',name,`${port}/tcp`)).split('\n')[0];
+ const url=async(name,port)=>{const address=(await cli('port',name,`${port}/tcp`)).split('\n')[0];assert.match(address,/^127\.0\.0\.1:\d+$/,'container did not expose its expected loopback port');return 'http://'+address;};
  const webURL=await url(names.web,8080),wsURL=(await url(names.server,8787)).replace('http:','ws:')+'/ws',management=await url(names.server,8788);
  await until(async()=> (await fetch(webURL)).status===200,'web readiness');
  await until(async()=> (await fetch(management+'/readyz')).status===200,'backend readiness');
@@ -35,6 +35,7 @@ try {
  ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));ws.addEventListener('close',()=>closed=true);
  await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});ws.send(JSON.stringify({Hello:{version:3,name:'Shutdown probe'}}));
  await until(()=>messages.some(m=>m.Welcome),'shutdown client admitted');
+ ws.send(JSON.stringify({Ready:true}));await until(()=>messages.some(m=>m.State),'shutdown client receives actual running simulation');
  const start=performance.now();await cli('stop','--time','10',names.server);assert(performance.now()-start<2000,'container bounded SIGTERM shutdown');
  await until(()=>closed,'shutdown closes client');assert(messages.some(m=>m.Error?.includes('backend restarting')));
  const inspect=JSON.parse(await cli('inspect',names.server))[0];assert.equal(inspect.State.ExitCode,0);

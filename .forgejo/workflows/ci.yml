@@ -37,6 +37,8 @@ jobs:
       # than whatever the runner image happens to ship.
       - name: Install Rust
         uses: https://github.com/dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
 
       - name: Cache cargo registry and build artifacts
         uses: https://github.com/Swatinem/rust-cache@v2.7.8
@@ -58,6 +60,7 @@ jobs:
         run: |
           node scripts/rooms-ui.test.mjs
           node --test scripts/resilience-harness.test.mjs
+          node --test scripts/network-harness.test.mjs
           node scripts/pages-redirect.test.mjs
           python3 scripts/update-chart-version.test.py
 

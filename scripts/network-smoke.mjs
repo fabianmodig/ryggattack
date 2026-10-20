@@ -2,6 +2,7 @@
 // Build native bins and dist/web first. Requires Playwright Chromium.
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/network-smoke.mjs [output-dir]
 import assert from 'node:assert/strict';
+import {neutralWindow} from './network-harness-helpers.mjs';
 import http from 'node:http';
 import net from 'node:net';
 import fs from 'node:fs';
@@ -211,13 +212,25 @@ try {
   assert(a.last.tick>tick+64,'online menu does not pause server');
   await a.page.keyboard.press('Escape',{delay:500}); await sleep(1800);
   // Editing the HTML form must keep focus and suppress game keys.
-  await ensureRunning();
-  await a.page.locator('#online-entry summary').click();
-  const name=a.page.getByRole('textbox',{name:'Player name',exact:true}); await name.fill('Typing');
-  await sleep(1800); start=a.inputs.length;
-  await name.press('Space',{delay:1500}); await sleep(1800);
-  assert.equal(await a.page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Player name');
-  assert(a.inputs.slice(start).length>0 && a.inputs.slice(start).every(i=>!i.fire&&i.horizontal===0&&i.vertical===0),'form neutral intent');
+  evidence.form_windows=[];
+  let formPassed=false;
+  for(let attempt=0;attempt<3&&!formPassed;attempt++){
+    await ensureRunning();
+    await a.page.locator('#online-entry summary').click();
+    const name=a.page.getByRole('textbox',{name:'Player name',exact:true});await name.fill('Typing');
+    const previous=await a.page.evaluate(()=>globalThis.ryggattackOnline);
+    await a.page.waitForFunction(previous=>globalThis.ryggattackOnline!==previous||JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.phase!=='Running',previous,{timeout:60000});
+    start=a.inputs.length;
+    await a.page.keyboard.down('Space');
+    try{
+      await until(()=>neutralWindow(a.inputs.slice(start),a.lobby.phase)!=='wait','observed focused-form input window');
+    }finally{await a.page.keyboard.up('Space');}
+    const samples=a.inputs.slice(start),decision=neutralWindow(samples,a.lobby.phase);
+    assert.equal(await a.page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Player name');
+    evidence.form_windows.push({attempt,phase:a.lobby.phase,decision,packets:samples.length,all_neutral:samples.every(i=>!i.fire&&i.horizontal===0&&i.vertical===0)});
+    formPassed=decision==='passed';
+  }
+  assert(formPassed,'three actual neutral form packets required; empty completed-match windows are not passes');
   // Playwright forces every headless page focused; bringToFront alone is not
   // a blur. Exercise a real DOM canvas blur while a fire key is held instead.
   await ensureRunning();
