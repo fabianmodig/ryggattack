@@ -14,7 +14,7 @@ const CART_HEIGHT: f32 = 0.62;
 #[derive(Resource)]
 pub(crate) struct RailMap {
     pub(crate) seed: u64,
-    pub(super) edges: Vec<(usize, usize)>,
+    pub(crate) edges: Vec<(usize, usize)>,
     pub(super) neighbors: Vec<Vec<usize>>,
 }
 
@@ -69,7 +69,7 @@ impl RailMap {
         Self::from_edges(seed, selected.into_iter().collect())
     }
 
-    pub(super) fn from_edges(seed: u64, mut edges: Vec<(usize, usize)>) -> Self {
+    pub(crate) fn from_edges(seed: u64, mut edges: Vec<(usize, usize)>) -> Self {
         edges.sort_unstable();
         let mut neighbors = vec![Vec::new(); TRACK_GRID_SIZE * TRACK_GRID_SIZE];
         for &(left, right) in &edges {

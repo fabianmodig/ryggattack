@@ -1,0 +1,188 @@
+[
+  {
+    "at": 441.008031,
+    "what": "online0 goto",
+    "data": "http://127.0.0.1:40211/?online=ws://127.0.0.1:42953&name=Diagnostic0"
+  },
+  {
+    "at": 452.887757,
+    "what": "online0 navigation",
+    "data": "http://127.0.0.1:40211/?online=ws://127.0.0.1:42953&name=Diagnostic0"
+  },
+  {
+    "at": 2604.867311,
+    "what": "online ready",
+    "data": 0
+  },
+  {
+    "at": 2645.812973,
+    "what": "online1 goto",
+    "data": "http://127.0.0.1:40211/?online=ws://127.0.0.1:42953&name=Diagnostic1"
+  },
+  {
+    "at": 2658.06123,
+    "what": "online1 navigation",
+    "data": "http://127.0.0.1:40211/?online=ws://127.0.0.1:42953&name=Diagnostic1"
+  },
+  {
+    "at": 40407.844178,
+    "what": "online ready",
+    "data": 1
+  },
+  {
+    "at": 40436.085063,
+    "what": "offline goto",
+    "data": "http://127.0.0.1:40211/?quality=0"
+  },
+  {
+    "at": 40444.670269,
+    "what": "offline navigation",
+    "data": "http://127.0.0.1:40211/?quality=0"
+  },
+  {
+    "at": 80844.767985,
+    "what": "offline status removed"
+  },
+  {
+    "at": 80845.075656,
+    "what": "before focus url",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "closed": false,
+      "frames": [
+        "http://127.0.0.1:40211/?quality=0"
+      ]
+    }
+  },
+  {
+    "at": 92483.104737,
+    "what": "before focus DOM",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "title": "Ryggattack",
+      "ready": "complete",
+      "canvases": [
+        {
+          "id": "ryggattack-canvas",
+          "width": 1280,
+          "height": 720,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 480,
+            "top": 0,
+            "right": 640,
+            "bottom": 480,
+            "left": 0
+          }
+        }
+      ],
+      "body": "Online development match",
+      "focus": "<canvas id=\"ryggattack-canvas\" tabindex=\"0\" alt=\"Ryggattack \u2014 POC\" width=\"1280\" height=\"720\" style=\"width: 100%; height: 100%; min-width: 180px; min-height: 120px;\"></canvas>"
+    }
+  },
+  {
+    "at": 122483.696632,
+    "what": "offline focus error",
+    "data": "TimeoutError: locator.focus: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('canvas')\n"
+  },
+  {
+    "at": 122483.791984,
+    "what": "after focus timeout url",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "closed": false,
+      "frames": [
+        "http://127.0.0.1:40211/?quality=0"
+      ]
+    }
+  },
+  {
+    "at": 133877.277421,
+    "what": "after focus timeout DOM",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "title": "Ryggattack",
+      "ready": "complete",
+      "canvases": [
+        {
+          "id": "ryggattack-canvas",
+          "width": 640,
+          "height": 480,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 480,
+            "top": 0,
+            "right": 640,
+            "bottom": 480,
+            "left": 0
+          }
+        }
+      ],
+      "body": "Online development match",
+      "focus": "<canvas id=\"ryggattack-canvas\" tabindex=\"0\" alt=\"Ryggattack \u2014 POC\" width=\"640\" height=\"480\" style=\"width: 100%; height: 100%; min-width: 180px; min-height: 120px;\"></canvas>"
+    }
+  },
+  {
+    "at": 154119.87655,
+    "what": "offline screenshot passed"
+  },
+  {
+    "at": 154130.434049,
+    "what": "online0 close"
+  },
+  {
+    "at": 160673.773726,
+    "what": "online1 close"
+  },
+  {
+    "at": 160673.953984,
+    "what": "online pages closed"
+  },
+  {
+    "at": 160674.002624,
+    "what": "after online close url",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "closed": false,
+      "frames": [
+        "http://127.0.0.1:40211/?quality=0"
+      ]
+    }
+  },
+  {
+    "at": 163511.726381,
+    "what": "after online close DOM",
+    "data": {
+      "url": "http://127.0.0.1:40211/?quality=0",
+      "title": "Ryggattack",
+      "ready": "complete",
+      "canvases": [
+        {
+          "id": "ryggattack-canvas",
+          "width": 640,
+          "height": 480,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 480,
+            "top": 0,
+            "right": 640,
+            "bottom": 480,
+            "left": 0
+          }
+        }
+      ],
+      "body": "Online development match",
+      "focus": "<canvas id=\"ryggattack-canvas\" tabindex=\"0\" alt=\"Ryggattack \u2014 POC\" width=\"640\" height=\"480\" style=\"width: 100%; height: 100%; min-width: 180px; min-height: 120px;\"></canvas>"
+    }
+  },
+  {
+    "at": 163516.156326,
+    "what": "offline isolated focus passed"
+  }
+]

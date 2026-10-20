@@ -38,7 +38,7 @@ impl Default for SimulationConfig {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct CartSnapshot {
     pub id: usize,
     pub active: bool,
@@ -68,6 +68,8 @@ pub struct Snapshot {
 pub struct Simulation {
     pub(crate) app: App,
     tick: u64,
+    network_ids: std::collections::HashMap<Entity, u64>,
+    next_network_id: u64,
 }
 impl Simulation {
     pub fn new(config: SimulationConfig) -> Result<Self, &'static str> {
@@ -108,7 +110,12 @@ impl Simulation {
         app.world_mut()
             .run_system_once(crate::game::start_new_game)
             .expect("shared round reset is initialized");
-        Ok(Self { app, tick: 0 })
+        Ok(Self {
+            app,
+            tick: 0,
+            network_ids: Default::default(),
+            next_network_id: 1,
+        })
     }
 
     /// Replace held intent. Neutral input does not hand this seat to a bot.
@@ -145,6 +152,82 @@ impl Simulation {
         // remains coupled to gameplay. No render schedule or GPU is installed.
         self.app.world_mut().run_schedule(Update);
         self.tick += 1;
+    }
+
+    /// Explicit topology: clients must never regenerate random map state.
+    pub fn network_edges(&self) -> Vec<(usize, usize)> {
+        self.app.world().resource::<RailMap>().edges.clone()
+    }
+
+    /// Presentation replication with stable monotonic IDs, not ECS handles.
+    /// Props use their real collider bounds; transient effects are visual only.
+    pub fn network_frame(&mut self) -> crate::network::Frame {
+        use crate::network::{Body, Frame};
+        let snap = self.snapshot();
+        let world = self.app.world_mut();
+        let mut live = std::collections::HashSet::new();
+        let mut bodies = Vec::new();
+        for (entity, transform, projectile, pickup, scenery, fireball) in world
+            .query::<(
+                Entity,
+                &Transform,
+                Option<&Projectile>,
+                Option<&Pickup>,
+                Option<&Scenery>,
+                Option<&crate::explosions::Fireball>,
+            )>()
+            .iter(world)
+        {
+            let kind = if projectile.is_some() {
+                0
+            } else if let Some(pickup) = pickup {
+                if pickup.0 == crate::powerups::Kind::Speed {
+                    1
+                } else {
+                    2
+                }
+            } else if scenery.is_some() {
+                3
+            } else if fireball.is_some() {
+                4
+            } else {
+                continue;
+            };
+            live.insert(entity);
+            let id = *self.network_ids.entry(entity).or_insert_with(|| {
+                let id = self.next_network_id;
+                self.next_network_id += 1;
+                id
+            });
+            let mut position = transform.translation;
+            let scale = if let Some(prop) = scenery {
+                position.y = prop.height * 0.5;
+                [prop.hit_radius * 2.0, prop.height, prop.hit_radius * 2.0]
+            } else {
+                transform.scale.to_array()
+            };
+            bodies.push(Body {
+                id,
+                position: position.to_array(),
+                rotation: transform.rotation.to_array(),
+                scale,
+                kind,
+            });
+        }
+        self.network_ids.retain(|entity, _| live.contains(entity));
+        bodies.sort_by_key(|body| body.id);
+        Frame {
+            tick: snap.tick,
+            ack: [0; 4],
+            names: Default::default(),
+            carts: snap.carts,
+            wins: snap.wins,
+            winner: snap.winner,
+            round_finished: snap.round_finished,
+            transition: snap.transition,
+            until_drop: snap.until_drop,
+            bodies,
+        }
     }
 
     pub fn snapshot(&mut self) -> Snapshot {
