@@ -185,12 +185,12 @@ fn admitted_fragment_trickle_is_disconnected_while_healthy_ticks_advance() {
     let mut attacker = raw_upgrade(addr);
     wire_text(
         &mut attacker,
-        r#"{"Hello":{"version":2,"name":"fragmenter"}}"#,
+        &format!(r#"{{"Hello":{{"version":{VERSION},"name":"fragmenter"}}}}"#),
     );
     std::thread::sleep(Duration::from_millis(100));
     // Drain Welcome/state before beginning an incomplete message.
     attacker.set_nonblocking(true).unwrap();
-    while attacker.read(&mut [0; 8192]).is_ok() {}
+    while matches!(attacker.read(&mut [0; 8192]),Ok(n) if n > 0) {}
     let (mut healthy, _) = connect(format!("ws://{addr}")).unwrap();
     hello(&mut healthy, VERSION);
     assert!(matches!(

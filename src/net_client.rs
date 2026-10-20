@@ -111,25 +111,62 @@ fn valid_lobby(lobby: &crate::rooms::Lobby) -> bool {
         && !lobby.humans.is_empty()
         && lobby.humans.len() <= 4
         && lobby.settings.valid(lobby.humans.len())
-        && lobby.humans.iter().any(|h| h.id == lobby.host)
+        && lobby
+            .humans
+            .iter()
+            .any(|h| h.id == lobby.host && h.connected)
         && lobby.humans.iter().all(|h| {
             h.id > 0
                 && h.seat < 4
                 && ids.insert(h.id)
                 && seats.insert(h.seat)
                 && valid_name(&h.name)
+                && if h.connected {
+                    h.reconnect_seconds.is_none()
+                } else {
+                    h.reconnect_seconds.is_some_and(|s| (1..=60).contains(&s))
+                }
         })
         && match lobby.phase {
             Phase::Countdown { ticks_left } => {
-                (1..=128).contains(&ticks_left) && lobby.humans.iter().all(|h| h.ready)
+                (1..=128).contains(&ticks_left)
+                    && lobby.humans.iter().all(|h| h.ready && h.connected)
             }
             _ => true,
         }
 }
-type Welcome = (usize, u64, u64, Vec<(usize, usize)>);
+#[cfg(any(target_arch = "wasm32", test))]
+fn claim_key(address: &str, code: &str) -> String {
+    format!(
+        "ryggattack.claim.{}",
+        serde_json::to_string(&(address, code)).unwrap()
+    )
+}
+#[cfg(any(target_arch = "wasm32", test))]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StoredClaim {
+    room: u64,
+    participant: u64,
+    seat: usize,
+    credential: String,
+}
+#[cfg(any(target_arch = "wasm32", test))]
+impl StoredClaim {
+    fn parse(text: &str) -> Option<Self> {
+        if text.len() > 512 {
+            return None;
+        }
+        let c: Self = serde_json::from_str(text).ok()?;
+        (c.room > 0 && c.participant > 0 && c.seat < 4 && valid_credential(&c.credential))
+            .then_some(c)
+    }
+}
+type Welcome = (usize, u64, u64, Vec<(usize, usize)>, String, String);
 #[derive(Default)]
 struct Inbox {
     opened: bool,
+    disconnected: bool,
     welcome: Option<Welcome>,
     lobby: Option<crate::rooms::Lobby>,
     notice: Option<String>,
@@ -157,6 +194,12 @@ pub struct NetworkClient {
     sent: Instant,
     acknowledged: bool,
     failed: bool,
+    credential: Option<String>,
+    retry_started: Option<Instant>,
+    retry_at: Instant,
+    retry_count: u32,
+    suppress_until_neutral: bool,
+    awaiting_welcome: bool,
 }
 impl NetworkClient {
     pub fn connect(address: &str, name: &str) -> Result<Self, String> {
@@ -174,7 +217,8 @@ impl NetworkClient {
         .map_err(str::to_owned)?;
         let inbox = Arc::new(Mutex::new(Inbox::default()));
         let now = Instant::now();
-        Ok(Self {
+        #[allow(unused_mut)]
+        let mut client = Self {
             sender: None,
             room_code: room.map(str::to_owned),
             participant: None,
@@ -195,15 +239,39 @@ impl NetworkClient {
             sent: now,
             acknowledged: true,
             failed: false,
-        })
+            credential: None,
+            retry_started: None,
+            retry_at: now,
+            retry_count: 0,
+            suppress_until_neutral: false,
+            awaiting_welcome: true,
+        };
+        #[cfg(target_arch = "wasm32")]
+        if let Some(code) = room {
+            let stored = web_sys::window()
+                .and_then(|w| w.session_storage().ok().flatten())
+                .and_then(|s| s.get_item(&claim_key(address, code)).ok().flatten())
+                .and_then(|s| StoredClaim::parse(&s));
+            if let Some(c) = stored {
+                client.room = Some(c.room);
+                client.participant = Some(c.participant);
+                client.seat = Some(c.seat);
+                client.credential = Some(c.credential);
+                client.suppress_until_neutral = true;
+                client.status = "Reconnecting saved seat…".into();
+            }
+        }
+        Ok(client)
     }
     pub fn command(&mut self, command: ClientMessage) -> Result<(), String> {
-        if self.failed || self.seat.is_none() {
+        if self.failed || self.seat.is_none() || self.awaiting_welcome {
             return Err("not connected".into());
         }
         if matches!(
             command,
-            ClientMessage::Hello { .. } | ClientMessage::Input { .. }
+            ClientMessage::Hello { .. }
+                | ClientMessage::Reconnect { .. }
+                | ClientMessage::Input { .. }
         ) {
             return Err("not a lobby command".into());
         }
@@ -216,12 +284,72 @@ impl NetworkClient {
         self.notice.clear();
         Ok(())
     }
+    fn clear_claim(&self) {
+        #[cfg(target_arch = "wasm32")]
+        if let Some(code) = &self.room_code
+            && let Some(storage) =
+                web_sys::window().and_then(|w| w.session_storage().ok().flatten())
+        {
+            let _ = storage.remove_item(&claim_key(&self.address, code));
+        }
+    }
+    fn save_claim(&self) {
+        #[cfg(target_arch = "wasm32")]
+        if let (Some(code), Some(room), Some(participant), Some(seat), Some(credential), Some(w)) = (
+            &self.room_code,
+            self.room,
+            self.participant,
+            self.seat,
+            &self.credential,
+            web_sys::window(),
+        ) {
+            if let Ok(Some(storage)) = w.session_storage() {
+                let text = serde_json::to_string(&StoredClaim {
+                    room,
+                    participant,
+                    seat,
+                    credential: credential.clone(),
+                })
+                .unwrap();
+                let _ = storage.set_item(&claim_key(&self.address, code), &text);
+            }
+            // Invitation only in the address bar; credential stays private.
+            if let (Ok(search), Ok(path), Ok(history)) =
+                (w.location().search(), w.location().pathname(), w.history())
+                && let Ok(params) = web_sys::UrlSearchParams::new_with_str(&search)
+            {
+                params.set("room", code);
+                let _ = history.replace_state_with_url(
+                    &wasm_bindgen::JsValue::NULL,
+                    "",
+                    Some(&format!("{path}?{}", params.to_string())),
+                );
+            }
+        }
+    }
+    fn fail_terminal(&mut self, status: String) {
+        self.clear_claim();
+        self.credential = None;
+        if let Some(mut sender) = self.sender.take() {
+            sender.close();
+        }
+        self.failed = true;
+        self.retry_started = None;
+        self.notice.clear();
+        self.lobby = None;
+        self.frame = None;
+        self.previous = None;
+        self.status = status;
+    }
     pub fn leave(&mut self) {
+        self.clear_claim();
         let _ = self.command(ClientMessage::Leave);
         if let Some(sender) = &mut self.sender {
             sender.close();
         }
         self.failed = true;
+        self.credential = None;
+        self.retry_started = None;
         self.seat = None;
         self.participant = None;
         self.room = None;
@@ -255,13 +383,18 @@ impl NetworkClient {
                                 edges,
                                 room,
                                 participant,
+                                code,
+                                credential,
                             }) if version == VERSION
                                 && seat < 4
                                 && room > 0
                                 && participant > 0
+                                && valid_code(&code)
+                                && valid_credential(&credential)
                                 && valid_topology(&edges) =>
                             {
-                                inbox.welcome = Some((seat, room, participant, edges))
+                                inbox.welcome =
+                                    Some((seat, room, participant, edges, code, credential))
                             }
                             Some(ServerMessage::State(mut frame)) if valid_frame(&frame) => {
                                 frame.carts.sort_unstable_by_key(|cart| cart.id);
@@ -277,16 +410,12 @@ impl NetworkClient {
                             _ => inbox.error = Some("Invalid server protocol".into()),
                         }
                     }
-                    ewebsock::WsEvent::Error(_) => {
-                        inbox.error = Some("Connection failed; check backend address".into())
-                    }
-                    ewebsock::WsEvent::Closed => {
-                        inbox.error =
-                            Some("Disconnected; join a lobby again as a new participant".into())
+                    ewebsock::WsEvent::Error(_) | ewebsock::WsEvent::Closed => {
+                        inbox.disconnected = true;
                     }
                     _ => {}
                 }
-                if inbox.error.is_some() {
+                if inbox.error.is_some() || inbox.disconnected {
                     ControlFlow::Break(())
                 } else {
                     ControlFlow::Continue(())
@@ -294,67 +423,145 @@ impl NetworkClient {
             }),
         )
     }
+    fn retry(&mut self) {
+        if let Some(mut sender) = self.sender.take() {
+            sender.close();
+        }
+        self.inbox = Arc::new(Mutex::new(Inbox::default()));
+        let started = *self.retry_started.get_or_insert_with(Instant::now);
+        if self.credential.is_none()
+            || started.elapsed() >= Duration::from_secs(55)
+            || self.retry_count >= 12
+        {
+            self.failed = true;
+            self.status =
+                "Backend unavailable or reconnect expired; leave and join a lobby again".into();
+            return;
+        }
+        self.retry_count += 1;
+        self.retry_at =
+            Instant::now() + Duration::from_millis((250u64 << self.retry_count.min(4)).min(4000));
+        self.sequence = 0;
+        self.awaiting_welcome = true;
+        self.acknowledged = true;
+        self.suppress_until_neutral = true;
+        self.previous = None;
+        self.status = format!(
+            "Retrying {}/12 — bot takeover; seat reserved up to 60s",
+            self.retry_count
+        );
+    }
     /// Returns true only when an intent was sent; caller may retain fire taps.
     pub fn pump(&mut self, intent: ControlIntent) -> bool {
-        if self.failed {
+        if self.failed || Instant::now() < self.retry_at {
             return false;
         }
+        if self
+            .retry_started
+            .is_some_and(|s| s.elapsed() >= Duration::from_secs(55))
+        {
+            self.retry();
+            return false;
+        }
+        let intent = if self.suppress_until_neutral {
+            if intent == ControlIntent::default() {
+                self.suppress_until_neutral = false;
+            }
+            ControlIntent::default()
+        } else {
+            intent
+        };
         // Do not open a socket while the caller is still constructing Bevy's
         // scene/plugins. The transport clock starts only when it can be polled.
         if self.sender.is_none() {
             match Self::open(&self.address, self.inbox.clone()) {
                 Ok(sender) => self.sender = Some(sender),
-                Err(error) => {
-                    self.status = format!("Connection failed: {error}");
-                    self.failed = true;
+                Err(_) => {
+                    self.retry();
                     return false;
                 }
             }
             self.sent = Instant::now();
         }
-        let sender = self.sender.as_mut().expect("opened above");
         let inbox = std::mem::take(&mut *self.inbox.lock().unwrap());
-        if let Some(error) = inbox.error {
-            self.status = error;
-            self.failed = true;
-            sender.close();
+        if let Some((seat, room, participant, edges, code, credential)) = inbox.welcome {
+            if self.participant.is_some_and(|id| id != participant)
+                || self.room.is_some_and(|id| id != room)
+                || self.seat.is_some_and(|s| s != seat)
+            {
+                self.fail_terminal("Invalid server protocol".into());
+                return false;
+            }
+            self.seat = Some(seat);
+            self.room = Some(room);
+            self.participant = Some(participant);
+            self.edges = Some(edges);
+            self.room_code = Some(code);
+            self.credential = Some(credential);
+            self.retry_started = None;
+            self.retry_count = 0;
+            self.awaiting_welcome = false;
+            self.received = Instant::now();
+            self.sequence = 0;
+            self.acknowledged = true;
+            self.frame = None;
+            self.previous = None;
+            self.notice.clear();
+            self.status = format!("Online — seat {}", seat + 1);
+            self.save_claim();
+        }
+        if inbox.disconnected && inbox.error.is_none() {
+            self.retry();
             return false;
         }
+        if let Some(error) = inbox.error {
+            self.fail_terminal(error);
+            return false;
+        }
+        let sender = self.sender.as_mut().expect("opened above");
         if inbox.opened {
             // Scene/plugin startup may delay the first pump. Start the Hello
             // acknowledgement deadline when Hello is actually sent, not when
             // construction began before the first rendered frame.
             self.sent = Instant::now();
             sender.send(ewebsock::WsMessage::Text(
-                serde_json::to_string(&ClientMessage::Hello {
-                    version: VERSION,
-                    name: self.name.clone(),
-                    room: self.room_code.clone(),
+                serde_json::to_string(&if let (Some(credential), Some(participant), Some(room)) =
+                    (&self.credential, self.participant, &self.room_code)
+                {
+                    ClientMessage::Reconnect {
+                        version: VERSION,
+                        room: room.clone(),
+                        participant,
+                        credential: credential.clone(),
+                    }
+                } else {
+                    ClientMessage::Hello {
+                        version: VERSION,
+                        name: self.name.clone(),
+                        room: self.room_code.clone(),
+                    }
                 })
                 .unwrap(),
             ));
-            self.status = "Waiting for seat…".into();
-        }
-        if let Some((seat, room, participant, edges)) = inbox.welcome {
-            self.seat = Some(seat);
-            self.room = Some(room);
-            self.participant = Some(participant);
-            self.edges = Some(edges);
-            self.status = format!("Online — seat {}", seat + 1);
+            self.status = if self.credential.is_some() {
+                "Reconnecting — bot takeover until seat restored…"
+            } else {
+                "Waiting for seat…"
+            }
+            .into();
         }
         if let Some(notice) = inbox.notice {
             self.notice = notice;
         }
         if let Some(lobby) = inbox.lobby {
             if Some(lobby.id) != self.room
+                || self.room_code.as_ref() != Some(&lobby.code)
                 || !lobby
                     .humans
                     .iter()
                     .any(|h| Some(h.id) == self.participant && Some(h.seat) == self.seat)
             {
-                self.failed = true;
-                self.status = "Invalid server protocol".into();
-                sender.close();
+                self.fail_terminal("Invalid server protocol".into());
                 return false;
             }
             if lobby.phase != crate::rooms::Phase::Running {
@@ -383,15 +590,17 @@ impl NetworkClient {
                 self.received = Instant::now();
             }
         }
-        if (self.seat.is_none() || !self.acknowledged)
-            && self.sent.elapsed() > Duration::from_secs(5)
+        if ((self.awaiting_welcome || !self.acknowledged)
+            && self.sent.elapsed() > Duration::from_secs(5))
+            || (self.seat.is_some()
+                && self.received.elapsed() > Duration::from_secs(5)
+                && self.retry_started.is_none())
         {
-            self.failed = true;
-            sender.close();
-            self.status = "Server timeout; leave and join a lobby again".into();
+            self.retry();
             return false;
         }
         if self.seat.is_some()
+            && !self.awaiting_welcome
             && running
             && self.acknowledged
             && (self.sequence == 0 || self.sent.elapsed() >= Duration::from_millis(62))
@@ -411,5 +620,103 @@ impl NetworkClient {
             return true;
         }
         false
+    }
+}
+#[cfg(test)]
+mod resilience_tests {
+    use super::*;
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn terminal_identity_mismatches_revoke_claim_close_transport_and_clear_notice() {
+        for mismatch in ["welcome", "lobby", "server error"] {
+            let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+            let mut c = NetworkClient::connect_room(
+                &format!("ws://{}", listener.local_addr().unwrap()),
+                "Ada",
+                Some(&"a".repeat(20)),
+            )
+            .unwrap();
+            c.participant = Some(1);
+            c.room = Some(1);
+            c.seat = Some(0);
+            c.credential = Some("a".repeat(64));
+            c.notice = "not connected".into();
+            {
+                let mut inbox = c.inbox.lock().unwrap();
+                match mismatch {
+                    "welcome" => {
+                        inbox.welcome = Some((0, 1, 2, vec![], "a".repeat(20), "b".repeat(64)))
+                    }
+                    "lobby" => {
+                        inbox.lobby =
+                            Some(crate::rooms::Lobby::new(2, "a".repeat(20), 1, "Ada".into()))
+                    }
+                    _ => inbox.error = Some("room expired".into()),
+                }
+            }
+            assert!(!c.pump(Default::default()));
+            assert!(c.failed, "{mismatch}");
+            assert!(
+                c.credential.is_none(),
+                "terminal {mismatch} retained private claim"
+            );
+            assert!(c.sender.is_none(), "terminal {mismatch} retained transport");
+            assert!(
+                c.notice.is_empty(),
+                "terminal {mismatch} retained stale notice"
+            );
+        }
+    }
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn restored_welcome_clears_retry_command_notice() {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut c = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        c.address = format!("ws://{}", listener.local_addr().unwrap());
+        c.notice = "not connected".into();
+        c.inbox.lock().unwrap().welcome = Some((0, 1, 1, vec![], "a".repeat(20), "b".repeat(64)));
+        c.pump(Default::default());
+        assert!(c.status.starts_with("Online"));
+        assert!(
+            c.notice.is_empty(),
+            "successful reconnect is masked by a stale command error"
+        );
+    }
+    #[test]
+    fn stored_claim_is_private_scoped_and_validated() {
+        assert_ne!(claim_key("ws://a", "room"), claim_key("ws://b", "room"));
+        assert_ne!(claim_key("ws://a", "room"), claim_key("ws://a", "other"));
+        let good =
+            serde_json::json!({"room":1,"participant":2,"seat":0,"credential":"a".repeat(64)});
+        assert!(StoredClaim::parse(&good.to_string()).is_some());
+        for (k, v) in [
+            ("participant", serde_json::json!(0)),
+            ("seat", serde_json::json!(4)),
+            ("credential", serde_json::json!("invite")),
+        ] {
+            let mut invalid = good.clone();
+            invalid[k] = v;
+            assert!(StoredClaim::parse(&invalid.to_string()).is_none());
+        }
+    }
+    #[test]
+    fn retries_are_bounded_and_leave_disables_reconnect() {
+        let mut c = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        c.credential = Some("a".repeat(64));
+        for _ in 0..12 {
+            c.retry();
+            assert!(!c.failed);
+        }
+        c.retry();
+        assert!(c.failed);
+        assert!(c.status.contains("unavailable"));
+        c.leave();
+        assert!(c.credential.is_none());
+        assert!(!c.pump(Default::default()));
+        let mut c = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        c.credential = Some("a".repeat(64));
+        c.retry_started = Some(Instant::now() - Duration::from_secs(55));
+        c.retry();
+        assert!(c.failed);
     }
 }

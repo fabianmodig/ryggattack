@@ -15,6 +15,7 @@ pub(crate) struct SeatInputs {
     /// Non-device controlled seats (for the headless caller). Local seats are
     /// still selected by the offline roster; an empty intent is neutral, not a bot.
     pub(crate) external: [bool; 4],
+    pub(crate) occupied: Option<[bool; 4]>,
     /// The local frame adapter retains a sampled press until one tick observes it.
     /// External submitters still replace held intent; no remote action queue is implied.
     pub(crate) local_fire_pending: [bool; 4],

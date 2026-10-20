@@ -21,7 +21,7 @@ tungstenite = "0.29"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 js-sys = "0.3"
 wasm-bindgen = "0.2"
-web-sys = { version = "0.3", features = ["Window", "Location", "UrlSearchParams", "Document", "Element"] }
+web-sys = { version = "0.3", features = ["Window", "Location", "UrlSearchParams", "Document", "Element", "Storage", "History"] }
 
 [profile.dev]
 opt-level = 1

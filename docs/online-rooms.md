@@ -1,4 +1,9 @@
-# Issue 6 phase 3 — private room/lobby development slice
+# Issue 6 phase 3 — historical private room/lobby development slice
+
+This document describes the merged **v2/phase-3** artifact and its historical
+evidence. Current v3 reconnect/retention behavior and limits are documented in
+[online-resilience.md](online-resilience.md); its policies supersede the
+disconnect/clock descriptions below.
 
 This remains a loopback-only, anonymous development backend. No infrastructure,
 public bind, deployment, reconnect reservation or crash recovery is included.

@@ -7,6 +7,10 @@ export function settingsCommand(arena, target, bots) {
   if(!['Forest','Volcano'].includes(arena)||![1,3,5,7].includes(wins_target)||!Number.isInteger(bots)||bots<0||bots>3)throw Error('Invalid settings');
   return {Configure:{arena,wins_target,bots}};
 }
+export function participantStatus(h, phase) {
+  if(!h.connected)return `${phase==='Running'?'Bot takeover':'Disconnected'} · reserved ${h.reconnect_seconds??0}s`;
+  return phase==='Running'?'playing':h.ready?'ready':'not ready';
+}
 export function installRoomControls() {
   const $=id=>document.getElementById(id), params=new URLSearchParams(location.search);
   $('backend').value=params.get('online')??'ws://127.0.0.1:8787';
@@ -26,7 +30,7 @@ export function installRoomControls() {
     const s=JSON.parse(text), l=s.lobby; $('room-controls').hidden=!l;
     $('room-notice').textContent=s.notice||s.status;
     if(!l)return;
-    $('room-info').textContent=`Room ${l.code} · ${typeof l.phase==='string'?l.phase:`Starting in ${(l.phase.Countdown.ticks_left/64).toFixed(1)}s`}\n`+l.humans.map(h=>`${h.name}${h.id===l.host?' (host)':''}: ${h.ready?'ready':'not ready'}`).join('\n');
+    $('room-info').textContent=`Room ${l.code} · ${typeof l.phase==='string'?l.phase:`Starting in ${(l.phase.Countdown.ticks_left/64).toFixed(1)}s`}\n`+l.humans.map(h=>`${h.name}${h.id===l.host?' (host)':''}: ${participantStatus(h,l.phase)}`).join('\n');
     $('share-room').value=joinUrl(location.href,$('backend').value,l.code);
     const running=l.phase==='Running', host=l.host===s.participant;
     for(const id of ['arena-room','target-room','bots-room','apply-room'])$(id).disabled=running||!host;

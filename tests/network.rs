@@ -15,6 +15,11 @@ fn replication_includes_explicit_map_and_stable_visual_ids_and_powerup_positions
     let edges = sim.network_edges();
     assert!(edges.len() >= 24);
     let first = sim.network_frame();
+    assert_eq!(
+        serde_json::to_value(&first).unwrap()["simulation_tick"],
+        0,
+        "replication exposes the paused simulation clock separately from service ticks"
+    );
     assert_eq!(first.carts.len(), 4);
     assert!(first.bodies.iter().any(|b| b.kind == 3));
     sim.submit(
@@ -44,6 +49,41 @@ fn replication_includes_explicit_map_and_stable_visual_ids_and_powerup_positions
     assert!(serde_json::to_string(&frame).unwrap().len() < ryggattack::network::MAX_STATE_BYTES);
 }
 
+#[test]
+fn credentials_never_appear_in_debug_diagnostics() {
+    let secret = "b".repeat(64);
+    let claim = ryggattack::network::ClientMessage::Reconnect {
+        version: VERSION,
+        room: "a".repeat(20),
+        participant: 1,
+        credential: secret.clone(),
+    };
+    assert!(!format!("{claim:?}").contains(&secret));
+    let welcome = ryggattack::network::ServerMessage::Welcome {
+        version: VERSION,
+        room: 1,
+        participant: 1,
+        seat: 0,
+        edges: vec![],
+        code: "a".repeat(20),
+        credential: secret.clone(),
+    };
+    assert!(!format!("{welcome:?}").contains(&secret));
+}
+#[test]
+fn reconnect_requires_private_bounded_credential_and_current_version() {
+    let msg = serde_json::json!({"Reconnect":{"version":VERSION,"room":"a".repeat(20),"participant":1,"credential":"b".repeat(64)}});
+    assert!(decode_client(&msg.to_string()).is_ok());
+    for (key, value) in [
+        ("credential", serde_json::json!("a".repeat(20))),
+        ("participant", serde_json::json!(0)),
+        ("version", serde_json::json!(0)),
+    ] {
+        let mut invalid = msg.clone();
+        invalid["Reconnect"][key] = value;
+        assert!(decode_client(&invalid.to_string()).is_err());
+    }
+}
 #[test]
 fn protocol_rejects_unknown_fields_nonfinite_axes_and_versions() {
     assert!(

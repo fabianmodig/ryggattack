@@ -50,6 +50,11 @@ jobs:
       - name: Test refresh-rate calibration
         run: node --test scripts/refresh-rate.test.mjs
 
+      - name: Test room UI states and validation
+        run: |
+          node scripts/rooms-ui.test.mjs
+          node --test scripts/resilience-harness.test.mjs
+
       - name: Run tests
         run: cargo test --locked
 

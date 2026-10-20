@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "actual two WASM clients; TCP cut -> bot takeover and visible reservation -> same participant/seat, ordinary former host; rendered loop and real input resume",
+    "last-human transport loss freezes simulation across real wall gap; eligible credential resumes same room and character",
+    "saved seat reload; no credential in URL/public UI state",
+    "same browser tab never sends another endpoint/room claim; original private identity still reclaims",
+    "real backend process restart: terminal expired/restarted feedback, no fake persistence, saved claim cleared",
+    "real incompatible-version WebSocket handshake is shown as a terminal error in rendered UI",
+    "actual missing invite, four-seat full rejection, unavailable backend visible; deliberate Leave clears session claim and disables retries"
+  ],
+  "error_count": 0,
+  "expected_transport_errors": 7,
+  "overruns": 0
+}
+
+TIMING phase4-reconnect-reviewed: 196.381 s; exit=0

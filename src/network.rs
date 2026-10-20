@@ -1,7 +1,7 @@
 //! Versioned development protocol. Connection ownership, never a client seat field,
-//! determines authority. Private lobbies are supported; reconnect is not.
+//! determines authority. Reconnect uses a separate private rotating bearer credential.
 use serde::{Deserialize, Serialize};
-pub const VERSION: u32 = 2;
+pub const VERSION: u32 = 3;
 pub const MAX_INPUT_BYTES: usize = 1024;
 pub fn valid_code(code: &str) -> bool {
     code.len() == 20
@@ -9,9 +9,15 @@ pub fn valid_code(code: &str) -> bool {
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
+pub fn valid_credential(token: &str) -> bool {
+    token.len() == 64
+        && token
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
 pub const MAX_STATE_BYTES: usize = 256 * 1024;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum ClientMessage {
     Hello {
@@ -19,6 +25,12 @@ pub enum ClientMessage {
         name: String,
         /// None creates a private room; a code joins an existing lobby.
         room: Option<String>,
+    },
+    Reconnect {
+        version: u32,
+        room: String,
+        participant: u64,
+        credential: String,
     },
     Input {
         sequence: u64,
@@ -30,12 +42,38 @@ pub enum ClientMessage {
     Configure(crate::rooms::RoomSettings),
     Leave,
 }
+impl std::fmt::Debug for ClientMessage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Hello { .. } => "Hello",
+            Self::Reconnect { .. } => "Reconnect { credential: [REDACTED] }",
+            Self::Input { .. } => "Input",
+            Self::Ready(_) => "Ready",
+            Self::Configure(_) => "Configure",
+            Self::Leave => "Leave",
+        })
+    }
+}
 pub fn decode_client(text: &str) -> Result<ClientMessage, &'static str> {
     if text.len() > MAX_INPUT_BYTES {
         return Err("message too large");
     }
     let msg: ClientMessage = serde_json::from_str(text).map_err(|_| "invalid protocol")?;
     match &msg {
+        ClientMessage::Reconnect {
+            version,
+            room,
+            participant,
+            credential,
+        } => {
+            if *version != VERSION
+                || !valid_code(room)
+                || *participant == 0
+                || !valid_credential(credential)
+            {
+                return Err("invalid reconnect/version");
+            }
+        }
         ClientMessage::Hello {
             version,
             name,
@@ -88,6 +126,7 @@ pub struct Body {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Frame {
     pub tick: u64,
+    pub simulation_tick: u64,
     pub ack: [u64; 4],
     pub names: [Option<String>; 4],
     pub carts: Vec<crate::headless::CartSnapshot>,
@@ -98,13 +137,15 @@ pub struct Frame {
     pub until_drop: f32,
     pub bodies: Vec<Body>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub enum ServerMessage {
     Welcome {
         version: u32,
         seat: usize,
         room: u64,
         participant: u64,
+        code: String,
+        credential: String,
         edges: Vec<(usize, usize)>,
     },
     State(Frame),
@@ -112,4 +153,26 @@ pub enum ServerMessage {
     /// A recoverable lobby command rejection, not a transport failure.
     Notice(String),
     Error(String),
+}
+impl std::fmt::Debug for ServerMessage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Welcome {
+                room,
+                participant,
+                seat,
+                ..
+            } => f
+                .debug_struct("Welcome")
+                .field("room", room)
+                .field("participant", participant)
+                .field("seat", seat)
+                .field("credential", &"[REDACTED]")
+                .finish(),
+            Self::State(frame) => f.debug_tuple("State").field(frame).finish(),
+            Self::Lobby(lobby) => f.debug_tuple("Lobby").field(lobby).finish(),
+            Self::Notice(text) => f.debug_tuple("Notice").field(text).finish(),
+            Self::Error(text) => f.debug_tuple("Error").field(text).finish(),
+        }
+    }
 }

@@ -39,7 +39,7 @@ and CPU-side visual construction remain coupled to some gameplay systems.
 See [the foundation notes](docs/online-foundation.md) for the reusable Rust API.
 `cargo run` continues to open the ordinary offline game.
 
-## Private online rooms (issue #6, phase 3)
+## Private online rooms (issue #6, phases 3–4)
 
 The loopback-only WebSocket service runs isolated authoritative rooms, one
 human seat per connected device, with up to four humans plus bots total.
@@ -69,9 +69,16 @@ run the actual shared AI and do not ready up. One human with bots works;
 zero-bot solo practice remains offline. New joins are locked during a match,
 even if a seat is free. A victory displays for three server seconds, then
 returns connected players to the **same lobby**, preserving its settings and
-clearing readiness. Disconnects remove lobby participants and elect the
-oldest connected human as host. No reconnect/reservation/bot-takeover or
-public/deployable backend is claimed; those remain later issue #6 work.
+clearing readiness. Disconnects elect the oldest connected human as host and
+reserve the seat for 60 wall seconds. During play the actual shared bot AI
+controls the same character; private reconnect restores its current state,
+without respawning dead players or reclaiming former-host privileges. The
+last human leaving freezes simulation; eligible reconnect resumes it, and
+60 seconds empty deletes the room. Browser and native adapters retry with
+bounded backoff; browser reload uses endpoint/room-scoped sessionStorage,
+not the shareable invitation. Deliberate Leave clears the saved claim and
+stops retrying. See [resilience policies and verification](docs/online-resilience.md).
+A public/deployable backend and persistence are **not** claimed (phase 5).
 
 Without the online opt-in, offline play is unchanged. Online Escape suppresses
 your input rather than pausing the server. Replicated visuals remain development

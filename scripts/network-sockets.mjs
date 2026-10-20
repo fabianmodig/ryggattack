@@ -14,7 +14,7 @@ function maskedFrame(opcode, fin, payload=Buffer.alloc(0)) {
 }
 try {
   const port=await new Promise((resolve,reject)=>{let s='';server.stdout.on('data',b=>{s+=b;const m=s.match(/ws:\/\/127.0.0.1:(\d+)/);if(m)resolve(+m[1]);});server.on('error',reject);setTimeout(()=>reject(Error('startup timeout')),5000).unref();});
-  async function open(version=2) {
+  async function open(version=3) {
     const ws=new WebSocket(`ws://127.0.0.1:${port}`);sockets.push(ws);
     const messages=[];let closed=false;
     ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));
@@ -43,7 +43,7 @@ try {
   ]) {
     const c=await open();await c.until(m=>m.Welcome);c.ws.send(payload);await c.until(m=>m.Error||m.closed);c.ws.close();await sleep(80);results.push(`${name} rejected`);
   }
-  const bad=await open(3);await bad.until(m=>m.Error);bad.ws.close();results.push('incompatible version rejected');
+  const bad=await open(4);await bad.until(m=>m.Error);bad.ws.close();results.push('incompatible version rejected');
   const flood=await open();await flood.until(m=>m.Welcome);
   for(let sequence=1;sequence<=100;sequence++)flood.ws.send(JSON.stringify({Input:{sequence,horizontal:0,vertical:0,fire:false}}));
   await flood.until(m=>m.Error||m.closed);results.push('input flood disconnected');flood.ws.close();await sleep(100);
@@ -69,7 +69,7 @@ try {
   async function admitted(origin) {
     const c=await raw(origin);assert(c.header.startsWith('HTTP/1.1 101'));
     const count=healthy.messages.length;
-    c.socket.write(maskedFrame(1,true,Buffer.from(JSON.stringify({Hello:{version:2,name:'Raw attacker'}}))));
+    c.socket.write(maskedFrame(1,true,Buffer.from(JSON.stringify({Hello:{version:3,name:'Raw attacker'}}))));
     const end=performance.now()+2500;
     while(!c.received.includes('Raw attacker')){assert(performance.now()<end,'raw attacker not admitted');await sleep(5);}
     return c;

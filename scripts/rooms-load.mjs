@@ -12,7 +12,7 @@ try {
  const port=await new Promise((resolve,reject)=>{let text='';server.stdout.on('data',b=>{text+=b;const m=text.match(/ws:\/\/127\.0\.0\.1:(\d+)/);if(m)resolve(m[1]);});server.on('error',reject);});
  async function add(){
   const c={ws:new WebSocket(`ws://127.0.0.1:${port}`),pending:false,seq:0};clients.push(c);
-  c.ws.addEventListener('open',()=>c.ws.send(JSON.stringify({Hello:{version:2,name:'Load human'}})));
+  c.ws.addEventListener('open',()=>c.ws.send(JSON.stringify({Hello:{version:3,name:'Load human'}})));
   c.ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Welcome)c.identity=m.Welcome;
    if(m.Lobby){c.lobby=m.Lobby;const me=m.Lobby.humans.find(h=>h.id===c.identity.participant);if(me?.ready)c.pending=false;if(m.Lobby.phase==='Lobby'&&!me?.ready&&!c.pending){c.pending=true;c.ws.send(JSON.stringify({Ready:true}));}}
    if(m.State){c.last={tick:m.State.tick,at:performance.now()};c.first??=c.last;c.ws.send(JSON.stringify({Input:{sequence:++c.seq,horizontal:0,vertical:0,fire:true}}));}
@@ -25,7 +25,7 @@ try {
   while(clients.length<count)await add();
   if(count===16){
    const extra=new WebSocket(`ws://127.0.0.1:${port}`);let error;
-   extra.addEventListener('open',()=>extra.send(JSON.stringify({Hello:{version:2,name:'Over capacity'}})));
+   extra.addEventListener('open',()=>extra.send(JSON.stringify({Hello:{version:3,name:'Over capacity'}})));
    extra.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error)error=m.Error;});
    await until(()=>error,'room capacity rejection');assert(error.includes('capacity'));extra.close();
   }
