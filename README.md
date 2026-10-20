@@ -58,6 +58,11 @@ pause the server. Existing carts/rails are reused; other replicated visuals
 are development proxies. See [networking slice notes](docs/online-network-slice.md)
 for protocol/queue bounds, browser/native verification, controls and important
 limitations. Do not reverse-proxy this unauthenticated development service.
+The server permits browser origins `http://127.0.0.1:8000` and
+`http://localhost:8000` by default. If serving on port 8080 as below, launch it
+with `RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080`.
+Native clients without Origin remain allowed. Each victory displays for three
+server seconds, then a fresh match starts without losing connected seats.
 
 ## Run it
 

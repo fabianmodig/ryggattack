@@ -1,10 +1,11 @@
 # Phase 2 verification evidence — October 20, 2026
 
-The final complete replay passed against the runtime sources and artifacts in
-[manifest.json](manifest.json). [results.json](results.json) is the actual
-browser/native run result, not synthesized data. The enclosing commit binds
-these source hashes to the tested implementation. No runtime source changed
-after the final web build and complete replay.
+This is the original phase-2 implementation replay. It passed against the
+runtime sources and artifacts in [manifest.json](manifest.json), but those
+sources predate the later security-review fixes. The [review replay](../online-network-review-evidence/README.md)
+binds the newer sources to their own native tests, web build, and browser/native
+runtime result. [results.json](results.json) here is the actual historical
+browser/native run result, not synthesized data.
 
 ## Final gates
 

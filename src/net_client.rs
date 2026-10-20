@@ -6,6 +6,99 @@ use std::{
     sync::{Arc, Mutex},
 };
 use web_time::{Duration, Instant};
+// The renderer constructs routes for all four corners immediately. Validate
+// the complete 5x5 undirected grid topology before publishing any map to it.
+fn valid_topology(edges: &[(usize, usize)]) -> bool {
+    if edges.is_empty() || edges.len() > 40 {
+        return false;
+    }
+    let mut seen = std::collections::HashSet::new();
+    let mut adjacent = [0u32; 25];
+    for &(a, b) in edges {
+        if a >= 25
+            || b >= 25
+            || a == b
+            || !((a / 5 == b / 5 && a.abs_diff(b) == 1) || a.abs_diff(b) == 5)
+            || !seen.insert((a.min(b), a.max(b)))
+        {
+            return false;
+        }
+        adjacent[a] |= 1 << b;
+        adjacent[b] |= 1 << a;
+    }
+    let mut reached = 1u32;
+    loop {
+        let next = adjacent
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| reached & (1 << i) != 0)
+            .fold(reached, |all, (_, neighbors)| all | neighbors);
+        if next == reached {
+            break;
+        }
+        reached = next;
+    }
+    reached == (1 << 25) - 1
+}
+// These are presentation-safety limits, deliberately wider than gameplay's
+// arena/timers. Validate before publishing, then canonicalize carts for HUD and
+// interpolation, which index by seat. Body and cart IDs are separate namespaces.
+fn valid_frame(frame: &Frame) -> bool {
+    fn bounded(values: &[f32], low: f32, high: f32) -> bool {
+        values
+            .iter()
+            .all(|v| v.is_finite() && (low..=high).contains(v))
+    }
+    fn unit(values: &[f32]) -> bool {
+        bounded(values, -1.01, 1.01)
+            && (0.98..=1.02).contains(&values.iter().map(|v| v * v).sum::<f32>())
+    }
+    if frame.carts.len() != 4
+        || frame.bodies.len() > 1024
+        || frame
+            .winner
+            .is_some_and(|id| id >= 4 || !frame.round_finished || frame.wins[id] == 0)
+        || frame.wins.iter().any(|w| *w > 7)
+        || !bounded(&[frame.transition, frame.until_drop], 0., 60.)
+        || frame.names.iter().flatten().any(|name| {
+            name.trim().is_empty()
+                || name.chars().count() > 24
+                || name.chars().any(char::is_control)
+        })
+    {
+        return false;
+    }
+    let mut carts = [false; 4];
+    for cart in &frame.carts {
+        if cart.id >= 4
+            || std::mem::replace(&mut carts[cart.id], true)
+            || (!cart.active && cart.alive)
+            || !bounded(&cart.position, -1024., 1024.)
+            || !unit(&cart.forward)
+            || !bounded(
+                &[
+                    cart.shot_cooldown,
+                    cart.speed_seconds,
+                    cart.all_hits_seconds,
+                ],
+                0.,
+                60.,
+            )
+        {
+            return false;
+        }
+    }
+    let mut ids = std::collections::HashSet::new();
+    frame.bodies.iter().all(|body| {
+        body.id > 0
+            && body.id <= 9_007_199_254_740_991
+            && ids.insert(body.id)
+            && body.kind <= 4
+            && bounded(&body.position, -1024., 1024.)
+            && unit(&body.rotation)
+            && bounded(&body.scale, 0., 128.)
+    })
+}
 #[derive(Default)]
 struct Inbox {
     opened: bool,
@@ -83,16 +176,11 @@ impl NetworkClient {
                                 version,
                                 seat,
                                 edges,
-                            }) if version == VERSION
-                                && seat < 4
-                                && edges.len() <= 40
-                                && edges.iter().all(|&(a, b)| a < 25 && b < 25) =>
-                            {
+                            }) if version == VERSION && seat < 4 && valid_topology(&edges) => {
                                 inbox.welcome = Some((seat, edges))
                             }
-                            Some(ServerMessage::State(frame))
-                                if frame.carts.len() == 4 && frame.bodies.len() <= 1024 =>
-                            {
+                            Some(ServerMessage::State(mut frame)) if valid_frame(&frame) => {
+                                frame.carts.sort_unstable_by_key(|cart| cart.id);
                                 inbox.frame = Some(frame)
                             }
                             Some(ServerMessage::Error(err)) => inbox.error = Some(err),

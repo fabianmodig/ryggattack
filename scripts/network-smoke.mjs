@@ -58,7 +58,7 @@ try {
     const code=await new Promise((resolve,reject)=>http.get({host:'127.0.0.1',port:staticServer.address().port,path:p},r=>{r.resume();resolve(r.statusCode);}).on('error',reject)); assert.equal(code,status);
   }
   const bin=path.resolve('target/debug');
-  server=spawn(path.join(bin,'ryggattack-server'),['127.0.0.1:0'],{stdio:['ignore','pipe','pipe']});
+  server=spawn(path.join(bin,'ryggattack-server'),['127.0.0.1:0'],{stdio:['ignore','pipe','pipe'],env:{...process.env,RYGGATTACK_ALLOWED_ORIGINS:`http://127.0.0.1:${staticServer.address().port}`}});
   server.stderr.on('data',b=>{serverLog+=b;});
   const port=await new Promise((resolve,reject)=>{let text='';server.stdout.on('data',b=>{text+=b;const m=text.match(/ws:\/\/127\.0\.0\.1:(\d+)/);if(m)resolve(Number(m[1]));});server.on('exit',code=>reject(Error(`server exit ${code}: ${serverLog}`)));setTimeout(()=>reject(Error('server startup timeout')),10000).unref();});
   proxy=net.createServer(down=>{

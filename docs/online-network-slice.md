@@ -17,10 +17,10 @@ cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ada
 cargo run --locked --bin ryggattack-net-probe -- ws://127.0.0.1:8787 15
 # Browser clients (separate terminal):
 scripts/build-web.sh
-python3 -m http.server 8080 --bind 127.0.0.1 --directory dist/web
+python3 -m http.server 8000 --bind 127.0.0.1 --directory dist/web
 ```
 
-Open `http://127.0.0.1:8080/?online=ws%3A%2F%2F127.0.0.1%3A8787&name=Ada`
+Open `http://127.0.0.1:8000/?online=ws%3A%2F%2F127.0.0.1%3A8787&name=Ada`
 and a second browser with a different name. Alternatively expand **Online
 development match** on the ordinary page and submit its form. The `online`
 query parameter / `--online` argument is opt-in: absent it, the existing offline
@@ -41,8 +41,10 @@ Empty seats move automatically with neutral steering and no firing; they are
 round. Free seats can be reused during a running match. There is no ready
 countdown, invitation, admission lock, or reserved identity in this phase.
 The match uses the foundation's default forest, seed and first-to-three
-configuration. Restart the service and reload/relaunch clients after a match
-winner; there is not yet a return-to-lobby or new-match command.
+configuration. A winner is displayed for three authoritative seconds, then
+the shared fresh-game reset starts another match with zero wins. Socket seats,
+topology, simulation tick and replication ID allocation survive this reset.
+There is not yet a return-to-lobby or new-match command.
 
 ## Authority and protocol
 
@@ -89,22 +91,51 @@ winner; there is not yet a return-to-lobby or new-match command.
 
 ## Bounds and failure behavior
 
-The service refuses non-loopback bind addresses. It has no origin policy,
-authentication or TLS setup and **must not be exposed through a reverse proxy**.
-A malicious web origin can still reach loopback services; this is not a
-production security boundary or CSRF/origin defense.
+The service refuses non-loopback bind addresses and checks Origin during HTTP
+upgrade. Browser defaults are exactly `http://127.0.0.1:8000` and
+`http://localhost:8000`, not every localhost port. Override (replace, not append)
+with `RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080` on
+the **server** for another web host/port. Entries must be exact http(s) origins,
+without wildcard, userinfo, path or trailing slash. Disallowed, null, malformed
+or duplicate Origin headers receive HTTP 403 before a seat is allocated.
+Native clients with **no Origin header** are deliberately permitted; Origin is
+not authentication and native software can forge it. There is no authentication
+or TLS setup and this service **must not be exposed through a reverse proxy**.
 
 There are four active peers, at most eight simultaneous handshake workers,
-a four-entry admission queue, one-second HTTP-upgrade socket IO timeouts,
-a separate ten-second Hello read grace for WASM scene startup,
-1 KiB incoming frame/message bounds, a maximum of eight text inputs per peer
-per tick, and a 256 KiB serialized snapshot ceiling. Nonblocking peer sends
+a four-entry admission queue, an absolute one-second HTTP-upgrade deadline,
+and an absolute ten-second deadline from accept through complete Hello (including
+all fragments). Each underlying blocking read uses the remaining deadline, not
+a renewable inactivity timeout. Admitted partial headers, payloads and fragmented
+messages have a one-second absolute completion deadline; control frames do not
+renew it. Each peer/tick may read at most 1 KiB new wire bytes in four nonblocking
+read calls, plus at most the 1 KiB already buffered by tungstenite. Thus empty
+non-FIN frame floods cannot evade the tick work bound. There are also 1 KiB
+frame/message payload bounds, at most eight text inputs per peer/tick, and a
+256 KiB serialized snapshot ceiling. Nonblocking peer sends
 that cannot progress disconnect that slow peer rather than enqueue unlimited
 snapshots; input is neutralized on removal. One second without a newer input
 also clears held actions. A half-open handshake does not block the tick.
-The per-operation handshake timeout and worker cap are not a full anonymous
-abuse defense; slow byte streams can occupy workers. There is no room-creation
-rate limit because room creation is not implemented.
+Workers are reclaimed even while an attacker trickles empty continuation frames.
+These bounds are not a public-service anonymous abuse defense: eight pending
+clients can still occupy admission until their fixed deadlines. There is no
+room-creation rate limit because room creation is not implemented.
+
+Before publishing data to the renderer, the shared client validates a nonempty,
+unique, grid-adjacent, connected 25-node map, including all starting corners.
+It requires exactly one cart for each seat ID 0..3 and sorts carts by ID. Bodies
+need unique nonzero IDs (at most the JSON safe-integer ceiling), supported kinds
+0..4, finite bounded positions/scales and unit rotations. Cart directions must
+be unit length; timers, names, winner and scores are bounded/validated too.
+Malformed data becomes visible `Invalid server protocol`, never a renderer map
+or partially published frame. Body IDs and cart IDs use separate namespaces.
+
+The selected backend must still be **trusted for allocation safety**. ewebsock's
+native option bounds individual frames, not aggregate messages; the browser
+WebSocket API ignores that option and allocates incoming messages before the
+callback. The adapter's 256 KiB text-length check and semantic validation run
+**after allocation**. Its latest-state mailbox bounds retained application state,
+not browser/native transport allocations from an arbitrary malicious backend.
 
 A client handshake/ack that takes more than five seconds becomes a visible
 connection timeout. Protocol, full-match and disconnect errors are shown in
