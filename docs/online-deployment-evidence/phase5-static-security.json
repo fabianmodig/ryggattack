@@ -1,0 +1,15 @@
+{
+  "findings": {
+    "hardcoded_secret": [],
+    "shell_injection": [],
+    "dynamic_eval_exec": [
+      "const cli=async(...args)=>(await exec(engine,args,{maxBuffer:1024*1024})).stdout.trim();"
+    ],
+    "unsafe_deserialization": [],
+    "sql_string_interpolation": []
+  },
+  "reviewed_false_positives": {
+    "dynamic_eval_exec": "exec identifier is Node promisify(execFile); explicit executable and argv array, no shell or code evaluation"
+  },
+  "pattern_self_tests": true
+}

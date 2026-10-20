@@ -1,0 +1,259 @@
+{
+  "original_file_sha256": "8635a63422600fa9dd7938f9e12ff3192406e64efa1cf0eaab1f5f1a1715b4b0",
+  "artifact": {
+    "index.html": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a",
+    "rooms.mjs": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+    "ryggattack.js": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+    "ryggattack_bg.wasm": "c9eecc0e081e587649fa83b5bec06f82a9730b72890cee37952279d01de57940"
+  },
+  "failure": "AssertionError [ERR_ASSERTION]: form neutral intent\n    at file:///home/hermes/src/ryggattack-deployment/scripts/network-smoke.mjs:220:3",
+  "errors": [],
+  "server_overruns": 0,
+  "clients": [
+    {
+      "name": "BrowserA",
+      "phase": "Lobby",
+      "winner": 3,
+      "input_tail": [
+        {
+          "sequence": 35,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 100895.935813
+        },
+        {
+          "sequence": 36,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 101353.401976
+        },
+        {
+          "sequence": 37,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 102233.772423
+        },
+        {
+          "sequence": 38,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 103107.919215
+        },
+        {
+          "sequence": 39,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 103997.425563
+        },
+        {
+          "sequence": 40,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 104886.830607
+        },
+        {
+          "sequence": 41,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 105778.698116
+        },
+        {
+          "sequence": 42,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 107119.483928
+        },
+        {
+          "sequence": 43,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 107993.316406
+        },
+        {
+          "sequence": 44,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 108879.687851
+        },
+        {
+          "sequence": 45,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 109753.804702
+        },
+        {
+          "sequence": 46,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 110660.88709
+        },
+        {
+          "sequence": 47,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 111533.30196
+        },
+        {
+          "sequence": 48,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 112410.872314
+        },
+        {
+          "sequence": 49,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 113309.754406
+        },
+        {
+          "sequence": 50,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 113759.385562
+        }
+      ]
+    },
+    {
+      "name": "BrowserB",
+      "phase": "Lobby",
+      "winner": 3,
+      "input_tail": [
+        {
+          "sequence": 35,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": true,
+          "at": 100901.046471
+        },
+        {
+          "sequence": 36,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": true,
+          "at": 101792.797491
+        },
+        {
+          "sequence": 37,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": true,
+          "at": 102673.057428
+        },
+        {
+          "sequence": 38,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": true,
+          "at": 103551.030617
+        },
+        {
+          "sequence": 39,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 104441.686449
+        },
+        {
+          "sequence": 40,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 105334.716566
+        },
+        {
+          "sequence": 41,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 106677.474233
+        },
+        {
+          "sequence": 42,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 107551.327545
+        },
+        {
+          "sequence": 43,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 108438.31056
+        },
+        {
+          "sequence": 44,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 109312.511486
+        },
+        {
+          "sequence": 45,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 110191.028002
+        },
+        {
+          "sequence": 46,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 111090.976568
+        },
+        {
+          "sequence": 47,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 111970.619643
+        },
+        {
+          "sequence": 48,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 112871.705745
+        },
+        {
+          "sequence": 49,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 113317.418008
+        },
+        {
+          "sequence": 50,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at": 114628.554225
+        }
+      ]
+    },
+    {
+      "name": "native",
+      "phase": "Lobby",
+      "winner": 3,
+      "input_tail": []
+    }
+  ],
+  "diagnosis": "Natural first-to-one match reached Lobby during the fixed-sleep form window; captured input was neutral. Corrected harness requires three actual neutral packets, retries only real round boundaries, and never hides non-neutral input."
+}

@@ -31,6 +31,9 @@ listing. Possession of a room code/link grants admission, not a reserved identit
 Secure, rotated private reconnect credentials remain distinct from invitations.
 
 Native clients use the same adapter with Rustls/ring and WebPKI roots for WSS.
+After the operator confirms public TLS, connect with
+`cargo run --bin ryggattack -- --online wss://ryggattack.modig.online/ws --name Ada`
+(and `--room <code>` to join).
 A local real TLS test confirms TLS negotiation and rejection of an untrusted
 certificate. It does not establish a trusted connection to the not-yet-deployed
 public certificate, nor exercise a native graphical window.
@@ -82,7 +85,7 @@ All admission limits are **global per process**, not per source IP:
 | Input message/frame size | shared protocol bound (1 KiB) |
 | Raw input read work per peer per tick | 1 KiB and four read calls |
 | Completed input/control messages per peer per tick | 8 |
-| Partial/fragmented message absolute lifetime | 1 second |
+| Admitted-peer partial/fragmented message absolute lifetime | 1 second (initial Hello uses its separate 10s admission bound) |
 | Running peer with no valid input | 120 seconds, then ordinary disconnect/reservation |
 | Missing live input | neutral intent after 1 second |
 | Empty room / reconnect identity retention | 60 wall-clock seconds |
@@ -107,7 +110,7 @@ Only port 8788 serves management HTTP:
   Otherwise 503. This detects a stalled game loop, not just a listening socket.
 - `GET /metrics`: Prometheus-compatible aggregate numbers, without identifying
   labels: rooms, human players (including reserved seats), connected players,
-  pending admissions, completed server ticks, discarded-debt tick overruns and
+  pending admission workers, completed server ticks, discarded-debt tick overruns and
   admission-rate rejections. This is not per-room gameplay tracing.
 - Other paths: 404. The listener has a fixed 1 KiB request buffer, 100ms absolute
   read/write bounds, one request at a time and no keep-alive or worker explosion.
@@ -157,7 +160,9 @@ runtime is Debian trixie (glibc 2.41); compile its executable on compatible glib
 read-only roots, dropped capabilities, no privilege escalation and resource
 requests/limits in Helm. Only web needs a bounded `/tmp` emptyDir for nginx.
 
-Forgejo is authoritative:
+Forgejo is authoritative. The release job explicitly installs Docker Buildx and
+enables BuildKit for the Dockerfile permission flags; local image verification
+uses rootless Podman. No registry publication was performed locally.
 
 1. PR CI runs Rust tests/clippy, JS/UI/startup tests, production/abuse/native TLS
    socket checks, real headless checks, WASM build, and Helm render/semantic tests.
