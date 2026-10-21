@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/hermes/src/ryggattack-ingress-fix/scripts/chart-test.py", line 32, in <module>
+    assert len(ingresses)==2, 'split web and WebSocket Ingresses for independent Traefik priorities'
+           ^^^^^^^^^^^^^^^^^
+AssertionError: split web and WebSocket Ingresses for independent Traefik priorities

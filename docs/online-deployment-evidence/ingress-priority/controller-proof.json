@@ -1,0 +1,33 @@
+{
+  "scope": "temporary distinct diagnostic HTTP Host only; trusted TLS SNI remains canonical; NOT canonical acceptance",
+  "host": "ryggattack-rule-89852940.modig.online",
+  "resources": [
+    {
+      "name": "ryggattack-rule-89852940-combined",
+      "uid": "b288de0f-cd3a-42d3-b640-43fd02d4cf9c"
+    },
+    {
+      "name": "ryggattack-rule-89852940-websocket",
+      "uid": "3e9278dd-0e1a-4529-8389-ae9127891281"
+    }
+  ],
+  "combined_red": {
+    "http": 404,
+    "server": "nginx/1.30.5",
+    "curl_exit": 0
+  },
+  "higher_priority_exact_ws_green": {
+    "http": 101,
+    "server": null,
+    "curl_exit": 28
+  },
+  "exact_ws_subpath_remains_404": {
+    "http": 404,
+    "server": "nginx/1.30.5",
+    "curl_exit": 0
+  },
+  "production_ingress_unchanged": true,
+  "no_certificate_changes": true,
+  "status": "passed",
+  "temporary_ingresses_removed": true
+}
