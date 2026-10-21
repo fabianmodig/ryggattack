@@ -1,0 +1,29 @@
+{
+  "first": {
+    "at": 16754.464634676,
+    "metrics": {
+      "ryggattack_rooms": 1,
+      "ryggattack_players": 1,
+      "ryggattack_connections": 0,
+      "ryggattack_pending_admissions": 0,
+      "ryggattack_ticks_total": 224974,
+      "ryggattack_tick_overruns_total": 1,
+      "ryggattack_rate_rejections_total": 0
+    }
+  },
+  "last": {
+    "at": 16764.583307397,
+    "metrics": {
+      "ryggattack_rooms": 1,
+      "ryggattack_players": 1,
+      "ryggattack_connections": 0,
+      "ryggattack_pending_admissions": 0,
+      "ryggattack_ticks_total": 225621,
+      "ryggattack_tick_overruns_total": 1,
+      "ryggattack_rate_rejections_total": 0
+    }
+  },
+  "wall_seconds": 10.118672721000621,
+  "observed_hz": 63.941192470549545,
+  "overruns_during_window": 0
+}

@@ -1,0 +1,3 @@
+{"status":"passed","evidence_directory":"/home/hermes/src/ryggattack/verification/live-deployment/sha-205d048-measured-capture","results":"/home/hermes/src/ryggattack/verification/live-deployment/sha-205d048-measured-capture/results.json"}
+
+TIMING phase5-live-measured-capture: 194.177 s; exit=0

@@ -1,0 +1,8 @@
+[
+  {
+    "deployment": "traefik-external",
+    "namespace": "traefik-external",
+    "access_log_flags": [],
+    "config_file_flags": []
+  }
+]

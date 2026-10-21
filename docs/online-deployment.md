@@ -1,10 +1,12 @@
 # Production deployment (phase 5)
 
 Canonical game: **https://ryggattack.modig.online/**. Browser transport:
-`wss://ryggattack.modig.online/ws`. This change supplies application/runtime,
-images, chart and local evidence, **not a live deployment**. Infrastructure,
-DNS, registry credentials, public certificate verification and rollout belong to
-the separately reviewed infrastructure change.
+`wss://ryggattack.modig.online/ws`. **Deployed and verified on 21 October 2026**:
+paired runtime `sha-205d048`, reviewed routing deployment `12b6f60` (PR #14),
+with the separately reviewed nixos-config PR #20 supplying Flux integration.
+The [live acceptance package](online-deployment-evidence/live-205d048/README.md)
+records trusted public TLS/WSS, actual two-browser/shared-native gameplay and
+reconnect, exact artifact hashes, operational safeguards and explicit limits.
 
 ## Runtime contract
 
@@ -35,8 +37,8 @@ After the operator confirms public TLS, connect with
 `cargo run --bin ryggattack -- --online wss://ryggattack.modig.online/ws --name Ada`
 (and `--room <code>` to join).
 A local real TLS test confirms TLS negotiation and rejection of an untrusted
-certificate. It does not establish a trusted connection to the not-yet-deployed
-public certificate, nor exercise a native graphical window.
+certificate. The subsequent live replay also verified trusted canonical WSS
+through the shared native adapter; a native graphical window was not exercised.
 
 Local development is unchanged:
 
@@ -235,9 +237,10 @@ canonical public acceptance**. The chart-only fix leaves runtime sources,
 images and the published paired `appVersion: sha-205d048` unchanged. After exact
 PR-head CI passes, the operator can use the documented chart-only merge pattern
 with `[skip ci]` in the merge commit message to avoid republishing unchanged
-images. This is not a skipped PR validation gate. No merge or rollout is implied
-by the local chart checks; canonical trusted browser/WSS replay remains blocked
-until the reviewed chart reaches main and Flux rolls it out.
+images. This is not a skipped PR validation gate. PR #14 subsequently merged
+after full exact-head CI and independent review; Flux applied the split routes
+without restarting the paired runtime. Canonical trusted WSS and the complete
+corrected live replay then passed; see the live acceptance package above.
 
 The separate infra GitRepository should follow `main`, use the namespace's
 read-only git Secret, and include each parent in source ignores:

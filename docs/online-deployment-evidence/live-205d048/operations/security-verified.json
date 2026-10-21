@@ -1,0 +1,40 @@
+{
+  "deployments": [
+    {
+      "deployment": "ryggattack-server",
+      "hardening_verified": true,
+      "resources": {
+        "limits": {
+          "cpu": "2",
+          "memory": "2Gi"
+        },
+        "requests": {
+          "cpu": "500m",
+          "memory": "512Mi"
+        }
+      },
+      "strategy": "Recreate",
+      "replicas": 1
+    },
+    {
+      "deployment": "ryggattack-web",
+      "hardening_verified": true,
+      "resources": {
+        "limits": {
+          "cpu": "1",
+          "memory": "128Mi"
+        },
+        "requests": {
+          "cpu": "50m",
+          "memory": "32Mi"
+        }
+      },
+      "strategy": "Recreate",
+      "replicas": 1
+    }
+  ],
+  "certificate_ready": true,
+  "certificate_dns_names": [
+    "ryggattack.modig.online"
+  ]
+}

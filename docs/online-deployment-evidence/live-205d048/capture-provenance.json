@@ -1,0 +1,18 @@
+{
+  "base": "unchanged original harness plus metadata-only protocol instrumentation",
+  "original_screenshot_ms": 15000,
+  "measured_capture_api_ms": [
+    31922.14532,
+    42105.524929,
+    36288.669329,
+    39328.881252,
+    46615.458255,
+    44833.716706
+  ],
+  "screenshot_only_ms": 60000,
+  "overall_ms": 420000,
+  "functional_assertions_tls_production_deadlines_unchanged": true,
+  "library_files_changed": false,
+  "candidate_sha256": "65240c6df0b4f16ec6c660436ebaab616863c34cc89a4692da86479121c4a864",
+  "delta": "--- \n+++ \n@@ -93,7 +93,7 @@\n const safeIdentity = w => Object.fromEntries(['version','seat','room','participant','code'].map(key=>[key,w[key]]));\n async function expand(c) { if(!await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }\n async function collapse(c) { if(await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }\n-async function screenshot(c,name) { traceScreenshot=`${c.name}:${name}`; try { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:15000}); } finally { traceScreenshot=null; } }\n+async function screenshot(c,name) { traceScreenshot=`${c.name}:${name}`; try { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:60000}); } finally { traceScreenshot=null; } }\n async function pageFor(name,code) {\n   const c=client(name);\n   // Separate rendered participants must not share SwiftShader GPU startup.\n"
+}

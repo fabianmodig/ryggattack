@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "same_namespace_ready": {
+      "http": "200",
+      "exit": 0,
+      "error": ""
+    },
+    "same_namespace_metrics": {
+      "http": "200",
+      "exit": 0,
+      "error": ""
+    },
+    "other_namespace_metrics": {
+      "http": "000",
+      "exit": 7,
+      "error": "curl: (7) Failed to connect to 10.42.1.100 port 8788 after 0 ms: Could not connect to server\ncommand terminated with exit code 7"
+    },
+    "other_namespace_game_positive_control": {
+      "http": "101",
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 3002 milliseconds with 0 bytes received\ncommand terminated with exit code 28"
+    }
+  },
+  "temporary_pods": [
+    {
+      "namespace": "ryggattack",
+      "name": "ryggattack-policy-89d1a99e-same",
+      "uid": "93b109bb-fd92-471e-b0a5-6647d467b7c2"
+    },
+    {
+      "namespace": "default",
+      "name": "ryggattack-policy-89d1a99e-other",
+      "uid": "e91b3af3-9592-48df-85a1-2e5480d9445c"
+    }
+  ],
+  "metrics": "ryggattack_rooms 0\nryggattack_players 0\nryggattack_connections 0\nryggattack_pending_admissions 0\nryggattack_ticks_total 18284\nryggattack_tick_overruns_total 0\nryggattack_rate_rejections_total 0\n",
+  "status": "passed",
+  "temporary_pods_removed": true
+}

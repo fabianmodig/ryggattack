@@ -1,0 +1,138 @@
+{
+  "at": "2026-10-21T10:34:34.461427+00:00",
+  "pods": [
+    {
+      "name": "ryggattack-server-fc58fcf9d-kd7jx",
+      "uid": "134aa5bc-6bf3-4d73-b491-7f07ac5962cf",
+      "image": "git.modig.online/fabianmodig/ryggattack/server:sha-205d048",
+      "imageID": "git.modig.online/fabianmodig/ryggattack/server@sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6",
+      "ready": true,
+      "restarts": 0
+    },
+    {
+      "name": "ryggattack-web-58fc68db65-dcddc",
+      "uid": "0ac3d719-40e2-4d24-9b75-485ad3b10667",
+      "image": "git.modig.online/fabianmodig/ryggattack/web:sha-205d048",
+      "imageID": "git.modig.online/fabianmodig/ryggattack/web@sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324",
+      "ready": true,
+      "restarts": 0
+    }
+  ],
+  "source_revision": "main@sha1:12b6f60cd71a86e6aba519af51b1131f0d60d0c7",
+  "helm_status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-10-21T09:35:55Z",
+        "message": "Helm upgrade succeeded for release ryggattack/ryggattack.v2 with chart ryggattack@0.1.0+12b6f60cd71a",
+        "observedGeneration": 1,
+        "reason": "UpgradeSucceeded",
+        "status": "True",
+        "type": "Ready"
+      },
+      {
+        "lastTransitionTime": "2026-10-21T09:04:47Z",
+        "message": "No drift detected against the cluster state",
+        "observedGeneration": 1,
+        "reason": "NoDriftDetected",
+        "status": "False",
+        "type": "Drifted"
+      },
+      {
+        "lastTransitionTime": "2026-10-21T09:35:55Z",
+        "message": "Helm upgrade succeeded for release ryggattack/ryggattack.v2 with chart ryggattack@0.1.0+12b6f60cd71a",
+        "observedGeneration": 1,
+        "reason": "UpgradeSucceeded",
+        "status": "True",
+        "type": "Released"
+      }
+    ],
+    "helmChart": "ryggattack/ryggattack-ryggattack",
+    "history": [
+      {
+        "action": "upgrade",
+        "apiVersion": "v2",
+        "appVersion": "sha-205d048",
+        "chartName": "ryggattack",
+        "chartVersion": "0.1.0+12b6f60cd71a",
+        "configDigest": "sha256:9eea5254bac1008bbee4d68f2d47a746697644b19160957de72da9c02175d4d2",
+        "digest": "sha256:44b78fe256f8a4289beccc90d1fcd64042f956c26b46b2a944c2b931cae9331c",
+        "firstDeployed": "2026-10-21T09:04:42Z",
+        "lastDeployed": "2026-10-21T09:35:55Z",
+        "name": "ryggattack",
+        "namespace": "ryggattack",
+        "status": "deployed",
+        "version": 2
+      },
+      {
+        "apiVersion": "v2",
+        "appVersion": "sha-205d048",
+        "chartName": "ryggattack",
+        "chartVersion": "0.1.0+01f27cca42b1",
+        "configDigest": "sha256:9eea5254bac1008bbee4d68f2d47a746697644b19160957de72da9c02175d4d2",
+        "digest": "sha256:365af37329c14c1932e241ee1fddc9548d9000a67975e9896c6ab35b475b6c55",
+        "firstDeployed": "2026-10-21T09:04:42Z",
+        "lastDeployed": "2026-10-21T09:04:42Z",
+        "name": "ryggattack",
+        "namespace": "ryggattack",
+        "status": "superseded",
+        "version": 1
+      }
+    ],
+    "inventory": {
+      "entries": [
+        {
+          "id": "ryggattack_ryggattack_networking.k8s.io_NetworkPolicy",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack-web__Service",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack-server__Service",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack-web_apps_Deployment",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack-server_apps_Deployment",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack_networking.k8s.io_Ingress",
+          "v": "v1"
+        },
+        {
+          "id": "ryggattack_ryggattack-websocket_networking.k8s.io_Ingress",
+          "v": "v1"
+        }
+      ]
+    },
+    "lastAttemptedConfigDigest": "sha256:9eea5254bac1008bbee4d68f2d47a746697644b19160957de72da9c02175d4d2",
+    "lastAttemptedGeneration": 1,
+    "lastAttemptedReleaseAction": "upgrade",
+    "lastAttemptedReleaseActionDuration": "518.661147ms",
+    "lastAttemptedRevision": "0.1.0+12b6f60cd71a",
+    "lastHandledReconcileAt": "2026-10-21T11:35:56.963388627+02:00",
+    "observedGeneration": 1,
+    "storageNamespace": "ryggattack"
+  },
+  "certificate_status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-10-21T09:05:59Z",
+        "message": "Certificate is up to date and has not expired",
+        "observedGeneration": 1,
+        "reason": "Ready",
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "notAfter": "2027-01-19T08:07:28Z",
+    "notBefore": "2026-10-21T08:07:29Z",
+    "renewalTime": "2026-12-20T08:07:28Z",
+    "revision": 1
+  }
+}

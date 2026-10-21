@@ -1,0 +1,58 @@
+{
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "Certificate",
+    "metadata": {
+        "creationTimestamp": "2026-10-21T09:04:42Z",
+        "generation": 1,
+        "labels": {
+            "app.kubernetes.io/managed-by": "Helm",
+            "helm.toolkit.fluxcd.io/name": "ryggattack",
+            "helm.toolkit.fluxcd.io/namespace": "ryggattack"
+        },
+        "name": "ryggattack-tls",
+        "namespace": "ryggattack",
+        "ownerReferences": [
+            {
+                "apiVersion": "networking.k8s.io/v1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "Ingress",
+                "name": "ryggattack",
+                "uid": "a087eb65-0848-4ad8-8b55-299dd350661c"
+            }
+        ],
+        "resourceVersion": "47221217",
+        "uid": "7f8a65b6-2bfa-49f2-b5ae-892aa8af79cf"
+    },
+    "spec": {
+        "dnsNames": [
+            "ryggattack.modig.online"
+        ],
+        "issuerRef": {
+            "group": "cert-manager.io",
+            "kind": "ClusterIssuer",
+            "name": "letsencrypt-cloudflare"
+        },
+        "secretName": "ryggattack-tls",
+        "usages": [
+            "digital signature",
+            "key encipherment"
+        ]
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastTransitionTime": "2026-10-21T09:05:59Z",
+                "message": "Certificate is up to date and has not expired",
+                "observedGeneration": 1,
+                "reason": "Ready",
+                "status": "True",
+                "type": "Ready"
+            }
+        ],
+        "notAfter": "2027-01-19T08:07:28Z",
+        "notBefore": "2026-10-21T08:07:29Z",
+        "renewalTime": "2026-12-20T08:07:28Z",
+        "revision": 1
+    }
+}
