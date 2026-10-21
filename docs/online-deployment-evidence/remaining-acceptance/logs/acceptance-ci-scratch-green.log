@@ -1,0 +1,214 @@
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 4.333529
+  type: 'test'
+  ...
+# Subtest: inherited remote engine selectors fail closed even for Podman
+ok 2 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 0.924823
+  type: 'test'
+  ...
+# Subtest: every engine command pins its validated local transport
+ok 3 - every engine command pins its validated local transport
+  ---
+  duration_ms: 2.251851
+  type: 'test'
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+ok 4 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 363.897282
+  type: 'test'
+  ...
+# Subtest: actual process effective/bounding/ambient capability sets must all be zero
+ok 5 - actual process effective/bounding/ambient capability sets must all be zero
+  ---
+  duration_ms: 2.122272
+  type: 'test'
+  ...
+# Subtest: local authorization is mandatory; unknown and unsafe arguments fail closed
+ok 6 - local authorization is mandatory; unknown and unsafe arguments fail closed
+  ---
+  duration_ms: 0.582968
+  type: 'test'
+  ...
+# Subtest: only explicit IPv4 loopback published ports are accepted
+ok 7 - only explicit IPv4 loopback published ports are accepted
+  ---
+  duration_ms: 0.409814
+  type: 'test'
+  ...
+# Subtest: DOM text, not the diagnostic global, is authoritative; hidden notices fail
+ok 8 - DOM text, not the diagnostic global, is authoritative; hidden notices fail
+  ---
+  duration_ms: 0.338129
+  type: 'test'
+  ...
+# Subtest: CLI authorization and help are inert even without any browser dependency
+ok 9 - CLI authorization and help are inert even without any browser dependency
+  ---
+  duration_ms: 450.739796
+  type: 'test'
+  ...
+# Subtest: credential negative scan rejects exact known secrets and private key evidence
+ok 10 - credential negative scan rejects exact known secrets and private key evidence
+  ---
+  duration_ms: 0.984192
+  type: 'test'
+  ...
+# Subtest: local smoke publishes only random loopback ports
+ok 11 - local smoke publishes only random loopback ports
+  ---
+  duration_ms: 2.818553
+  type: 'test'
+  ...
+# Subtest: remote-daemon CI smoke shares the calling job network without host exposure
+ok 12 - remote-daemon CI smoke shares the calling job network without host exposure
+  ---
+  duration_ms: 0.288383
+  type: 'test'
+  ...
+# Subtest: network helper rejects malformed namespaces, ports and non-loopback publication
+ok 13 - network helper rejects malformed namespaces, ports and non-loopback publication
+  ---
+  duration_ms: 2.512103
+  type: 'test'
+  ...
+# Subtest: a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+ok 14 - a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+  ---
+  duration_ms: 0.757435
+  type: 'test'
+  ...
+# Subtest: non-neutral form input always fails, including across a natural match boundary
+ok 15 - non-neutral form input always fails, including across a natural match boundary
+  ---
+  duration_ms: 0.515231
+  type: 'test'
+  ...
+# Subtest: perf servers serve the calibration module with a JavaScript MIME type
+ok 16 - perf servers serve the calibration module with a JavaScript MIME type
+  ---
+  duration_ms: 1.946652
+  type: 'test'
+  ...
+# Subtest: page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+ok 17 - page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+  ---
+  duration_ms: 2.942689
+  type: 'test'
+  ...
+# Subtest: page still starts wasm if calibration unexpectedly rejects
+ok 18 - page still starts wasm if calibration unexpectedly rejects
+  ---
+  duration_ms: 1.725607
+  type: 'test'
+  ...
+# Subtest: hidden pages discard calibration without scheduling rAF
+ok 19 - hidden pages discard calibration without scheduling rAF
+  ---
+  duration_ms: 0.14562
+  type: 'test'
+  ...
+# Subtest: missing or failing rAF resolves null instead of blocking startup
+ok 20 - missing or failing rAF resolves null instead of blocking startup
+  ---
+  duration_ms: 0.264421
+  type: 'test'
+  ...
+# Subtest: stalled or incomplete calibration has a bounded timeout and cleanup
+ok 21 - stalled or incomplete calibration has a bounded timeout and cleanup
+  ---
+  duration_ms: 0.184227
+  type: 'test'
+  ...
+# Subtest: visibility changes invalidate partially measured cadence
+ok 22 - visibility changes invalidate partially measured cadence
+  ---
+  duration_ms: 0.227417
+  type: 'test'
+  ...
+# Subtest: implausible or invalid timestamps never become tiny or invalid targets
+ok 23 - implausible or invalid timestamps never become tiny or invalid targets
+  ---
+  duration_ms: 1.081102
+  type: 'test'
+  ...
+# Subtest: one scheduling hitch does not lower an otherwise stable 40 Hz target
+ok 24 - one scheduling hitch does not lower an otherwise stable 40 Hz target
+  ---
+  duration_ms: 0.338804
+  type: 'test'
+  ...
+# Subtest: unstable throttled cadence is not accepted as a low-refresh display
+ok 25 - unstable throttled cadence is not accepted as a low-refresh display
+  ---
+  duration_ms: 0.364451
+  type: 'test'
+  ...
+# Subtest: status waits tolerate only unpublished initialization and require the actual expected status
+ok 26 - status waits tolerate only unpublished initialization and require the actual expected status
+  ---
+  duration_ms: 1.047959
+  type: 'test'
+  ...
+# Subtest: visible DOM credentials block screenshots before capture
+ok 27 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 2.663593
+  type: 'test'
+  ...
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+ok 28 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 17.180174
+  type: 'test'
+  ...
+# Subtest: privacy fixture initializes missing HOME and TMPDIR scratch parents
+ok 29 - privacy fixture initializes missing HOME and TMPDIR scratch parents
+  ---
+  duration_ms: 299.512226
+  type: 'test'
+  ...
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+ok 30 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 0.390632
+  type: 'test'
+  ...
+# Subtest: solo help and invalid CLI are inert with a missing Playwright module
+ok 31 - solo help and invalid CLI are inert with a missing Playwright module
+  ---
+  duration_ms: 473.536396
+  type: 'test'
+  ...
+# Subtest: unchanged default creates the original three-bot configuration
+ok 32 - unchanged default creates the original three-bot configuration
+  ---
+  duration_ms: 0.218663
+  type: 'test'
+  ...
+# Subtest: explicit bot configuration covers all supported non-practice rosters
+ok 33 - explicit bot configuration covers all supported non-practice rosters
+  ---
+  duration_ms: 0.330208
+  type: 'test'
+  ...
+# Subtest: authorization and bot count fail closed before any live side effects
+ok 34 - authorization and bot count fail closed before any live side effects
+  ---
+  duration_ms: 0.585383
+  type: 'test'
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 963.544177

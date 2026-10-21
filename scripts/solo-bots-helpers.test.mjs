@@ -14,7 +14,9 @@ test('visible DOM credentials block screenshots before capture',async()=>{
 
 test('publishing scans every artifact and purges earlier screenshots on privacy failure',async()=>{
  const {publishSoloEvidence}=await import('./solo-bots-helpers.mjs');
- const root=fs.mkdtempSync(path.join(process.env.TMPDIR??path.join(os.homedir(),'.hermes/cache/scratch'),'solo-privacy-test-'));
+ const scratch=process.env.TMPDIR??path.join(os.homedir(),'.hermes/cache/scratch');
+ fs.mkdirSync(scratch,{recursive:true});
+ const root=fs.mkdtempSync(path.join(scratch,'solo-privacy-test-'));
  try {
   for(const reason of ['dom','text','nested','binary','evidence','key','unicode']) {
    const out=path.join(root,reason);fs.mkdirSync(out);fs.writeFileSync(path.join(out,'earlier.png'),Buffer.from([137,80,78,71]));
@@ -34,6 +36,23 @@ test('publishing scans every artifact and purges earlier screenshots on privacy 
   const proof=JSON.parse(fs.readFileSync(path.join(out,'results.json'),'utf8')).private_material_negative_scan;
   assert.equal(proof.screenshot_text_check,'visible DOM before capture; binary scans are not OCR');
  } finally {fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('privacy fixture initializes missing HOME and TMPDIR scratch parents',()=>{
+ const base=process.env.TMPDIR??path.join(os.homedir(),'.hermes/cache/scratch');fs.mkdirSync(base,{recursive:true});
+ const sandbox=fs.mkdtempSync(path.join(base,'solo-scratch-regression-'));
+ try {
+  for(const mode of ['home','tmpdir']) {
+   const env={...process.env,HOME:path.join(sandbox,mode,'home')};delete env.TMPDIR;
+   // A nested --test invocation must not inherit the outer runner's child marker.
+   delete env.NODE_TEST_CONTEXT;
+   if(mode==='tmpdir')env.TMPDIR=path.join(sandbox,mode,'custom-scratch');
+   const scratch=env.TMPDIR??path.join(env.HOME,'.hermes/cache/scratch');assert(!fs.existsSync(scratch));
+   const result=spawnSync(process.execPath,['--test','--test-name-pattern=publishing scans every artifact',fileURLToPath(import.meta.url)],{encoding:'utf8',timeout:10000,env});
+   assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/# tests 1\b/);assert.match(result.stdout,/# pass 1\b/);
+   assert(fs.statSync(scratch).isDirectory());assert.deepEqual(fs.readdirSync(scratch),[]);
+  }
+ } finally {fs.rmSync(sandbox,{recursive:true,force:true});}
 });
 
 test('observed input samples must satisfy the selected bot steering and fire policy',async()=>{

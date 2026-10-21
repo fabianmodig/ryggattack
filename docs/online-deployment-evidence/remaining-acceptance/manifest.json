@@ -3,7 +3,11 @@
   "proofs": [
     {
       "path": "docs/online-deployment-evidence/remaining-acceptance/README.md",
-      "sha256": "a2f7317f78b6b30fb9cd7717c9c1b699348e6dbc049e6318f49f69a3435d2450"
+      "sha256": "1a6da5b3f24c73bbe15b14b5e4a8fbfae08acc21f8dcdef018dd1b2e4e90e811"
+    },
+    {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/ci-initial-failure.json",
+      "sha256": "351acdc63849ab4327dc8c0623338d7ed5d164d7d45511a096120691a3f8975f"
     },
     {
       "path": "docs/online-deployment-evidence/remaining-acceptance/feedback-clean/Restart-online.png",
@@ -154,6 +158,26 @@
       "sha256": "9f326f32c3604b087daeeddad68256ed236d2aadf300910a4ac0492e0965dffc"
     },
     {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-ci-postfix-nonbuild.log",
+      "sha256": "da8cc36bc25d0ea0df03efecc1b211b37b8cb6eec24db84f0697af972c7ab97c"
+    },
+    {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-ci-scratch-green.log",
+      "sha256": "9cf364f814031059341ba3ecb23213d1d86d752303bcd94b4678cb803f6bbbb5"
+    },
+    {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-ci-scratch-helper-green.log",
+      "sha256": "5a9c189ace65868f8ae9e9f63356af55ab7265cd05b8b26f123559fed0478d29"
+    },
+    {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-ci-scratch-nested-red.log",
+      "sha256": "1142f23d62dd6abb81b415b86c4276e87e4d80ad02a38880bb96241def118f98"
+    },
+    {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-ci-scratch-red.log",
+      "sha256": "c6d69d483d89d8f950e456cdf3f285f5bd7a99806bbf57b5771d51358f75b9f8"
+    },
+    {
       "path": "docs/online-deployment-evidence/remaining-acceptance/logs/acceptance-expanded-clippy.log",
       "sha256": "33d9a8360c359d5385607cd02cd9aab91077e27ad439ddd545ab0341009c0590"
     },
@@ -218,6 +242,10 @@
       "sha256": "1c352b1a0bae6ea89e23fd9013599f329d153186212175d544b87dab29eff311"
     },
     {
+      "path": "docs/online-deployment-evidence/remaining-acceptance/reviews/ci-portability.json",
+      "sha256": "9d1ec7253a72485a0574d2ceb4fbace08aa021ea4b08b8b1da98a43f43bf05b5"
+    },
+    {
       "path": "docs/online-deployment-evidence/remaining-acceptance/reviews/harness-final.json",
       "sha256": "8257b0278a1f5a7eabab252fd0298737411ee1f7fb539546988eb834d175a3a5"
     },
@@ -271,7 +299,7 @@
     },
     {
       "path": "docs/online-deployment-evidence/remaining-acceptance/validation.json",
-      "sha256": "d60b4fe3c7ae5da97cc51b66c532aeaf3258d3b5012912fa2805d67e40f6b376"
+      "sha256": "bcd7e3c02efa8146bf08c1a7cc93d1387fb2c0f365ab7cde7439202dcf42effd"
     }
   ],
   "sources": [
@@ -317,7 +345,7 @@
     },
     {
       "path": "scripts/solo-bots-helpers.test.mjs",
-      "sha256": "b2abd955c92b1e587e9a270300493359547e8c9688693bebaa81115420e66fee"
+      "sha256": "727b6db57f2842f2ab02e3be8bc64323f39a0b899e3097f51729bb1fc902ec96"
     },
     {
       "path": ".forgejo/workflows/ci.yml",

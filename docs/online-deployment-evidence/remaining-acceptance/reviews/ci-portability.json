@@ -1,0 +1,10 @@
+{
+  "delegation_id": "deleg_e05cb8a8",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "suggestions": [],
+  "scope": "CI portability correction in scripts/solo-bots-helpers.test.mjs only",
+  "summary": "Recursive scratch-parent creation fixes the missing-directory failure without weakening privacy assertions. Both missing-HOME/TMPDIR regression cases use owned sandbox paths, require exactly one child test/pass, verify cleanup and exclude recursive regression execution. No production change was found.",
+  "verification_boundary": "Independent static review only; parent separately ran18 helper tests and the full34-test Node matrix, including fresh HOME without TMPDIR."
+}

@@ -1,5 +1,5 @@
 {
-  "status": "local-acceptance-passed-independent-reviews-approved-CI-separate",
+  "status": "local-passed-all-source-reviews-approved-awaiting-corrected-exact-head-CI",
   "gates": {
     "acceptance-expanded-rust": {
       "seconds": 169.882,
@@ -69,9 +69,9 @@
   },
   "scope": "Web-first. Tests/evidence only; no deployed application change. Presentation parity and manual native graphics not certified. Original failed attempts preserved.",
   "final_helper_tests": {
-    "passed": 17,
+    "passed": 18,
     "failed": 0,
-    "log": "logs/acceptance-review-fix.log",
+    "log": "logs/acceptance-ci-scratch-helper-green.log",
     "parent_independently_rerun": true
   },
   "maintained_harness_sources_sha256": {
@@ -80,12 +80,25 @@
     "scripts/client-feedback-helpers.test.mjs": "b411664c19dbaa2a5fa77aa415bf0abdb1225c19e051c76f090a23b7a779e3a2",
     "scripts/solo-bots-smoke.mjs": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
     "scripts/solo-bots-helpers.mjs": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
-    "scripts/solo-bots-helpers.test.mjs": "b2abd955c92b1e587e9a270300493359547e8c9688693bebaa81115420e66fee"
+    "scripts/solo-bots-helpers.test.mjs": "727b6db57f2842f2ab02e3be8bc64323f39a0b899e3097f51729bb1fc902ec96"
   },
   "provenance_boundary": "Top-level executed verifier hashes are recorded by runtime reports. Imported helper hashes below document the frozen archived source; the old reports did not capture helper hashes at startup. Hardened solo helper changes were unit-tested, not claimed as the earlier archived public run.",
   "independent_reviews": {
     "rust": "reviews/rust.json",
     "harness": "reviews/harness-final.json",
-    "initial_blocked_review_preserved": "reviews/harness-initial-blocked.json"
+    "initial_blocked_review_preserved": "reviews/harness-initial-blocked.json",
+    "ci_portability": "reviews/ci-portability.json"
+  },
+  "ci_portability_fix": {
+    "initial_head": "39de1b7d1aa82ce23e838cabd14bf1fbb72c8ff2",
+    "failed_run_id": 324,
+    "failed_job_id": 477,
+    "cause": "missing scratch parent in test fixture",
+    "broader_node_tests": 34,
+    "fresh_HOME_without_TMPDIR": "passed",
+    "log": "logs/acceptance-ci-scratch-green.log",
+    "all_nonbuild_gates": "logs/acceptance-ci-postfix-nonbuild.log",
+    "runtime_source_changed": false,
+    "corrected_exact_head_CI_required": true
   }
 }
