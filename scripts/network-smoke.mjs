@@ -177,8 +177,12 @@ try {
   await a.page.locator('#ready-room').click();
   await until(()=>a.lobby.humans.find(h=>h.id===a.identity.participant).ready,'host ready');
   await b.page.locator('#ready-room').click();
-  await a.page.locator('#ready-room').click();
+  // Wait for the authoritative phase: independent delayed transports can
+  // otherwise deliver A's unready before B's ready and never start a countdown.
   await until(()=>a.lobbies.some(l=>l.phase.Countdown),'authoritative countdown observed');
+  // Controls are already visible. Keep a real mouse click, but skip the two
+  // stability animation frames so cold rendering cannot outlast the countdown.
+  await a.page.locator('#ready-room').click({force:true});
   await until(()=>a.lobby.phase==='Lobby'&&!a.lobby.humans.find(h=>h.id===a.identity.participant).ready,'unready cancels countdown');
   await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='Ready',null,{timeout:60000});
   await a.page.screenshot({path:path.join(out,'lobby-cancelled.png'),timeout:180000});
@@ -200,6 +204,9 @@ try {
   await ensureRunning();
   assert.equal(isolatedLobby.humans.length,1);assert.equal(isolatedLobby.settings.arena,'Forest');isolated.close();
   for(const c of [a,b]){
+    // A slow software-GPU capture may span the entire first-to-one match.
+    // Reuse the existing real Ready/start gate before checking the next client.
+    await ensureRunning();
     await c.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.phase==='Running',null,{timeout:60000});
     await c.page.screenshot({path:path.join(out,`initial-playing-${c.name}.png`),timeout:180000});
   }
