@@ -242,5 +242,8 @@ in-memory state simply because a URL redirects. Coordinate the initial Pages
 redirect with public bootstrap: its workflow can complete before the first
 Kubernetes release/certificate is available. No public readiness is implied.
 
-See `docs/online-deployment-evidence/` for exact local artifacts, source hashes,
-commands, timings, screenshots and limitations.
+See `docs/online-deployment-evidence/review-corrected/` for the latest corrected
+runtime's local artifacts, source hashes, commands, timings, screenshots and
+limitations. The evidence directory's root preserves earlier pre-review results
+and must not be substituted for the corrected-source reruns. Public rollout and
+trusted public browser/native acceptance are separate from either local fixture.

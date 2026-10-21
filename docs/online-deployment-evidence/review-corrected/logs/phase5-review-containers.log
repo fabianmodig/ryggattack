@@ -1,0 +1,61 @@
+{
+  "checks": [
+    "explicit production bind",
+    "exact HTTPS Origin and native policy",
+    "only /ws upgrades",
+    "private health/readiness and aggregate metrics",
+    "anonymous creation/code guessing globally rate limited without stalling tick",
+    "spoofed Forwarded/X-Forwarded-For cannot evade global limits"
+  ],
+  "logs": ""
+}
+{
+  "checks": [
+    "actual nonroot read-only cap-drop images",
+    "exact JS/WASM/HTML/module bytes and MIME",
+    "no public management routes",
+    "production socket/abuse contract",
+    "same-image Recreate resets all in-memory rooms",
+    "container SIGTERM notifies and closes real client with exit 0"
+  ],
+  "images": {
+    "web": {
+      "image": "c00ca03d754f6840fa62a1eaed310d2b6d5e56bb7ecd269a48b6a8c04eee2e84",
+      "user": "101:101",
+      "readonly": true,
+      "capDrop": [
+        "CAP_CHOWN",
+        "CAP_DAC_OVERRIDE",
+        "CAP_FOWNER",
+        "CAP_FSETID",
+        "CAP_KILL",
+        "CAP_NET_BIND_SERVICE",
+        "CAP_SETFCAP",
+        "CAP_SETGID",
+        "CAP_SETPCAP",
+        "CAP_SETUID",
+        "CAP_SYS_CHROOT"
+      ]
+    },
+    "server": {
+      "image": "96cf2a8ad4d9cda0254306c35a2a852dc74bfa9837aed3a600b3bbb2430226be",
+      "user": "10001:10001",
+      "readonly": true,
+      "capDrop": [
+        "CAP_CHOWN",
+        "CAP_DAC_OVERRIDE",
+        "CAP_FOWNER",
+        "CAP_FSETID",
+        "CAP_KILL",
+        "CAP_NET_BIND_SERVICE",
+        "CAP_SETFCAP",
+        "CAP_SETGID",
+        "CAP_SETPCAP",
+        "CAP_SETUID",
+        "CAP_SYS_CHROOT"
+      ]
+    }
+  }
+}
+
+TIMING phase5-review-containers: 8.955 s; exit=0
