@@ -801,6 +801,12 @@ impl Room {
             }
         }
         if self.lobby.advance() {
+            // Clients intentionally send no gameplay input in the lobby. Start
+            // the running-input idle window afresh for every connected socket,
+            // including retained sockets starting another match.
+            for peer in self.peers.iter_mut().flatten() {
+                peer.last_input = now;
+            }
             let mut human_seats = [false; 4];
             for h in &self.lobby.humans {
                 human_seats[h.seat] = true;
@@ -1339,6 +1345,100 @@ mod tests {
         assert!(!budget.allow(now + Duration::from_secs(10) - Duration::from_nanos(1)));
         assert!(budget.allow(now + Duration::from_secs(10)));
         assert_eq!(budget.used, 1);
+    }
+    #[test]
+    fn initial_long_lobby_preserves_connected_peer_on_match_start() {
+        long_lobby_preserves_peer(false);
+    }
+    #[test]
+    fn between_match_long_lobby_preserves_connected_peer_on_match_start() {
+        long_lobby_preserves_peer(true);
+    }
+    fn long_lobby_preserves_peer(between_matches: bool) {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (stream, _) = listener.accept().unwrap();
+        stream.set_nonblocking(true).unwrap();
+        let socket = WebSocket::from_raw_socket(
+            Transport {
+                stream,
+                deadline: None,
+                quota: None,
+                wire: Some(WireProgress::default()),
+                http_matched: 0,
+            },
+            tungstenite::protocol::Role::Server,
+            None,
+        );
+        let mut room = fixture();
+        let now = Instant::now();
+        room.attach(socket, 0, 1, now);
+        let credential = room.credentials[0].clone().unwrap();
+        if between_matches {
+            room.lobby.ready(1, true).unwrap();
+            for tick in 1..=128 {
+                room.tick_at(tick, now);
+            }
+            let world = room.simulation.as_mut().unwrap().app.world_mut();
+            world.resource_mut::<crate::game::Round>().wins = [2, 0, 0, 0];
+            for mut player in world.query::<&mut crate::players::Player>().iter_mut(world) {
+                if player.id != 0 {
+                    player.alive = false;
+                }
+            }
+            for tick in 129..=384 {
+                room.tick_at(tick, now);
+            }
+            assert!(room.simulation.is_none(), "real victory returns to lobby");
+        }
+        let started = now + Duration::from_secs(121);
+        room.tick_at(385, started);
+        assert!(room.peers[0].is_some(), "lobby silence is allowed");
+        room.lobby.ready(1, true).unwrap();
+        for tick in 386..=513 {
+            room.tick_at(tick, started);
+        }
+        assert!(room.simulation.is_some());
+        room.tick_at(514, started);
+        assert!(
+            room.peers[0].is_some(),
+            "lobby time must not expire a newly running peer"
+        );
+        room.tick_at(
+            515,
+            started + Duration::from_secs(120) - Duration::from_nanos(1),
+        );
+        assert!(
+            room.peers[0].is_some(),
+            "full running idle window is granted"
+        );
+        let expired = started + Duration::from_secs(120);
+        room.tick_at(516, expired);
+        assert!(
+            room.peers[0].is_none(),
+            "actual running silence still expires"
+        );
+        assert!(!room.lobby.humans[0].connected);
+        assert_eq!(
+            room.reservations[0],
+            Some(expired + Duration::from_secs(60))
+        );
+        assert_eq!(room.credentials[0].as_ref(), Some(&credential));
+        assert!(
+            room.simulation
+                .as_mut()
+                .unwrap()
+                .submit(0, ControlIntent::default())
+                .is_err(),
+            "disconnected seat loses input authority"
+        );
+        assert!(room.reclaim(1, &"f".repeat(64), expired).is_err());
+        assert!(
+            room.reclaim(1, &credential, expired + Duration::from_secs(60))
+                .is_err()
+        );
+        assert!(room.credentials[0].is_none());
+        assert!(room.lobby.humans.is_empty());
     }
     #[test]
     fn silent_running_connection_times_out_and_reserves_its_seat() {

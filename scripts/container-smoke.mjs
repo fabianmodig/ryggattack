@@ -4,6 +4,7 @@ import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import net from 'node:net';
 const exec=promisify(execFile),engine=process.env.ENGINE??'docker';
 const [web,server]=process.argv.slice(2);assert(web&&server,'web and backend image required');
 const names={web:`ryggattack-web-${process.pid}`,server:`ryggattack-server-${process.pid}`};
@@ -25,8 +26,30 @@ try {
   const type=r.headers.get('content-type');if(file.endsWith('.wasm'))assert.match(type,/application\/wasm/);if(file.endsWith('.mjs'))assert.match(type,/javascript/);
   assert.equal(sha(Buffer.from(await r.arrayBuffer())),sha(fs.readFileSync('dist/web/'+file)),`${file} exact image artifact`);
  }
- const privateQuery='phase5-query-must-not-log';await fetch(webURL+'/?name='+privateQuery+'&room=0123456789abcdef0123');await sleep(100);
- assert(!(await cli('logs',names.web)).includes(privateQuery),'web access logs must not disclose room/name queries');
+ // Capture BOTH streams: Docker emits container stderr on CLI stderr.
+ const logs=async()=>{const r=await exec(engine,['logs',names.web],{maxBuffer:1024*1024});return r.stdout+r.stderr;};
+ const marker=crypto.randomUUID(),privateQuery=`phase5-query-${marker}`,privateReferer=`phase5-referer-${marker}`;
+ const headers={Referer:`https://private.invalid/?room=${privateReferer}&name=${privateReferer}`};
+ for(const [route,status] of [['/',200],['/missing-private.mjs',404],['/missing-private.wasm',404],['/missing-private.js',404],['/missing-private',404],['/%00.mjs',400],['/%ZZ.wasm',400]]){
+  assert.equal((await fetch(webURL+route+'?name='+privateQuery+'&room='+privateQuery,{headers})).status,status,route);
+ }
+ // Raw request avoids URL normalization and exercises the early parser path.
+ const malformed=await new Promise((resolve,reject)=>{
+  const u=new URL(webURL),socket=net.connect(Number(u.port),u.hostname);let response='';
+  socket.setTimeout(3000,()=>socket.destroy(Error('malformed HTTP response timed out')));
+  socket.once('connect',()=>socket.write(`GE(T /missing-private.mjs?name=${privateQuery} HTTP/1.1\r\nHost: localhost\r\nReferer: ${headers.Referer}\r\nConnection: close\r\n\r\n`));
+  socket.on('data',chunk=>response+=chunk);socket.once('error',reject);socket.once('end',()=>resolve(response));
+ });
+ assert.match(malformed,/^HTTP\/1\.1 400 /);
+ await sleep(100);
+ const webLogs=await logs();
+ assert(!webLogs.includes(privateQuery)&&!webLogs.includes(privateReferer),`web logs must not disclose query or Referer on successful, missing-asset or malformed requests:\n${webLogs}`);
+ assert(webLogs.includes('"event":"http_request"'),'sanitized access diagnostics remain enabled');
+ // Request-log suppression must not discard global startup diagnostics.
+ let startupFailure;
+ try{await exec(engine,['run','--rm','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--tmpfs','/tmp:rw,noexec,nosuid,size=16m',web,'-c','/missing-phase5-nginx.conf','-t']);}catch(error){startupFailure=error;}
+ assert(startupFailure,'invalid nginx startup configuration must fail');
+ assert.match(startupFailure.stderr,/\[emerg\].*missing-phase5-nginx\.conf/,'global infrastructure errors remain on stderr');
  for(const route of ['/metrics','/healthz','/readyz','/ws'])assert.equal((await fetch(webURL+route)).status,404,'web must not expose backend/management');
  const result=await new Promise(r=>{const c=spawn(process.execPath,['scripts/production-smoke.mjs'],{env:{...process.env,PRODUCTION_WS:wsURL,PRODUCTION_MANAGEMENT:management},stdio:'inherit'});c.once('exit',r);});assert.equal(result,0);
  // Exercise the chart's actual Recreate contract. A fresh network namespace
