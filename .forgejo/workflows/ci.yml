@@ -92,6 +92,7 @@ jobs:
           apt-get install -y --no-install-recommends python3-yaml curl ca-certificates
           curl -fsSL https://get.helm.sh/helm-v4.3.0-linux-amd64.tar.gz | tar xz
           install linux-amd64/helm /usr/local/bin/helm
+      - run: node scripts/portable-container-build.test.mjs
       - run: helm lint charts/ryggattack --strict
       - run: python3 scripts/chart-test.py
 

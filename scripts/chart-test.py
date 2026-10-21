@@ -49,7 +49,8 @@ for value in ['latest','sha-bad','']:
 with open('.forgejo/workflows/release.yml') as file:
     release=yaml.safe_load(file)
 assert 'permissions' not in release
-assert release['env']['DOCKER_BUILDKIT']=='1'
+assert release['env']['DOCKER_BUILDKIT']=='0'
+assert 'docker-buildx' not in str(release['jobs']['publish']['steps'])
 steps=release['jobs']['publish']['steps']
 for name in ['Log in to Forgejo container registry','Publish paired images before changing desired deployment','Commit paired chart appVersion after successful publication']:
     step=next(s for s in steps if s.get('name')==name)

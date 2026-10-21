@@ -160,9 +160,13 @@ runtime is Debian trixie (glibc 2.41); compile its executable on compatible glib
 read-only roots, dropped capabilities, no privilege escalation and resource
 requests/limits in Helm. Only web needs a bounded `/tmp` emptyDir for nginx.
 
-Forgejo is authoritative. The release job explicitly installs Docker Buildx and
-enables BuildKit for the Dockerfile permission flags; local image verification
-uses rootless Podman. No registry publication was performed locally.
+Forgejo is authoritative. Its `ubuntu-latest` label currently uses a Debian
+Bookworm Node job image and the runner's Podman-compatible Docker API. The release
+uses `docker.io` with `DOCKER_BUILDKIT=0`, without an unavailable Buildx package;
+Dockerfiles set final permissions with portable `RUN chmod` instructions rather
+than BuildKit-only `COPY --chmod`. Runtime users/permissions, read-only roots and
+all prepublication image/socket checks are unchanged. Local image verification
+uses rootless Podman and also exercises the Docker-compatible build path.
 
 1. PR CI runs Rust tests/clippy, JS/UI/startup tests, production/abuse/native TLS
    socket checks, real headless checks, WASM build, and Helm render/semantic tests.
