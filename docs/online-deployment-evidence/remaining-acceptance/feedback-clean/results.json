@@ -1,0 +1,402 @@
+{
+  "status": "passed",
+  "started_at": "2026-10-21T18:30:52.346Z",
+  "scope": "isolated rootless actual published images; canonical origin mapped only to loopback; no public traffic, deployment, builds, state/packet injection",
+  "budgets_ms": {
+    "assertion": 120000,
+    "startup": 30000,
+    "screenshot": 60000
+  },
+  "source_sha256": "c049dcd6be766fc919faf75ea2d8a05d3e318c77584a49dd901dab178c0b8cd1",
+  "images": {
+    "web": {
+      "reference": "git.modig.online/fabianmodig/ryggattack/web:sha-205d048",
+      "id": "21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+      "repo_digests": [
+        "git.modig.online/fabianmodig/ryggattack/web@sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324"
+      ],
+      "paired_manifest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324"
+    },
+    "server": {
+      "reference": "git.modig.online/fabianmodig/ryggattack/server:sha-205d048",
+      "id": "0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+      "repo_digests": [
+        "git.modig.online/fabianmodig/ryggattack/server@sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6"
+      ],
+      "paired_manifest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6"
+    }
+  },
+  "assets": {
+    "index.html": {
+      "sha256": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a",
+      "bytes": 4567,
+      "mime": "text/html"
+    },
+    "rooms.mjs": {
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "bytes": 3535,
+      "mime": "text/javascript"
+    },
+    "ryggattack.js": {
+      "sha256": "f0548a5b786dc9b2b0cb49f2321e26460143b55d335a99491db157911ae7f614",
+      "bytes": 118877,
+      "mime": "application/javascript"
+    },
+    "ryggattack_bg.wasm": {
+      "sha256": "ca53a5654215a33dfa2fd2828ae8be51b24a1e9b6c4f2146fdae7f837a183849",
+      "bytes": 39626082,
+      "mime": "application/wasm"
+    }
+  },
+  "checks": [
+    {
+      "scenario": "Restart-online",
+      "notice": "Online — seat 1",
+      "visible": true,
+      "details_open": true,
+      "actions": [],
+      "at_ms": 17100,
+      "screenshot": "Restart-online.png"
+    },
+    {
+      "scenario": "pre-restart-notice",
+      "notice": "solo practice is offline; add a bot or human",
+      "visible": true,
+      "details_open": true,
+      "actions": [],
+      "at_ms": 37768,
+      "screenshot": "pre-restart-notice.png"
+    },
+    {
+      "scenario": "graceful-restart",
+      "notice": "backend restarting; rooms reset; join a lobby again",
+      "visible": true,
+      "details_open": true,
+      "actions": [
+        "Create private room",
+        "Join room"
+      ],
+      "at_ms": 56660,
+      "screenshot": "graceful-restart.png"
+    },
+    {
+      "scenario": "formerly-valid-stale-invite",
+      "notice": "room not found",
+      "visible": true,
+      "details_open": true,
+      "actions": [
+        "Create private room",
+        "Join room"
+      ],
+      "at_ms": 76127,
+      "screenshot": "formerly-valid-stale-invite.png"
+    },
+    {
+      "scenario": "full-room",
+      "notice": "room full",
+      "visible": true,
+      "details_open": true,
+      "actions": [
+        "Create private room",
+        "Join room"
+      ],
+      "at_ms": 88973,
+      "screenshot": "full-room.png"
+    },
+    {
+      "scenario": "Unavailable-online",
+      "notice": "Online — seat 1",
+      "visible": true,
+      "details_open": true,
+      "actions": [],
+      "at_ms": 108777,
+      "screenshot": "Unavailable-online.png"
+    },
+    {
+      "scenario": "connection-retrying",
+      "notice": "Retrying 2/12 — bot takeover; seat reserved up to 60s",
+      "visible": true,
+      "details_open": true,
+      "actions": [],
+      "at_ms": 126316,
+      "screenshot": "connection-retrying.png"
+    },
+    {
+      "scenario": "connection-unavailable",
+      "notice": "Backend unavailable or reconnect expired; leave and join a lobby again",
+      "visible": true,
+      "details_open": true,
+      "actions": [
+        "Create private room",
+        "Join room"
+      ],
+      "at_ms": 180069,
+      "screenshot": "connection-unavailable.png"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "Restart-online.png",
+      "sha256": "3326c7146630035adb35c6cc66bccc7c3fa28d8323d254c110e8670ee0977bba",
+      "bytes": 199346,
+      "width": 800,
+      "height": 700,
+      "at_ms": 5312,
+      "duration_ms": 11788
+    },
+    {
+      "file": "pre-restart-notice.png",
+      "sha256": "0064c6d66f5bbba07e7af5110b75f981957e7d5a68c53b85224aba96c534e2e5",
+      "bytes": 206457,
+      "width": 800,
+      "height": 700,
+      "at_ms": 26085,
+      "duration_ms": 11683
+    },
+    {
+      "file": "graceful-restart.png",
+      "sha256": "6256b41fe6c207053a12bcd05f7a42c567411011d845657423ad0ee226a685a6",
+      "bytes": 243438,
+      "width": 800,
+      "height": 700,
+      "at_ms": 44904,
+      "duration_ms": 11756
+    },
+    {
+      "file": "formerly-valid-stale-invite.png",
+      "sha256": "dd3888ed82816f2ade5944ea16f332a0b0d430a17ae4402658041434a5fc82cc",
+      "bytes": 193263,
+      "width": 800,
+      "height": 700,
+      "at_ms": 70088,
+      "duration_ms": 6039
+    },
+    {
+      "file": "full-room.png",
+      "sha256": "3cf161063103f2c196f3903a2f8338a59b9ba64f5e648808e4609307ae196e45",
+      "bytes": 192067,
+      "width": 800,
+      "height": 700,
+      "at_ms": 83786,
+      "duration_ms": 5187
+    },
+    {
+      "file": "Unavailable-online.png",
+      "sha256": "10e6873a56d8092220621892e0bc35cde0b04a3d4f76213884df3f4cdc42a0b2",
+      "bytes": 201395,
+      "width": 800,
+      "height": 700,
+      "at_ms": 96635,
+      "duration_ms": 12142
+    },
+    {
+      "file": "connection-retrying.png",
+      "sha256": "ff45caa8793c41292710a7b5717ccc4347ffd48758ee5f94d043a0b902e1ff5c",
+      "bytes": 207443,
+      "width": 800,
+      "height": 700,
+      "at_ms": 113338,
+      "duration_ms": 12978
+    },
+    {
+      "file": "connection-unavailable.png",
+      "sha256": "6e36643269c877a6638e5938eef30ac3a2d8a31843822d2b4b6c641232cdd2b6",
+      "bytes": 209701,
+      "width": 800,
+      "height": 700,
+      "at_ms": 167130,
+      "duration_ms": 12939
+    }
+  ],
+  "proxy": [
+    {
+      "scenario": "graceful-restart",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": false,
+      "at_ms": 4453
+    },
+    {
+      "scenario": "formerly-valid-stale-invite",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": false,
+      "at_ms": 69672
+    },
+    {
+      "scenario": "full-room",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": false,
+      "at_ms": 83372
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": false,
+      "at_ms": 96139
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 110004
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 111928
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 115904
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 121045
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 126259
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 131583
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 137428
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 142605
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 147786
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 152898
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 158105
+    },
+    {
+      "scenario": "connection-failure",
+      "path": "/ws",
+      "origin": "https://ryggattack.modig.online",
+      "blocked": true,
+      "at_ms": 163230
+    }
+  ],
+  "page_errors": [],
+  "cleanup": {
+    "browser_closed": true,
+    "ryggattack-feedback-web-23019-cde7627f": "removed-and-verified",
+    "ryggattack-feedback-server-23019-1f5b99f8": "removed-and-verified",
+    "private_tls_fixture_removed": true
+  },
+  "rootless": true,
+  "web_container": {
+    "image_id": "21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+    "user": "101:101",
+    "readonly": true,
+    "cap_drop_all": true,
+    "capabilities": {
+      "CapEff": "0000000000000000",
+      "CapBnd": "0000000000000000",
+      "CapAmb": "0000000000000000"
+    },
+    "no_new_privileges": true
+  },
+  "server_container": {
+    "image_id": "0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+    "user": "10001:10001",
+    "readonly": true,
+    "cap_drop_all": true,
+    "capabilities": {
+      "CapEff": "0000000000000000",
+      "CapBnd": "0000000000000000",
+      "CapAmb": "0000000000000000"
+    },
+    "no_new_privileges": true
+  },
+  "browser_version": "153.0.8010.12",
+  "browser_isolation": "one fresh Chromium; sequential fresh contexts; locally ignored self-signed fixture certificate only",
+  "formerly_valid_invite": {
+    "code": "19d63655b7e00456056d",
+    "admitted_before_restart": true,
+    "room": 3,
+    "rejected_after_same_image_recreate": true
+  },
+  "restart": {
+    "exit_code": 0,
+    "error": "backend restarting; rooms reset; join a lobby again",
+    "transport_closed": true,
+    "claims_cleared": true,
+    "preexisting_notice_cleared": true,
+    "duration_ms": 16310
+  },
+  "recreated_server": {
+    "image_id": "0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+    "user": "10001:10001",
+    "readonly": true,
+    "cap_drop_all": true,
+    "capabilities": {
+      "CapEff": "0000000000000000",
+      "CapBnd": "0000000000000000",
+      "CapAmb": "0000000000000000"
+    },
+    "no_new_privileges": true
+  },
+  "capacity": {
+    "raw_connected_humans": 4,
+    "distinct_seats": 4,
+    "rendered_fifth_rejected": true
+  },
+  "connection_failure": {
+    "cause": "owned local proxy destroys real backend upgrades and established TCP sockets",
+    "blocked_upgrade_attempts": 12,
+    "elapsed_ms": 71288,
+    "production_deadlines_unchanged": true
+  },
+  "finished_at": "2026-10-21T18:34:03.598Z",
+  "total_ms": 191252,
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 7
+  }
+}

@@ -870,6 +870,11 @@ impl Room {
 }
 
 #[cfg(test)]
+mod authority_tests;
+#[cfg(test)]
+mod parity_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use bevy::ecs::system::RunSystemOnce;

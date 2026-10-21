@@ -1,0 +1,3 @@
+{"status":"passed","evidence_directory":"/home/hermes/src/ryggattack-acceptance/verification/solo-bots/2026-10-21T18-18-41-583Z-21ff7e","timings_ms":{"assets":616,"admitted":3069,"countdown":3835,"running":5835,"completion_budget_started":5840,"winner":11650,"natural_completion":14590,"completion_duration":8750,"total":31569}}
+
+TIMING acceptance-solo-onebot: 31.627 s; exit=0

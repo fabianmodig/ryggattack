@@ -1,0 +1,3 @@
+{"status":"passed","evidence_directory":"/home/hermes/src/ryggattack-acceptance/verification/client-feedback/2026-10-21T18-30-52-340Z-8e6d64ac","checks":["Restart-online","pre-restart-notice","graceful-restart","formerly-valid-stale-invite","full-room","Unavailable-online","connection-retrying","connection-unavailable"]}
+
+TIMING acceptance-visible-feedback-clean: 191.333 s; exit=0

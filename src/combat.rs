@@ -283,6 +283,70 @@ fn is_rear_hit(shot_direction: Vec3, target_forward: Vec3) -> bool {
         > BACK_HIT_DOT_THRESHOLD
 }
 
+/// Existing combat rail fixture, shared by the two entry-path regressions.
+/// Only projectile construction is exposed; movement, contact, death and scoring
+/// still run through each entry's complete fixed gameplay schedule.
+#[cfg(test)]
+pub(crate) fn parity_test_incoming_shot(world: &mut World, direction: Vec3) {
+    let path = crate::tracks::RailPath::Edge { from: 0, to: 1 };
+    let edge_length = crate::tracks::track_pose(path, 0.0)
+        .0
+        .distance(crate::tracks::track_pose(path, 1.0).0);
+    let position = crate::tracks::track_pose(
+        path,
+        0.8 + 4.2 * crate::simulation::TICK_DURATION.as_secs_f32() / edge_length,
+    )
+    .0;
+    let velocity = direction * MISSILE_SPEED;
+    world.spawn((
+        Projectile {
+            owner: 0,
+            velocity,
+            remaining_life: 1.0,
+            trail: 0.0,
+        },
+        Transform::from_translation(
+            position - velocity * crate::simulation::TICK_DURATION.as_secs_f32(),
+        ),
+        Transient,
+    ));
+}
+
+/// Gameplay-only readback: exhaust cadence and renderer children are cosmetic.
+#[cfg(test)]
+pub(crate) fn parity_test_projectiles(world: &mut World) -> Vec<(usize, [f32; 3], [f32; 3], f32)> {
+    world
+        .query::<(&Projectile, &Transform)>()
+        .iter(world)
+        .map(|(p, t)| {
+            (
+                p.owner,
+                t.translation.to_array(),
+                p.velocity.to_array(),
+                p.remaining_life,
+            )
+        })
+        .collect()
+}
+
+/// Unit combat fixture; the complete gameplay schedule still moves and strikes it.
+#[cfg(test)]
+pub(crate) fn parity_test_prop_shot(world: &mut World, impact: Vec3) {
+    let velocity = Vec3::X * MISSILE_SPEED;
+    world.spawn((
+        Projectile {
+            owner: 0,
+            velocity,
+            remaining_life: 1.0,
+            trail: 0.0,
+        },
+        Transform::from_translation(
+            impact - velocity * crate::simulation::TICK_DURATION.as_secs_f32(),
+        ),
+        Transient,
+    ));
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

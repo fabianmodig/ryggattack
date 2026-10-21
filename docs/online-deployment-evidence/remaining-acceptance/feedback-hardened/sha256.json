@@ -1,0 +1,38 @@
+[
+  {
+    "file": "Restart-online.png",
+    "sha256": "209651bb3b8ab47755b540b6ae762152a72d8924d6f8fc15c2f2cd166b59aac1"
+  },
+  {
+    "file": "Unavailable-online.png",
+    "sha256": "ac5e809e16a174820df1ebfba5c0fbb4d0852b86492d18fe4cb903bab80afab2"
+  },
+  {
+    "file": "connection-retrying.png",
+    "sha256": "af40113d6bd960b5d039206b5eda9823d0a8ff73a4631b6919c5627da6770d37"
+  },
+  {
+    "file": "connection-unavailable.png",
+    "sha256": "ef3a445460264046ba1dabbbb69b2a11dc0bb7bdfb4121288582b29462b16ab7"
+  },
+  {
+    "file": "formerly-valid-stale-invite.png",
+    "sha256": "8d642f8569b37396c61237ec14921d12237c92c65dacd83db784d873ce827f60"
+  },
+  {
+    "file": "full-room.png",
+    "sha256": "25804b7605f0502e17f7ca70410da7362e6a0c07b196f2356a6c547300b6611f"
+  },
+  {
+    "file": "graceful-restart.png",
+    "sha256": "6256b41fe6c207053a12bcd05f7a42c567411011d845657423ad0ee226a685a6"
+  },
+  {
+    "file": "pre-restart-notice.png",
+    "sha256": "37e385c51a5bc67b170105b6d14002316d35dc4b8b9408cb51eade7b0e83c895"
+  },
+  {
+    "file": "results.json",
+    "sha256": "fe26d31dae6e6eb365b40f1c623f755b1963ec91d8452e51af804ee698bab8d9"
+  }
+]

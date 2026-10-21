@@ -1,0 +1,104 @@
+{
+  "status": "local-passed-all-source-reviews-approved-awaiting-corrected-exact-head-CI",
+  "gates": {
+    "acceptance-expanded-rust": {
+      "seconds": 169.882,
+      "exit": 0
+    },
+    "acceptance-expanded-clippy": {
+      "seconds": 3.269,
+      "exit": 0
+    },
+    "acceptance-final-native-build": {
+      "seconds": 0.349,
+      "exit": 0
+    },
+    "acceptance-final-native-tls.test": {
+      "seconds": 2.298,
+      "exit": 0
+    },
+    "acceptance-final-server-banner.test": {
+      "seconds": 0.116,
+      "exit": 0
+    },
+    "acceptance-final-server-policy.test": {
+      "seconds": 0.093,
+      "exit": 0
+    },
+    "acceptance-final-production-smoke": {
+      "seconds": 5.102,
+      "exit": 0
+    },
+    "acceptance-final-network-sockets": {
+      "seconds": 10.291,
+      "exit": 0
+    },
+    "acceptance-final-headless": {
+      "seconds": 3.204,
+      "exit": 0
+    },
+    "acceptance-visible-feedback-clean": {
+      "seconds": 191.333,
+      "exit": 0
+    },
+    "acceptance-solo-onebot": {
+      "seconds": 31.627,
+      "exit": 0
+    },
+    "acceptance-nonbuild": {
+      "exit": 0,
+      "detail": "every COMMAND entry records exit=0"
+    },
+    "acceptance-hardened-feedback": {
+      "seconds": 189.672,
+      "exit": 0
+    },
+    "acceptance-hardened-nonbuild": {
+      "exit": 0,
+      "node_tests": 33,
+      "detail": "Every command exit0; room UI, Pages, portable build, chart version, Helm contract and strict lint passed."
+    }
+  },
+  "rust_tests_passed": 197,
+  "rust_test_sources_sha256": {
+    "src/server.rs": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+    "src/combat.rs": "6d99fee7f172fdf0667be748329a87a59872275fd114f47aef10d792d07de0b6",
+    "src/explosions.rs": "d67ab803370735befe27867e41beb40bd9b5663591c68bb694d39a8ea879f063",
+    "src/server/parity_tests.rs": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+    "src/server/authority_tests.rs": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282"
+  },
+  "scope": "Web-first. Tests/evidence only; no deployed application change. Presentation parity and manual native graphics not certified. Original failed attempts preserved.",
+  "final_helper_tests": {
+    "passed": 18,
+    "failed": 0,
+    "log": "logs/acceptance-ci-scratch-helper-green.log",
+    "parent_independently_rerun": true
+  },
+  "maintained_harness_sources_sha256": {
+    "scripts/client-feedback-smoke.mjs": "a940dfbaf43902896cf16e4ac0efcbe4fad53b8f7f66a0630ff8318fee159d4d",
+    "scripts/client-feedback-helpers.mjs": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+    "scripts/client-feedback-helpers.test.mjs": "b411664c19dbaa2a5fa77aa415bf0abdb1225c19e051c76f090a23b7a779e3a2",
+    "scripts/solo-bots-smoke.mjs": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
+    "scripts/solo-bots-helpers.mjs": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+    "scripts/solo-bots-helpers.test.mjs": "727b6db57f2842f2ab02e3be8bc64323f39a0b899e3097f51729bb1fc902ec96"
+  },
+  "provenance_boundary": "Top-level executed verifier hashes are recorded by runtime reports. Imported helper hashes below document the frozen archived source; the old reports did not capture helper hashes at startup. Hardened solo helper changes were unit-tested, not claimed as the earlier archived public run.",
+  "independent_reviews": {
+    "rust": "reviews/rust.json",
+    "harness": "reviews/harness-final.json",
+    "initial_blocked_review_preserved": "reviews/harness-initial-blocked.json",
+    "ci_portability": "reviews/ci-portability.json"
+  },
+  "ci_portability_fix": {
+    "initial_head": "39de1b7d1aa82ce23e838cabd14bf1fbb72c8ff2",
+    "failed_run_id": 324,
+    "failed_job_id": 477,
+    "cause": "missing scratch parent in test fixture",
+    "broader_node_tests": 34,
+    "fresh_HOME_without_TMPDIR": "passed",
+    "log": "logs/acceptance-ci-scratch-green.log",
+    "all_nonbuild_gates": "logs/acceptance-ci-postfix-nonbuild.log",
+    "runtime_source_changed": false,
+    "corrected_exact_head_CI_required": true
+  }
+}

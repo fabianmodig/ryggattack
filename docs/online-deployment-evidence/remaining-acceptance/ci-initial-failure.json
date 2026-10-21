@@ -1,0 +1,15 @@
+{
+  "head": "39de1b7d1aa82ce23e838cabd14bf1fbb72c8ff2",
+  "run_id": 324,
+  "display_run": 54,
+  "status": "failure",
+  "required_contexts": {"cargo test": "failure", "Helm deployment contract": "success", "web build": "success"},
+  "failed_job_id": 477,
+  "failed_step": "Node helper tests before cargo execution",
+  "verified_cause": "ENOENT: missing /root/.hermes/cache/scratch parent passed to mkdtemp when TMPDIR is unset",
+  "verification": "Parent independently fetched actual job477 log and exact-head commit statuses; original failure is retained, not relabeled as passing.",
+  "local_reproduction": "Fresh HOME under the authorized scratch root, TMPDIR unset: original privacy publishing test fails with the same ENOENT.",
+  "correction": "Create the test scratch parent recursively before mkdtemp. New subprocess regression covers both fresh HOME fallback and explicitly missing TMPDIR, requires exactly one child test/pass and verifies cleanup.",
+  "additional_regression_failure_preserved": "The initial nested-test regression inherited Node's child runner marker, skipped the inner file and failed its non-vacuous directory assertion. Clearing the child marker fixed that regression; RED and GREEN logs are retained.",
+  "scope": "Test fixture only. No runtime verifier/helper, Rust, WASM, game rule or deployment changes. Existing browser/runtime evidence is not rerun or rebranded. Corrected head requires a new complete exact-head CI run."
+}

@@ -578,6 +578,16 @@ fn random_direction(rng: &mut SimpleRng) -> Vec3 {
     direction.normalize_or(Vec3::Y)
 }
 
+/// Pending gameplay blasts only, independent of cosmetic effect entities.
+#[cfg(test)]
+pub(crate) fn parity_test_detonations(world: &mut World) -> Vec<([f32; 3], usize, f32)> {
+    world
+        .query::<&Detonation>()
+        .iter(world)
+        .map(|d| (d.position.to_array(), d.chain, d.fuse))
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

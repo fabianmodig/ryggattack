@@ -1,0 +1,49 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-21T15:36:54.523Z",
+  "scope": "isolated rootless actual published images; canonical origin mapped only to loopback; no public traffic, deployment, builds, state/packet injection",
+  "budgets_ms": {
+    "assertion": 120000,
+    "startup": 30000,
+    "screenshot": 60000
+  },
+  "source_sha256": "72df05409b7dbc2c614a8fc61754be5795bcd70809f367a7ec96cb33f773c07e",
+  "images": {
+    "web": {
+      "reference": "git.modig.online/fabianmodig/ryggattack/web:sha-205d048",
+      "id": "21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+      "repo_digests": [
+        "git.modig.online/fabianmodig/ryggattack/web@sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324"
+      ],
+      "paired_manifest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324"
+    },
+    "server": {
+      "reference": "git.modig.online/fabianmodig/ryggattack/server:sha-205d048",
+      "id": "0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+      "repo_digests": [
+        "git.modig.online/fabianmodig/ryggattack/server@sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6"
+      ],
+      "paired_manifest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6"
+    }
+  },
+  "assets": {},
+  "checks": [],
+  "screenshots": [],
+  "proxy": [],
+  "page_errors": [],
+  "cleanup": {
+    "browser_closed": true,
+    "ryggattack-feedback-web-5536-5f80aa69": "removed-and-verified"
+  },
+  "rootless": true,
+  "failure": {
+    "scenario": "setup",
+    "message": "The expression evaluated to a falsy value:\n\n  assert(c.HostConfig.CapDrop.some(x=>x.toUpperCase()==='ALL'))\n"
+  },
+  "finished_at": "2026-10-21T15:36:55.441Z",
+  "total_ms": 918,
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 0
+  }
+}
