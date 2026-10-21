@@ -53,6 +53,7 @@ const staticServer=http.createServer((req,res)=>{
   fs.readFile(file,(e,d)=>{if(e){res.writeHead(404).end();return;}res.writeHead(200,{'content-type':({'.js':'text/javascript','.mjs':'text/javascript','.wasm':'application/wasm','.html':'text/html'})[path.extname(file)]??'application/octet-stream'}).end(d);});
 });
 let browser, server, probe, proxy, offline;
+const browsers=[];
 let serverLog='';
 const sockets=new Set();
 try {
@@ -89,10 +90,13 @@ try {
   });
   await listen(proxy);
   const address=`ws://127.0.0.1:${proxy.address().port}`;
-  browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
+  const browserOptions={args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']};
   async function pageFor(name,code=null) {
     const c=client(name);
-    const page=await (await browser.newContext({viewport:{width:640,height:480}})).newPage();
+    // Isolate each participant's SwiftShader GPU startup, not just storage.
+    const participantBrowser=await chromium.launch(browserOptions);browsers.push(participantBrowser);
+    browser??=participantBrowser; // Reuse A's process for later share-link/offline checks.
+    const page=await (await participantBrowser.newContext({viewport:{width:640,height:480}})).newPage();
     c.events=[];
     await page.addInitScript(()=>{
       globalThis.socketTrace=[];
@@ -349,6 +353,6 @@ try {
   assert([...secrets].every(t=>!JSON.stringify(evidence).includes(t)),'private credential leaked into runtime evidence');
   evidence.credential_negative_scan=true;
   fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));
-  await browser?.close();probe?.kill();server?.kill();for(const s of sockets)s.destroy();proxy?.close();staticServer.close();
+  await Promise.all(browsers.map(b=>b.close()));probe?.kill();server?.kill();for(const s of sockets)s.destroy();proxy?.close();staticServer.close();
 }
 console.log(JSON.stringify(evidence,null,2));

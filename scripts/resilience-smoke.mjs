@@ -17,7 +17,7 @@ const listen=s=>new Promise(r=>s.listen(0,'127.0.0.1',r));
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const secrets=new Set(),clients=[],gates=[],nodeSockets=[];
 const evidence={artifact:Object.fromEntries(['index.html','rooms.mjs','ryggattack.js','ryggattack_bg.wasm'].map(f=>[f,sha(fs.readFileSync(path.join(root,f)))])),checks:[],errors:[],transport_console:[],server_events:[]};
-let browser,server,port,serverLog='',outage=false;
+let server,port,serverLog='',outage=false;const browsers=[];let browserOptions;
 const staticServer=http.createServer((req,res)=>{let file;try{let p=decodeURIComponent(req.url.split('?')[0]);if(p.includes('\0'))throw Error();if(p.endsWith('/'))p+='index.html';file=path.resolve(root,'.'+p);}catch{res.writeHead(400).end();return;}if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(e,d)=>{if(e){res.writeHead(404).end();return;}res.writeHead(200,{'content-type':({'.js':'text/javascript','.mjs':'text/javascript','.wasm':'application/wasm','.html':'text/html'})[path.extname(file)]??'application/octet-stream'}).end(d);});});
 async function startServer(bind=0){
  server=spawn(path.resolve('target/debug/ryggattack-server'),[`127.0.0.1:${bind}`],{env:{...process.env,RYGGATTACK_ALLOWED_ORIGINS:`http://127.0.0.1:${staticServer.address().port}`}});
@@ -31,8 +31,11 @@ async function gate(){
 }
 function publicIdentity(w){secrets.add(w.credential);const {credential,...safe}=w;return safe;}
 async function pageFor(name,g,code){
+ // Separate GPU processes prevent cold startup in B from starving A's transport.
+ // Keep this participant's context/tab unchanged through reload/storage checks.
+ const browser=await chromium.launch(browserOptions);browsers.push(browser);
  const page=await (await browser.newContext({viewport:{width:640,height:480}})).newPage();
- const c={name,page,g,welcomes:[],frames:[],inputs:[],handshakes:[],statuses:[]};clients.push(c);
+ const c={name,browser,page,g,welcomes:[],frames:[],inputs:[],handshakes:[],statuses:[]};clients.push(c);
  page.on('pageerror',e=>evidence.errors.push(`${name}: ${e.message}`));
  page.on('console',m=>{if(m.type()==='error'){const text=m.text();if(outage&&text.includes('WebSocket'))evidence.transport_console.push(text);else evidence.errors.push(`${name}: ${text}`);}});
  page.on('websocket',ws=>{
@@ -60,7 +63,7 @@ async function rawJoin(code=null){
 }
 try{
  await listen(staticServer);await startServer();
- browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
+ browserOptions={args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']};
  const a=await pageFor('ResilienceA',await gate());const code=a.lobby.code;
  const b=await pageFor('ResilienceB',await gate(),code);
  const original={a:a.identity,b:b.identity};
@@ -121,7 +124,7 @@ try{
  // Two rendered clients above establish concurrent recovery. Close the second
  // SwiftShader renderer before repeated full-page starts: otherwise shader
  // startup can consume the real 60-second reservation while testing storage.
- await b.page.close();b.page=null;
+ await b.page.close();b.page=null;await b.browser.close();
  // Session reload exercises private storage, not a new public invitation join.
  const reloadId=a.identity.participant,reloadWelcomes=a.welcomes.length;
  await a.page.reload();await until(()=>a.welcomes.length>reloadWelcomes,'saved credential reload');assert.equal(a.identity.participant,reloadId);
@@ -196,5 +199,5 @@ try{
  const text=JSON.stringify(evidence,null,2);assert([...secrets].every(t=>!text.includes(t)),'credential leaked into evidence');
  evidence.credential_negative_scan=true;fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));
  console.log(JSON.stringify({checks:evidence.checks,error_count:evidence.errors.length,expected_transport_errors:evidence.transport_console.length,overruns:evidence.server_overruns,failure:evidence.failure},null,2));
- for(const s of nodeSockets)s.close();if(browser)await browser.close();for(const g of gates){for(const s of g.sockets)s.destroy();g.listener.close();}if(server)server.kill();staticServer.close();
+ for(const s of nodeSockets)s.close();await Promise.all(browsers.map(b=>b.close()));for(const g of gates){for(const s of g.sockets)s.destroy();g.listener.close();}if(server)server.kill();staticServer.close();
 }

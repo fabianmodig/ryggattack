@@ -39,7 +39,8 @@ fs.mkdirSync(evidenceRoot,{recursive:true}); fs.mkdirSync(out,{recursive:false})
 const sha = data => crypto.createHash('sha256').update(data).digest('hex');
 const secrets=new Set(), clients=[];
 const evidence={status:'running',started_at:new Date().toISOString(),origin,backend,artifacts:{},errors:[],expected_outage_errors:[],console:[],socket_handshakes:[],checks:[],cleanup:{scope:'only the newly created private room; no administration, deletion, enumeration, or writes to other rooms',rendered:[]}};
-let browser,probe,probeDone,probeStopped=false,stopping=false,interrupted=false,outage=false;
+let chromium,browserOptions,probe,probeDone,probeStopped=false,stopping=false,interrupted=false,outage=false;
+const browsers=[];
 let native,stderrBytes=0,stderrHash=crypto.createHash('sha256');
 const deadline=performance.now()+420000;
 const interrupt=()=>{interrupted=true;};
@@ -70,6 +71,8 @@ async function collapse(c) { if(await c.page.locator('#online-entry').evaluate(e
 async function screenshot(c,name) { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:15000}); }
 async function pageFor(name,code) {
   const c=client(name);
+  // Separate rendered participants must not share SwiftShader GPU startup.
+  const browser=await chromium.launch(browserOptions);browsers.push(browser);
   c.context=await browser.newContext({viewport:{width:800,height:600},ignoreHTTPSErrors:false});
   c.page=await c.context.newPage(); c.page.setDefaultTimeout(30000);c.page.setDefaultNavigationTimeout(45000);
   await c.page.addInitScript(()=>{
@@ -149,7 +152,7 @@ async function leave(c,observers) {
 
 try {
   const binary=path.join(repo,'target/debug/ryggattack-net-probe');fs.accessSync(binary,fs.constants.X_OK);
-  const {chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url)('playwright');
+  ({chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url)('playwright'));
   for(const [file,mime] of [['index.html',/^text\/html\b/],['rooms.mjs',/^(text|application)\/javascript\b/],['ryggattack.js',/^(text|application)\/javascript\b/],['ryggattack_bg.wasm',/^application\/wasm\b/]]) {
     const url=`${origin}/${file}`;
     const response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(30000)});
@@ -160,7 +163,7 @@ try {
     if(file.endsWith('.wasm'))assert(bytes.subarray(0,4).equals(Buffer.from([0,97,115,109])),'WASM magic');
   }
   evidence.checks.push('trusted public HTTPS asset statuses, MIME types and SHA-256 hashes');
-  browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
+  browserOptions={args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']};
   const a=await pageFor('LiveA'),b=await pageFor('LiveB',a.lobby.code);
   evidence.room={id:a.lobby.id,code:a.lobby.code,created_by_this_run:true};
   assert.equal(a.identity.room,b.identity.room);assert.equal(a.lobby.humans.length,2);
@@ -279,7 +282,7 @@ try {
     evidence.cleanup.native={controlled_termination:probeStopped,closed:probe.exitCode!==null||probe.signalCode!==null,explicit_leave:false,server_side_removal_verified:false,reservation_note:'Transport closure reserves the native seat; last-human empty-room cleanup expires it after 60 seconds. Local process termination is not proof of server-side expiry.'};
     if(!evidence.cleanup.native.closed)evidence.status='failed';
   }
-  try{await browser?.close();}catch{evidence.status='failed';}
+  for(const browser of browsers)try{await browser.close();}catch{evidence.status='failed';}
   evidence.native_stderr={bytes:stderrBytes,sha256:stderrHash.digest('hex'),raw_text_excluded:true};
   evidence.clients=clients.map(c=>({name:c.name,identity:c.identity,participant:c.participant,seat:c.seat,dom:c.dom,frames:c.frames,first:c.first,last:c.observed,welcomes:c.welcomes,events:c.events,input_count:c.inputs.length,last_inputs:c.inputs.slice(-8),last_lobby:c.lobby}));
   if(evidence.errors.length)evidence.status='failed';
