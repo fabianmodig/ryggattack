@@ -1,0 +1,14 @@
+[
+  {
+    "file": "actual-game.png",
+    "sha256": "5daccb47b91a86e0c2f61658126c9e260d38acb5ae1fa6a4a5ff751817de3ed7"
+  },
+  {
+    "file": "failure.png",
+    "sha256": "768463739bf5d1b1aa0c1011eae7e0c8f08423c2385c4b72694573ec996463d3"
+  },
+  {
+    "file": "results.json",
+    "sha256": "0b7062076e24bbe93209b333cd314d500ae5058b9668206e18ef9667eb0f5f51"
+  }
+]

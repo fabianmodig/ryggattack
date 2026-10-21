@@ -1,0 +1,462 @@
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+not ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 1.67359
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Docker context override forbidden/. Input:
+    
+    'TypeError: localEngineEndpoint is not a function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'localEngineEndpoint is not a function'
+  name: 'TypeError'
+  stack: |-
+    file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:11:20
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:11:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:11:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 74.610487
+
+RED Docker endpoint regression exit=1
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 2.362848
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.509161
+
+GREEN Docker endpoint regression exit=0
+TAP version 13
+# Subtest: every engine command pins its validated local transport
+not ok 1 - every engine command pins its validated local transport
+  ---
+  duration_ms: 2.176458
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:20:1'
+  failureType: 'testCodeFailure'
+  error: 'localEngineArgs is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:23:20)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+not ok 2 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 87.948546
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Docker context override forbidden/. Input:
+    
+    "data:text/javascript,import%20fs%20from%20'node%3Afs'%3Bimport%20cp%20from%20'node%3Achild_process'%3Bimport%20%7BsyncBuiltinESMExports%7D%20from%20'node%3Amodule'%3Bfs.mkdirSync%3D()%3D%3E%7Bthrow%20Error('forbidden%20output%20creation')%7D%3Bcp.execFile%3D()%3D%3E%7Bthrow%20Error('forbidden%20CLI%20execution')%7D%3BsyncBuiltinESMExports()%3B:1\n" +
+      "import fs from 'node:fs';import cp from 'node:child_process';import {syncBuiltinESMExports} from 'node:module';fs.mkdirSync=()=>{throw Error('forbidden output creation')};cp.execFile=()=>{throw Error('forbidden CLI execution')};syncBuiltinESMExports();\n" +
+      '                                                                                                                                       ^\n' +
+      '\n' +
+      'Error: forbidden output creation\n' +
+      "    at fs.mkdirSync (data:text/javascript,import%20fs%20from%20'node%3Afs'%3Bimport%20cp%20from%20'node%3Achild_process'%3Bimport%20%7BsyncBuiltinESMExports%7D%20from%20'node%3Amodule'%3Bfs.mkdirSync%3D()%3D%3E%7Bthrow%20Error('forbidden%20output%20creation')%7D%3Bcp.execFile%3D()%3D%3E%7Bthrow%20Error('forbidden%20CLI%20execution')%7D%3BsyncBuiltinESMExports()%3B:1:136)\n" +
+      '    at file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-smoke.mjs:27:4\n' +
+      '    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n' +
+      '    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)\n' +
+      '    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)\n' +
+      '\n' +
+      'Node.js v22.23.3\n'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    data:text/javascript,import%20fs%20from%20'node%3Afs'%3Bimport%20cp%20from%20'node%3Achild_process'%3Bimport%20%7BsyncBuiltinESMExports%7D%20from%20'node%3Amodule'%3Bfs.mkdirSync%3D()%3D%3E%7Bthrow%20Error('forbidden%20output%20creation')%7D%3Bcp.execFile%3D()%3D%3E%7Bthrow%20Error('forbidden%20CLI%20execution')%7D%3BsyncBuiltinESMExports()%3B:1
+    import fs from 'node:fs';import cp from 'node:child_process';import {syncBuiltinESMExports} from 'node:module';fs.mkdirSync=()=>{throw Error('forbidden output creation')};cp.execFile=()=>{throw Error('forbidden CLI execution')};syncBuiltinESMExports();
+                                                                                                                                           ^
+    
+    Error: forbidden output creation
+        at fs.mkdirSync (data:text/javascript,import%20fs%20from%20'node%3Afs'%3Bimport%20cp%20from%20'node%3Achild_process'%3Bimport%20%7BsyncBuiltinESMExports%7D%20from%20'node%3Amodule'%3Bfs.mkdirSync%3D()%3D%3E%7Bthrow%20Error('forbidden%20output%20creation')%7D%3Bcp.execFile%3D()%3D%3E%7Bthrow%20Error('forbidden%20CLI%20execution')%7D%3BsyncBuiltinESMExports()%3B:1:136)
+        at file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-smoke.mjs:27:4
+        at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+        at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+        at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+    
+    Node.js v22.23.3
+    
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:31:42)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 163.755916
+
+RED transport pinning and inert regression exit=1
+TAP version 13
+# Subtest: every engine command pins its validated local transport
+ok 1 - every engine command pins its validated local transport
+  ---
+  duration_ms: 3.50686
+  type: 'test'
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+ok 2 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 86.379721
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 166.61717
+
+GREEN transport pinning and inert regression exit=0
+TAP version 13
+# Subtest: visible DOM credentials block screenshots before capture
+not ok 1 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 1.247402
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:3:1'
+  failureType: 'testCodeFailure'
+  error: 'capturePrivateScreenshot is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    file:///home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:6:27
+    waitForActual (node:assert:630:21)
+    Function.rejects (node:assert:767:31)
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:6:15)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 95.546178
+
+RED solo visible DOM privacy exit=1
+TAP version 13
+# Subtest: visible DOM credentials block screenshots before capture
+ok 1 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 6.384015
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 174.885006
+
+GREEN solo visible DOM privacy exit=0
+TAP version 13
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+not ok 1 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 9.853403
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: 'publishSoloEvidence is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:27:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 274.688604
+
+RED solo artifact privacy and purge exit=1
+TAP version 13
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+ok 1 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 34.931659
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 125.819823
+
+GREEN solo artifact privacy and purge exit=0
+TAP version 13
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+not ok 1 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 1.203394
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: 'recordSoloInput is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/solo-bots-helpers.test.mjs:42:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80.101093
+
+RED solo observed input policy exit=1
+TAP version 13
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+ok 1 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 1.996314
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86.967857
+
+GREEN solo observed input policy exit=0
+TAP version 13
+# Subtest: inherited remote engine selectors fail closed even for Podman
+not ok 1 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 2.212101
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:20:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-acceptance/scripts/client-feedback-helpers.test.mjs:22:166)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.298464
+
+RED preserve inherited remote selectors exit=1
+TAP version 13
+# Subtest: inherited remote engine selectors fail closed even for Podman
+ok 1 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 2.358175
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.589009
+
+GREEN preserve inherited remote selectors exit=0
+
+Syntax checks (six owned scripts) exit=0
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 2.766295
+  type: 'test'
+  ...
+# Subtest: inherited remote engine selectors fail closed even for Podman
+ok 2 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 0.701722
+  type: 'test'
+  ...
+# Subtest: every engine command pins its validated local transport
+ok 3 - every engine command pins its validated local transport
+  ---
+  duration_ms: 1.433575
+  type: 'test'
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+ok 4 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 407.579969
+  type: 'test'
+  ...
+# Subtest: actual process effective/bounding/ambient capability sets must all be zero
+ok 5 - actual process effective/bounding/ambient capability sets must all be zero
+  ---
+  duration_ms: 1.568351
+  type: 'test'
+  ...
+# Subtest: local authorization is mandatory; unknown and unsafe arguments fail closed
+ok 6 - local authorization is mandatory; unknown and unsafe arguments fail closed
+  ---
+  duration_ms: 0.564976
+  type: 'test'
+  ...
+# Subtest: only explicit IPv4 loopback published ports are accepted
+ok 7 - only explicit IPv4 loopback published ports are accepted
+  ---
+  duration_ms: 0.417296
+  type: 'test'
+  ...
+# Subtest: DOM text, not the diagnostic global, is authoritative; hidden notices fail
+ok 8 - DOM text, not the diagnostic global, is authoritative; hidden notices fail
+  ---
+  duration_ms: 0.343822
+  type: 'test'
+  ...
+# Subtest: CLI authorization and help are inert even without any browser dependency
+ok 9 - CLI authorization and help are inert even without any browser dependency
+  ---
+  duration_ms: 433.627897
+  type: 'test'
+  ...
+# Subtest: credential negative scan rejects exact known secrets and private key evidence
+ok 10 - credential negative scan rejects exact known secrets and private key evidence
+  ---
+  duration_ms: 0.723218
+  type: 'test'
+  ...
+# Subtest: visible DOM credentials block screenshots before capture
+ok 11 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 2.634921
+  type: 'test'
+  ...
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+ok 12 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 23.726679
+  type: 'test'
+  ...
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+ok 13 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 0.417765
+  type: 'test'
+  ...
+# Subtest: solo help and invalid CLI are inert with a missing Playwright module
+ok 14 - solo help and invalid CLI are inert with a missing Playwright module
+  ---
+  duration_ms: 519.974488
+  type: 'test'
+  ...
+# Subtest: unchanged default creates the original three-bot configuration
+ok 15 - unchanged default creates the original three-bot configuration
+  ---
+  duration_ms: 0.223831
+  type: 'test'
+  ...
+# Subtest: explicit bot configuration covers all supported non-practice rosters
+ok 16 - explicit bot configuration covers all supported non-practice rosters
+  ---
+  duration_ms: 0.323879
+  type: 'test'
+  ...
+# Subtest: authorization and bot count fail closed before any live side effects
+ok 17 - authorization and bot count fail closed before any live side effects
+  ---
+  duration_ms: 1.184801
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 923.667326
+
+FINAL combined helper and inert process suite exit=0

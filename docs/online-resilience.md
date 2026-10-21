@@ -27,9 +27,16 @@ wait for the ordinary next round. The active-seat mask is independent of the
 controller mask, so substituted bots survive ordinary round restoration.
 
 These are bearer credentials, not accounts or device attestation. Someone who
-actually steals the **current** private credential can win the next claim;
-rotation rejects subsequent replay, but cannot distinguish that thief from the
-owner. A lost rotated Welcome fails closed rather than accepting the old token.
+actually steals the **current** private credential can claim that participant,
+including replacing an owner who is still connected. Rotation rejects subsequent
+replay, but cannot distinguish that thief from the owner. A lost rotated Welcome
+fails closed rather than accepting the old token.
+
+For v1, Fabian explicitly chose to retain this anonymous bearer model and record
+its limitation, rather than add device-bound proof of possession. Acceptance
+therefore requires rejection of incorrect, expired, cross-room and superseded
+credentials and revocation of old-socket authority; it does **not** claim resistance
+to theft of a currently valid bearer or compromise of its storage/device.
 Protecting bearer secrets over the Internet requires phase-5 TLS and endpoint
 security; invitation possession alone is never enough. Debug formatting redacts
 credentials, service errors never echo payloads, and evidence harnesses remove

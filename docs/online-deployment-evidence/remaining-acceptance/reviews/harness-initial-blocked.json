@@ -1,0 +1,15 @@
+{
+  "delegation_id": "deleg_b32cab57",
+  "passed": false,
+  "security_concerns": [
+    "Inherited DOCKER_CONTEXT could override a Unix DOCKER_HOST while the verifier skipped context inspection, violating local-only authorization."
+  ],
+  "logic_errors": [],
+  "suggestions": [
+    "Check visible DOM text before solo screenshots, scan all artifacts and purge earlier artifacts on a privacy failure; binary matching is not OCR.",
+    "Assert observed left+fire samples for two/three bots and neutral-steering fire for one bot.",
+    "Add process-level inert solo help/invalid-authorization tests with no Playwright dependency."
+  ],
+  "disposition": "Preserved initial blocked review. Separate fixer implemented endpoint validation/pinning and the suggested harness hardening, with RED/GREEN Node regression evidence. Fresh independent review is required before commit; the initial review is not approval.",
+  "boundary": "The actual archived local browser runs used explicit non-remote Podman, not the affected Docker selection path. This finding concerns verification-tool authorization, not an identified deployed-game vulnerability."
+}

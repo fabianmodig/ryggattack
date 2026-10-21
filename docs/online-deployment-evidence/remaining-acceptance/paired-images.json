@@ -1,0 +1,12 @@
+{
+  "web": {
+    "image": "git.modig.online/fabianmodig/ryggattack/web:sha-205d048",
+    "id": "21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+    "manifest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324"
+  },
+  "server": {
+    "image": "git.modig.online/fabianmodig/ryggattack/server:sha-205d048",
+    "id": "0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+    "manifest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6"
+  }
+}
