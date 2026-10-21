@@ -1,0 +1,8 @@
+apiVersion: v2
+name: ryggattack
+description: Single-replica in-memory Ryggattack private rooms and WASM client
+type: application
+version: 0.1.0
+# CI commits a paired, published web/server immutable tag here with [skip ci].
+# Bootstrap placeholder; do not deploy before the first main release publishes.
+appVersion: sha-e0d6439

@@ -1,0 +1,40 @@
+{
+  "web": {
+    "Id": "2ad188584f1ab181c25686aabf2468d330ca772aed6028a4bdcb40c7d98eed5e",
+    "Digest": "sha256:0dd0c5a8d1a5330227cca2fd8af4a05b295fcab667a5db574b3c1698d567b9d7",
+    "RepoTags": [
+      "git.modig.online/fabianmodig/ryggattack/web:sha-7ce74a3"
+    ],
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 166018012,
+    "user": "101:101",
+    "labels": {
+      "io.buildah.version": "1.39.3",
+      "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>",
+      "org.opencontainers.image.description": "The Ryggattack WebAssembly build, served by nginx",
+      "org.opencontainers.image.revision": "7ce74a3da89eff726e81a2417b271726b7add98a",
+      "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+      "org.opencontainers.image.title": "Ryggattack (web)",
+      "org.opencontainers.image.version": "sha-7ce74a3"
+    }
+  },
+  "server": {
+    "Id": "ea647fc31db0d7632faeac55d80ba986b2ea7cd79b9028298991970ff18d4c55",
+    "Digest": "sha256:edfabb0b14a50d96336f9e5c9642069643fadbe03e89c5e751927103a5304ff9",
+    "RepoTags": [
+      "git.modig.online/fabianmodig/ryggattack/server:sha-7ce74a3"
+    ],
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 131863421,
+    "user": "10001:10001",
+    "labels": {
+      "io.buildah.version": "1.39.3",
+      "org.opencontainers.image.revision": "7ce74a3da89eff726e81a2417b271726b7add98a",
+      "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+      "org.opencontainers.image.version": "sha-7ce74a3"
+    },
+    "executable_sha256": "b3153a6fc603a2e81018f0b24934f8c10837dcbf99f42aab420209d6d4befbb3"
+  }
+}

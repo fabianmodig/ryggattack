@@ -1,0 +1,18 @@
+# Game ports are reachable through Traefik. The management port is not public:
+# only same-namespace pods (e.g. an explicitly installed monitor) may query it.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  podSelector:
+    matchLabels: {app.kubernetes.io/instance: {{ .Release.Name }}}
+  policyTypes: [Ingress]
+  ingress:
+    - ports:
+        - {protocol: TCP, port: 8080}
+        - {protocol: TCP, port: 8787}
+    - from:
+        - podSelector: {}
+      ports:
+        - {protocol: TCP, port: 8788}

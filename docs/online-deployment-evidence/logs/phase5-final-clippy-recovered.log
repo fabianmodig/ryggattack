@@ -1,0 +1,46 @@
+    Checking ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+warning: this function has too many arguments (8/7)
+   --> src/explosions.rs:201:1
+    |
+201 | / pub(crate) fn run_detonations(
+202 | |     mut commands: Commands,
+203 | |     time: Res<Time>,
+204 | |     assets: Res<EffectAssets>,
+...   |
+209 | |     mut wrecked: Local<HashSet<Entity>>,
+210 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/settings.rs:715:25
+    |
+715 |     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#type_complexity
+    = note: `#[warn(clippy::type_complexity)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:513:17
+    |
+513 |     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:593:14
+    |
+593 |     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#type_complexity
+
+warning: `ryggattack` (lib) generated 4 warnings
+warning: `ryggattack` (lib test) generated 4 warnings (4 duplicates)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 6.68s
+
+TIMING phase5-final-clippy-recovered: 6.753 s; exit=0

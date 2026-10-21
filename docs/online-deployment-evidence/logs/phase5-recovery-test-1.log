@@ -1,0 +1,9 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.63s
+     Running unittests src/bin/ryggattack-headless.rs (target/debug/deps/ryggattack_headless-be1b2270885b4ebf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+TIMING phase5-recovery-test-1: 0.776 s; exit=0

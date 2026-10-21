@@ -1,0 +1,3 @@
+Production origin/mode configuration fails closed for missing, wildcard, null, malformed and mismatched policies
+
+TIMING phase5-source-policy: 0.123 s; exit=0

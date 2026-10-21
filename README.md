@@ -39,9 +39,9 @@ and CPU-side visual construction remain coupled to some gameplay systems.
 See [the foundation notes](docs/online-foundation.md) for the reusable Rust API.
 `cargo run` continues to open the ordinary offline game.
 
-## Private online rooms (issue #6, phases 3–4)
+## Private online rooms (issue #6, phases 3–5)
 
-The loopback-only WebSocket service runs isolated authoritative rooms, one
+The authoritative WebSocket service defaults to loopback and runs isolated rooms, one
 human seat per connected device, with up to four humans plus bots total.
 Names are anonymous display labels, not identities. Create a room and share
 its 20-character unguessable code/link; joining a lobby can replace a bot.
@@ -78,12 +78,16 @@ last human leaving freezes simulation; eligible reconnect resumes it, and
 bounded backoff; browser reload uses endpoint/room-scoped sessionStorage,
 not the shareable invitation. Deliberate Leave clears the saved claim and
 stops retrying. See [resilience policies and verification](docs/online-resilience.md).
-A public/deployable backend and persistence are **not** claimed (phase 5).
+Phase 5 adds explicit production binding, same-origin WSS, bounded admission,
+private health/metrics, hardened paired images and a single-replica Helm chart.
+See [production setup, shutdown/reset and rollback](docs/online-deployment.md).
+Local verification is not proof of a public rollout; persistence is not provided.
 
 Without the online opt-in, offline play is unchanged. Online Escape suppresses
 your input rather than pausing the server. Replicated visuals remain development
-proxies. See [room protocol and limits](docs/online-rooms.md). Do not reverse-proxy
-this unauthenticated development service. Browser origins default to exactly
+proxies. See [room protocol and limits](docs/online-rooms.md). Public deployments
+must opt into the production policy, never simply reverse-proxy development
+mode. Development browser origins default to exactly
 `http://127.0.0.1:8000` and `http://localhost:8000`. For port 8080, set
 `RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080` on the
 server. Native clients without Origin remain allowed.
@@ -173,10 +177,11 @@ that cargo does not install; the build says which of the two it produced.
 
 ### The playable build
 
-Every push to `main` deploys `dist/web/` to GitHub Pages, so the current state
-of the game is playable without installing anything:
-
-**<https://fabianmodig.github.io/ryggattack/>**
+The canonical deployment target is **https://ryggattack.modig.online/**, serving
+the game and same-origin `/ws` through the Kubernetes external ingress. Public
+readiness must be confirmed by the deployment owner. GitHub Pages publishes
+only a redirect to that origin, preserving invitations and replacing obsolete
+backend URLs; it no longer hosts an independent gameplay artifact.
 
 The repository lives on `git.modig.online` and is push-mirrored to GitHub.
 `.github/workflows/pages.yml` runs only there: Forgejo ignores
@@ -186,8 +191,11 @@ anything.
 
 ### The published container image
 
-Every push to `main` builds the bundle and publishes an image that serves it,
-tagged with the commit it was built from and `latest`:
+A main release builds/tests separate web and backend images, publishes them
+with the same `sha-<short source commit>` tag (plus convenience `latest`), then
+commits the paired chart `appVersion` with `[skip ci]`. The Helm chart never
+deploys `latest`; no publication occurs from a manual branch run. Both pushes
+and container smoke must succeed before chart advancement:
 
 ```sh
 docker run --rm -p 8080:8080 git.modig.online/fabianmodig/ryggattack/web:latest
@@ -198,13 +206,15 @@ The image is nginx on port 8080 with `dist/web/` as its document root, the
 module and the glue stored pre-compressed, and `.wasm` answered as
 `application/wasm`. Nothing is built from tags.
 
-`.forgejo/workflows/release.yml` builds the image, starts it and checks that it
-really serves the page and the module, and pushes only then. Pushing needs the
+`.forgejo/workflows/release.yml` builds both images and exercises real hardened
+HTTP/health/WebSocket containers before pushing either. Pushing needs the
 `PACKAGE_USER` and `PACKAGE_TOKEN` Actions secrets. Starting the workflow by
 hand from another branch builds and smoke-tests the image without publishing
-it.
+it. Chart commit-back additionally needs the scoped workflow token to have
+repository-write permission. First-publication/bootstrap and the private
+management port are documented in [production setup](docs/online-deployment.md).
 
-The same image builds locally, from the repository root:
+The web image builds locally, from the repository root:
 
 ```sh
 scripts/build-web.sh

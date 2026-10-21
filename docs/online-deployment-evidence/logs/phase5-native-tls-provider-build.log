@@ -1,0 +1,9 @@
+   Compiling ring v0.17.14
+   Compiling rustls v0.23.46
+   Compiling rustls-webpki v0.103.16
+   Compiling tungstenite v0.24.0
+   Compiling ewebsock v0.8.0
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1m 54s
+
+TIMING phase5-native-tls-provider-build: 115.040 s; exit=0

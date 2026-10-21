@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 9.81s
+     Running tests/rooms_server.rs (target/debug/deps/rooms_server-42d4e7d5868f475c)
+
+running 1 test
+test actual_rooms_isolate_ids_rosters_permissions_countdown_and_running_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+
+TIMING phase5-recovery-test-6: 10.508 s; exit=0

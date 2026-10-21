@@ -1,0 +1,425 @@
+{
+  "artifact": {
+    "index.html": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a",
+    "rooms.mjs": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+    "ryggattack.js": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+    "ryggattack_bg.wasm": "c9eecc0e081e587649fa83b5bec06f82a9730b72890cee37952279d01de57940"
+  },
+  "checks": [
+    "actual canonical HTTPS location with local-only DNS map/self-signed fixture",
+    "default same-origin WSS /ws from real HTML create/join forms",
+    "two real rendered WASM clients configure/ready/start and send keyboard intent",
+    "authoritative common snapshots identical",
+    "real WSS disconnect -> bot takeover -> same private identity/seat secure reconnect; held controls neutralized"
+  ],
+  "errors": [],
+  "expected_outage_errors": [],
+  "origins": [
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    },
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    },
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    }
+  ],
+  "proxy": [
+    {
+      "client": "ProductionA",
+      "at_ms": 2884.758964,
+      "connected_at_ms": 2885.404526,
+      "response_line": "HTTP/1.1 101 Switching Protocols",
+      "response_at_ms": 2888.977932,
+      "closed_at_ms": 47091.732256
+    },
+    {
+      "client": "ProductionB",
+      "at_ms": 5755.115928,
+      "connected_at_ms": 5755.328544,
+      "response_line": "HTTP/1.1 101 Switching Protocols",
+      "response_at_ms": 5764.051055
+    },
+    {
+      "client": "ProductionA",
+      "at_ms": 50413.650969,
+      "connected_at_ms": 50414.218641,
+      "response_line": "HTTP/1.1 101 Switching Protocols",
+      "response_at_ms": 50420.117709,
+      "closed_at_ms": 94764.633281
+    }
+  ],
+  "identities": {
+    "a": {
+      "version": 3,
+      "seat": 0,
+      "room": 3,
+      "participant": 2,
+      "code": "2dca43430c323cd9abf8",
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          19,
+          24
+        ],
+        [
+          20,
+          21
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          23,
+          24
+        ]
+      ]
+    },
+    "b": {
+      "version": 3,
+      "seat": 1,
+      "room": 3,
+      "participant": 4,
+      "code": "2dca43430c323cd9abf8",
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          19,
+          24
+        ],
+        [
+          20,
+          21
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          23,
+          24
+        ]
+      ]
+    }
+  },
+  "shared_identical_ticks": 1135,
+  "held_input_neutralization": true,
+  "browser_isolation": "one Chromium/SwiftShader GPU process per rendered participant",
+  "lifecycle": [
+    {
+      "name": "ProductionA",
+      "time_origin_ms": 1792562034096.5,
+      "trace": [
+        [
+          "construct",
+          2125.4000000001397
+        ],
+        [
+          "open",
+          2147.5
+        ],
+        [
+          "send",
+          2150.1999999999534,
+          "Hello"
+        ],
+        [
+          "receive",
+          2164.4000000001397,
+          "Welcome"
+        ],
+        [
+          "close",
+          46335.40000000014
+        ],
+        [
+          "construct",
+          49654.19999999995
+        ],
+        [
+          "open",
+          49664.5
+        ],
+        [
+          "send",
+          51409.60000000009,
+          "Reconnect"
+        ],
+        [
+          "receive",
+          51414,
+          "Welcome"
+        ]
+      ]
+    },
+    {
+      "name": "ProductionB",
+      "time_origin_ms": 1792562036662.9,
+      "trace": [
+        [
+          "construct",
+          2430
+        ],
+        [
+          "open",
+          2450.7999999998137
+        ],
+        [
+          "send",
+          2452.6999999999534,
+          "Hello"
+        ],
+        [
+          "receive",
+          2457.0999999998603,
+          "Welcome"
+        ]
+      ]
+    }
+  ],
+  "server_log": "",
+  "credential_negative_scan": true
+}

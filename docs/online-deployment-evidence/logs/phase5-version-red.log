@@ -1,0 +1,11 @@
+python3: can't open file '/home/hermes/src/ryggattack-deployment/scripts/update-chart-version.py': [Errno 2] No such file or directory
+Traceback (most recent call last):
+  File "/home/hermes/src/ryggattack-deployment/scripts/update-chart-version.test.py", line 11, in <module>
+    subprocess.run(['python3',str(script),'sha-1234567',str(chart)],check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['python3', '/home/hermes/src/ryggattack-deployment/scripts/update-chart-version.py', 'sha-1234567', '/home/hermes/.hermes/cache/scratch/tmpxwry6sir/Chart.yaml']' returned non-zero exit status 2.
+
+TIMING phase5-version-red: 0.209 s; exit=1

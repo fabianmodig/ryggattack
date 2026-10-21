@@ -1,0 +1,4 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `release` profile [optimized] target(s) in 4m 58s
+
+TIMING phase5-review-release: 298.174 s; exit=0

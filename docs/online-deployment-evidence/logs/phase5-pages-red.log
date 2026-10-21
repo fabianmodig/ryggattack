@@ -1,0 +1,19 @@
+node:fs:440
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open 'web/pages-redirect.html'
+    at Object.readFileSync (node:fs:440:20)
+    at file:///home/hermes/src/ryggattack-deployment/scripts/pages-redirect.test.mjs:4:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'web/pages-redirect.html'
+}
+
+Node.js v22.23.3
+
+TIMING phase5-pages-red: 0.171 s; exit=1

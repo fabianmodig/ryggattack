@@ -13,7 +13,9 @@ export function participantStatus(h, phase) {
 }
 export function installRoomControls() {
   const $=id=>document.getElementById(id), params=new URLSearchParams(location.search);
-  $('backend').value=params.get('online')??'ws://127.0.0.1:8787';
+  const site=new URL(location.href);
+  const local=['localhost','127.0.0.1','[::1]'].includes(site.hostname) && site.protocol==='http:';
+  $('backend').value=params.get('online')??(local?'ws://127.0.0.1:8787':`wss://${site.host}/ws`);
   $('player-name').value=params.get('name')??'Player';
   $('room-code').value=params.get('room')??'';
   if(params.has('room')) $('online-entry').open=true;

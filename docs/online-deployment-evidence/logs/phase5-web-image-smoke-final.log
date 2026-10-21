@@ -1,0 +1,3 @@
+Actual nonroot/read-only/cap-drop nginx image: exact HTML/JS/WASM/module hashes, MIME, private-query-free structured logs, no management or WS routes PASS
+
+TIMING phase5-web-image-smoke-final: 0.950 s; exit=0

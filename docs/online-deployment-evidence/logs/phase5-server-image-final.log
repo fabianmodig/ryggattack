@@ -1,0 +1,20 @@
+STEP 1/8: FROM debian:trixie-slim
+STEP 2/8: RUN ldconfig -p | grep -q 'libgcc_s.so.1'
+--> 3d4287656c7a
+STEP 3/8: COPY --chmod=0555 dist/server/ryggattack-server /usr/local/bin/ryggattack-server
+--> 9e7f29b5b2fc
+STEP 4/8: USER 10001:10001
+--> 33d7988fbaaf
+STEP 5/8: EXPOSE 8787 8788
+--> ecff8e0b1ff9
+STEP 6/8: ENTRYPOINT ["/usr/local/bin/ryggattack-server"]
+--> d847737918fe
+STEP 7/8: CMD ["0.0.0.0:8787"]
+--> 69a1b8f74c75
+STEP 8/8: LABEL "org.opencontainers.image.revision"="7ce74a3da89eff726e81a2417b271726b7add98a" "org.opencontainers.image.version"="sha-7ce74a3" "org.opencontainers.image.source"="https://git.modig.online/fabianmodig/ryggattack"
+COMMIT git.modig.online/fabianmodig/ryggattack/server:sha-7ce74a3
+--> ea647fc31db0
+Successfully tagged git.modig.online/fabianmodig/ryggattack/server:sha-7ce74a3
+ea647fc31db0d7632faeac55d80ba986b2ea7cd79b9028298991970ff18d4c55
+
+TIMING phase5-server-image-final: 1.117 s; exit=0

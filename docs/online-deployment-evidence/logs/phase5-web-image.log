@@ -1,0 +1,30 @@
+STEP 1/12: FROM nginx:1.30-alpine
+STEP 2/12: LABEL org.opencontainers.image.title="Ryggattack (web)"       org.opencontainers.image.description="The Ryggattack WebAssembly build, served by nginx"
+--> d634153a30dd
+STEP 3/12: RUN nginx -V 2>&1 | grep -q -- --with-http_gzip_static_module
+--> 8d7f9484ba08
+STEP 4/12: COPY --chmod=0644 web/nginx-main.conf /etc/nginx/nginx.conf
+--> dac9fbd68007
+STEP 5/12: COPY --chmod=0644 web/nginx.conf /etc/nginx/conf.d/default.conf
+--> 62dcb513af19
+STEP 6/12: COPY dist/web /usr/share/nginx/html
+--> b73a3cfae3f2
+STEP 7/12: RUN chmod -R a+rX /usr/share/nginx/html     && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz     && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz     && nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+--> f2034642e852
+STEP 8/12: USER 101:101
+--> 46074522a210
+STEP 9/12: ENTRYPOINT ["nginx"]
+--> 17e8a1139cd4
+STEP 10/12: CMD ["-g", "daemon off;"]
+--> 3e06669108d1
+STEP 11/12: EXPOSE 8080
+--> fe49b23f74d2
+STEP 12/12: LABEL "org.opencontainers.image.revision"="b72055fa779908e5450c80b367841b1b78575b9e" "org.opencontainers.image.version"="sha-b72055f" "org.opencontainers.image.source"="https://git.modig.online/fabianmodig/ryggattack"
+COMMIT git.modig.online/fabianmodig/ryggattack/web:sha-b72055f
+--> a02fbcc6ac72
+Successfully tagged git.modig.online/fabianmodig/ryggattack/web:sha-b72055f
+a02fbcc6ac72c1c051cc7e02c6c83f57bf5a971e6955ca095c7cd0474e905105
+
+TIMING phase5-web-image: 4.941 s; exit=0

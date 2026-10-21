@@ -2,6 +2,7 @@
 // Build native bins and dist/web first. Requires Playwright Chromium.
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/network-smoke.mjs [output-dir]
 import assert from 'node:assert/strict';
+import {neutralWindow} from './network-harness-helpers.mjs';
 import http from 'node:http';
 import net from 'node:net';
 import fs from 'node:fs';
@@ -52,6 +53,7 @@ const staticServer=http.createServer((req,res)=>{
   fs.readFile(file,(e,d)=>{if(e){res.writeHead(404).end();return;}res.writeHead(200,{'content-type':({'.js':'text/javascript','.mjs':'text/javascript','.wasm':'application/wasm','.html':'text/html'})[path.extname(file)]??'application/octet-stream'}).end(d);});
 });
 let browser, server, probe, proxy, offline;
+const browsers=[];
 let serverLog='';
 const sockets=new Set();
 try {
@@ -88,10 +90,13 @@ try {
   });
   await listen(proxy);
   const address=`ws://127.0.0.1:${proxy.address().port}`;
-  browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
+  const browserOptions={args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']};
   async function pageFor(name,code=null) {
     const c=client(name);
-    const page=await (await browser.newContext({viewport:{width:640,height:480}})).newPage();
+    // Isolate each participant's SwiftShader GPU startup, not just storage.
+    const participantBrowser=await chromium.launch(browserOptions);browsers.push(participantBrowser);
+    browser??=participantBrowser; // Reuse A's process for later share-link/offline checks.
+    const page=await (await participantBrowser.newContext({viewport:{width:640,height:480}})).newPage();
     c.events=[];
     await page.addInitScript(()=>{
       globalThis.socketTrace=[];
@@ -172,8 +177,12 @@ try {
   await a.page.locator('#ready-room').click();
   await until(()=>a.lobby.humans.find(h=>h.id===a.identity.participant).ready,'host ready');
   await b.page.locator('#ready-room').click();
-  await a.page.locator('#ready-room').click();
+  // Wait for the authoritative phase: independent delayed transports can
+  // otherwise deliver A's unready before B's ready and never start a countdown.
   await until(()=>a.lobbies.some(l=>l.phase.Countdown),'authoritative countdown observed');
+  // Controls are already visible. Keep a real mouse click, but skip the two
+  // stability animation frames so cold rendering cannot outlast the countdown.
+  await a.page.locator('#ready-room').click({force:true});
   await until(()=>a.lobby.phase==='Lobby'&&!a.lobby.humans.find(h=>h.id===a.identity.participant).ready,'unready cancels countdown');
   await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='Ready',null,{timeout:60000});
   await a.page.screenshot({path:path.join(out,'lobby-cancelled.png'),timeout:180000});
@@ -195,6 +204,9 @@ try {
   await ensureRunning();
   assert.equal(isolatedLobby.humans.length,1);assert.equal(isolatedLobby.settings.arena,'Forest');isolated.close();
   for(const c of [a,b]){
+    // A slow software-GPU capture may span the entire first-to-one match.
+    // Reuse the existing real Ready/start gate before checking the next client.
+    await ensureRunning();
     await c.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.phase==='Running',null,{timeout:60000});
     await c.page.screenshot({path:path.join(out,`initial-playing-${c.name}.png`),timeout:180000});
   }
@@ -211,13 +223,25 @@ try {
   assert(a.last.tick>tick+64,'online menu does not pause server');
   await a.page.keyboard.press('Escape',{delay:500}); await sleep(1800);
   // Editing the HTML form must keep focus and suppress game keys.
-  await ensureRunning();
-  await a.page.locator('#online-entry summary').click();
-  const name=a.page.getByRole('textbox',{name:'Player name',exact:true}); await name.fill('Typing');
-  await sleep(1800); start=a.inputs.length;
-  await name.press('Space',{delay:1500}); await sleep(1800);
-  assert.equal(await a.page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Player name');
-  assert(a.inputs.slice(start).length>0 && a.inputs.slice(start).every(i=>!i.fire&&i.horizontal===0&&i.vertical===0),'form neutral intent');
+  evidence.form_windows=[];
+  let formPassed=false;
+  for(let attempt=0;attempt<3&&!formPassed;attempt++){
+    await ensureRunning();
+    await a.page.locator('#online-entry summary').click();
+    const name=a.page.getByRole('textbox',{name:'Player name',exact:true});await name.fill('Typing');
+    const previous=await a.page.evaluate(()=>globalThis.ryggattackOnline);
+    await a.page.waitForFunction(previous=>globalThis.ryggattackOnline!==previous||JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.phase!=='Running',previous,{timeout:60000});
+    start=a.inputs.length;
+    await a.page.keyboard.down('Space');
+    try{
+      await until(()=>neutralWindow(a.inputs.slice(start),a.lobby.phase)!=='wait','observed focused-form input window');
+    }finally{await a.page.keyboard.up('Space');}
+    const samples=a.inputs.slice(start),decision=neutralWindow(samples,a.lobby.phase);
+    assert.equal(await a.page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Player name');
+    evidence.form_windows.push({attempt,phase:a.lobby.phase,decision,packets:samples.length,all_neutral:samples.every(i=>!i.fire&&i.horizontal===0&&i.vertical===0)});
+    formPassed=decision==='passed';
+  }
+  assert(formPassed,'three actual neutral form packets required; empty completed-match windows are not passes');
   // Playwright forces every headless page focused; bringToFront alone is not
   // a blur. Exercise a real DOM canvas blur while a fire key is held instead.
   await ensureRunning();
@@ -331,11 +355,11 @@ try {
   throw error;
 } finally {
   evidence.server_log=serverLog;
-  evidence.server_overruns=(serverLog.match(/tick overrun/g)||[]).length;
+  evidence.server_overruns=(serverLog.match(/tick_overrun/g)||[]).length;
   for(const c of clients){const sorted=c.rtts.sort((a,b)=>a-b);const hz=c.last_observed&&c.first_observed?(c.last_observed.tick-c.first_observed.tick)/((c.last_observed.at_ms-c.first_observed.at_ms)/1000):null;evidence.clients.push({name:c.name,events:c.events,seat:c.seat,frames:c.frames,first_observed:c.first_observed,last_observed:c.last_observed,observed_server_hz:hz,simulated_to_wall_ratio:hz/64,projectile_observations:c.shots,explosion_observations:c.explosions,eliminated_frames:c.eliminated,round_finished_frames:c.rounds,moved:c.moved,turns:c.turns,input_count:c.inputs.length,wire_ack_rtt_median_ms:sorted[Math.floor(sorted.length/2)],wire_ack_rtt_p95_ms:sorted[Math.floor(sorted.length*.95)],last_tick:c.last?.tick,wins:c.last?.wins});}
   assert([...secrets].every(t=>!JSON.stringify(evidence).includes(t)),'private credential leaked into runtime evidence');
   evidence.credential_negative_scan=true;
   fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));
-  await browser?.close();probe?.kill();server?.kill();for(const s of sockets)s.destroy();proxy?.close();staticServer.close();
+  await Promise.all(browsers.map(b=>b.close()));probe?.kill();server?.kill();for(const s of sockets)s.destroy();proxy?.close();staticServer.close();
 }
 console.log(JSON.stringify(evidence,null,2));

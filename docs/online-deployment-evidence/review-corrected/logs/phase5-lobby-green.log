@@ -1,0 +1,14 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 40.31s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-42c4915cf24c9258)
+
+running 2 tests
+test server::tests::initial_long_lobby_preserves_connected_peer_on_match_start ... ok
+test server::tests::between_match_long_lobby_preserves_connected_peer_on_match_start ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 158 filtered out; finished in 0.13s
+
+
+real	0m40.608s
+user	0m9.645s
+sys	0m9.126s

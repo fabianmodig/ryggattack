@@ -1,0 +1,452 @@
+BrowserA running seat 0
+BrowserB running seat 1
+Input/menu/form/canvas-blur checks passed
+Crossplay passed: 3594 identical shared ticks; online pages closed before offline smoke
+{
+  "artifact": {
+    "index.html": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a",
+    "rooms.mjs": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+    "ryggattack.js": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+    "ryggattack_bg.wasm": "c9eecc0e081e587649fa83b5bec06f82a9730b72890cee37952279d01de57940"
+  },
+  "clients": [
+    {
+      "name": "BrowserA",
+      "events": [
+        [
+          "socket",
+          2874.052983
+        ],
+        [
+          "hello",
+          3016.956918
+        ],
+        [
+          "close",
+          423163.449882
+        ]
+      ],
+      "seat": 0,
+      "frames": 3594,
+      "first_observed": {
+        "tick": 4352,
+        "at_ms": 68505.838518
+      },
+      "last_observed": {
+        "tick": 24484,
+        "at_ms": 383054.262042
+      },
+      "observed_server_hz": 64.002864088314,
+      "simulated_to_wall_ratio": 1.0000447513799062,
+      "projectile_observations": 5299,
+      "explosion_observations": 22755,
+      "eliminated_frames": 3419,
+      "round_finished_frames": 144,
+      "moved": true,
+      "turns": true,
+      "input_count": 138,
+      "wire_ack_rtt_median_ms": 181.10633799999778,
+      "wire_ack_rtt_p95_ms": 208.63957499997923,
+      "last_tick": 24484,
+      "wins": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "BrowserB",
+      "events": [
+        [
+          "socket",
+          7151.53196
+        ],
+        [
+          "hello",
+          7168.582788
+        ]
+      ],
+      "seat": 1,
+      "frames": 3594,
+      "first_observed": {
+        "tick": 4352,
+        "at_ms": 68510.140925
+      },
+      "last_observed": {
+        "tick": 24484,
+        "at_ms": 383054.632145
+      },
+      "observed_server_hz": 64.00366422541859,
+      "simulated_to_wall_ratio": 1.0000572535221655,
+      "projectile_observations": 5299,
+      "explosion_observations": 22755,
+      "eliminated_frames": 3419,
+      "round_finished_frames": 144,
+      "moved": true,
+      "turns": true,
+      "input_count": 140,
+      "wire_ack_rtt_median_ms": 181.46496299999126,
+      "wire_ack_rtt_p95_ms": 207.34010300000955,
+      "last_tick": 24484,
+      "wins": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "native",
+      "seat": 2,
+      "frames": 3594,
+      "first_observed": {
+        "tick": 4352,
+        "at_ms": 68508.439198
+      },
+      "last_observed": {
+        "tick": 24484,
+        "at_ms": 383056.901377
+      },
+      "observed_server_hz": 64.00285622297365,
+      "simulated_to_wall_ratio": 1.0000446284839632,
+      "projectile_observations": 5299,
+      "explosion_observations": 22755,
+      "eliminated_frames": 3419,
+      "round_finished_frames": 144,
+      "moved": true,
+      "turns": true,
+      "input_count": 0,
+      "wire_ack_rtt_median_ms": 188.47545399999998,
+      "wire_ack_rtt_p95_ms": 189.423667,
+      "last_tick": 24484,
+      "wins": [
+        1,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "private create/join through actual HTML forms",
+    "host settings and disabled non-host controls",
+    "unready cancels authoritative countdown",
+    "settings clear readiness",
+    "isolated second room unaffected",
+    "natural victory returns same room/settings/connected humans",
+    "deliberate leave and earliest-human host election",
+    "share link prefill/join uses new participant ID",
+    "visible malformed invite error",
+    "two actual Bevy WASM clients",
+    "native shared adapter crossplay",
+    "75ms each-way TCP delay",
+    "authoritative snapshots identical at same tick",
+    "keyboard steering and fire",
+    "menu neutral input/server advances",
+    "form focus neutral input",
+    "canvas blur clears held fire",
+    "offline launch/lobby/game/pause screenshots",
+    "raw traversal/malformed-path rejection"
+  ],
+  "delay_ms_each_direction": 75,
+  "server_log_events": [],
+  "fixture": {
+    "simulation_seed": 3,
+    "lifecycle_win_target": 1,
+    "native_lifetime_seconds": 600,
+    "completion_input": "A Left+Fire; B Fire; native alternating horizontal+Fire; real server bot AI"
+  },
+  "room": {
+    "id": 3,
+    "code": "9c2990a8c6b80ff68317",
+    "share": "http://127.0.0.1:40027/?online=ws%3A%2F%2F127.0.0.1%3A34963&room=9c2990a8c6b80ff68317",
+    "isolated_id": 6
+  },
+  "form_windows": [
+    {
+      "attempt": 0,
+      "phase": "Lobby",
+      "decision": "retry-round",
+      "packets": 1,
+      "all_neutral": true
+    },
+    {
+      "attempt": 1,
+      "phase": "Running",
+      "decision": "passed",
+      "packets": 3,
+      "all_neutral": true
+    }
+  ],
+  "completion_controls": [
+    {
+      "name": "BrowserA",
+      "left": true,
+      "tick": 19616,
+      "alive": [
+        true,
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "name": "BrowserB",
+      "left": false,
+      "tick": 19616,
+      "alive": [
+        true,
+        false,
+        true,
+        true
+      ]
+    }
+  ],
+  "returned_lobby": {
+    "id": 3,
+    "code": "9c2990a8c6b80ff68317",
+    "host": 2,
+    "humans": [
+      {
+        "id": 2,
+        "name": "BrowserA",
+        "seat": 0,
+        "ready": false,
+        "connected": true,
+        "reconnect_seconds": null
+      },
+      {
+        "id": 4,
+        "name": "BrowserB",
+        "seat": 1,
+        "ready": false,
+        "connected": true,
+        "reconnect_seconds": null
+      },
+      {
+        "id": 7,
+        "name": "Native probe",
+        "seat": 2,
+        "ready": true,
+        "connected": true,
+        "reconnect_seconds": null
+      }
+    ],
+    "settings": {
+      "arena": "Volcano",
+      "wins_target": 1,
+      "bots": 1
+    },
+    "phase": "Lobby"
+  },
+  "returned_lobby_cleared": {
+    "id": 3,
+    "code": "9c2990a8c6b80ff68317",
+    "host": 2,
+    "humans": [
+      {
+        "id": 2,
+        "name": "BrowserA",
+        "seat": 0,
+        "ready": false,
+        "connected": true,
+        "reconnect_seconds": null
+      },
+      {
+        "id": 4,
+        "name": "BrowserB",
+        "seat": 1,
+        "ready": false,
+        "connected": true,
+        "reconnect_seconds": null
+      },
+      {
+        "id": 7,
+        "name": "Native probe",
+        "seat": 2,
+        "ready": false,
+        "connected": true,
+        "reconnect_seconds": null
+      }
+    ],
+    "settings": {
+      "arena": "Volcano",
+      "wins_target": 1,
+      "bots": 1
+    },
+    "phase": "Lobby"
+  },
+  "native_exit": {
+    "code": null,
+    "signal": "SIGINT",
+    "at_ms": 417580.509975
+  },
+  "native_summary": {
+    "seat": 2,
+    "median_ack_rtt_ms": 188.47545399999998
+  },
+  "shared_identical_ticks": 3594,
+  "shared_tick_range": [
+    4352,
+    24484
+  ],
+  "share_link_identity": {
+    "version": 3,
+    "seat": 0,
+    "room": 3,
+    "participant": 8,
+    "code": "9c2990a8c6b80ff68317",
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        11
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        8,
+        13
+      ],
+      [
+        9,
+        14
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        15
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        11,
+        16
+      ],
+      [
+        12,
+        17
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        13,
+        18
+      ],
+      [
+        14,
+        19
+      ],
+      [
+        15,
+        16
+      ],
+      [
+        15,
+        20
+      ],
+      [
+        16,
+        17
+      ],
+      [
+        17,
+        22
+      ],
+      [
+        18,
+        19
+      ],
+      [
+        18,
+        23
+      ],
+      [
+        19,
+        24
+      ],
+      [
+        20,
+        21
+      ],
+      [
+        21,
+        22
+      ],
+      [
+        22,
+        23
+      ],
+      [
+        23,
+        24
+      ]
+    ]
+  },
+  "offline_lifecycle": {
+    "url": "http://127.0.0.1:40027/?quality=0",
+    "title": "Ryggattack",
+    "ready": "complete",
+    "canvases": 1,
+    "iframes": 0
+  },
+  "server_log": "",
+  "server_overruns": 0,
+  "credential_negative_scan": true
+}
+
+TIMING phase5-review-crossplay: 548.499 s; exit=0

@@ -1,5 +1,5 @@
-//! Loopback-only private-room service over the existing authoritative simulation.
-//! Bounded private reconnect; no public auth, deployment or asset-free server claim.
+//! Bounded private-room service over the existing authoritative CPU-side simulation.
+//! Development defaults to loopback; production requires explicit binding and exact Origin policy.
 use crate::{
     headless::{Simulation, SimulationConfig, TICK_DURATION},
     input::ControlIntent,
@@ -175,8 +175,39 @@ struct Room {
     credentials: [Option<String>; 4],
     last_activity: Instant,
 }
+// Global, bounded fixed windows: deliberately ignore forwarded/source identity.
+// A proxy collapses source IPs; trusting X-Forwarded-For would permit bypass.
+struct RateBudget {
+    since: Instant,
+    used: usize,
+    limit: usize,
+}
+impl RateBudget {
+    fn new(limit: usize) -> Self {
+        Self {
+            since: Instant::now(),
+            used: 0,
+            limit,
+        }
+    }
+    fn allow(&mut self, now: Instant) -> bool {
+        if now.saturating_duration_since(self.since) >= Duration::from_secs(10) {
+            self.since = now;
+            self.used = 0;
+        }
+        if self.used >= self.limit {
+            return false;
+        }
+        self.used += 1;
+        true
+    }
+}
 pub struct Server {
     origins: Arc<Vec<String>>,
+    production: bool,
+    accepts: RateBudget,
+    creates: RateBudget,
+    joins: RateBudget,
     listener: TcpListener,
     pending: Arc<AtomicUsize>,
     tx: mpsc::SyncSender<(WebSocket<Transport>, String)>,
@@ -184,12 +215,28 @@ pub struct Server {
     rooms: Vec<Room>,
     next_id: u64,
     ticks: u64,
+    status: Arc<std::sync::Mutex<crate::management::Status>>,
 }
 impl Server {
     pub fn bind(address: &str) -> std::io::Result<Self> {
+        Self::bind_policy(address, false)
+    }
+    /// Explicit public binding opt-in. Browser origin is deliberately not configurable
+    /// to arbitrary hosts: changing the deployment domain requires a reviewed change.
+    pub fn bind_production(address: &str) -> std::io::Result<Self> {
+        if std::env::var("RYGGATTACK_ALLOWED_ORIGINS").as_deref()
+            != Ok("https://ryggattack.modig.online")
+        {
+            return Err(io::Error::other(
+                "production requires exactly https://ryggattack.modig.online",
+            ));
+        }
+        Self::bind_policy(address, true)
+    }
+    fn bind_policy(address: &str, production: bool) -> std::io::Result<Self> {
         let listener = TcpListener::bind(address)?;
         // Origin checks complement loopback binding; neither authenticates native clients.
-        if !listener.local_addr()?.ip().is_loopback() {
+        if !production && !listener.local_addr()?.ip().is_loopback() {
             return Err(std::io::Error::other(
                 "development server must bind loopback",
             ));
@@ -225,6 +272,10 @@ impl Server {
         let (tx, rx) = mpsc::sync_channel(4);
         Ok(Self {
             origins: Arc::new(origins),
+            production,
+            accepts: RateBudget::new(128),
+            creates: RateBudget::new(16),
+            joins: RateBudget::new(64),
             listener,
             pending: Arc::new(AtomicUsize::new(0)),
             tx,
@@ -232,14 +283,22 @@ impl Server {
             rooms: Vec::new(),
             next_id: 1,
             ticks: 0,
+            status: Arc::new(std::sync::Mutex::new(crate::management::Status::default())),
         })
     }
     pub fn local_addr(&self) -> SocketAddr {
         self.listener.local_addr().unwrap()
     }
-    pub fn run(mut self) -> ! {
+    pub fn status(&self) -> Arc<std::sync::Mutex<crate::management::Status>> {
+        self.status.clone()
+    }
+    pub fn run(self) {
+        static STOP: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+        self.run_until(&STOP);
+    }
+    pub fn run_until(mut self, stop: &std::sync::atomic::AtomicBool) {
         let mut deadline = Instant::now();
-        loop {
+        while !stop.load(Ordering::Relaxed) {
             self.tick();
             deadline += TICK_DURATION;
             let now = Instant::now();
@@ -247,9 +306,31 @@ impl Server {
                 std::thread::sleep(deadline - now);
             } else if now.duration_since(deadline) > TICK_DURATION * 4 {
                 deadline = now;
-                eprintln!("tick overrun: discarded wall-clock debt");
+                self.status.lock().unwrap().overruns += 1;
+                eprintln!("{{\"event\":\"tick_overrun\",\"action\":\"discard_wall_clock_debt\"}}");
             }
         }
+        self.status.lock().unwrap().tick_at = None;
+        for room in &mut self.rooms {
+            for peer in room.peers.iter_mut().flatten() {
+                send(
+                    &mut peer.socket,
+                    &ServerMessage::Error(
+                        "backend restarting; rooms reset; join a lobby again".into(),
+                    ),
+                );
+                let _ = peer.socket.close(Some(tungstenite::protocol::CloseFrame {
+                    code: tungstenite::protocol::frame::coding::CloseCode::Restart,
+                    reason: "backend restarting".into(),
+                }));
+                let _ = peer
+                    .socket
+                    .get_mut()
+                    .stream
+                    .shutdown(std::net::Shutdown::Both);
+            }
+        }
+        eprintln!("{{\"event\":\"shutdown\",\"rooms_reset\":true}}");
     }
     pub fn tick(&mut self) {
         self.tick_at(Instant::now());
@@ -267,6 +348,10 @@ impl Server {
             let Ok((stream, _)) = self.listener.accept() else {
                 break;
             };
+            if !self.accepts.allow(now) {
+                self.status.lock().unwrap().rejected += 1;
+                continue;
+            }
             if self.pending.load(Ordering::Relaxed) >= 8 {
                 continue;
             }
@@ -274,6 +359,7 @@ impl Server {
             let count = self.pending.clone();
             let tx = self.tx.clone();
             let origins = self.origins.clone();
+            let production = self.production;
             let accepted = Instant::now();
             std::thread::spawn(move || {
                 let _ = stream.set_nodelay(true);
@@ -296,6 +382,12 @@ impl Server {
                     move |request: &tungstenite::handshake::server::Request, response| {
                         // No Origin is the explicit native-client policy. Browsers must
                         // supply exactly one allowlisted Origin; null is never native.
+                        if production && request.uri() != "/ws" {
+                            return Err(tungstenite::http::Response::builder()
+                                .status(404)
+                                .body(Some("not found".into()))
+                                .unwrap());
+                        }
                         let values: Vec<_> = request.headers().get_all("Origin").iter().collect();
                         if values.is_empty()
                             || (values.len() == 1
@@ -344,6 +436,23 @@ impl Server {
             });
         }
         while let Ok((mut socket, text)) = self.rx.try_recv() {
+            let create = matches!(
+                decode_client(&text),
+                Ok(ClientMessage::Hello { room: None, .. })
+            );
+            let allowed = if create {
+                self.creates.allow(now)
+            } else {
+                self.joins.allow(now)
+            };
+            if !allowed {
+                self.status.lock().unwrap().rejected += 1;
+                send(
+                    &mut socket,
+                    &ServerMessage::Error("global admission rate limit; try later".into()),
+                );
+                continue;
+            }
             if let Ok(ClientMessage::Reconnect {
                 room: code,
                 participant,
@@ -421,6 +530,18 @@ impl Server {
             room.tick_at(self.ticks, now);
         }
         self.rooms.retain(|r| !r.expired(now));
+        let mut status = self.status.lock().unwrap();
+        status.tick_at = Some(Instant::now());
+        status.ticks = self.ticks;
+        status.rooms = self.rooms.len();
+        status.players = self.rooms.iter().map(|r| r.lobby.humans.len()).sum();
+        status.connections = self
+            .rooms
+            .iter()
+            .flat_map(|r| r.peers.iter())
+            .flatten()
+            .count();
+        status.pending = self.pending.load(Ordering::Relaxed);
     }
 }
 fn send(socket: &mut WebSocket<Transport>, message: &ServerMessage) -> bool {
@@ -660,6 +781,15 @@ impl Room {
                 {
                     remove = true;
                 }
+                if self.simulation.is_some()
+                    && now.saturating_duration_since(peer.last_input) >= Duration::from_secs(120)
+                {
+                    send(
+                        &mut peer.socket,
+                        &ServerMessage::Error("idle connection expired; join a lobby again".into()),
+                    );
+                    remove = true;
+                }
                 if peer.last_input.elapsed() > Duration::from_secs(1)
                     && let Some(sim) = &mut self.simulation
                 {
@@ -671,6 +801,12 @@ impl Room {
             }
         }
         if self.lobby.advance() {
+            // Clients intentionally send no gameplay input in the lobby. Start
+            // the running-input idle window afresh for every connected socket,
+            // including retained sockets starting another match.
+            for peer in self.peers.iter_mut().flatten() {
+                peer.last_input = now;
+            }
             let mut human_seats = [false; 4];
             for h in &self.lobby.humans {
                 human_seats[h.seat] = true;
@@ -1197,6 +1333,142 @@ mod tests {
         assert_eq!(server.rooms.len(), 1);
         server.tick_at(now + Duration::from_secs(60));
         assert!(server.rooms.is_empty());
+    }
+    #[test]
+    fn global_admission_fixed_window_is_bounded_and_resets_at_boundary() {
+        let mut budget = RateBudget::new(16);
+        let now = budget.since;
+        for _ in 0..16 {
+            assert!(budget.allow(now));
+        }
+        assert!(!budget.allow(now));
+        assert!(!budget.allow(now + Duration::from_secs(10) - Duration::from_nanos(1)));
+        assert!(budget.allow(now + Duration::from_secs(10)));
+        assert_eq!(budget.used, 1);
+    }
+    #[test]
+    fn initial_long_lobby_preserves_connected_peer_on_match_start() {
+        long_lobby_preserves_peer(false);
+    }
+    #[test]
+    fn between_match_long_lobby_preserves_connected_peer_on_match_start() {
+        long_lobby_preserves_peer(true);
+    }
+    fn long_lobby_preserves_peer(between_matches: bool) {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (stream, _) = listener.accept().unwrap();
+        stream.set_nonblocking(true).unwrap();
+        let socket = WebSocket::from_raw_socket(
+            Transport {
+                stream,
+                deadline: None,
+                quota: None,
+                wire: Some(WireProgress::default()),
+                http_matched: 0,
+            },
+            tungstenite::protocol::Role::Server,
+            None,
+        );
+        let mut room = fixture();
+        let now = Instant::now();
+        room.attach(socket, 0, 1, now);
+        let credential = room.credentials[0].clone().unwrap();
+        if between_matches {
+            room.lobby.ready(1, true).unwrap();
+            for tick in 1..=128 {
+                room.tick_at(tick, now);
+            }
+            let world = room.simulation.as_mut().unwrap().app.world_mut();
+            world.resource_mut::<crate::game::Round>().wins = [2, 0, 0, 0];
+            for mut player in world.query::<&mut crate::players::Player>().iter_mut(world) {
+                if player.id != 0 {
+                    player.alive = false;
+                }
+            }
+            for tick in 129..=384 {
+                room.tick_at(tick, now);
+            }
+            assert!(room.simulation.is_none(), "real victory returns to lobby");
+        }
+        let started = now + Duration::from_secs(121);
+        room.tick_at(385, started);
+        assert!(room.peers[0].is_some(), "lobby silence is allowed");
+        room.lobby.ready(1, true).unwrap();
+        for tick in 386..=513 {
+            room.tick_at(tick, started);
+        }
+        assert!(room.simulation.is_some());
+        room.tick_at(514, started);
+        assert!(
+            room.peers[0].is_some(),
+            "lobby time must not expire a newly running peer"
+        );
+        room.tick_at(
+            515,
+            started + Duration::from_secs(120) - Duration::from_nanos(1),
+        );
+        assert!(
+            room.peers[0].is_some(),
+            "full running idle window is granted"
+        );
+        let expired = started + Duration::from_secs(120);
+        room.tick_at(516, expired);
+        assert!(
+            room.peers[0].is_none(),
+            "actual running silence still expires"
+        );
+        assert!(!room.lobby.humans[0].connected);
+        assert_eq!(
+            room.reservations[0],
+            Some(expired + Duration::from_secs(60))
+        );
+        assert_eq!(room.credentials[0].as_ref(), Some(&credential));
+        assert!(
+            room.simulation
+                .as_mut()
+                .unwrap()
+                .submit(0, ControlIntent::default())
+                .is_err(),
+            "disconnected seat loses input authority"
+        );
+        assert!(room.reclaim(1, &"f".repeat(64), expired).is_err());
+        assert!(
+            room.reclaim(1, &credential, expired + Duration::from_secs(60))
+                .is_err()
+        );
+        assert!(room.credentials[0].is_none());
+        assert!(room.lobby.humans.is_empty());
+    }
+    #[test]
+    fn silent_running_connection_times_out_and_reserves_its_seat() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (stream, _) = listener.accept().unwrap();
+        stream.set_nonblocking(true).unwrap();
+        let socket = WebSocket::from_raw_socket(
+            Transport {
+                stream,
+                deadline: None,
+                quota: None,
+                wire: Some(WireProgress::default()),
+                http_matched: 0,
+            },
+            tungstenite::protocol::Role::Server,
+            None,
+        );
+        let mut room = fixture();
+        let now = Instant::now();
+        room.attach(socket, 0, 1, now);
+        room.lobby.ready(1, true).unwrap();
+        for tick in 1..=128 {
+            room.tick_at(tick, now);
+        }
+        assert!(room.simulation.is_some());
+        room.tick_at(129, now + Duration::from_secs(120));
+        assert!(room.peers[0].is_none(), "silent active socket must expire");
+        assert!(!room.lobby.humans[0].connected);
+        assert_eq!(room.reservations[0], Some(now + Duration::from_secs(180)));
     }
     #[test]
     fn raw_empty_continuation_flood_has_bounded_tick_work() {

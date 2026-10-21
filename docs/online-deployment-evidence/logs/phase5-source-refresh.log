@@ -1,0 +1,72 @@
+TAP version 13
+# Subtest: perf servers serve the calibration module with a JavaScript MIME type
+ok 1 - perf servers serve the calibration module with a JavaScript MIME type
+  ---
+  duration_ms: 2.57751
+  type: 'test'
+  ...
+# Subtest: page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+ok 2 - page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+  ---
+  duration_ms: 4.059451
+  type: 'test'
+  ...
+# Subtest: page still starts wasm if calibration unexpectedly rejects
+ok 3 - page still starts wasm if calibration unexpectedly rejects
+  ---
+  duration_ms: 1.75375
+  type: 'test'
+  ...
+# Subtest: hidden pages discard calibration without scheduling rAF
+ok 4 - hidden pages discard calibration without scheduling rAF
+  ---
+  duration_ms: 0.161423
+  type: 'test'
+  ...
+# Subtest: missing or failing rAF resolves null instead of blocking startup
+ok 5 - missing or failing rAF resolves null instead of blocking startup
+  ---
+  duration_ms: 0.259251
+  type: 'test'
+  ...
+# Subtest: stalled or incomplete calibration has a bounded timeout and cleanup
+ok 6 - stalled or incomplete calibration has a bounded timeout and cleanup
+  ---
+  duration_ms: 0.187167
+  type: 'test'
+  ...
+# Subtest: visibility changes invalidate partially measured cadence
+ok 7 - visibility changes invalidate partially measured cadence
+  ---
+  duration_ms: 0.22955
+  type: 'test'
+  ...
+# Subtest: implausible or invalid timestamps never become tiny or invalid targets
+ok 8 - implausible or invalid timestamps never become tiny or invalid targets
+  ---
+  duration_ms: 1.603107
+  type: 'test'
+  ...
+# Subtest: one scheduling hitch does not lower an otherwise stable 40 Hz target
+ok 9 - one scheduling hitch does not lower an otherwise stable 40 Hz target
+  ---
+  duration_ms: 0.421797
+  type: 'test'
+  ...
+# Subtest: unstable throttled cadence is not accepted as a low-refresh display
+ok 10 - unstable throttled cadence is not accepted as a low-refresh display
+  ---
+  duration_ms: 0.354167
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 125.973914
+
+TIMING phase5-source-refresh: 0.184 s; exit=0

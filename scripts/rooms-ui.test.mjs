@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const html=fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8');
+assert(!html.includes('value="ws://127.0.0.1:8787"'),'static production HTML must not hardcode an insecure loopback backend');
 assert(!html.includes('No reconnect reservations yet.'),'entry UI must not deny implemented reconnect');
 assert.match(html,/60.*wall.*second/i,'entry explains wall-clock reservation');
 import {joinUrl, settingsCommand, installRoomControls, participantStatus} from '../web/rooms.mjs';
@@ -20,9 +21,17 @@ for(const args of [['Forest','2','0'],['bad','1','0'],['Forest','1','4']])assert
 // visible, not an uncaught page exception. No socket/gameplay is mocked here.
 const elements=new Map();
 globalThis.document={getElementById:id=>{if(!elements.has(id))elements.set(id,{});return elements.get(id);}};
-globalThis.location={search:'',href:'https://game.example/'};
+globalThis.location={search:'',href:'https://ryggattack.modig.online/'};
 const interval=globalThis.setInterval;globalThis.setInterval=()=>{};
-installRoomControls();globalThis.setInterval=interval;
+installRoomControls();
+assert.equal(document.getElementById('backend').value,'wss://ryggattack.modig.online/ws');
+globalThis.location={search:'',href:'http://ryggattack.modig.online/'};installRoomControls();
+assert.equal(document.getElementById('backend').value,'wss://ryggattack.modig.online/ws');
+globalThis.location={search:'',href:'http://localhost:8000/'};installRoomControls();
+assert.equal(document.getElementById('backend').value,'ws://127.0.0.1:8787');
+globalThis.location={search:'?online=ws%3A%2F%2F127.0.0.1%3A9999',href:'http://localhost:8000/'};installRoomControls();
+assert.equal(document.getElementById('backend').value,'ws://127.0.0.1:9999');
+globalThis.setInterval=interval;
 document.getElementById('arena-room').value='Forest';
 document.getElementById('target-room').value='1';
 document.getElementById('bots-room').value='4';

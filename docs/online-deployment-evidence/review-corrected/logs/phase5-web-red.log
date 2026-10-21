@@ -1,0 +1,37 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: web logs must not disclose query or Referer on successful, missing-asset or malformed requests:
+{"event":"http_request","method":"GET","status":200,"bytes":2004}
+{"event":"http_request","method":"GET","status":200,"bytes":2004}
+{"event":"http_request","method":"GET","status":200,"bytes":2004}
+{"event":"http_request","method":"GET","status":200,"bytes":3535}
+{"event":"http_request","method":"GET","status":200,"bytes":16429}
+{"event":"http_request","method":"GET","status":200,"bytes":11780523}
+{"event":"http_request","method":"GET","status":200,"bytes":2004}
+{"event":"http_request","method":"GET","status":404,"bytes":153}
+{"event":"http_request","method":"GET","status":404,"bytes":153}
+{"event":"http_request","method":"GET","status":404,"bytes":153}
+{"event":"http_request","method":"GET","status":404,"bytes":153}
+{"event":"http_request","method":"GET","status":400,"bytes":157}
+{"event":"http_request","method":"GET","status":400,"bytes":157}
+{"event":"http_request","method":"","status":400,"bytes":157}
+2026/10/20 21:40:56 [error] 3#3: *2 open() "/usr/share/nginx/html/missing-private.mjs" failed (2: No such file or directory), client: 192.168.1.207, server: _, request: "GET /missing-private.mjs?name=phase5-query-76893693-48b6-4548-af58-451ead80d120&room=phase5-query-76893693-48b6-4548-af58-451ead80d120 HTTP/1.1", host: "127.0.0.1:37595", referrer: "https://private.invalid/?room=phase5-referer-76893693-48b6-4548-af58-451ead80d120&name=phase5-referer-76893693-48b6-4548-af58-451ead80d120"
+2026/10/20 21:40:56 [error] 2#2: *1 open() "/usr/share/nginx/html/missing-private.wasm" failed (2: No such file or directory), client: 192.168.1.207, server: _, request: "GET /missing-private.wasm?name=phase5-query-76893693-48b6-4548-af58-451ead80d120&room=phase5-query-76893693-48b6-4548-af58-451ead80d120 HTTP/1.1", host: "127.0.0.1:37595", referrer: "https://private.invalid/?room=phase5-referer-76893693-48b6-4548-af58-451ead80d120&name=phase5-referer-76893693-48b6-4548-af58-451ead80d120"
+
+    at file:///home/hermes/src/ryggattack-deployment/scripts/container-smoke.mjs:46:2
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.3
+
+real	0m4.037s
+user	0m1.423s
+sys	0m0.559s

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  ingressClassName: external
+  tls:
+    - hosts: [ryggattack.modig.online]
+      secretName: {{ .Release.Name }}-tls
+  rules:
+    - host: ryggattack.modig.online
+      http:
+        paths:
+          - path: /ws
+            pathType: Exact
+            backend:
+              service:
+                name: {{ .Release.Name }}-server
+                port: {name: websocket}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-web
+                port: {name: http}

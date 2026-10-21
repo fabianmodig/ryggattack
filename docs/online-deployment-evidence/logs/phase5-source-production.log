@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "explicit production bind",
+    "exact HTTPS Origin and native policy",
+    "only /ws upgrades",
+    "private health/readiness and aggregate metrics",
+    "anonymous creation/code guessing globally rate limited without stalling tick",
+    "SIGTERM notifies connected clients and exits cleanly within 2s"
+  ],
+  "logs": "{\"event\":\"shutdown\",\"rooms_reset\":true}\n"
+}
+
+TIMING phase5-source-production: 3.058 s; exit=0

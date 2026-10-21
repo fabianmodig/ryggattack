@@ -1,0 +1,15 @@
+image:
+  web: git.modig.online/fabianmodig/ryggattack/web
+  server: git.modig.online/fabianmodig/ryggattack/server
+  # Empty uses Chart.appVersion for BOTH images; never use latest.
+  tag: ""
+imagePullSecrets:
+  - name: forgejo-pull-secret
+web:
+  resources:
+    requests: {cpu: 50m, memory: 32Mi}
+    limits: {cpu: "1", memory: 128Mi}
+server:
+  resources:
+    requests: {cpu: 500m, memory: 512Mi}
+    limits: {cpu: "2", memory: 2Gi}

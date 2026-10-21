@@ -1,0 +1,28 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)
+    Finished `test` profile [optimized + debuginfo] target(s) in 54.92s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-42c4915cf24c9258)
+
+running 2 tests
+
+thread 'server::tests::initial_long_lobby_preserves_connected_peer_on_match_start' (985865) panicked at src/server.rs:1397:9:
+lobby time must not expire a newly running peer
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test server::tests::initial_long_lobby_preserves_connected_peer_on_match_start ... FAILED
+
+thread 'server::tests::between_match_long_lobby_preserves_connected_peer_on_match_start' (985864) panicked at src/server.rs:1397:9:
+lobby time must not expire a newly running peer
+test server::tests::between_match_long_lobby_preserves_connected_peer_on_match_start ... FAILED
+
+failures:
+
+failures:
+    server::tests::between_match_long_lobby_preserves_connected_peer_on_match_start
+    server::tests::initial_long_lobby_preserves_connected_peer_on_match_start
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 158 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `--lib`
+
+real	0m55.172s
+user	0m30.741s
+sys	0m8.114s

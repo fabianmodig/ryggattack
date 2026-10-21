@@ -1,0 +1,327 @@
+{
+  "artifact": {
+    "index.html": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a",
+    "rooms.mjs": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+    "ryggattack.js": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+    "ryggattack_bg.wasm": "c9eecc0e081e587649fa83b5bec06f82a9730b72890cee37952279d01de57940"
+  },
+  "checks": [
+    "actual canonical HTTPS location with local-only DNS map/self-signed fixture",
+    "default same-origin WSS /ws from real HTML create/join forms",
+    "two real rendered WASM clients configure/ready/start and send keyboard intent",
+    "authoritative common snapshots identical",
+    "real WSS disconnect -> bot takeover -> same private identity/seat secure reconnect; held controls neutralized"
+  ],
+  "errors": [],
+  "expected_outage_errors": [],
+  "origins": [
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    },
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    },
+    {
+      "origin": "https://ryggattack.modig.online",
+      "path": "/ws"
+    }
+  ],
+  "identities": {
+    "a": {
+      "version": 3,
+      "seat": 0,
+      "room": 3,
+      "participant": 2,
+      "code": "db6b0418fc8efdba03cc",
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          19,
+          24
+        ],
+        [
+          20,
+          21
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          23,
+          24
+        ]
+      ]
+    },
+    "b": {
+      "version": 3,
+      "seat": 1,
+      "room": 3,
+      "participant": 4,
+      "code": "db6b0418fc8efdba03cc",
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          19,
+          24
+        ],
+        [
+          20,
+          21
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          23,
+          24
+        ]
+      ]
+    }
+  },
+  "shared_identical_ticks": 389,
+  "held_input_neutralization": true,
+  "server_log": "",
+  "credential_negative_scan": true
+}

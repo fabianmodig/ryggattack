@@ -1,0 +1,3 @@
+Chart update validates paired immutable tag and preserves non-version fields
+
+TIMING phase5-version-green: 0.128 s; exit=0

@@ -1,0 +1,9 @@
+error: no matching package named `rustls` found
+location searched: crates.io index
+required by package `tungstenite v0.24.0`
+    ... which satisfies dependency `tungstenite = ">=0.23, <=0.24"` (locked to 0.24.0) of package `ewebsock v0.8.0`
+    ... which satisfies dependency `ewebsock = "^0.8"` (locked to 0.8.0) of package `ryggattack v0.1.0 (/home/hermes/src/ryggattack-deployment)`
+note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+help: if this error is too confusing you may wish to retry without `--offline`
+
+TIMING phase5-native-tls-build: 0.043 s; exit=101

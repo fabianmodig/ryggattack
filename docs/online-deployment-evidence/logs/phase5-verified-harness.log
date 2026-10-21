@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+ok 1 - a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+  ---
+  duration_ms: 0.732964
+  type: 'test'
+  ...
+# Subtest: non-neutral form input always fails, including across a natural match boundary
+ok 2 - non-neutral form input always fails, including across a natural match boundary
+  ---
+  duration_ms: 0.405449
+  type: 'test'
+  ...
+# Subtest: status waits tolerate only unpublished initialization and require the actual expected status
+ok 3 - status waits tolerate only unpublished initialization and require the actual expected status
+  ---
+  duration_ms: 0.767287
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.795784
+
+TIMING phase5-verified-harness: 0.123 s; exit=0
