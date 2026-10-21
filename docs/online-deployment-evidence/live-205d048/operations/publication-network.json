@@ -1,0 +1,424 @@
+{
+  "observed_at": "2026-10-21T09:02:15.494340+00:00",
+  "exact_merge": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+  "runs": [
+    {
+      "id": 321,
+      "workflow_id": "release.yml",
+      "index_in_repo": 51,
+      "commit_sha": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+      "status": "success",
+      "started": "2026-10-21T10:47:28+02:00",
+      "stopped": "2026-10-21T11:01:50+02:00",
+      "duration": 862000000000,
+      "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/51"
+    },
+    {
+      "id": 320,
+      "workflow_id": "ci.yml",
+      "index_in_repo": 50,
+      "commit_sha": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+      "status": "success",
+      "started": "2026-10-21T10:36:36+02:00",
+      "stopped": "2026-10-21T10:47:27+02:00",
+      "duration": 651000000000,
+      "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/50"
+    }
+  ],
+  "statuses": [
+    {
+      "context": "CI / web build (push)",
+      "status": "skipped",
+      "description": "Has been skipped",
+      "target_url": "/fabianmodig/ryggattack/actions/runs/50/jobs/2",
+      "updated_at": "2026-10-21T10:36:36+02:00"
+    },
+    {
+      "context": "CI / cargo test (push)",
+      "status": "success",
+      "description": "Successful in 10m35s",
+      "target_url": "/fabianmodig/ryggattack/actions/runs/50/jobs/0",
+      "updated_at": "2026-10-21T10:47:11+02:00"
+    },
+    {
+      "context": "CI / Helm deployment contract (push)",
+      "status": "success",
+      "description": "Successful in 15s",
+      "target_url": "/fabianmodig/ryggattack/actions/runs/50/jobs/1",
+      "updated_at": "2026-10-21T10:47:27+02:00"
+    },
+    {
+      "context": "Release / Build and publish paired web/backend (push)",
+      "status": "success",
+      "description": "Successful in 14m22s",
+      "target_url": "/fabianmodig/ryggattack/actions/runs/51/jobs/0",
+      "updated_at": "2026-10-21T11:01:50+02:00"
+    }
+  ],
+  "main": "01f27cca42b134e21c467b314180d8dc507bb523",
+  "jobs": {
+    "321": [
+      {
+        "id": 470,
+        "run_id": 321,
+        "attempt": 1,
+        "handle": "98be2543-99b4-463a-aed8-0d0d92891cdb",
+        "repo_id": 8,
+        "owner_id": 2,
+        "name": "Build and publish paired web/backend",
+        "needs": null,
+        "runs_on": [
+          "ubuntu-latest"
+        ],
+        "task_id": 435,
+        "status": "success"
+      }
+    ],
+    "320": [
+      {
+        "id": 467,
+        "run_id": 320,
+        "attempt": 1,
+        "handle": "e5950f86-1337-49bb-b914-a6f985ce7f57",
+        "repo_id": 8,
+        "owner_id": 2,
+        "name": "cargo test",
+        "needs": null,
+        "runs_on": [
+          "ubuntu-latest"
+        ],
+        "task_id": 433,
+        "status": "success"
+      },
+      {
+        "id": 468,
+        "run_id": 320,
+        "attempt": 1,
+        "handle": "f1bbd4d8-499e-4874-9af4-2d81f9cf83ee",
+        "repo_id": 8,
+        "owner_id": 2,
+        "name": "Helm deployment contract",
+        "needs": null,
+        "runs_on": [
+          "ubuntu-latest"
+        ],
+        "task_id": 434,
+        "status": "success"
+      },
+      {
+        "id": 469,
+        "run_id": 320,
+        "attempt": 1,
+        "handle": "b745db4c-54ec-45ca-b16f-82d27b6d2d90",
+        "repo_id": 8,
+        "owner_id": 2,
+        "name": "web build",
+        "needs": null,
+        "runs_on": [
+          "ubuntu-latest"
+        ],
+        "task_id": 0,
+        "status": "skipped"
+      }
+    ]
+  },
+  "release_log_evidence": {
+    "470": {
+      "path": "/home/hermes/.hermes/cache/scratch/ryggattack-network-job-470-evidence.log",
+      "log_bytes": 72208,
+      "matches": [
+        "2026-10-21T08:47:28.7884662Z The network alias is build_and_publish_paired_web_backend (sanitized version of Build and publish paired web/backend)",
+        "2026-10-21T08:47:28.9040951Z Cleaning up network for job Build and publish paired web/backend, and network name is: WORKFLOW-7fbcc3779618a153a1427cc4b07db87d",
+        "2026-10-21T08:51:51.4374799Z \u001b[1m\u001b[92m    Finished\u001b[0m `test` profile [optimized + debuginfo] target(s) in 2m 37s",
+        "2026-10-21T08:51:51.6269871Z test players::tests::local_input_does_not_buffer_actions_while_paused_or_round_finished ... ok",
+        "2026-10-21T08:51:51.6611188Z test powerups::tests::finished_round_and_pause_freeze_drops_and_buffs ... ok",
+        "2026-10-21T08:51:51.6639750Z test powerups::tests::speed_is_non_stacking_refreshes_and_expires_while_buffs_coexist ... ok",
+        "2026-10-21T08:51:51.6651448Z test rooms::resilience_tests::fresh_join_elects_host_after_last_human_deliberately_leaves ... ok",
+        "2026-10-21T08:51:51.6652889Z test rooms::resilience_tests::fresh_join_elects_host_without_taking_reserved_identity_or_restoring_former_host ... ok",
+        "2026-10-21T08:51:52.0156801Z test server::tests::long_match_completion_starts_a_fresh_lobby_idle_window ... ok",
+        "2026-10-21T08:51:52.1283721Z test server::tests::shared_adapter_fresh_invitation_join_elects_host_in_retained_lobby ... ok",
+        "2026-10-21T08:51:52.2721084Z test settings::tests::refresh_targets_are_validated_and_capped_without_using_game_fps ... ok",
+        "2026-10-21T08:51:52.4652184Z test settings::tests::native_low_refresh_keeps_full_quality_and_recovers_saved_low_quality ... ok",
+        "2026-10-21T08:51:52.9896389Z test result: ok. 160 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.44s",
+        "2026-10-21T08:51:53.3087328Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:51:53.6177567Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:51:54.2529299Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:51:54.5244553Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:51:54.5990029Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:51:58.6985022Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.02s",
+        "2026-10-21T08:51:58.9942022Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s",
+        "2026-10-21T08:51:59.7600608Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s",
+        "2026-10-21T08:52:01.7060987Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.87s",
+        "2026-10-21T08:52:01.7630964Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:52:01.8248823Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:52:02.5460787Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s",
+        "2026-10-21T08:52:24.5585287Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.95s",
+        "2026-10-21T08:52:25.3311001Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s",
+        "2026-10-21T08:52:26.2337386Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "2026-10-21T08:53:35.7114670Z \u001b[1m\u001b[92m    Finished\u001b[0m `release` profile [optimized] target(s) in 1m 09s",
+        "2026-10-21T08:55:25.4247209Z \u001b[1m\u001b[92m    Finished\u001b[0m `release` profile [optimized] target(s) in 1m 48s",
+        "2026-10-21T08:56:31.2955028Z Successfully tagged git.modig.online/***/ryggattack/web:sha-205d048",
+        "2026-10-21T08:56:31.3118488Z Successfully built 21757910bcab",
+        "2026-10-21T08:56:31.3118625Z Successfully tagged git.modig.online/***/ryggattack/web:sha-205d048",
+        "2026-10-21T08:56:31.7564874Z Successfully tagged git.modig.online/***/ryggattack/server:sha-205d048",
+        "2026-10-21T08:56:31.7681773Z Successfully built 0e1a08437d27",
+        "2026-10-21T08:56:31.7681840Z Successfully tagged git.modig.online/***/ryggattack/server:sha-205d048",
+        "2026-10-21T08:56:41.0401176Z     \"exact JS/WASM/HTML/module bytes and MIME\",",
+        "2026-10-21T08:56:41.0401747Z       \"image\": \"sha256:21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8\",",
+        "2026-10-21T08:56:41.0402789Z       \"image\": \"sha256:0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457\",",
+        "2026-10-21T08:56:44.7877318Z sha-205d048: digest: sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324 size: 2311",
+        "2026-10-21T08:56:46.5626934Z latest: digest: sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324 size: 2311",
+        "2026-10-21T08:56:48.5015786Z sha-205d048: digest: sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6 size: 900",
+        "2026-10-21T08:56:49.6451864Z latest: digest: sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6 size: 900",
+        "2026-10-21T08:56:50.5252064Z [main 01f27cc] chore: deploy paired sha-205d048 [skip ci]",
+        "2026-10-21T08:56:50.9692698Z To https://git.modig.online/***/ryggattack",
+        "2026-10-21T08:56:50.9692959Z    205d048..01f27cc  HEAD -> main"
+      ],
+      "result_path": "/home/hermes/.hermes/cache/scratch/ryggattack-network-job-470-result.log",
+      "actual_smoke_checks_logged": true,
+      "paired_push_logged": true
+    }
+  },
+  "chart": {
+    "main_head": "01f27cca42b134e21c467b314180d8dc507bb523",
+    "contents": "apiVersion: v2\nname: ryggattack\ndescription: Single-replica in-memory Ryggattack private rooms and WASM client\ntype: application\nversion: 0.1.0\n# CI commits a paired, published web/server immutable tag here with [skip ci].\n# Bootstrap placeholder; do not deploy before the first main release publishes.\nappVersion: sha-205d048\n",
+    "commit": {
+      "sha": "01f27cca42b134e21c467b314180d8dc507bb523",
+      "message": "chore: deploy paired sha-205d048 [skip ci]\n",
+      "parents": [
+        {
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/git/commits/205d0482790bda115c6d907ce6ff52dfc472a56c",
+          "sha": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+          "created": "0001-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "at_merge": "apiVersion: v2\nname: ryggattack\ndescription: Single-replica in-memory Ryggattack private rooms and WASM client\ntype: application\nversion: 0.1.0\n# CI commits a paired, published web/server immutable tag here with [skip ci].\n# Bootstrap placeholder; do not deploy before the first main release publishes.\nappVersion: sha-e0d6439\n",
+    "shared_values": "image:\n  web: git.modig.online/fabianmodig/ryggattack/web\n  server: git.modig.online/fabianmodig/ryggattack/server\n  # Empty uses Chart.appVersion for BOTH images; never use latest.\n  tag: \"\"\nimagePullSecrets:\n  - name: forgejo-pull-secret\nweb:\n  resources:\n    requests: {cpu: 50m, memory: 32Mi}\n    limits: {cpu: \"1\", memory: 128Mi}\nserver:\n  resources:\n    requests: {cpu: 500m, memory: 512Mi}\n    limits: {cpu: \"2\", memory: 2Gi}\n",
+    "workloads": "{{- $tag := .Values.image.tag | default .Chart.AppVersion -}}\n{{- if not (regexMatch \"^sha-[0-9a-f]{7,40}$\" $tag) }}{{ fail \"paired images require immutable sha-<commit> tag\" }}{{ end }}\n{{- range $component := list \"web\" \"server\" }}\n---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: {{ $.Release.Name }}-{{ $component }}\n  labels: {app.kubernetes.io/name: ryggattack, app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\nspec:\n  replicas: 1\n  strategy: {type: Recreate}\n  selector:\n    matchLabels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n  template:\n    metadata:\n      labels: {app.kubernetes.io/name: ryggattack, app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n    spec:\n      automountServiceAccountToken: false\n      imagePullSecrets: {{ $.Values.imagePullSecrets | toJson }}\n      terminationGracePeriodSeconds: 15\n      securityContext:\n        runAsNonRoot: true\n        runAsUser: {{ if eq $component \"server\" }}10001{{ else }}101{{ end }}\n        runAsGroup: {{ if eq $component \"server\" }}10001{{ else }}101{{ end }}\n        seccompProfile: {type: RuntimeDefault}\n      containers:\n        - name: {{ $component }}\n          image: \"{{ index $.Values.image $component }}:{{ $tag }}\"\n          imagePullPolicy: IfNotPresent\n          securityContext:\n            readOnlyRootFilesystem: true\n            allowPrivilegeEscalation: false\n            capabilities: {drop: [ALL]}\n          resources: {{ index $.Values $component \"resources\" | toJson }}\n          {{- if eq $component \"server\" }}\n          args: [\"0.0.0.0:8787\"]\n          env:\n            - {name: RYGGATTACK_MODE, value: production}\n            - {name: RYGGATTACK_ALLOWED_ORIGINS, value: \"https://ryggattack.modig.online\"}\n            - {name: RYGGATTACK_MANAGEMENT_BIND, value: \"0.0.0.0:8788\"}\n          ports:\n            - {name: websocket, containerPort: 8787}\n            - {name: management, containerPort: 8788}\n          readinessProbe:\n            httpGet: {path: /readyz, port: management}\n            periodSeconds: 3\n            timeoutSeconds: 1\n          livenessProbe:\n            httpGet: {path: /healthz, port: management}\n            periodSeconds: 5\n            timeoutSeconds: 1\n          startupProbe:\n            httpGet: {path: /readyz, port: management}\n            failureThreshold: 30\n            periodSeconds: 1\n          {{- else }}\n          ports:\n            - {name: http, containerPort: 8080}\n          readinessProbe:\n            httpGet: {path: /, port: http}\n          livenessProbe:\n            httpGet: {path: /, port: http}\n          volumeMounts:\n            - {name: temp, mountPath: /tmp}\n      volumes:\n        - name: temp\n          emptyDir: {sizeLimit: 16Mi}\n          {{- end }}\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: {{ $.Release.Name }}-{{ $component }}\nspec:\n  type: ClusterIP\n  selector: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n  ports:\n    {{- if eq $component \"server\" }}\n    - {name: websocket, port: 8787, targetPort: websocket}\n    - {name: management, port: 8788, targetPort: management}\n    {{- else }}\n    - {name: http, port: 8080, targetPort: http}\n    {{- end }}\n{{- end }}\n",
+    "commit_back_present": true,
+    "compare": {
+      "total_commits": 1,
+      "commits": [
+        {
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/git/commits/01f27cca42b134e21c467b314180d8dc507bb523",
+          "sha": "01f27cca42b134e21c467b314180d8dc507bb523",
+          "created": "2026-10-21T08:56:50Z",
+          "html_url": "https://git.modig.online/fabianmodig/ryggattack/commit/01f27cca42b134e21c467b314180d8dc507bb523",
+          "commit": {
+            "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/git/commits/01f27cca42b134e21c467b314180d8dc507bb523",
+            "author": {
+              "name": "Ryggattack release",
+              "email": "ryggattack-release@modig.online",
+              "date": "2026-10-21T08:56:50Z"
+            },
+            "committer": {
+              "name": "Ryggattack release",
+              "email": "ryggattack-release@modig.online",
+              "date": "2026-10-21T08:56:50Z"
+            },
+            "message": "chore: deploy paired sha-205d048 [skip ci]\n",
+            "tree": {
+              "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/git/trees/01f27cca42b134e21c467b314180d8dc507bb523",
+              "sha": "01f27cca42b134e21c467b314180d8dc507bb523",
+              "created": "2026-10-21T08:56:50Z"
+            },
+            "verification": {
+              "verified": false,
+              "reason": "gpg.error.not_signed_commit",
+              "signature": "",
+              "signer": null,
+              "payload": ""
+            }
+          },
+          "author": null,
+          "committer": null,
+          "parents": [
+            {
+              "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/git/commits/205d0482790bda115c6d907ce6ff52dfc472a56c",
+              "sha": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+              "created": "0001-01-01T00:00:00Z"
+            }
+          ],
+          "files": [
+            {
+              "filename": "charts/ryggattack/Chart.yaml",
+              "status": "modified"
+            }
+          ],
+          "stats": {
+            "total": 2,
+            "additions": 1,
+            "deletions": 1
+          }
+        }
+      ],
+      "files": [
+        {
+          "filename": "charts/ryggattack/Chart.yaml",
+          "status": "modified"
+        }
+      ]
+    },
+    "only_chart_changed_since_source": true
+  },
+  "verification_status": "deployable_publication_verified",
+  "registry": {
+    "observed_at": "2026-10-21T09:02:15.594170+00:00",
+    "images": {
+      "web": {
+        "repository": "git.modig.online/fabianmodig/ryggattack/web",
+        "tags": {
+          "sha-205d048": {
+            "digest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324",
+            "media_type": "application/vnd.docker.distribution.manifest.v2+json",
+            "platforms": [
+              {
+                "manifest_digest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324",
+                "config_digest": "sha256:21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+                "architecture": "amd64",
+                "os": "linux",
+                "variant": null,
+                "descriptor_platform": null,
+                "labels": {
+                  "io.buildah.version": "1.39.3",
+                  "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>",
+                  "org.opencontainers.image.description": "The Ryggattack WebAssembly build, served by nginx",
+                  "org.opencontainers.image.revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+                  "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+                  "org.opencontainers.image.title": "Ryggattack (web)",
+                  "org.opencontainers.image.version": "sha-205d048"
+                }
+              }
+            ]
+          },
+          "latest": {
+            "digest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324",
+            "media_type": "application/vnd.docker.distribution.manifest.v2+json",
+            "platforms": [
+              {
+                "manifest_digest": "sha256:113ab0514f1966a6b7b77c3e0e039be9cf90c354c64d7401f4e1154d420e8324",
+                "config_digest": "sha256:21757910bcab8cbb19b8e4a10c64ed5b39c6f92f01f085810c2280e614bce1f8",
+                "architecture": "amd64",
+                "os": "linux",
+                "variant": null,
+                "descriptor_platform": null,
+                "labels": {
+                  "io.buildah.version": "1.39.3",
+                  "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>",
+                  "org.opencontainers.image.description": "The Ryggattack WebAssembly build, served by nginx",
+                  "org.opencontainers.image.revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+                  "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+                  "org.opencontainers.image.title": "Ryggattack (web)",
+                  "org.opencontainers.image.version": "sha-205d048"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "server": {
+        "repository": "git.modig.online/fabianmodig/ryggattack/server",
+        "tags": {
+          "sha-205d048": {
+            "digest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6",
+            "media_type": "application/vnd.docker.distribution.manifest.v2+json",
+            "platforms": [
+              {
+                "manifest_digest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6",
+                "config_digest": "sha256:0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+                "architecture": "amd64",
+                "os": "linux",
+                "variant": null,
+                "descriptor_platform": null,
+                "labels": {
+                  "io.buildah.version": "1.39.3",
+                  "org.opencontainers.image.revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+                  "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+                  "org.opencontainers.image.version": "sha-205d048"
+                }
+              }
+            ]
+          },
+          "latest": {
+            "digest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6",
+            "media_type": "application/vnd.docker.distribution.manifest.v2+json",
+            "platforms": [
+              {
+                "manifest_digest": "sha256:850fcd3865dbced3fe7adcb398f45ed7d15023bb9808fd809b05efa751257ed6",
+                "config_digest": "sha256:0e1a08437d27d62fc5789ec9284e0d00e018be75e530159f995e9e0677513457",
+                "architecture": "amd64",
+                "os": "linux",
+                "variant": null,
+                "descriptor_platform": null,
+                "labels": {
+                  "io.buildah.version": "1.39.3",
+                  "org.opencontainers.image.revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+                  "org.opencontainers.image.source": "https://git.modig.online/fabianmodig/ryggattack",
+                  "org.opencontainers.image.version": "sha-205d048"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "errors": {}
+  },
+  "source": {
+    ".forgejo/workflows/release.yml": {
+      "sha256": "6fbb7a07eb47f81b8330d491661b9ac85b5b804e376268d1ec996f388918fcf0",
+      "contents": "name: Release\n\n# Only main publishes. A manual reviewed-branch run exercises the full paired\n# build/image smoke but does NOT publish or update the chart.\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\nconcurrency:\n  group: ${{ github.workflow }}-${{ github.ref }}\nenv:\n  CARGO_TERM_COLOR: always\n  # Forgejo's ubuntu-latest label currently uses node:22-bookworm and Podman's\n  # Docker-compatible API. Use its portable builder; no Buildx package/plugin.\n  DOCKER_BUILDKIT: \"0\"\njobs:\n  publish:\n    name: Build and publish paired web/backend\n    runs-on: ubuntu-latest\n    env:\n      PACKAGE_USER: ${{ secrets.PACKAGE_USER }}\n      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}\n    steps:\n      - uses: https://data.forgejo.org/actions/checkout@v4\n      - name: Resolve paired immutable version\n        run: |\n          repository=\"$(echo \"$GITHUB_REPOSITORY\" | tr '[:upper:]' '[:lower:]')\"\n          echo \"IMAGE=git.modig.online/$repository\" >> \"$GITHUB_ENV\"\n          echo \"VERSION=sha-${GITHUB_SHA:0:7}\" >> \"$GITHUB_ENV\"\n      - uses: https://github.com/actions/setup-node@v4\n        with:\n          node-version: 22\n      - uses: ./.github/actions/setup-web-build\n      - name: Install build and container tools\n        run: |\n          apt-get update\n          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3\n      - name: Install wasm-opt\n        env:\n          BINARYEN: version_131\n        run: |\n          curl -fsSL \"https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN/binaryen-$BINARYEN-x86_64-linux.tar.gz\" \\\n            | tar xz --strip-components=2 -C \"$RUNNER_TEMP/bin\" \"binaryen-$BINARYEN/bin/wasm-opt\"\n          wasm-opt --version\n      # Serialized native/WASM compilation to avoid simultaneous Bevy compilers.\n      - name: Build and test backend\n        run: |\n          cargo test --locked\n          cargo build --locked --release --bin ryggattack-server\n          mkdir -p dist/server\n          cp target/release/ryggattack-server dist/server/\n      - name: Build the web bundle\n        run: scripts/build-web.sh\n      - name: Build both runtime images\n        run: |\n          for component in web server; do\n            docker build --file \"$component/Dockerfile\" \\\n              --tag \"$IMAGE/$component:$VERSION\" \\\n              --label \"org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\" \\\n              --label \"org.opencontainers.image.revision=$GITHUB_SHA\" \\\n              --label \"org.opencontainers.image.version=$VERSION\" .\n          done\n      - name: Exercise actual hardened containers and sockets\n        run: CONTAINER_SMOKE_NETWORK_CONTAINER=\"$HOSTNAME\" node scripts/container-smoke.mjs \"$IMAGE/web:$VERSION\" \"$IMAGE/server:$VERSION\"\n      - name: Log in to Forgejo container registry\n        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''\n        run: |\n          printf '%s' \"$PACKAGE_TOKEN\" | docker login git.modig.online --username \"$PACKAGE_USER\" --password-stdin\n      - name: Publish paired images before changing desired deployment\n        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''\n        run: |\n          for component in web server; do\n            docker push \"$IMAGE/$component:$VERSION\"\n            docker tag \"$IMAGE/$component:$VERSION\" \"$IMAGE/$component:latest\"\n            docker push \"$IMAGE/$component:latest\"\n          done\n      # Checkout's scoped workflow token supplies repo write access; PACKAGE_TOKEN\n      # is package-only. Fail rather than overwriting a newer source revision.\n      - name: Commit paired chart appVersion after successful publication\n        if: github.ref == 'refs/heads/main' && env.PACKAGE_USER != '' && env.PACKAGE_TOKEN != ''\n        run: |\n          git fetch origin main\n          test \"$(git rev-parse origin/main)\" = \"$GITHUB_SHA\"\n          python3 scripts/update-chart-version.py \"$VERSION\"\n          git config user.name 'Ryggattack release'\n          git config user.email 'ryggattack-release@modig.online'\n          git add charts/ryggattack/Chart.yaml\n          if ! git diff --cached --quiet; then\n            git commit -m \"chore: deploy paired $VERSION [skip ci]\"\n            git push origin HEAD:main\n          fi\n"
+    },
+    "scripts/container-smoke.mjs": {
+      "sha256": "5e1df4f98612065fbc65db10f7db1b3a070f7d9c4f99d9b84a97b7f679b77a03",
+      "contents": "// Real image smoke; no mock HTTP/socket endpoints. ENGINE=podman locally, docker in CI.\nimport assert from 'node:assert/strict';\nimport {execFile,spawn} from 'node:child_process';\nimport {promisify} from 'node:util';\nimport fs from 'node:fs';\nimport crypto from 'node:crypto';\nimport net from 'node:net';\nimport {smokeNetworkArgs,smokeHttpUrl} from './container-smoke-network.mjs';\nconst networkContainer=process.env.CONTAINER_SMOKE_NETWORK_CONTAINER;\nconst exec=promisify(execFile),engine=process.env.ENGINE??'docker';\nconst [web,server]=process.argv.slice(2);assert(web&&server,'web and backend image required');\nconst names={web:`ryggattack-web-${process.pid}`,server:`ryggattack-server-${process.pid}`};\nconst cli=async(...args)=>(await exec(engine,args,{maxBuffer:1024*1024})).stdout.trim();\nconst sleep=ms=>new Promise(r=>setTimeout(r,ms));\nconst until=async(p,label)=>{let lastError;for(let i=0;i<100;i++){try{if(await p())return;}catch(error){lastError=error;}await sleep(100);}throw Error(label+(lastError?`: ${lastError.cause?.code??lastError.message}`:''));};\nconst sha=b=>crypto.createHash('sha256').update(b).digest('hex');\nconst startBackend=async()=>await cli('run','-d','--name',names.server,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','-e','RYGGATTACK_MODE=production','-e','RYGGATTACK_ALLOWED_ORIGINS=https://ryggattack.modig.online','-e','RYGGATTACK_MANAGEMENT_BIND=0.0.0.0:8788',...smokeNetworkArgs([8787,8788],networkContainer),server);\ntry {\n await cli('run','-d','--name',names.web,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--tmpfs','/tmp:rw,noexec,nosuid,size=16m',...smokeNetworkArgs([8080],networkContainer),web);\n await startBackend();\n const url=async(name,port)=>smokeHttpUrl(port,networkContainer===undefined?(await cli('port',name,`${port}/tcp`)).split('\\n')[0]:undefined,networkContainer);\n const webURL=await url(names.web,8080),wsURL=(await url(names.server,8787)).replace('http:','ws:')+'/ws',management=await url(names.server,8788);\n await until(async()=> (await fetch(webURL)).status===200,'web readiness');\n await until(async()=> (await fetch(management+'/readyz')).status===200,'backend readiness');\n assert((await (await fetch(webURL)).text()).includes('ryggattack-canvas'));\n for(const file of ['index.html','rooms.mjs','ryggattack.js','ryggattack_bg.wasm']){\n  const r=await fetch(webURL+'/'+file);assert.equal(r.status,200);\n  const type=r.headers.get('content-type');if(file.endsWith('.wasm'))assert.match(type,/application\\/wasm/);if(file.endsWith('.mjs'))assert.match(type,/javascript/);\n  assert.equal(sha(Buffer.from(await r.arrayBuffer())),sha(fs.readFileSync('dist/web/'+file)),`${file} exact image artifact`);\n }\n // Capture BOTH streams: Docker emits container stderr on CLI stderr.\n const logs=async()=>{const r=await exec(engine,['logs',names.web],{maxBuffer:1024*1024});return r.stdout+r.stderr;};\n const marker=crypto.randomUUID(),privateQuery=`phase5-query-${marker}`,privateReferer=`phase5-referer-${marker}`;\n const headers={Referer:`https://private.invalid/?room=${privateReferer}&name=${privateReferer}`};\n for(const [route,status] of [['/',200],['/missing-private.mjs',404],['/missing-private.wasm',404],['/missing-private.js',404],['/missing-private',404],['/%00.mjs',400],['/%ZZ.wasm',400]]){\n  assert.equal((await fetch(webURL+route+'?name='+privateQuery+'&room='+privateQuery,{headers})).status,status,route);\n }\n // Raw request avoids URL normalization and exercises the early parser path.\n const malformed=await new Promise((resolve,reject)=>{\n  const u=new URL(webURL),socket=net.connect(Number(u.port),u.hostname);let response='';\n  socket.setTimeout(3000,()=>socket.destroy(Error('malformed HTTP response timed out')));\n  socket.once('connect',()=>socket.write(`GE(T /missing-private.mjs?name=${privateQuery} HTTP/1.1\\r\\nHost: localhost\\r\\nReferer: ${headers.Referer}\\r\\nConnection: close\\r\\n\\r\\n`));\n  socket.on('data',chunk=>response+=chunk);socket.once('error',reject);socket.once('end',()=>resolve(response));\n });\n assert.match(malformed,/^HTTP\\/1\\.1 400 /);\n await sleep(100);\n const webLogs=await logs();\n assert(!webLogs.includes(privateQuery)&&!webLogs.includes(privateReferer),`web logs must not disclose query or Referer on successful, missing-asset or malformed requests:\\n${webLogs}`);\n assert(webLogs.includes('\"event\":\"http_request\"'),'sanitized access diagnostics remain enabled');\n // Request-log suppression must not discard global startup diagnostics.\n let startupFailure;\n try{await exec(engine,['run','--rm','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--tmpfs','/tmp:rw,noexec,nosuid,size=16m',web,'-c','/missing-phase5-nginx.conf','-t']);}catch(error){startupFailure=error;}\n assert(startupFailure,'invalid nginx startup configuration must fail');\n assert.match(startupFailure.stderr,/\\[emerg\\].*missing-phase5-nginx\\.conf/,'global infrastructure errors remain on stderr');\n for(const route of ['/metrics','/healthz','/readyz','/ws'])assert.equal((await fetch(webURL+route)).status,404,'web must not expose backend/management');\n const result=await new Promise(r=>{const c=spawn(process.execPath,['scripts/production-smoke.mjs'],{env:{...process.env,PRODUCTION_WS:wsURL,PRODUCTION_MANAGEMENT:management},stdio:'inherit'});c.once('exit',r);});assert.equal(result,0);\n // Exercise the chart's actual Recreate contract. A fresh network namespace\n // avoids Podman/pasta's rapid same-port restart race without hiding app errors.\n await cli('stop','--time','10',names.server);await cli('rm',names.server);\n names.server=`ryggattack-server-recreated-${process.pid}`;await startBackend();\n const resetManagement=await url(names.server,8788),resetWS=(await url(names.server,8787)).replace('http:','ws:')+'/ws';\n await until(async()=> (await fetch(resetManagement+'/readyz')).status===200,'recreated backend ready');\n assert.match(await (await fetch(resetManagement+'/metrics')).text(),/ryggattack_rooms 0\\n/);\n const ws=new WebSocket(resetWS),messages=[];let closed=false;\n ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));ws.addEventListener('close',()=>closed=true);\n await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});ws.send(JSON.stringify({Hello:{version:3,name:'Shutdown probe'}}));\n await until(()=>messages.some(m=>m.Welcome),'shutdown client admitted');\n ws.send(JSON.stringify({Ready:true}));await until(()=>messages.some(m=>m.State),'shutdown client receives actual running simulation');\n const start=performance.now();await cli('stop','--time','10',names.server);assert(performance.now()-start<2000,'container bounded SIGTERM shutdown');\n await until(()=>closed,'shutdown closes client');assert(messages.some(m=>m.Error?.includes('backend restarting')));\n const inspect=JSON.parse(await cli('inspect',names.server))[0];assert.equal(inspect.State.ExitCode,0);\n const configs={};for(const [component,name] of Object.entries(names)){const i=JSON.parse(await cli('inspect',name))[0];assert(i.Config.User&&i.Config.User!=='0');assert(i.HostConfig.ReadonlyRootfs);configs[component]={image:i.Image,user:i.Config.User,readonly:i.HostConfig.ReadonlyRootfs,capDrop:i.HostConfig.CapDrop};}\n console.log(JSON.stringify({checks:['actual nonroot read-only cap-drop images','exact JS/WASM/HTML/module bytes and MIME','no public management routes','production socket/abuse contract','same-image Recreate resets all in-memory rooms','container SIGTERM notifies and closes real client with exit 0'],images:configs},null,2));\n} catch(error) {\n // Preserve owned-container failure diagnostics before cleanup; never dump Env.\n for(const name of Object.values(names))try{\n  const state=JSON.parse(await cli('inspect','--format','{{json .State}}',name));\n  const logs=await exec(engine,['logs',name],{maxBuffer:1024*1024});\n  console.error(JSON.stringify({container:name,state,logs:(logs.stdout+logs.stderr).slice(-8000)}));\n }catch{}\n throw error;\n} finally {for(const name of Object.values(names))try{await cli('rm','-f',name);}catch{}}\n"
+    },
+    "scripts/container-smoke-network.mjs": {
+      "sha256": "d35c0683d62c22405ae796f124a185de5ac67a7077ddb8d923d7f0f7a7b6fa62",
+      "contents": "import assert from 'node:assert/strict';\nconst port=n=>assert(Number.isInteger(n)&&n>0&&n<=65535,'invalid smoke port');\nconst namespace=id=>assert(typeof id==='string'&&/^[a-f0-9]{12,64}$/.test(id),'expected the calling CI container ID');\nexport function smokeNetworkArgs(ports,container) {\n ports.forEach(port);\n if(container!==undefined){namespace(container);return ['--network','container:'+container];}\n return ports.flatMap(n=>['-p',`127.0.0.1::${n}`]);\n}\nexport function smokeHttpUrl(internalPort,published,container) {\n port(internalPort);\n if(container!==undefined){namespace(container);return `http://127.0.0.1:${internalPort}`;}\n assert(typeof published==='string'&&/^127\\.0\\.0\\.1:\\d+$/.test(published),'container did not expose an expected loopback port');\n port(Number(published.split(':')[1]));return 'http://'+published;\n}\n"
+    },
+    "scripts/build-web.sh": {
+      "sha256": "6719221f3602530e590f0b5fc5fc0ff8cf8b892ef7f872a2901cd88ec98531c0",
+      "contents": "#!/usr/bin/env bash\n# Build the WebAssembly version of Ryggattack into dist/web/.\n#\n# Usage: scripts/build-web.sh [--debug]\n#\n# Requires the wasm32-unknown-unknown target and a wasm-bindgen CLI whose\n# version matches the wasm-bindgen crate in Cargo.lock.\n\nset -euo pipefail\n\nproject_root=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")/..\" && pwd)\"\ncd \"$project_root\"\n\nprofile=\"release\"\nfor arg in \"$@\"; do\n  case \"$arg\" in\n    --debug) profile=\"debug\" ;;\n    *)\n      echo \"unknown argument: $arg\" >&2\n      exit 2\n      ;;\n  esac\ndone\n\nout_dir=\"dist/web\"\ntarget_dir=\"target/wasm32-unknown-unknown/$profile\"\n\n# Toolchains installed some other way (Nix, a distribution package) ship their\n# own target list, so only rustup-managed ones are checked here.\nif command -v rustup >/dev/null 2>&1 &&\n  ! rustup target list --installed | grep -qx wasm32-unknown-unknown; then\n  echo \"error: the wasm32-unknown-unknown target is missing.\" >&2\n  echo \"       run: rustup target add wasm32-unknown-unknown\" >&2\n  exit 1\nfi\n\nexpected=\"$(scripts/wasm-bindgen-version.sh)\"\n\nif ! command -v wasm-bindgen >/dev/null 2>&1; then\n  echo \"error: wasm-bindgen was not found on PATH.\" >&2\n  echo \"       run: cargo install wasm-bindgen-cli --version $expected\" >&2\n  exit 1\nfi\n\nactual=\"$(wasm-bindgen --version | awk '{print $2}')\"\nif [ \"$expected\" != \"$actual\" ]; then\n  echo \"error: wasm-bindgen CLI $actual does not match the wasm-bindgen crate $expected.\" >&2\n  echo \"       run: cargo install wasm-bindgen-cli --version $expected --force\" >&2\n  exit 1\nfi\n\nif [ \"$profile\" = \"release\" ]; then\n  cargo build --release --bin ryggattack --target wasm32-unknown-unknown\nelse\n  cargo build --bin ryggattack --target wasm32-unknown-unknown\nfi\n\nrm -rf \"$out_dir\"\nmkdir -p \"$out_dir\"\n\nbindgen_args=(--target web --no-typescript --out-dir \"$out_dir\")\nif [ \"$profile\" = \"release\" ]; then\n  # The symbol name section is roughly a third of the bundle and only feeds\n  # readable JavaScript stack traces, which a release build does not need.\n  bindgen_args+=(--remove-name-section --remove-producers-section)\nfi\n\nwasm-bindgen \"${bindgen_args[@]}\" \"$target_dir/ryggattack.wasm\"\n\n# Optional, because it needs Binaryen rather than anything cargo installs.\n# A host that cannot compress the response serves the module at its full size,\n# so releases are built where this is available and take the smaller one.\nmodule=\"$out_dir/ryggattack_bg.wasm\"\nif [ \"$profile\" = \"release\" ] && command -v wasm-opt >/dev/null 2>&1; then\n  before=\"$(wc -c <\"$module\")\"\n  # The feature flags have to cover whatever the current rustc emits. They are\n  # not a wish list: wasm-opt rejects a module using anything it was not told\n  # about, which fails this build rather than shipping a broken one.\n  wasm-opt -Oz \\\n    --enable-bulk-memory \\\n    --enable-nontrapping-float-to-int \\\n    -o \"$module.opt\" \"$module\"\n  mv \"$module.opt\" \"$module\"\n  after=\"$(wc -c <\"$module\")\"\n  echo \"wasm-opt: $((before / 1000000)) MB -> $((after / 1000000)) MB\"\nelif [ \"$profile\" = \"release\" ]; then\n  echo \"note: wasm-opt was not found, so the module keeps its full size.\"\nfi\n\ncp web/index.html web/refresh-rate.mjs web/rooms.mjs \"$out_dir/\"\nif [ -d assets ]; then\n  cp -R assets \"$out_dir/assets\"\nfi\n\necho\necho \"Built $out_dir. Serve it with:\"\necho \"  python3 -m http.server 8080 --directory $out_dir\"\n"
+    },
+    "web/Dockerfile": {
+      "sha256": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "contents": "# Packages the built web bundle behind nginx.\n#\n# The bundle is not compiled here \u2014 build it first, then build the image from\n# the repository root:\n#\n#   scripts/build-web.sh\n#   docker build -f web/Dockerfile -t ryggattack-web .\n#   docker run --rm -p 8080:8080 ryggattack-web\n#\n# The stable line picks up nginx security updates on rebuild; the one module\n# this image depends on is asserted below rather than assumed.\n\nFROM nginx:1.30-alpine\n\nLABEL org.opencontainers.image.title=\"Ryggattack (web)\" \\\n      org.opencontainers.image.description=\"The Ryggattack WebAssembly build, served by nginx\"\n\n# Fail the build, not the container, if a future base image drops the module\n# that serves the pre-compressed bundle.\nRUN nginx -V 2>&1 | grep -q -- --with-http_gzip_static_module\n\nCOPY web/nginx-main.conf /etc/nginx/nginx.conf\nCOPY web/nginx.conf /etc/nginx/conf.d/default.conf\nCOPY dist/web /usr/share/nginx/html\n\n# Roughly 50 MB of WebAssembly gzips to 15 MB. Doing it once at build time\n# beats doing it on every download. `gzip -k` is not in busybox, hence `-c`.\nRUN chmod 0644 /etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf \\\n    && chmod -R a+rX /usr/share/nginx/html \\\n    && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz \\\n    && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz \\\n    && nginx -t \\\n    && rm -f /tmp/nginx.pid\n\nUSER 101:101\nENTRYPOINT [\"nginx\"]\nCMD [\"-g\", \"daemon off;\"]\nEXPOSE 8080\n"
+    },
+    "server/Dockerfile": {
+      "sha256": "c5c111c797bba311e87b9a87d5bfb0b77f4d178f9fcd3b368774670f5856a34e",
+      "contents": "# Native executable is compiled/tested by CI before packaging, just like WASM.\n# Build on glibc <= 2.41 (CI node:22-bookworm); runtime supplies glibc and libgcc.\nFROM debian:trixie-slim\n# The base already supplies libgcc-s1 (also required by apt itself). Assert it\n# instead of running a redundant network install that needs an _apt UID mapping.\nRUN ldconfig -p | grep -q 'libgcc_s.so.1'\nCOPY dist/server/ryggattack-server /usr/local/bin/ryggattack-server\nRUN chmod 0555 /usr/local/bin/ryggattack-server\nUSER 10001:10001\nEXPOSE 8787 8788\nENTRYPOINT [\"/usr/local/bin/ryggattack-server\"]\nCMD [\"0.0.0.0:8787\"]\n"
+    },
+    "charts/ryggattack/values.yaml": {
+      "sha256": "c685524c120505e4fbc34a54cce89b0a96c4aa9e99cd51e069bafb7ec41a901f",
+      "contents": "image:\n  web: git.modig.online/fabianmodig/ryggattack/web\n  server: git.modig.online/fabianmodig/ryggattack/server\n  # Empty uses Chart.appVersion for BOTH images; never use latest.\n  tag: \"\"\nimagePullSecrets:\n  - name: forgejo-pull-secret\nweb:\n  resources:\n    requests: {cpu: 50m, memory: 32Mi}\n    limits: {cpu: \"1\", memory: 128Mi}\nserver:\n  resources:\n    requests: {cpu: 500m, memory: 512Mi}\n    limits: {cpu: \"2\", memory: 2Gi}\n"
+    },
+    "charts/ryggattack/templates/workloads.yaml": {
+      "sha256": "9362f576a2e58931f1905e2f0fe679b1a8124b18c17fe367e835d5b41d45bdcd",
+      "contents": "{{- $tag := .Values.image.tag | default .Chart.AppVersion -}}\n{{- if not (regexMatch \"^sha-[0-9a-f]{7,40}$\" $tag) }}{{ fail \"paired images require immutable sha-<commit> tag\" }}{{ end }}\n{{- range $component := list \"web\" \"server\" }}\n---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: {{ $.Release.Name }}-{{ $component }}\n  labels: {app.kubernetes.io/name: ryggattack, app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\nspec:\n  replicas: 1\n  strategy: {type: Recreate}\n  selector:\n    matchLabels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n  template:\n    metadata:\n      labels: {app.kubernetes.io/name: ryggattack, app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n    spec:\n      automountServiceAccountToken: false\n      imagePullSecrets: {{ $.Values.imagePullSecrets | toJson }}\n      terminationGracePeriodSeconds: 15\n      securityContext:\n        runAsNonRoot: true\n        runAsUser: {{ if eq $component \"server\" }}10001{{ else }}101{{ end }}\n        runAsGroup: {{ if eq $component \"server\" }}10001{{ else }}101{{ end }}\n        seccompProfile: {type: RuntimeDefault}\n      containers:\n        - name: {{ $component }}\n          image: \"{{ index $.Values.image $component }}:{{ $tag }}\"\n          imagePullPolicy: IfNotPresent\n          securityContext:\n            readOnlyRootFilesystem: true\n            allowPrivilegeEscalation: false\n            capabilities: {drop: [ALL]}\n          resources: {{ index $.Values $component \"resources\" | toJson }}\n          {{- if eq $component \"server\" }}\n          args: [\"0.0.0.0:8787\"]\n          env:\n            - {name: RYGGATTACK_MODE, value: production}\n            - {name: RYGGATTACK_ALLOWED_ORIGINS, value: \"https://ryggattack.modig.online\"}\n            - {name: RYGGATTACK_MANAGEMENT_BIND, value: \"0.0.0.0:8788\"}\n          ports:\n            - {name: websocket, containerPort: 8787}\n            - {name: management, containerPort: 8788}\n          readinessProbe:\n            httpGet: {path: /readyz, port: management}\n            periodSeconds: 3\n            timeoutSeconds: 1\n          livenessProbe:\n            httpGet: {path: /healthz, port: management}\n            periodSeconds: 5\n            timeoutSeconds: 1\n          startupProbe:\n            httpGet: {path: /readyz, port: management}\n            failureThreshold: 30\n            periodSeconds: 1\n          {{- else }}\n          ports:\n            - {name: http, containerPort: 8080}\n          readinessProbe:\n            httpGet: {path: /, port: http}\n          livenessProbe:\n            httpGet: {path: /, port: http}\n          volumeMounts:\n            - {name: temp, mountPath: /tmp}\n      volumes:\n        - name: temp\n          emptyDir: {sizeLimit: 16Mi}\n          {{- end }}\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: {{ $.Release.Name }}-{{ $component }}\nspec:\n  type: ClusterIP\n  selector: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}\n  ports:\n    {{- if eq $component \"server\" }}\n    - {name: websocket, port: 8787, targetPort: websocket}\n    - {name: management, port: 8788, targetPort: management}\n    {{- else }}\n    - {name: http, port: 8080, targetPort: http}\n    {{- end }}\n{{- end }}\n"
+    }
+  },
+  "limits": [
+    "Read-only remote verification; no workflow, source, registry or Kubernetes mutations.",
+    "Publication evidence is not canonical endpoint or Kubernetes workload readiness."
+  ],
+  "release_steps": [
+    "2026-10-21T08:47:30.1399715Z \u2b50 Run Main https://data.forgejo.org/actions/checkout@v4",
+    "2026-10-21T08:56:29.7165208Z wasm-opt: 53 MB -> 39 MB",
+    "2026-10-21T08:56:29.7205625Z Built dist/web. Serve it with:",
+    "2026-10-21T08:56:51.3296044Z \u2b50 Run Post ./.github/actions/setup-web-build",
+    "2026-10-21T08:56:51.3316363Z \u2b50 Run Post https://github.com/Swatinem/rust-cache@v2.7.8",
+    "2026-10-21T09:01:45.7780723Z   \u2705  Success - Post https://github.com/Swatinem/rust-cache@v2.7.8",
+    "2026-10-21T09:01:46.1253869Z \u2b50 Run Post https://github.com/dtolnay/rust-toolchain@stable",
+    "2026-10-21T09:01:46.1387506Z   \u2705  Success - Post https://github.com/dtolnay/rust-toolchain@stable",
+    "2026-10-21T09:01:46.4649089Z   \u2705  Success - Post ./.github/actions/setup-web-build",
+    "2026-10-21T09:01:46.8025026Z \u2b50 Run Post https://github.com/actions/setup-node@v4",
+    "2026-10-21T09:01:47.0004848Z   \u2705  Success - Post https://github.com/actions/setup-node@v4",
+    "2026-10-21T09:01:47.3356726Z \u2b50 Run Post https://data.forgejo.org/actions/checkout@v4",
+    "2026-10-21T09:01:47.5612636Z   \u2705  Success - Post https://data.forgejo.org/actions/checkout@v4",
+    "2026-10-21T09:01:47.8960202Z \ud83c\udfc1  Job succeeded"
+  ],
+  "smoke_to_registry_config_identity_verified": true,
+  "fresh_web_dist_verified": true
+}

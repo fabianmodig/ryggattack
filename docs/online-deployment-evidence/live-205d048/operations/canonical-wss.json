@@ -1,0 +1,14 @@
+{
+  "canonical_good_origin": {
+    "http": "101",
+    "curl_exit": 28
+  },
+  "bad_origin": {
+    "http": "403",
+    "curl_exit": 0
+  },
+  "ws_subpath": {
+    "http": "404",
+    "curl_exit": 0
+  }
+}

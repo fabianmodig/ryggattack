@@ -68,7 +68,7 @@ function frame(c,f) {
 const safeIdentity = w => Object.fromEntries(['version','seat','room','participant','code'].map(key=>[key,w[key]]));
 async function expand(c) { if(!await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }
 async function collapse(c) { if(await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }
-async function screenshot(c,name) { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:15000}); }
+async function screenshot(c,name) { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:60000}); }
 async function pageFor(name,code) {
   const c=client(name);
   // Separate rendered participants must not share SwiftShader GPU startup.

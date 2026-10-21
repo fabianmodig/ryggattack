@@ -1,0 +1,7 @@
+ryggattack_rooms 1
+ryggattack_players 3
+ryggattack_connections 3
+ryggattack_pending_admissions 0
+ryggattack_ticks_total 221210
+ryggattack_tick_overruns_total 1
+ryggattack_rate_rejections_total 0

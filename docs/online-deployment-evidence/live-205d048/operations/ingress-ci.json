@@ -1,0 +1,1661 @@
+{
+  "expected_head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+  "api_run_id": 322,
+  "ui_run_id": 52,
+  "observer_started": "2026-10-21T09:24:23.364043+00:00",
+  "poll_interval_seconds": 45,
+  "max_observation_seconds": 1500,
+  "observations": [
+    {
+      "observed_at": "2026-10-21T09:24:23.364903+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 4,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:38+02:00",
+          "updated_at": "2026-10-21T11:18:38+02:00"
+        },
+        {
+          "id": 2,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        },
+        {
+          "id": 3,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:18:38+02:00",
+        "duration": 345000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "running"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:25:08.562421+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 4,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:38+02:00",
+          "updated_at": "2026-10-21T11:18:38+02:00"
+        },
+        {
+          "id": 2,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        },
+        {
+          "id": 3,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:18:38+02:00",
+        "duration": 390000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "running"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:25:53.712289+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 4,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:38+02:00",
+          "updated_at": "2026-10-21T11:18:38+02:00"
+        },
+        {
+          "id": 2,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        },
+        {
+          "id": 3,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:18:38+02:00",
+        "duration": 435000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "running"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:26:38.848682+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        },
+        {
+          "id": 6,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        },
+        {
+          "id": 3,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Waiting to run",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:18:37+02:00",
+          "updated_at": "2026-10-21T11:18:37+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:36+02:00",
+        "duration": 480000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "running"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 0,
+          "status": "waiting"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:27:24.021832+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 526000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:28:09.162284+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 571000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:28:54.493753+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 616000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:29:39.745450+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 661000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:30:24.953198+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 707000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:31:10.321634+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 752000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:31:37.343505+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 779000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:32:22.493286+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 824000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:33:07.639738+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 869000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:33:52.768029+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 914000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:34:37.908721+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 8,
+          "status": "pending",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Has started running",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:52+02:00",
+          "updated_at": "2026-10-21T11:26:52+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "running",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "1970-01-01T01:00:00+01:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:26:52+02:00",
+        "duration": 959000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "running"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    },
+    {
+      "observed_at": "2026-10-21T09:35:23.066144+00:00",
+      "pr": {
+        "head": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "state": "open",
+        "merged": false
+      },
+      "latest_statuses": [
+        {
+          "id": 9,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/2",
+          "description": "Successful in 8m27s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / web build (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:35:19+02:00",
+          "updated_at": "2026-10-21T11:35:19+02:00"
+        },
+        {
+          "id": 7,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/1",
+          "description": "Successful in 15s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / Helm deployment contract (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:51+02:00",
+          "updated_at": "2026-10-21T11:26:51+02:00"
+        },
+        {
+          "id": 5,
+          "status": "success",
+          "target_url": "/fabianmodig/ryggattack/actions/runs/52/jobs/0",
+          "description": "Successful in 7m58s",
+          "url": "https://git.modig.online/api/v1/repos/fabianmodig/ryggattack/statuses/0c2e11711b28389a59678bdfdade7cb70691d076",
+          "context": "CI / cargo test (pull_request)",
+          "creator": null,
+          "created_at": "2026-10-21T11:26:36+02:00",
+          "updated_at": "2026-10-21T11:26:36+02:00"
+        }
+      ],
+      "run": {
+        "id": 322,
+        "index_in_repo": 52,
+        "commit_sha": "0c2e11711b28389a59678bdfdade7cb70691d076",
+        "status": "success",
+        "started": "2026-10-21T11:18:38+02:00",
+        "stopped": "2026-10-21T11:35:19+02:00",
+        "created": "2026-10-21T11:18:37+02:00",
+        "updated": "2026-10-21T11:35:19+02:00",
+        "duration": 1001000000000,
+        "html_url": "https://git.modig.online/fabianmodig/ryggattack/actions/runs/52"
+      },
+      "jobs": [
+        {
+          "id": 471,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "a10c0156-bf9f-4c82-807b-26efdaee2d77",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "cargo test",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 436,
+          "status": "success"
+        },
+        {
+          "id": 472,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "3f6ece14-2102-4d6f-a23f-925368522c24",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "Helm deployment contract",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 437,
+          "status": "success"
+        },
+        {
+          "id": 473,
+          "run_id": 322,
+          "attempt": 1,
+          "handle": "f4f8d9e5-120c-49ad-ae88-fd97b921e203",
+          "repo_id": 8,
+          "owner_id": 2,
+          "name": "web build",
+          "needs": null,
+          "runs_on": [
+            "ubuntu-latest"
+          ],
+          "task_id": 438,
+          "status": "success"
+        }
+      ],
+      "head_after": "0c2e11711b28389a59678bdfdade7cb70691d076"
+    }
+  ],
+  "outcome": "all_required_green",
+  "last_observed_at": "2026-10-21T09:35:23.277768+00:00",
+  "elapsed_seconds": 659.91
+}

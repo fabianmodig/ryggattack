@@ -1,0 +1,102 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-21T09:08:04.638Z",
+  "origin": "https://ryggattack.modig.online",
+  "backend": "wss://ryggattack.modig.online/ws",
+  "artifacts": {
+    "index.html": {
+      "url": "https://ryggattack.modig.online/index.html",
+      "status": 200,
+      "mime": "text/html",
+      "bytes": 4567,
+      "sha256": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a"
+    },
+    "rooms.mjs": {
+      "url": "https://ryggattack.modig.online/rooms.mjs",
+      "status": 200,
+      "mime": "text/javascript",
+      "bytes": 3535,
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827"
+    },
+    "ryggattack.js": {
+      "url": "https://ryggattack.modig.online/ryggattack.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 118877,
+      "sha256": "f0548a5b786dc9b2b0cb49f2321e26460143b55d335a99491db157911ae7f614"
+    },
+    "ryggattack_bg.wasm": {
+      "url": "https://ryggattack.modig.online/ryggattack_bg.wasm",
+      "status": 200,
+      "mime": "application/wasm",
+      "bytes": 39626082,
+      "sha256": "ca53a5654215a33dfa2fd2828ae8be51b24a1e9b6c4f2146fdae7f837a183849"
+    }
+  },
+  "errors": [
+    {
+      "source": "LiveA",
+      "at_ms": 3029.877302,
+      "message": "Error during WebSocket handshake: Unexpected response code: 404"
+    },
+    {
+      "source": "LiveA",
+      "at_ms": 3030.19757,
+      "message": "WebSocket connection to 'wss://ryggattack.modig.online/ws' failed: Error during WebSocket handshake: Unexpected response code: 404"
+    }
+  ],
+  "expected_outage_errors": [],
+  "console": [
+    {
+      "client": "LiveA",
+      "type": "error",
+      "expected_outage": false,
+      "text": "WebSocket connection to 'wss://ryggattack.modig.online/ws' failed: Error during WebSocket handshake: Unexpected response code: 404"
+    }
+  ],
+  "socket_handshakes": [
+    {
+      "client": "LiveA",
+      "url": "wss://ryggattack.modig.online/ws",
+      "origin": "https://ryggattack.modig.online"
+    }
+  ],
+  "checks": [
+    "trusted public HTTPS asset statuses, MIME types and SHA-256 hashes"
+  ],
+  "cleanup": {
+    "scope": "only the newly created private room; no administration, deletion, enumeration, or writes to other rooms",
+    "rendered": []
+  },
+  "failure": "LiveA real HTML form admission",
+  "native_stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_text_excluded": true
+  },
+  "clients": [
+    {
+      "name": "LiveA",
+      "frames": 0,
+      "welcomes": [],
+      "events": [
+        {
+          "event": "socket",
+          "url": "wss://ryggattack.modig.online/ws",
+          "at_ms": 3027.682039
+        },
+        {
+          "event": "close",
+          "at_ms": 3031.668046
+        }
+      ],
+      "input_count": 0,
+      "last_inputs": []
+    }
+  ],
+  "finished_at": "2026-10-21T09:09:51.322Z",
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 0
+  }
+}

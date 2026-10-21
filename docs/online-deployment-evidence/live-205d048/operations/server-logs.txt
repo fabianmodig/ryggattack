@@ -1,0 +1,2 @@
+{"event":"listening","management":"0.0.0.0:8788","mode":"production","service":"private rooms; secure reconnect; no accounts","websocket":"ws://0.0.0.0:8787"}
+{"event":"tick_overrun","action":"discard_wall_clock_debt"}

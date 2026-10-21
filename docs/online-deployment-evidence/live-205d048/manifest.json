@@ -1,0 +1,136 @@
+{
+  "runtime_revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+  "deployment_revision": "12b6f60cd71a86e6aba519af51b1131f0d60d0c7",
+  "proof_count": 32,
+  "private_material_scan_passed": true,
+  "proofs": [
+    {
+      "path": "capture-provenance.json",
+      "sha256": "69c6d0d7283a746826337331e7c43ecfa048ffce789f6f302b8a2ffd49c5182b"
+    },
+    {
+      "path": "failed/640/results.json",
+      "sha256": "d6fd41a2ad7751818fa11ebb2bd5a008bc14d258498b976ed1452ef8ba40973d"
+    },
+    {
+      "path": "failed/first/results.json",
+      "sha256": "a785aa2ba1686f786a9d70600302ab6f978e742985b338612791af846c0d5f7b"
+    },
+    {
+      "path": "failed/protocol-diag/results.json",
+      "sha256": "3e2f82dbef0cef434fdeb8e6834b10b00b1b53821a70a3083f6aa25a943d6517"
+    },
+    {
+      "path": "failed/protocol-diag/screenshot-protocol-metadata.jsonl",
+      "sha256": "a34bf65f1b6c16ae7dca518afbc9d7875ecb8905888814ff0f118f604fa934bc"
+    },
+    {
+      "path": "failed/routing-fixed/results.json",
+      "sha256": "f4e884b9c5eee7160fcddeaae69a9c770303449f86429187e9e165de07f51612"
+    },
+    {
+      "path": "failed/view-capture/results.json",
+      "sha256": "a9a9346b5a602288c04c64090b8255f5b074da6d1f6a93f5dbcfe5648dfe1ed0"
+    },
+    {
+      "path": "failed/view-capture/screenshot-protocol-metadata.jsonl",
+      "sha256": "bb480b8e201d3e4198f81ab6b3acd8ac989b5ffd405e27b489f7977de16ca956"
+    },
+    {
+      "path": "independent-review.json",
+      "sha256": "b3a1a7bee81fc340163ac19ddf55102f93d1c67d6151880141661c692f7ab3de"
+    },
+    {
+      "path": "measured-verifier.mjs",
+      "sha256": "65240c6df0b4f16ec6c660436ebaab616863c34cc89a4692da86479121c4a864"
+    },
+    {
+      "path": "operations/canonical-wss.json",
+      "sha256": "af4e35266e37202b83366cefc6f0fd7d1c1eea47e458517aaee62f5677b1d411"
+    },
+    {
+      "path": "operations/certificate.json",
+      "sha256": "2965a55699e0636aceb8b1f5b1ccd13a3b1a049943667c8ac56822f6a0deb8b0"
+    },
+    {
+      "path": "operations/ingress-ci.json",
+      "sha256": "bd76208450b091c9994e907aaed97bb7b62a168385580b116e903819f6a733c9"
+    },
+    {
+      "path": "operations/ingress-logging.json",
+      "sha256": "2a3a055782279f89da0478cf3cb169ad88f301beac53ea233d66870cef100ad1"
+    },
+    {
+      "path": "operations/ingress-merged.json",
+      "sha256": "042d0effd641cdade569fb55ec82d84d238c1ad3b84a94d8aa8cba9cf882394e"
+    },
+    {
+      "path": "operations/live-clock.json",
+      "sha256": "31dcf733d1885862213bf43e9a33f83e18b81e00e8d6324db0c31ffe4af62a61"
+    },
+    {
+      "path": "operations/live-metrics.txt",
+      "sha256": "32b4813ec86d3859716e4628e1113fb35006026dd8d56adc36fb465e415be825"
+    },
+    {
+      "path": "operations/network-policy.json",
+      "sha256": "854de5fa6756d3f0ccdcf11723e9cbcddf818bb300df5d3ce8fa70fc165f7aeb"
+    },
+    {
+      "path": "operations/parent-registry.json",
+      "sha256": "6bb4ad0eca617ef8b63273aa2c63797d0dfc65b10b65adce2b84fe884b2f4085"
+    },
+    {
+      "path": "operations/public-ip.json",
+      "sha256": "4e99099fddcb5b2556d2edb7288bcd0b9907c4d26414e8f30edf23cf7763b930"
+    },
+    {
+      "path": "operations/publication-network.json",
+      "sha256": "395e82f2fffdb2b29bc26c52a6bede0870aeaa1c8295c7bcc1404a99c501ba9b"
+    },
+    {
+      "path": "operations/resumed-assets.json",
+      "sha256": "7298b537644b03263bb7b778fabfdc3d053e329c825afb5c2a5d9de648a45341"
+    },
+    {
+      "path": "operations/resumed-readback.json",
+      "sha256": "0145f45fea8b49946c8d265e13b2475362a9e8a58f822bd781b1ac812b0904d9"
+    },
+    {
+      "path": "operations/security-verified.json",
+      "sha256": "5b46229b8bc15ce99354b3d88b31859b105cc689c06e09c039f4d07acbfb7f61"
+    },
+    {
+      "path": "operations/server-logs.txt",
+      "sha256": "39425e96252f8bcaf21952a74969d5e6d4c0fe1f0ad60c4564432d402244253a"
+    },
+    {
+      "path": "operations/web-logs.txt",
+      "sha256": "d7a9d7bbab63d53b3c0e81f7cd8202cfa042fa63b9f360b3f9dd1a23b6548865"
+    },
+    {
+      "path": "passed/live-game.png",
+      "sha256": "b303ca5b5f6a107a12c7fc62cc0c7f4651bfdfe2c54bcfa9de8b457c1c62f8a2"
+    },
+    {
+      "path": "passed/reclaimed-identity.png",
+      "sha256": "e88ef940175dc32d2c2c895eb69c07973ce6930ca301c71fa79e862563def03c"
+    },
+    {
+      "path": "passed/results.json",
+      "sha256": "04bacd29a859af2d4f3ccac3ebf484264a6e63c65c799424216a6a6cf47e67d8"
+    },
+    {
+      "path": "passed/screenshot-protocol-metadata.jsonl",
+      "sha256": "23f5c32a2bf33f8c80d3c23327b576de8a339a5ff89a92907122c3c2dd6121e6"
+    },
+    {
+      "path": "passed/timing.txt",
+      "sha256": "4d5e10cc6e3a1a96d564bdfa4e4b602170a1723cf31c2306ccdb4c6d1408da29"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "777c85a7ad56f87a0a574c4abd4a5745aece45ca4871a85a6c781cbf1e785342"
+    }
+  ]
+}

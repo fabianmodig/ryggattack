@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "validated_at": "2026-10-21T10:34:34.769028+00:00",
+  "runtime_revision": "205d0482790bda115c6d907ce6ff52dfc472a56c",
+  "deployment_revision": "12b6f60cd71a86e6aba519af51b1131f0d60d0c7",
+  "common_snapshots_reported_by_live_asserting_harness": 1666,
+  "post_reconnect_common_snapshots": 8,
+  "independent_revalidation": "Result invariants, sample ranges, identities, clock calculation, cleanup records, assets and current pods verified. Full frame streams were hashed in memory by the harness and were not persisted; 1666 full comparisons cannot be independently recomputed from the 16 retained samples.",
+  "observed_hz": 63.947991716500994,
+  "native_probe_sha256": "d587b67af9954abaabb2917ab6a6dbcf444ee99d4ec4405cb54c565505b1ba35",
+  "original_verifier_sha256": "05df152225eee4a1f11a9069841d4766e6f76afb02364ccce3617c9c334e3367",
+  "measured_verifier_sha256": "65240c6df0b4f16ec6c660436ebaab616863c34cc89a4692da86479121c4a864",
+  "promoted_verifier_sha256": "9f855e97d439335906cd0d0b5653d61efeef47ae45047c7ba221a28e9d364c39",
+  "runtime_builds_this_resume": 0,
+  "screenshots_manually_reviewed": true
+}

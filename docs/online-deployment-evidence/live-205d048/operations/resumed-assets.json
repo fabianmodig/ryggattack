@@ -1,0 +1,26 @@
+{
+  "index.html": {
+    "status": 200,
+    "mime": "text/html",
+    "bytes": 4567,
+    "sha256": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a"
+  },
+  "rooms.mjs": {
+    "status": 200,
+    "mime": "text/javascript",
+    "bytes": 3535,
+    "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827"
+  },
+  "ryggattack.js": {
+    "status": 200,
+    "mime": "application/javascript",
+    "bytes": 118877,
+    "sha256": "f0548a5b786dc9b2b0cb49f2321e26460143b55d335a99491db157911ae7f614"
+  },
+  "ryggattack_bg.wasm": {
+    "status": 200,
+    "mime": "application/wasm",
+    "bytes": 39626082,
+    "sha256": "ca53a5654215a33dfa2fd2828ae8be51b24a1e9b6c4f2146fdae7f837a183849"
+  }
+}

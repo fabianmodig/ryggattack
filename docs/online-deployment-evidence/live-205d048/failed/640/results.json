@@ -1,0 +1,445 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-21T09:43:29.951Z",
+  "origin": "https://ryggattack.modig.online",
+  "backend": "wss://ryggattack.modig.online/ws",
+  "artifacts": {
+    "index.html": {
+      "url": "https://ryggattack.modig.online/index.html",
+      "status": 200,
+      "mime": "text/html",
+      "bytes": 4567,
+      "sha256": "dd7dda7ccbd5444002ab5b309bfaac23ba2562069c992ebfaf34bc9e59f9b08a"
+    },
+    "rooms.mjs": {
+      "url": "https://ryggattack.modig.online/rooms.mjs",
+      "status": 200,
+      "mime": "text/javascript",
+      "bytes": 3535,
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827"
+    },
+    "ryggattack.js": {
+      "url": "https://ryggattack.modig.online/ryggattack.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 118877,
+      "sha256": "f0548a5b786dc9b2b0cb49f2321e26460143b55d335a99491db157911ae7f614"
+    },
+    "ryggattack_bg.wasm": {
+      "url": "https://ryggattack.modig.online/ryggattack_bg.wasm",
+      "status": 200,
+      "mime": "application/wasm",
+      "bytes": 39626082,
+      "sha256": "ca53a5654215a33dfa2fd2828ae8be51b24a1e9b6c4f2146fdae7f837a183849"
+    }
+  },
+  "errors": [
+    {
+      "source": "LiveA",
+      "at_ms": 63034.503766,
+      "message": "failure screenshot unavailable"
+    },
+    {
+      "source": "LiveB",
+      "at_ms": 78033.800662,
+      "message": "failure screenshot unavailable"
+    }
+  ],
+  "expected_outage_errors": [],
+  "console": [],
+  "socket_handshakes": [
+    {
+      "client": "LiveA",
+      "url": "wss://ryggattack.modig.online/ws",
+      "origin": "https://ryggattack.modig.online"
+    },
+    {
+      "client": "LiveB",
+      "url": "wss://ryggattack.modig.online/ws",
+      "origin": "https://ryggattack.modig.online"
+    }
+  ],
+  "checks": [
+    "trusted public HTTPS asset statuses, MIME types and SHA-256 hashes"
+  ],
+  "cleanup": {
+    "scope": "only the newly created private room; no administration, deletion, enumeration, or writes to other rooms",
+    "rendered": [
+      {
+        "client": "LiveA",
+        "participant": 6,
+        "room": 7,
+        "leave_packet": true,
+        "observed_removed_by": [
+          "LiveB",
+          "Native"
+        ]
+      },
+      {
+        "client": "LiveB",
+        "participant": 8,
+        "room": 7,
+        "leave_packet": true,
+        "observed_removed_by": [
+          "Native"
+        ]
+      }
+    ],
+    "native": {
+      "controlled_termination": true,
+      "closed": true,
+      "explicit_leave": false,
+      "server_side_removal_verified": false,
+      "reservation_note": "Transport closure reserves the native seat; last-human empty-room cleanup expires it after 60 seconds. Local process termination is not proof of server-side expiry."
+    }
+  },
+  "room": {
+    "id": 7,
+    "code": "e2a2944236bc0d1b3cd9",
+    "created_by_this_run": true
+  },
+  "failure": "page.screenshot: Timeout 15000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n",
+  "native_exit": {
+    "code": null,
+    "signal": "SIGTERM",
+    "controlled": true,
+    "at_ms": 91001.122451
+  },
+  "native_stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_text_excluded": true
+  },
+  "clients": [
+    {
+      "name": "LiveA",
+      "identity": {
+        "version": 3,
+        "seat": 0,
+        "room": 7,
+        "participant": 6,
+        "code": "e2a2944236bc0d1b3cd9"
+      },
+      "dom": {
+        "origin": "https://ryggattack.modig.online",
+        "backend": "wss://ryggattack.modig.online/ws",
+        "canvas_count": 1
+      },
+      "frames": 1004,
+      "first": {
+        "tick": 150052,
+        "simulation_tick": 2,
+        "at_ms": 20922.532742
+      },
+      "last": {
+        "tick": 154064,
+        "simulation_tick": 4014,
+        "at_ms": 83607.3644
+      },
+      "welcomes": [
+        {
+          "version": 3,
+          "seat": 0,
+          "room": 7,
+          "participant": 6,
+          "code": "e2a2944236bc0d1b3cd9"
+        }
+      ],
+      "events": [
+        {
+          "event": "socket",
+          "url": "wss://ryggattack.modig.online/ws",
+          "at_ms": 3044.775152
+        },
+        {
+          "event": "Hello",
+          "at_ms": 3057.507626
+        },
+        {
+          "event": "close",
+          "at_ms": 83653.577156
+        }
+      ],
+      "input_count": 39,
+      "last_inputs": [
+        {
+          "sequence": 32,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 69184.735623
+        },
+        {
+          "sequence": 33,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 70818.140535
+        },
+        {
+          "sequence": 34,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 72388.198605
+        },
+        {
+          "sequence": 35,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 74005.387819
+        },
+        {
+          "sequence": 36,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 75578.247059
+        },
+        {
+          "sequence": 37,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 78763.299174
+        },
+        {
+          "sequence": 38,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 80386.477405
+        },
+        {
+          "sequence": 39,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 82035.307034
+        }
+      ],
+      "last_lobby": {
+        "id": 7,
+        "code": "e2a2944236bc0d1b3cd9",
+        "host": 6,
+        "humans": [
+          {
+            "id": 6,
+            "name": "LiveA",
+            "seat": 0,
+            "ready": true,
+            "connected": true,
+            "reconnect_seconds": null
+          },
+          {
+            "id": 8,
+            "name": "LiveB",
+            "seat": 1,
+            "ready": true,
+            "connected": true,
+            "reconnect_seconds": null
+          },
+          {
+            "id": 9,
+            "name": "Native probe",
+            "seat": 2,
+            "ready": true,
+            "connected": true,
+            "reconnect_seconds": null
+          }
+        ],
+        "settings": {
+          "arena": "Forest",
+          "wins_target": 7,
+          "bots": 0
+        },
+        "phase": "Running"
+      }
+    },
+    {
+      "name": "LiveB",
+      "identity": {
+        "version": 3,
+        "seat": 1,
+        "room": 7,
+        "participant": 8,
+        "code": "e2a2944236bc0d1b3cd9"
+      },
+      "dom": {
+        "origin": "https://ryggattack.modig.online",
+        "backend": "wss://ryggattack.modig.online/ws",
+        "canvas_count": 1
+      },
+      "frames": 1121,
+      "first": {
+        "tick": 150052,
+        "simulation_tick": 2,
+        "at_ms": 20928.972672
+      },
+      "last": {
+        "tick": 154532,
+        "simulation_tick": 4482,
+        "at_ms": 90920.46945
+      },
+      "welcomes": [
+        {
+          "version": 3,
+          "seat": 1,
+          "room": 7,
+          "participant": 8,
+          "code": "e2a2944236bc0d1b3cd9"
+        }
+      ],
+      "events": [
+        {
+          "event": "socket",
+          "url": "wss://ryggattack.modig.online/ws",
+          "at_ms": 5830.662517
+        },
+        {
+          "event": "Hello",
+          "at_ms": 5836.545956
+        },
+        {
+          "event": "close",
+          "at_ms": 90949.866354
+        }
+      ],
+      "input_count": 44,
+      "last_inputs": [
+        {
+          "sequence": 37,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 77956.65683
+        },
+        {
+          "sequence": 38,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 79581.646632
+        },
+        {
+          "sequence": 39,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 81219.564585
+        },
+        {
+          "sequence": 40,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 82824.25049
+        },
+        {
+          "sequence": 41,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 84446.709056
+        },
+        {
+          "sequence": 42,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 86077.227737
+        },
+        {
+          "sequence": 43,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 87703.719175
+        },
+        {
+          "sequence": 44,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "at_ms": 89333.176696
+        }
+      ],
+      "last_lobby": {
+        "id": 7,
+        "code": "e2a2944236bc0d1b3cd9",
+        "host": 8,
+        "humans": [
+          {
+            "id": 8,
+            "name": "LiveB",
+            "seat": 1,
+            "ready": true,
+            "connected": true,
+            "reconnect_seconds": null
+          },
+          {
+            "id": 9,
+            "name": "Native probe",
+            "seat": 2,
+            "ready": true,
+            "connected": true,
+            "reconnect_seconds": null
+          }
+        ],
+        "settings": {
+          "arena": "Forest",
+          "wins_target": 7,
+          "bots": 0
+        },
+        "phase": "Running"
+      }
+    },
+    {
+      "name": "Native",
+      "participant": 9,
+      "seat": 2,
+      "frames": 1122,
+      "first": {
+        "tick": 150052,
+        "simulation_tick": 2,
+        "at_ms": 20925.344609
+      },
+      "last": {
+        "tick": 154536,
+        "simulation_tick": 4486,
+        "at_ms": 90983.71958
+      },
+      "welcomes": [],
+      "events": [],
+      "input_count": 0,
+      "last_inputs": [],
+      "last_lobby": {
+        "code": "e2a2944236bc0d1b3cd9",
+        "host": 9,
+        "humans": [
+          {
+            "connected": true,
+            "id": 9,
+            "name": "Native probe",
+            "ready": true,
+            "reconnect_seconds": null,
+            "seat": 2
+          }
+        ],
+        "id": 7,
+        "phase": "Running",
+        "settings": {
+          "arena": "Forest",
+          "bots": 0,
+          "wins_target": 7
+        }
+      }
+    }
+  ],
+  "finished_at": "2026-10-21T09:45:37.270Z",
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 2
+  }
+}

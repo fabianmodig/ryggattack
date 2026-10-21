@@ -1,0 +1,14 @@
+{
+  "scope": "public DNS via external resolver and trusted HTTPS/WSS through router public IP, initiated from LAN (hairpin), NOT off-LAN verification",
+  "public_ipv4": [
+    "158.174.171.219"
+  ],
+  "https": {
+    "http": "200",
+    "exit": 0
+  },
+  "wss": {
+    "http": "101",
+    "exit": 28
+  }
+}

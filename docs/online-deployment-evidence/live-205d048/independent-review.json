@@ -1,0 +1,14 @@
+{
+  "source_session": "20261021_120033_8497c2",
+  "message_id": 23876,
+  "delegation": "deleg_e2b2c81e",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "scope": "read-only screenshot verifier comparison, not a deployment pass",
+  "caveats": [
+    "Original 15-second failures must be preserved and disclosed.",
+    "420-second overall value is unchanged but enforcement is cooperative, not a hard process watchdog.",
+    "Diagnostic stderr filter drops unknown diagnostics; structured result and exit status, not silent stderr, establish outcome."
+  ]
+}
