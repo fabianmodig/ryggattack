@@ -243,7 +243,10 @@ try {
   await expand(a);await screenshot(a,'reclaimed-identity');outage=false;
   evidence.identity_before_disconnect=identity;evidence.identity_after_reconnect=a.identity;
   evidence.checks.push('real runtime WebSocket close; offline context holds retries; other human sees bot takeover and continuing ticks','same participant/seat Welcome on trusted WSS recovery; held-input neutralization before key release');
+  const recoveredTick=b.last.tick;
+  await until(()=>[...a.hashes.keys()].filter(t=>t>recoveredTick&&b.hashes.has(t)&&native.hashes.has(t)).length>=8,'post-reconnect common browser/browser/native snapshots');
   const common=[...a.hashes.keys()].filter(t=>b.hashes.has(t)&&native.hashes.has(t)).sort((x,y)=>x-y);
+  evidence.post_reconnect_common_snapshots={after_tick:recoveredTick,count:common.filter(t=>t>recoveredTick).length};
   assert(common.length>=32,'at least 32 common browser/browser/native ticks');
   for(const tick of common) {assert.equal(a.hashes.get(tick),b.hashes.get(tick),`WASM equality at tick ${tick}`);assert.equal(a.hashes.get(tick),native.hashes.get(tick),`native f32 equality at tick ${tick}`);}
   assert(common.at(-1)-common[0]>=128,'shared equality spans meaningful ticks');
@@ -273,7 +276,7 @@ try {
     probeStopped=true;
     if(probe.exitCode===null&&probe.signalCode===null)probe.kill('SIGTERM');
     try{await Promise.race([probeDone,pause(5000).then(()=>{if(probe.exitCode===null&&probe.signalCode===null)probe.kill('SIGKILL');})]);await Promise.race([probeDone,pause(2000)]);}catch{evidence.status='failed';}
-    evidence.cleanup.native={controlled_termination:probeStopped,closed:probe.exitCode!==null||probe.signalCode!==null};
+    evidence.cleanup.native={controlled_termination:probeStopped,closed:probe.exitCode!==null||probe.signalCode!==null,explicit_leave:false,server_side_removal_verified:false,reservation_note:'Transport closure reserves the native seat; last-human empty-room cleanup expires it after 60 seconds. Local process termination is not proof of server-side expiry.'};
     if(!evidence.cleanup.native.closed)evidence.status='failed';
   }
   try{await browser?.close();}catch{evidence.status='failed';}
