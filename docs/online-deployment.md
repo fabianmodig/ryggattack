@@ -166,7 +166,10 @@ uses `docker.io` with `DOCKER_BUILDKIT=0`, without an unavailable Buildx package
 Dockerfiles set final permissions with portable `RUN chmod` instructions rather
 than BuildKit-only `COPY --chmod`. Runtime users/permissions, read-only roots and
 all prepublication image/socket checks are unchanged. Local image verification
-uses rootless Podman and also exercises the Docker-compatible build path.
+uses rootless Podman and also exercises the Docker-compatible build path. In CI,
+the smoke containers explicitly share the calling job's network namespace,
+without host-published ports: a remote Docker daemon's loopback is not the job's
+loopback. Local smoke retains randomized loopback-only publication.
 
 1. PR CI runs Rust tests/clippy, JS/UI/startup tests, production/abuse/native TLS
    socket checks, real headless checks, WASM build, and Helm render/semantic tests.

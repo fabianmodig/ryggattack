@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const workflow=fs.readFileSync('.forgejo/workflows/release.yml','utf8');
 assert.match(workflow,/DOCKER_BUILDKIT: "0"/,'use the portable legacy Docker API builder explicitly');
 assert(!workflow.includes('docker-buildx'),'Bookworm release must not require unavailable buildx package');
+assert.match(workflow,/CONTAINER_SMOKE_NETWORK_CONTAINER="\$HOSTNAME"/,'remote-daemon smoke must use the calling job network namespace');
 for(const component of ['web','server']) {
  const dockerfile=fs.readFileSync(`${component}/Dockerfile`,'utf8');
  assert(!/COPY\s+--chmod=/.test(dockerfile),'set final permissions with portable RUN chmod');
