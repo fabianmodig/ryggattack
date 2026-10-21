@@ -10,7 +10,7 @@ const until=async(p,label,ms=120000)=>{const end=performance.now()+ms;while(!p()
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const secrets=new Set(),clients=[],pipes=new Set(),blocked=new Set();
 const evidence={artifact:Object.fromEntries(['index.html','rooms.mjs','ryggattack.js','ryggattack_bg.wasm'].map(f=>[f,sha(fs.readFileSync(path.join(root,f)))])),checks:[],errors:[],expected_outage_errors:[],origins:[]};
-let browser,server,backend,log='',outage=false;
+let server,backend,log='',outage=false;const browsers=[];let browserOptions;
 execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-keyout',out+'/key.pem','-out',out+'/cert.pem','-days','1','-subj','/CN=ryggattack.modig.online','-addext','subjectAltName=DNS:ryggattack.modig.online'],{stdio:'ignore'});
 const front=https.createServer({key:fs.readFileSync(out+'/key.pem'),cert:fs.readFileSync(out+'/cert.pem')},(req,res)=>{
  let file;try{let p=decodeURIComponent(req.url.split('?')[0]);if(p.includes('\0'))throw Error();if(p.endsWith('/'))p+='index.html';file=path.resolve(root,'.'+p);}catch{res.writeHead(400).end();return;}
@@ -21,12 +21,18 @@ front.on('upgrade',(req,down,head)=>{
  const name=req.headers['user-agent'];evidence.origins.push({origin:req.headers.origin,path:req.url});
  if(req.url!=='/ws'||blocked.has(name)){down.destroy();return;}
  const up=net.connect(backend,'127.0.0.1');const p={name,up,down};pipes.add(p);
+ const proxyEvent={client:name,at_ms:performance.now()};(evidence.proxy??=[]).push(proxyEvent);up.once('connect',()=>proxyEvent.connected_at_ms=performance.now());up.once('data',b=>{proxyEvent.response_line=/^HTTP\/1\.[01] [0-9]{3} [A-Za-z ]+\r\n/.exec(String(b))?.[0].trim()??'unrecognized HTTP status line';proxyEvent.response_at_ms=performance.now();});up.once('close',()=>proxyEvent.closed_at_ms=performance.now());up.once('error',e=>proxyEvent.error=e.message);
  for(const s of [up,down]){s.on('error',()=>{up.destroy();down.destroy();});s.on('close',()=>pipes.delete(p));}
  up.write(`${req.method} ${req.url} HTTP/${req.httpVersion}\r\n${Object.entries(req.headers).map(([k,v])=>`${k}: ${v}`).join('\r\n')}\r\n\r\n`);if(head.length)up.write(head);down.pipe(up);up.pipe(down);
 });
 async function expand(c){if(!await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();}
 async function pageFor(name,code){
- const page=await (await browser.newContext({viewport:{width:640,height:480},ignoreHTTPSErrors:true,userAgent:name})).newPage();const c={name,page,welcomes:[],frames:[],inputs:[]};clients.push(c);
+ // Separate real clients must not share a SwiftShader GPU process: another
+ // context's cold GPU initialization can starve open/Hello after HTTP 101.
+ // Keep both renderers running together for every gameplay/recovery assertion.
+ const browser=await chromium.launch(browserOptions);browsers.push(browser);
+ const page=await (await browser.newContext({viewport:{width:640,height:480},ignoreHTTPSErrors:true,userAgent:name})).newPage();const c={name,page,welcomes:[],frames:[],inputs:[],events:[]};clients.push(c);
+ await page.addInitScript(()=>{globalThis.productionSocketTrace=[];const Original=globalThis.WebSocket;globalThis.WebSocket=class extends Original{constructor(...args){super(...args);productionSocketTrace.push(['construct',performance.now()]);for(const event of ['open','close','error'])this.addEventListener(event,()=>productionSocketTrace.push([event,performance.now()]));this.addEventListener('message',e=>{try{productionSocketTrace.push(['receive',performance.now(),Object.keys(JSON.parse(e.data))[0]]);}catch{}});}send(data){try{productionSocketTrace.push(['send',performance.now(),Object.keys(JSON.parse(data))[0]]);}catch{}return super.send(data);}};});
  page.on('pageerror',e=>evidence.errors.push(`${name}: ${e.message}`));page.on('console',m=>{if(m.type()==='error'){if(outage&&m.text().includes('WebSocket'))evidence.expected_outage_errors.push(m.text());else evidence.errors.push(`${name}: ${m.text()}`);}});
  page.on('websocket',ws=>{assert.equal(ws.url(),'wss://ryggattack.modig.online/ws');ws.on('framereceived',({payload})=>{const m=JSON.parse(payload);if(m.Welcome){secrets.add(m.Welcome.credential);const {credential,...safe}=m.Welcome;c.identity=safe;c.welcomes.push(safe);}if(m.Lobby)c.lobby=m.Lobby;if(m.State){c.last=m.State;c.frames.push(m.State);}});ws.on('framesent',({payload})=>{const m=JSON.parse(payload);if(m.Input)c.inputs.push(m.Input);});});
  await page.goto(`https://ryggattack.modig.online/?quality=0${code?'&room='+code:''}`);
@@ -38,7 +44,7 @@ try{
  server=spawn(path.resolve('target/debug/ryggattack-server'),['127.0.0.1:0'],{env:{...process.env,RYGGATTACK_MODE:'production',RYGGATTACK_ALLOWED_ORIGINS:'https://ryggattack.modig.online',RYGGATTACK_MANAGEMENT_BIND:'127.0.0.1:0'}});server.stderr.on('data',b=>log+=b);
  backend=await new Promise((r,j)=>{server.stdout.on('data',b=>{const m=String(b).match(/ws:\/\/127.0.0.1:(\d+)/);if(m)r(+m[1]);});server.once('error',j);setTimeout(()=>j(Error('backend startup')),10000).unref();});
  await new Promise(r=>front.listen(0,'127.0.0.1',r));
- browser=await chromium.launch({args:[`--host-resolver-rules=MAP ryggattack.modig.online 127.0.0.1:${front.address().port}`,'--no-proxy-server','--ignore-certificate-errors','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
+ browserOptions={args:[`--host-resolver-rules=MAP ryggattack.modig.online 127.0.0.1:${front.address().port}`,'--no-proxy-server','--ignore-certificate-errors','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']};
  const a=await pageFor('ProductionA'),b=await pageFor('ProductionB',a.lobby.code);
  assert.equal(a.identity.room,b.identity.room);assert.notEqual(a.identity.seat,b.identity.seat);
  await expand(a);await a.page.locator('#bots-room').fill('0');await a.page.locator('#target-room').selectOption('7');await a.page.locator('#apply-room').click();await until(()=>a.lobby.settings.bots===0,'host settings');
@@ -55,11 +61,13 @@ try{
  const other=new Map(b.frames.map(f=>[f.tick,f]));const common=a.frames.filter(f=>other.has(f.tick));assert(common.length>8);for(const f of common)assert.deepEqual(f,other.get(f.tick));
  assert(evidence.origins.length>=3&&evidence.origins.every(r=>r.origin==='https://ryggattack.modig.online'&&r.path==='/ws'));
  evidence.identities={a:a.identity,b:b.identity};evidence.shared_identical_ticks=common.length;evidence.held_input_neutralization=true;evidence.checks=['actual canonical HTTPS location with local-only DNS map/self-signed fixture','default same-origin WSS /ws from real HTML create/join forms','two real rendered WASM clients configure/ready/start and send keyboard intent','authoritative common snapshots identical','real WSS disconnect -> bot takeover -> same private identity/seat secure reconnect; held controls neutralized'];
+ evidence.browser_isolation='one Chromium/SwiftShader GPU process per rendered participant';
+ evidence.lifecycle=[];for(const c of clients)evidence.lifecycle.push({name:c.name,...await c.page.evaluate(()=>({time_origin_ms:performance.timeOrigin,trace:productionSocketTrace.filter(([event,,kind])=>!['send','receive'].includes(event)||['Hello','Reconnect','Welcome','Error'].includes(kind))}))});
  // Release both software renderers before the offline game, just as the shared harness.
  for(const c of clients){await c.page.close();c.page=null;}
  assert.equal(evidence.errors.length,0,JSON.stringify(evidence.errors));
-}catch(e){evidence.failure=String(e.stack??e);for(const c of clients)if(c.page)try{await c.page.screenshot({path:path.join(out,c.name+'-failure.png'),timeout:30000});}catch{}throw e;
+}catch(e){evidence.failure=String(e.stack??e);evidence.failure_state=[];for(const c of clients)if(c.page){try{evidence.failure_state.push({name:c.name,identity:c.identity,lobby:c.lobby,welcomes:c.welcomes,frames:c.frames.length,trace:await c.page.evaluate(()=>globalThis.productionSocketTrace??[]),status:await c.page.locator('#room-notice').innerText()});await c.page.screenshot({path:path.join(out,c.name+'-failure.png'),timeout:30000});}catch{}}throw e;
 }finally{
  evidence.server_log=log;const text=JSON.stringify(evidence,null,2);assert([...secrets].every(t=>!text.includes(t)),'credential leaked');evidence.credential_negative_scan=true;fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));
- await browser?.close();for(const p of pipes){p.up.destroy();p.down.destroy();}await new Promise(r=>front.close(r));server?.kill('SIGTERM');
+ await Promise.all(browsers.map(b=>b.close()));for(const p of pipes){p.up.destroy();p.down.destroy();}await new Promise(r=>front.close(r));server?.kill('SIGTERM');
 }
