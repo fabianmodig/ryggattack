@@ -4,6 +4,30 @@ metadata:
   name: {{ .Release.Name }}
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    traefik.ingress.kubernetes.io/router.priority: "10"
+spec:
+  ingressClassName: external
+  tls:
+    - hosts: [ryggattack.modig.online]
+      secretName: {{ .Release.Name }}-tls
+  rules:
+    - host: ryggattack.modig.online
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-web
+                port: {name: http}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-websocket
+  annotations:
+    # Exact /ws must outrank the longer generated PathPrefix(`/`) rule.
+    traefik.ingress.kubernetes.io/router.priority: "100"
 spec:
   ingressClassName: external
   tls:
@@ -19,9 +43,3 @@ spec:
               service:
                 name: {{ .Release.Name }}-server
                 port: {name: websocket}
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-web
-                port: {name: http}

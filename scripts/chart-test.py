@@ -28,14 +28,32 @@ assert env['RYGGATTACK_MODE']=='production'
 assert env['RYGGATTACK_ALLOWED_ORIGINS']=='https://ryggattack.modig.online'
 assert c['readinessProbe']['httpGet']=={'path':'/readyz','port':'management'}
 assert c['livenessProbe']['httpGet']=={'path':'/healthz','port':'management'}
-ingress=next(i for i in items if i['kind']=='Ingress')
-assert ingress['spec']['ingressClassName']=='external'
-assert ingress['metadata']['annotations']['cert-manager.io/cluster-issuer']=='letsencrypt-cloudflare'
-assert ingress['spec']['tls'][0]['hosts']==['ryggattack.modig.online']
-paths=ingress['spec']['rules'][0]['http']['paths']
-assert {(p['path'],p['pathType']) for p in paths}=={('/','Prefix'),('/ws','Exact')}
-assert next(p for p in paths if p['path']=='/ws')['backend']['service']['port']['name']=='websocket'
-assert all(p['backend']['service']['port']['name']!='management' for p in paths)
+ingresses=[i for i in items if i['kind']=='Ingress']
+assert len(ingresses)==2, 'split web and WebSocket Ingresses for independent Traefik priorities'
+web=next(i for i in ingresses if i['metadata']['name']=='ryggattack')
+websocket=next(i for i in ingresses if i['metadata']['name']=='ryggattack-websocket')
+priority='traefik.ingress.kubernetes.io/router.priority'
+assert web['metadata']['annotations'][priority]=='10'
+assert websocket['metadata']['annotations'][priority]=='100'
+assert int(websocket['metadata']['annotations'][priority])>int(web['metadata']['annotations'][priority])
+issuer='cert-manager.io/cluster-issuer'
+assert web['metadata']['annotations'][issuer]=='letsencrypt-cloudflare'
+assert not any(key.startswith('cert-manager.io/') for key in websocket['metadata']['annotations']), 'only the existing web Ingress owns certificate issuance'
+for ingress, path, path_type, service, port in [
+    (web, '/', 'Prefix', 'ryggattack-web', 'http'),
+    (websocket, '/ws', 'Exact', 'ryggattack-server', 'websocket'),
+]:
+    assert ingress['spec']['ingressClassName']=='external'
+    assert ingress['spec']['tls']==[{'hosts':['ryggattack.modig.online'],'secretName':'ryggattack-tls'}]
+    assert ingress['spec']['rules']==[{
+        'host':'ryggattack.modig.online',
+        'http':{'paths':[{
+            'path':path, 'pathType':path_type,
+            'backend':{'service':{'name':service,'port':{'name':port}}},
+        }]},
+    }]
+    assert all(p['backend']['service']['port']['name']!='management'
+               for rule in ingress['spec']['rules'] for p in rule['http']['paths'])
 assert all(s['spec']['type']=='ClusterIP' for s in items if s['kind']=='Service')
 policies=[i for i in items if i['kind']=='NetworkPolicy']
 assert policies, 'management port must be namespace-private under NetworkPolicy'

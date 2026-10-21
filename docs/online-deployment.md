@@ -208,9 +208,36 @@ optional `image.tag` override changes **both** components and must match
 Ingress class **external**, host `ryggattack.modig.online`, TLS Secret
 `ryggattack-tls`, cert-manager ClusterIssuer **letsencrypt-cloudflare**:
 
-- `/` Prefix → `ryggattack-web:http` (8080).
-- `/ws` Exact → `ryggattack-server:websocket` (8787), no rewriting.
+- Ingress `ryggattack`: `/` Prefix → `ryggattack-web:http` (8080), explicit
+  `traefik.ingress.kubernetes.io/router.priority: "10"`.
+- Ingress `ryggattack-websocket`: `/ws` Exact →
+  `ryggattack-server:websocket` (8787), explicit priority `"100"`, no rewriting.
+- Both use the same external class, canonical host and existing TLS Secret.
+  Only the existing `ryggattack` Ingress carries the cert-manager issuer
+  annotation, preserving its certificate ownership without a second issuer owner.
 - `ryggattack-server:management` (8788) **has no ingress path**.
+
+Traefik orders otherwise-unprioritized routers by generated rule-string length,
+not an automatic Exact-over-Prefix preference. With the same Host matcher,
+``PathPrefix(`/`)`` can outrank ``Path(`/ws`)``, sending upgrades to nginx and
+returning 404. Separate Ingresses allow independent explicit priorities while
+retaining exact-only `/ws` routing and private management. See the official
+Kubernetes Ingress and HTTP Rules & Priority references:
+
+```text
+https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/ingress/
+https://doc.traefik.io/traefik/reference/routing-configuration/http/routing/rules-and-priority/
+```
+
+The [isolated controller proof](online-deployment-evidence/ingress-priority/README.md)
+records actual 404 → 101 behavior on a temporary diagnostic HTTP Host, **not
+canonical public acceptance**. The chart-only fix leaves runtime sources,
+images and the published paired `appVersion: sha-205d048` unchanged. After exact
+PR-head CI passes, the operator can use the documented chart-only merge pattern
+with `[skip ci]` in the merge commit message to avoid republishing unchanged
+images. This is not a skipped PR validation gate. No merge or rollout is implied
+by the local chart checks; canonical trusted browser/WSS replay remains blocked
+until the reviewed chart reaches main and Flux rolls it out.
 
 The separate infra GitRepository should follow `main`, use the namespace's
 read-only git Secret, and include each parent in source ignores:
