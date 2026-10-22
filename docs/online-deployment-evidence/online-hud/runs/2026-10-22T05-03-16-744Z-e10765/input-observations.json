@@ -1,0 +1,142 @@
+[
+  {
+    "sequence": 1,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 8746
+  },
+  {
+    "sequence": 2,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 11655
+  },
+  {
+    "sequence": 3,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12051
+  },
+  {
+    "sequence": 4,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12441
+  },
+  {
+    "sequence": 5,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12825
+  },
+  {
+    "sequence": 6,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13197
+  },
+  {
+    "sequence": 7,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13573
+  },
+  {
+    "sequence": 8,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14316
+  },
+  {
+    "sequence": 9,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14692
+  },
+  {
+    "sequence": 10,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15071
+  },
+  {
+    "sequence": 11,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15450
+  },
+  {
+    "sequence": 12,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15826
+  },
+  {
+    "sequence": 13,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16200
+  },
+  {
+    "sequence": 14,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16572
+  },
+  {
+    "sequence": 15,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 17310
+  },
+  {
+    "sequence": 16,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 17682
+  },
+  {
+    "sequence": 17,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 18143
+  },
+  {
+    "sequence": 18,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 18636
+  },
+  {
+    "sequence": 19,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 19103
+  },
+  {
+    "sequence": 20,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 19559
+  }
+]

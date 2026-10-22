@@ -1,0 +1,10 @@
+{
+  "review_id": "deleg_ce89d096",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "suggestions": [],
+  "scope": "Read-only startup policy delta review; no tests/build/browser execution",
+  "summary": "Only the first exact sequence1/zero axes/firefalse Input after one Hello and complete Welcome is admitted as startup-neutral. Any Lobby, Case, Configure or previous Input prevents reuse. All packets are retained, startup evidence stays separate and case assertions/counters are unchanged. Native pump supports the Welcome-to-first-Lobby gap.",
+  "actual_browser_acceptance": "pending separate actual execution"
+}

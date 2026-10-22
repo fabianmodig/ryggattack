@@ -1,0 +1,10 @@
+{
+  "review_id": "deleg_c06a6460",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "suggestions": [],
+  "scope": "Read-only static bounded DOM-poll transition review; no tests/build/browser execution",
+  "summary": "Live validation and final replay share the case-local page-clock transition tracker. Initial Lobby does not arm it; actual full DOM/serialized clearing must occur within 100ms of first observed post-Running raw Lobby. Missing/late clear and post-clear outcome reappearance fail. Independent wire-receipt clear<=1000ms, pre-wire winner proof>=2 observations/100ms, authoritative winner, case isolation, deadlines, freshness, privacy and retained failures remain enforced.",
+  "actual_browser_acceptance": "pending separate real execution"
+}

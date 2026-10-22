@@ -1,0 +1,12 @@
+{
+  "scope": "ISOLATED SYNTHETIC PRESENTATION DIAGNOSTIC ONLY; no native backend, WASM bootstrap, natural game or credential",
+  "fixture": {
+    "label": "ISOLATED SYNTHETIC PRESENTATION ONLY",
+    "checks": []
+  },
+  "screenshots": [],
+  "errors": [],
+  "archived_script_sha256": "1fec0bb9f368962e6b82d353c500d3948c16a9e83406fc09013ede1cdf66740a",
+  "status": "failed",
+  "failure": "AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:\n\n[\n  '<img src=x onerror=\"globalThis.fixtureEscaped=true\"> & a very long driver name (you)',\n  'Bot 2',\n  'Other',\n  'Fourth'\n]\n\n    at runPresentationFixture (evalmachine.<anonymous>:39:12)\n    at async file:///home/hermes/.hermes/cache/scratch/hud-synthetic-diagnostic.mjs:12:390"
+}

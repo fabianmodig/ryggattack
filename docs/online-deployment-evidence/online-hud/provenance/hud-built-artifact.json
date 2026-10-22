@@ -1,0 +1,88 @@
+{
+  "runtime_sources_unchanged": true,
+  "source_state": {
+    "head": "1b0fd6a471ff9f470f9262db6310df88312b0164",
+    "files": {
+      "Cargo.lock": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+      "Cargo.toml": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+      "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "scripts/build-web.sh": "45e5683d9a4651966c9c1c8389aaad4c09e2dc58267fa426442900c9c2fb43a5",
+      "src/arena.rs": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+      "src/batch.rs": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "src/bin/ryggattack-headless.rs": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "src/bin/ryggattack-net-probe.rs": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "src/bin/ryggattack-server.rs": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+      "src/combat.rs": "6d99fee7f172fdf0667be748329a87a59872275fd114f47aef10d792d07de0b6",
+      "src/explosions.rs": "d67ab803370735befe27867e41beb40bd9b5663591c68bb694d39a8ea879f063",
+      "src/game.rs": "26017559a256b87d48d91020e6d3413e41d09e2ae2cbf03df41aa9c7715c1204",
+      "src/headless.rs": "be15d72e7e21eb7a4cbded61a796cc9af5464da7d3885d76b99f52f49ce61510",
+      "src/input.rs": "4ac3b4c63b0284af8410db83f843547b164ce516d58093f73ff7c44b80b3e8cf",
+      "src/lib.rs": "d0260c99b07b3aff3054359ac974573c9bba0aca4afc7f217227aa5a38873ae5",
+      "src/main.rs": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "src/management.rs": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+      "src/match_settings.rs": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "src/net_client.rs": "44da75daab8712feb5c5176c936afce715d0d3c1b5d786685f9fbeb5fe70ceee",
+      "src/network.rs": "d8a6d2d3f5f8115ad627dfe46f1b5f547ca1d2d7dc94a4a377ce54f5366f74b3",
+      "src/online.rs": "68cfd0e19b2a437b295a58251c62993173416e42b2bcbfd52ec6070da17bc201",
+      "src/players/mod.rs": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "src/players/roster.rs": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "src/players/visuals.rs": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "src/powerups.rs": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "src/rooms.rs": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+      "src/scene.rs": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+      "src/scenery.rs": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+      "src/server.rs": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+      "src/server/authority_tests.rs": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+      "src/server/parity_tests.rs": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+      "src/settings.rs": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "src/simulation.rs": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "src/tracks/map.rs": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "src/tracks/mod.rs": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "src/tracks/path.rs": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "src/tracks/render.rs": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "src/ui/lobby.rs": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "src/ui/mod.rs": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "src/ui/nav.rs": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "web/Dockerfile": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "web/index.html": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "web/nginx-main.conf": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+      "web/nginx.conf": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+      "web/online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "web/online-hud.mjs": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "web/pages-redirect.html": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+      "web/refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "web/rooms.mjs": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827"
+    }
+  },
+  "artifacts": {
+    "index.html": {
+      "bytes": 4677,
+      "sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a"
+    },
+    "refresh-rate.mjs": {
+      "bytes": 2147,
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48"
+    },
+    "rooms.mjs": {
+      "bytes": 3535,
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827"
+    },
+    "online-hud.mjs": {
+      "bytes": 8755,
+      "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a"
+    },
+    "online-hud-bridge.mjs": {
+      "bytes": 1029,
+      "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc"
+    },
+    "ryggattack.js": {
+      "bytes": 118877,
+      "sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a"
+    },
+    "ryggattack_bg.wasm": {
+      "bytes": 39799188,
+      "sha256": "616a8724009a7d548190a50dfdfc205cb9e57a7c001b24d29ec5f32d80fea8a1"
+    }
+  }
+}

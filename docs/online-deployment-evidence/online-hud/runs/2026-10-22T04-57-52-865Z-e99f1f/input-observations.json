@@ -1,0 +1,51 @@
+[
+  {
+    "sequence": 1,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13056
+  },
+  {
+    "sequence": 2,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13925
+  },
+  {
+    "sequence": 3,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14712
+  },
+  {
+    "sequence": 4,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16268
+  },
+  {
+    "sequence": 5,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 17123
+  },
+  {
+    "sequence": 6,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 17918
+  },
+  {
+    "sequence": 7,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 18703
+  }
+]

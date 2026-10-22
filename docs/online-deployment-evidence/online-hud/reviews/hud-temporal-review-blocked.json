@@ -1,0 +1,11 @@
+{
+  "review_id": "deleg_e83b9436",
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [{
+    "locations": ["scripts/online-hud-smoke.mjs:117", "scripts/online-hud-cases.mjs:50-51"],
+    "diagnosis": "Unconditional raw-Lobby/outcome rejection incorrectly assumes native publication and the independently polled DOM change atomically. The bridge intentionally updates DOM every 100ms; the observer can see a newer raw Lobby alongside the previous displayed winner before that poll.",
+    "minimal_fix": "Use a shared case-local page-clock transition rule allowing at most the explicit 100ms DOM-poll interval, requiring clearing and rejecting post-clear reappearance. Preserve independent 1000ms wire-Lobby-to-actual-clear bound and pre-wire winner proof. Do not change runtime code to satisfy this oracle."
+  }],
+  "scope": "Read-only review; no builds/tests/browser actions; no actual acceptance approval"
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "actual-failure.png",
+    "sha256": "eb535e21a6901e50f6a6c66644c50675e9d21b4fe1a2d2035211ba7ae794a529"
+  },
+  {
+    "file": "authoritative-state-projections.json",
+    "sha256": "58d42c2845a333810168ebdf9c77c4b473586d62e958d6060f13297c4125d427"
+  },
+  {
+    "file": "dom-observations.json",
+    "sha256": "1ed720bd5c1d92bde942e3d2dbe8591de1f347d4a1a183b074fd8de792655ef2"
+  },
+  {
+    "file": "input-observations.json",
+    "sha256": "ffc11a8f6d519142a44fc1c7b7cfd08434ab27aa9999b774f26a1902ff9b314d"
+  },
+  {
+    "file": "results.json",
+    "sha256": "638005c80fcfd3b495fcbdcce52dee5dc82b4ec9f0d81847493f149831a588bd"
+  }
+]

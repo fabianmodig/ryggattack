@@ -1,0 +1,23 @@
+{
+  "scope": "Actual git diff --no-index --check of package versus empty directory; only copied immutable evidence may be excepted",
+  "exit_code": 3,
+  "stdout_lines": [
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red-callback.log:108: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red-callback.log:116: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red-details.log:12: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red-details.log:15: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red.log:12: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/red.log:15: trailing whitespace.",
+    "+    ",
+    "/home/hermes/src/ryggattack-online-hud/docs/online-deployment-evidence/online-hud/tdd/startup-policy/scoped-smoke.diff:12: trailing whitespace.",
+    "+ "
+  ],
+  "stderr": "",
+  "new_authored_file_findings": [],
+  "immutable_evidence_exception_only": true
+}

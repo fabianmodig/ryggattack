@@ -1,0 +1,18 @@
+[
+  {
+    "file": "authoritative-state-projections.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "file": "dom-observations.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "file": "input-observations.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "file": "results.json",
+    "sha256": "8c10a0fd82c6bd24a691504dc5b8a7ace4adfdc07c34dd3cb57a3209edf24848"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "implementation_commit": "a2c90aa411d0104d5459398ecceaf1c4cfb336f0",
+  "head_after_main_merge": "59c0c47713c608a5aa41f3470b723f9d07268dfc",
+  "merged_main": "520a47b8252e9ea8a6264e77dc69f00b990713bd",
+  "changed_paths": [
+    "charts/ryggattack/Chart.yaml"
+  ],
+  "all_104_executed_source_helper_artifact_binary_hashes_still_match": true
+}

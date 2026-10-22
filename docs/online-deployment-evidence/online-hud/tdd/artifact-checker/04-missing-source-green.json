@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T04:50:05.053394+00:00",
+  "command": [
+    "node",
+    "--test",
+    "scripts/online-hud-artifacts.test.mjs"
+  ],
+  "exit_code": 0,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "b9ba4323d9c885766b7d255c957463962d364cf8f1dc865e8de5e0bda3dd5148",
+    "scripts/online-hud-artifacts.mjs": "8647a5e02c65a51828db395911e58667fb9d194b10227031389f20637ff3d0be",
+    "scripts/online-hud-artifacts.test.mjs": "d2097e12f0a8524a9df1ddd15da5d6801ff9a0575a5538733d0e1578ace68211"
+  },
+  "output": "TAP version 13\n# Subtest: unreferenced retired HTML is not a game artifact requirement\nok 1 - unreferenced retired HTML is not a game artifact requirement\n  ---\n  duration_ms: 95.281571\n  type: 'test'\n  ...\n# Subtest: missing reachable source module fails rather than silently skipping it\nok 2 - missing reachable source module fails rather than silently skipping it\n  ---\n  duration_ms: 40.866296\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 213.954416\n"
+}

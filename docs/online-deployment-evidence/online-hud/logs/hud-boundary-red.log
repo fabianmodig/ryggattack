@@ -1,0 +1,21 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-hud)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4m 57s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-db21e59a20f3f2b2)
+
+running 1 test
+
+thread 'net_client::resilience_tests::coalesced_match_boundary_discards_old_winner_before_pump' (104834) panicked at src/net_client.rs:672:9:
+coalescing resurrected the previous match winner
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test net_client::resilience_tests::coalesced_match_boundary_discards_old_winner_before_pump ... FAILED
+
+failures:
+
+failures:
+    net_client::resilience_tests::coalesced_match_boundary_discards_old_winner_before_pump
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 170 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING hud-boundary-red: 298.267 s; exit=101

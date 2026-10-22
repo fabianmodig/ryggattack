@@ -1,0 +1,2 @@
+scripts/online-hud-startup.mjs: no whitespace diagnostics; raw no-index exit 1 indicates new-file differences
+scripts/online-hud-startup.test.mjs: no whitespace diagnostics; raw no-index exit 1 indicates new-file differences

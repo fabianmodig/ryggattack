@@ -1,0 +1,3 @@
+{"status":"failed","out":"/home/hermes/src/ryggattack-online-hud/verification/online-hud-synthetic-diagnostic","failure":"AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:"}
+
+TIMING hud-synthetic-diagnostic: 0.512 s; exit=1

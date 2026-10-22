@@ -1,0 +1,850 @@
+{
+  "scope": "Packaging-time verification against the original passing report; not a new execution or retroactive run metadata. All original hashes, including built WASM, generated glue, assets and native server, were compared on disk. Binary files are NOT retained.",
+  "checks": [
+    {
+      "file": "Cargo.lock",
+      "bytes": 150156,
+      "expected_sha256": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+      "actual_sha256": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+      "matched": true
+    },
+    {
+      "file": "Cargo.toml",
+      "bytes": 1194,
+      "expected_sha256": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+      "actual_sha256": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+      "matched": true
+    },
+    {
+      "file": "dist/web/assets/players/cart-riders.png",
+      "bytes": 1165424,
+      "expected_sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "actual_sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "matched": true
+    },
+    {
+      "file": "dist/web/assets/players/riders.png",
+      "bytes": 1118713,
+      "expected_sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "actual_sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "matched": true
+    },
+    {
+      "file": "dist/web/index.html",
+      "bytes": 4677,
+      "expected_sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "actual_sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "matched": true
+    },
+    {
+      "file": "dist/web/online-hud-bridge.mjs",
+      "bytes": 1029,
+      "expected_sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "actual_sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "matched": true
+    },
+    {
+      "file": "dist/web/online-hud.mjs",
+      "bytes": 8755,
+      "expected_sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "actual_sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "matched": true
+    },
+    {
+      "file": "dist/web/refresh-rate.mjs",
+      "bytes": 2147,
+      "expected_sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "actual_sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "matched": true
+    },
+    {
+      "file": "dist/web/rooms.mjs",
+      "bytes": 3535,
+      "expected_sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "actual_sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "matched": true
+    },
+    {
+      "file": "dist/web/ryggattack.js",
+      "bytes": 118877,
+      "expected_sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+      "actual_sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+      "matched": true
+    },
+    {
+      "file": "dist/web/ryggattack_bg.wasm",
+      "bytes": 39799188,
+      "expected_sha256": "616a8724009a7d548190a50dfdfc205cb9e57a7c001b24d29ec5f32d80fea8a1",
+      "actual_sha256": "616a8724009a7d548190a50dfdfc205cb9e57a7c001b24d29ec5f32d80fea8a1",
+      "matched": true
+    },
+    {
+      "file": "scripts/build-web.sh",
+      "bytes": 3368,
+      "expected_sha256": "45e5683d9a4651966c9c1c8389aaad4c09e2dc58267fa426442900c9c2fb43a5",
+      "actual_sha256": "45e5683d9a4651966c9c1c8389aaad4c09e2dc58267fa426442900c9c2fb43a5",
+      "matched": true
+    },
+    {
+      "file": "scripts/client-feedback-helpers.mjs",
+      "bytes": 3911,
+      "expected_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+      "actual_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+      "matched": true
+    },
+    {
+      "file": "scripts/client-feedback-helpers.test.mjs",
+      "bytes": 7626,
+      "expected_sha256": "b411664c19dbaa2a5fa77aa415bf0abdb1225c19e051c76f090a23b7a779e3a2",
+      "actual_sha256": "b411664c19dbaa2a5fa77aa415bf0abdb1225c19e051c76f090a23b7a779e3a2",
+      "matched": true
+    },
+    {
+      "file": "scripts/client-feedback-smoke.mjs",
+      "bytes": 26429,
+      "expected_sha256": "a940dfbaf43902896cf16e4ac0efcbe4fad53b8f7f66a0630ff8318fee159d4d",
+      "actual_sha256": "a940dfbaf43902896cf16e4ac0efcbe4fad53b8f7f66a0630ff8318fee159d4d",
+      "matched": true
+    },
+    {
+      "file": "scripts/container-smoke-network.mjs",
+      "bytes": 837,
+      "expected_sha256": "d35c0683d62c22405ae796f124a185de5ac67a7077ddb8d923d7f0f7a7b6fa62",
+      "actual_sha256": "d35c0683d62c22405ae796f124a185de5ac67a7077ddb8d923d7f0f7a7b6fa62",
+      "matched": true
+    },
+    {
+      "file": "scripts/container-smoke-network.test.mjs",
+      "bytes": 1018,
+      "expected_sha256": "19136397570c7f2f5fe25bcd4712bef60e8dfc76d426af90c6f34c904b6ce782",
+      "actual_sha256": "19136397570c7f2f5fe25bcd4712bef60e8dfc76d426af90c6f34c904b6ce782",
+      "matched": true
+    },
+    {
+      "file": "scripts/container-smoke.mjs",
+      "bytes": 8043,
+      "expected_sha256": "5e1df4f98612065fbc65db10f7db1b3a070f7d9c4f99d9b84a97b7f679b77a03",
+      "actual_sha256": "5e1df4f98612065fbc65db10f7db1b3a070f7d9c4f99d9b84a97b7f679b77a03",
+      "matched": true
+    },
+    {
+      "file": "scripts/live-deployment-helpers.mjs",
+      "bytes": 1545,
+      "expected_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+      "actual_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+      "matched": true
+    },
+    {
+      "file": "scripts/live-deployment-helpers.test.mjs",
+      "bytes": 1543,
+      "expected_sha256": "66d8de3fc03c39ab3ec9bed5887ff9945514fd15d2743585b4e049edea819d64",
+      "actual_sha256": "66d8de3fc03c39ab3ec9bed5887ff9945514fd15d2743585b4e049edea819d64",
+      "matched": true
+    },
+    {
+      "file": "scripts/live-deployment-smoke.mjs",
+      "bytes": 23464,
+      "expected_sha256": "9f855e97d439335906cd0d0b5653d61efeef47ae45047c7ba221a28e9d364c39",
+      "actual_sha256": "9f855e97d439335906cd0d0b5653d61efeef47ae45047c7ba221a28e9d364c39",
+      "matched": true
+    },
+    {
+      "file": "scripts/native-tls.test.mjs",
+      "bytes": 2451,
+      "expected_sha256": "ff62a26041c5bbf4bd625c622339344e3068553841cefa6cf4b91530a8f0ddb7",
+      "actual_sha256": "ff62a26041c5bbf4bd625c622339344e3068553841cefa6cf4b91530a8f0ddb7",
+      "matched": true
+    },
+    {
+      "file": "scripts/network-harness-helpers.mjs",
+      "bytes": 395,
+      "expected_sha256": "dcad4365c233fa1df860fcdaf7927e91c24b3476c47ed5a6b2568f1400cce2e2",
+      "actual_sha256": "dcad4365c233fa1df860fcdaf7927e91c24b3476c47ed5a6b2568f1400cce2e2",
+      "matched": true
+    },
+    {
+      "file": "scripts/network-harness.test.mjs",
+      "bytes": 911,
+      "expected_sha256": "9060a68ba94162802b57b9a509a2cdb96220fbe233e3f346bb6b79dc4905ac1a",
+      "actual_sha256": "9060a68ba94162802b57b9a509a2cdb96220fbe233e3f346bb6b79dc4905ac1a",
+      "matched": true
+    },
+    {
+      "file": "scripts/network-smoke.mjs",
+      "bytes": 30232,
+      "expected_sha256": "d31140d15b39a865d2e87e40dc4a7740e9e02353eecc5d81d89f78068891378e",
+      "actual_sha256": "d31140d15b39a865d2e87e40dc4a7740e9e02353eecc5d81d89f78068891378e",
+      "matched": true
+    },
+    {
+      "file": "scripts/network-sockets.mjs",
+      "bytes": 7492,
+      "expected_sha256": "9c6370d8a33945593124eac0d73ef01707e1834e543c6437251c0b7da732c20d",
+      "actual_sha256": "9c6370d8a33945593124eac0d73ef01707e1834e543c6437251c0b7da732c20d",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-artifacts.mjs",
+      "bytes": 2722,
+      "expected_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+      "actual_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-artifacts.test.mjs",
+      "bytes": 4067,
+      "expected_sha256": "4105d0bd301838eb26e6ea77facfbe72894836f7adf3a0d68bdf1b36d53aad4b",
+      "actual_sha256": "4105d0bd301838eb26e6ea77facfbe72894836f7adf3a0d68bdf1b36d53aad4b",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-assets.test.mjs",
+      "bytes": 1000,
+      "expected_sha256": "f87d298b1967dfe363b677a78056410243230dbb50dfe21e6e887eca33dfc5c6",
+      "actual_sha256": "f87d298b1967dfe363b677a78056410243230dbb50dfe21e6e887eca33dfc5c6",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-bridge.test.mjs",
+      "bytes": 2876,
+      "expected_sha256": "f0d563a9548b681317a1e84e36f180b02505f81f5d9a250a866367ac6d4b0436",
+      "actual_sha256": "f0d563a9548b681317a1e84e36f180b02505f81f5d9a250a866367ac6d4b0436",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-cases.mjs",
+      "bytes": 7332,
+      "expected_sha256": "4648a0fe34da71add1332d0e85b8231eb8f14e0913e6282091dea2f87f0cd050",
+      "actual_sha256": "4648a0fe34da71add1332d0e85b8231eb8f14e0913e6282091dea2f87f0cd050",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-cases.test.mjs",
+      "bytes": 3863,
+      "expected_sha256": "ec072a2898aa5160a0270fb7bf6e6c984649d3da5f3df24298865f1869d8465f",
+      "actual_sha256": "ec072a2898aa5160a0270fb7bf6e6c984649d3da5f3df24298865f1869d8465f",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-smoke.mjs",
+      "bytes": 49550,
+      "expected_sha256": "2d84061b09ab6260ec4acec63f0900beca0457d0a2fcd94eae788414f3d36b96",
+      "actual_sha256": "2d84061b09ab6260ec4acec63f0900beca0457d0a2fcd94eae788414f3d36b96",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-startup.mjs",
+      "bytes": 1757,
+      "expected_sha256": "7c519f9ee0f39a1a3156ba05ca1aacc9bb8fb529bc435b1afc30a2c7c9f50a14",
+      "actual_sha256": "7c519f9ee0f39a1a3156ba05ca1aacc9bb8fb529bc435b1afc30a2c7c9f50a14",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-startup.test.mjs",
+      "bytes": 7744,
+      "expected_sha256": "d0ecfddc1f9aafe8ffe8ddd624e74ca593276971bb5e2443d01cdefd6182bdd0",
+      "actual_sha256": "d0ecfddc1f9aafe8ffe8ddd624e74ca593276971bb5e2443d01cdefd6182bdd0",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud-temporal.test.mjs",
+      "bytes": 13583,
+      "expected_sha256": "d3ffb6b89dcf2b541a8a747c22953144c16a7a4008e7ec27058f1b307797b2ed",
+      "actual_sha256": "d3ffb6b89dcf2b541a8a747c22953144c16a7a4008e7ec27058f1b307797b2ed",
+      "matched": true
+    },
+    {
+      "file": "scripts/online-hud.test.mjs",
+      "bytes": 9606,
+      "expected_sha256": "7788cc1ca43f6acb3d93a00069308fa31644307fc13614c34c6efe441c039424",
+      "actual_sha256": "7788cc1ca43f6acb3d93a00069308fa31644307fc13614c34c6efe441c039424",
+      "matched": true
+    },
+    {
+      "file": "scripts/pages-redirect.test.mjs",
+      "bytes": 776,
+      "expected_sha256": "4a443379c687b11f35ac83c67df9fddd920b0bfd66d12f97909c3e2fe811a1e4",
+      "actual_sha256": "4a443379c687b11f35ac83c67df9fddd920b0bfd66d12f97909c3e2fe811a1e4",
+      "matched": true
+    },
+    {
+      "file": "scripts/perf/anatomy.mjs",
+      "bytes": 4242,
+      "expected_sha256": "4d5cab1ad96aff58a57095b97a4d592e2bb4e653e42465120abbe301ab63f877",
+      "actual_sha256": "4d5cab1ad96aff58a57095b97a4d592e2bb4e653e42465120abbe301ab63f877",
+      "matched": true
+    },
+    {
+      "file": "scripts/perf/foundation.mjs",
+      "bytes": 5096,
+      "expected_sha256": "64e9a42e6a6be2f9c774a4d8970f44074fe5e8bc25165a6a58cda74e656f602d",
+      "actual_sha256": "64e9a42e6a6be2f9c774a4d8970f44074fe5e8bc25165a6a58cda74e656f602d",
+      "matched": true
+    },
+    {
+      "file": "scripts/perf/ingame.mjs",
+      "bytes": 9125,
+      "expected_sha256": "1fcda27496ce484016ad25de88a0429eff3ebbf8641d924fae46dbfe3235040f",
+      "actual_sha256": "1fcda27496ce484016ad25de88a0429eff3ebbf8641d924fae46dbfe3235040f",
+      "matched": true
+    },
+    {
+      "file": "scripts/perf/powerups.mjs",
+      "bytes": 4314,
+      "expected_sha256": "c322a9938a2932eeff875c2e62d1804f2fef8608be938f2b9774b5b4b9c61cf3",
+      "actual_sha256": "c322a9938a2932eeff875c2e62d1804f2fef8608be938f2b9774b5b4b9c61cf3",
+      "matched": true
+    },
+    {
+      "file": "scripts/perf/shots.mjs",
+      "bytes": 3590,
+      "expected_sha256": "a540c7a7c9549946fbddb3facd6c4acae3ec404e976ba60a997c8901b2b2bc88",
+      "actual_sha256": "a540c7a7c9549946fbddb3facd6c4acae3ec404e976ba60a997c8901b2b2bc88",
+      "matched": true
+    },
+    {
+      "file": "scripts/portable-container-build.test.mjs",
+      "bytes": 1083,
+      "expected_sha256": "13e86a6f0dc990f60c5ce4501775fe4ea056007719017cd02032913bc39bd74a",
+      "actual_sha256": "13e86a6f0dc990f60c5ce4501775fe4ea056007719017cd02032913bc39bd74a",
+      "matched": true
+    },
+    {
+      "file": "scripts/production-browser.mjs",
+      "bytes": 11140,
+      "expected_sha256": "1dd057622271630b6f997dc63d4ae16c360be3119715921bb4526fad3809919d",
+      "actual_sha256": "1dd057622271630b6f997dc63d4ae16c360be3119715921bb4526fad3809919d",
+      "matched": true
+    },
+    {
+      "file": "scripts/production-smoke.mjs",
+      "bytes": 6986,
+      "expected_sha256": "e13690e5e77093310cc0f06e476b8194f9ec358598278a506fb3a80b28bb403a",
+      "actual_sha256": "e13690e5e77093310cc0f06e476b8194f9ec358598278a506fb3a80b28bb403a",
+      "matched": true
+    },
+    {
+      "file": "scripts/refresh-rate.test.mjs",
+      "bytes": 7910,
+      "expected_sha256": "4d16b29d1b21d3312ba075eee8e636e88cf9b405c6fb110e77d5129af4f4de75",
+      "actual_sha256": "4d16b29d1b21d3312ba075eee8e636e88cf9b405c6fb110e77d5129af4f4de75",
+      "matched": true
+    },
+    {
+      "file": "scripts/resilience-harness.test.mjs",
+      "bytes": 751,
+      "expected_sha256": "c5630c17428a1f76b64261d5728c5f62e1d2af25bda062006788766d2554d705",
+      "actual_sha256": "c5630c17428a1f76b64261d5728c5f62e1d2af25bda062006788766d2554d705",
+      "matched": true
+    },
+    {
+      "file": "scripts/resilience-helpers.mjs",
+      "bytes": 405,
+      "expected_sha256": "2286520b87c64858b80e1db5cdb645f0f1da2f1d50da4a2d398bd5e366d2d575",
+      "actual_sha256": "2286520b87c64858b80e1db5cdb645f0f1da2f1d50da4a2d398bd5e366d2d575",
+      "matched": true
+    },
+    {
+      "file": "scripts/resilience-smoke.mjs",
+      "bytes": 19519,
+      "expected_sha256": "c8c5abc09f91abefa279b2d5d74448c6081ced76832bd175ce7d674b922986f0",
+      "actual_sha256": "c8c5abc09f91abefa279b2d5d74448c6081ced76832bd175ce7d674b922986f0",
+      "matched": true
+    },
+    {
+      "file": "scripts/rooms-load.mjs",
+      "bytes": 3373,
+      "expected_sha256": "575c35e09e18a6478fa92dab5d2cfa20fa45e6558beb1e03b781033bd836c57a",
+      "actual_sha256": "575c35e09e18a6478fa92dab5d2cfa20fa45e6558beb1e03b781033bd836c57a",
+      "matched": true
+    },
+    {
+      "file": "scripts/rooms-ui.test.mjs",
+      "bytes": 3072,
+      "expected_sha256": "1bdc825ce1645c43372781dd88aa8ee72ad0174876e2f218a4284d79f189f179",
+      "actual_sha256": "1bdc825ce1645c43372781dd88aa8ee72ad0174876e2f218a4284d79f189f179",
+      "matched": true
+    },
+    {
+      "file": "scripts/server-banner.test.mjs",
+      "bytes": 722,
+      "expected_sha256": "2af88fc5c7d14892d7d8f68809b28f4445e166d8ecaee36d73fd5dd3eea47f37",
+      "actual_sha256": "2af88fc5c7d14892d7d8f68809b28f4445e166d8ecaee36d73fd5dd3eea47f37",
+      "matched": true
+    },
+    {
+      "file": "scripts/server-policy.test.mjs",
+      "bytes": 1127,
+      "expected_sha256": "7aedd3cfb1623dad84a9f6f03f06e1b60ea039d0891a32ad02ce9d8ce84dac19",
+      "actual_sha256": "7aedd3cfb1623dad84a9f6f03f06e1b60ea039d0891a32ad02ce9d8ce84dac19",
+      "matched": true
+    },
+    {
+      "file": "scripts/solo-bots-helpers.mjs",
+      "bytes": 3574,
+      "expected_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+      "actual_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+      "matched": true
+    },
+    {
+      "file": "scripts/solo-bots-helpers.test.mjs",
+      "bytes": 7294,
+      "expected_sha256": "727b6db57f2842f2ab02e3be8bc64323f39a0b899e3097f51729bb1fc902ec96",
+      "actual_sha256": "727b6db57f2842f2ab02e3be8bc64323f39a0b899e3097f51729bb1fc902ec96",
+      "matched": true
+    },
+    {
+      "file": "scripts/solo-bots-smoke.mjs",
+      "bytes": 12970,
+      "expected_sha256": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
+      "actual_sha256": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
+      "matched": true
+    },
+    {
+      "file": "scripts/wasm-bindgen-version.sh",
+      "bytes": 547,
+      "expected_sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+      "actual_sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+      "matched": true
+    },
+    {
+      "file": "src/arena.rs",
+      "bytes": 11457,
+      "expected_sha256": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+      "actual_sha256": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+      "matched": true
+    },
+    {
+      "file": "src/batch.rs",
+      "bytes": 7669,
+      "expected_sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "actual_sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "matched": true
+    },
+    {
+      "file": "src/bin/ryggattack-headless.rs",
+      "bytes": 2164,
+      "expected_sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "actual_sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "matched": true
+    },
+    {
+      "file": "src/bin/ryggattack-net-probe.rs",
+      "bytes": 2657,
+      "expected_sha256": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "actual_sha256": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "matched": true
+    },
+    {
+      "file": "src/bin/ryggattack-server.rs",
+      "bytes": 1868,
+      "expected_sha256": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+      "actual_sha256": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+      "matched": true
+    },
+    {
+      "file": "src/combat.rs",
+      "bytes": 21253,
+      "expected_sha256": "6d99fee7f172fdf0667be748329a87a59872275fd114f47aef10d792d07de0b6",
+      "actual_sha256": "6d99fee7f172fdf0667be748329a87a59872275fd114f47aef10d792d07de0b6",
+      "matched": true
+    },
+    {
+      "file": "src/explosions.rs",
+      "bytes": 19638,
+      "expected_sha256": "d67ab803370735befe27867e41beb40bd9b5663591c68bb694d39a8ea879f063",
+      "actual_sha256": "d67ab803370735befe27867e41beb40bd9b5663591c68bb694d39a8ea879f063",
+      "matched": true
+    },
+    {
+      "file": "src/game.rs",
+      "bytes": 12942,
+      "expected_sha256": "26017559a256b87d48d91020e6d3413e41d09e2ae2cbf03df41aa9c7715c1204",
+      "actual_sha256": "26017559a256b87d48d91020e6d3413e41d09e2ae2cbf03df41aa9c7715c1204",
+      "matched": true
+    },
+    {
+      "file": "src/headless.rs",
+      "bytes": 15335,
+      "expected_sha256": "be15d72e7e21eb7a4cbded61a796cc9af5464da7d3885d76b99f52f49ce61510",
+      "actual_sha256": "be15d72e7e21eb7a4cbded61a796cc9af5464da7d3885d76b99f52f49ce61510",
+      "matched": true
+    },
+    {
+      "file": "src/input.rs",
+      "bytes": 1730,
+      "expected_sha256": "4ac3b4c63b0284af8410db83f843547b164ce516d58093f73ff7c44b80b3e8cf",
+      "actual_sha256": "4ac3b4c63b0284af8410db83f843547b164ce516d58093f73ff7c44b80b3e8cf",
+      "matched": true
+    },
+    {
+      "file": "src/lib.rs",
+      "bytes": 4865,
+      "expected_sha256": "d0260c99b07b3aff3054359ac974573c9bba0aca4afc7f217227aa5a38873ae5",
+      "actual_sha256": "d0260c99b07b3aff3054359ac974573c9bba0aca4afc7f217227aa5a38873ae5",
+      "matched": true
+    },
+    {
+      "file": "src/main.rs",
+      "bytes": 44,
+      "expected_sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "actual_sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "matched": true
+    },
+    {
+      "file": "src/management.rs",
+      "bytes": 4007,
+      "expected_sha256": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+      "actual_sha256": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+      "matched": true
+    },
+    {
+      "file": "src/match_settings.rs",
+      "bytes": 1486,
+      "expected_sha256": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "actual_sha256": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "matched": true
+    },
+    {
+      "file": "src/net_client.rs",
+      "bytes": 30450,
+      "expected_sha256": "44da75daab8712feb5c5176c936afce715d0d3c1b5d786685f9fbeb5fe70ceee",
+      "actual_sha256": "44da75daab8712feb5c5176c936afce715d0d3c1b5d786685f9fbeb5fe70ceee",
+      "matched": true
+    },
+    {
+      "file": "src/network.rs",
+      "bytes": 5436,
+      "expected_sha256": "d8a6d2d3f5f8115ad627dfe46f1b5f547ca1d2d7dc94a4a377ce54f5366f74b3",
+      "actual_sha256": "d8a6d2d3f5f8115ad627dfe46f1b5f547ca1d2d7dc94a4a377ce54f5366f74b3",
+      "matched": true
+    },
+    {
+      "file": "src/online.rs",
+      "bytes": 35170,
+      "expected_sha256": "68cfd0e19b2a437b295a58251c62993173416e42b2bcbfd52ec6070da17bc201",
+      "actual_sha256": "68cfd0e19b2a437b295a58251c62993173416e42b2bcbfd52ec6070da17bc201",
+      "matched": true
+    },
+    {
+      "file": "src/players/mod.rs",
+      "bytes": 38902,
+      "expected_sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "actual_sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "matched": true
+    },
+    {
+      "file": "src/players/roster.rs",
+      "bytes": 5073,
+      "expected_sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "actual_sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "matched": true
+    },
+    {
+      "file": "src/players/visuals.rs",
+      "bytes": 9219,
+      "expected_sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "actual_sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "matched": true
+    },
+    {
+      "file": "src/powerups.rs",
+      "bytes": 12546,
+      "expected_sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "actual_sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "matched": true
+    },
+    {
+      "file": "src/rooms.rs",
+      "bytes": 7472,
+      "expected_sha256": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+      "actual_sha256": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+      "matched": true
+    },
+    {
+      "file": "src/scene.rs",
+      "bytes": 6271,
+      "expected_sha256": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+      "actual_sha256": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+      "matched": true
+    },
+    {
+      "file": "src/scenery.rs",
+      "bytes": 22370,
+      "expected_sha256": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+      "actual_sha256": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+      "matched": true
+    },
+    {
+      "file": "src/server.rs",
+      "bytes": 59031,
+      "expected_sha256": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+      "actual_sha256": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+      "matched": true
+    },
+    {
+      "file": "src/server/authority_tests.rs",
+      "bytes": 6640,
+      "expected_sha256": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+      "actual_sha256": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+      "matched": true
+    },
+    {
+      "file": "src/server/parity_tests.rs",
+      "bytes": 37616,
+      "expected_sha256": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+      "actual_sha256": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+      "matched": true
+    },
+    {
+      "file": "src/settings.rs",
+      "bytes": 38787,
+      "expected_sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "actual_sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "matched": true
+    },
+    {
+      "file": "src/simulation.rs",
+      "bytes": 8797,
+      "expected_sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "actual_sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "matched": true
+    },
+    {
+      "file": "src/tracks/map.rs",
+      "bytes": 9218,
+      "expected_sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "actual_sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "matched": true
+    },
+    {
+      "file": "src/tracks/mod.rs",
+      "bytes": 316,
+      "expected_sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "actual_sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "matched": true
+    },
+    {
+      "file": "src/tracks/path.rs",
+      "bytes": 13199,
+      "expected_sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "actual_sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "matched": true
+    },
+    {
+      "file": "src/tracks/render.rs",
+      "bytes": 10271,
+      "expected_sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "actual_sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "matched": true
+    },
+    {
+      "file": "src/ui/lobby.rs",
+      "bytes": 13758,
+      "expected_sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "actual_sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "matched": true
+    },
+    {
+      "file": "src/ui/mod.rs",
+      "bytes": 22938,
+      "expected_sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "actual_sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "matched": true
+    },
+    {
+      "file": "src/ui/nav.rs",
+      "bytes": 7277,
+      "expected_sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "actual_sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "matched": true
+    },
+    {
+      "file": "target/debug/ryggattack-server",
+      "bytes": 1807888552,
+      "expected_sha256": "4f8db2211e233f4bc2dd278fd1d0de9a9542c9121c53292f3d9a56dd3b119dac",
+      "actual_sha256": "4f8db2211e233f4bc2dd278fd1d0de9a9542c9121c53292f3d9a56dd3b119dac",
+      "matched": true
+    },
+    {
+      "file": "web/Dockerfile",
+      "bytes": 1508,
+      "expected_sha256": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "actual_sha256": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "matched": true
+    },
+    {
+      "file": "web/index.html",
+      "bytes": 4677,
+      "expected_sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "actual_sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "matched": true
+    },
+    {
+      "file": "web/nginx-main.conf",
+      "bytes": 660,
+      "expected_sha256": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+      "actual_sha256": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+      "matched": true
+    },
+    {
+      "file": "web/nginx.conf",
+      "bytes": 1735,
+      "expected_sha256": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+      "actual_sha256": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+      "matched": true
+    },
+    {
+      "file": "web/online-hud-bridge.mjs",
+      "bytes": 1029,
+      "expected_sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "actual_sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "matched": true
+    },
+    {
+      "file": "web/online-hud.mjs",
+      "bytes": 8755,
+      "expected_sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "actual_sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "matched": true
+    },
+    {
+      "file": "web/pages-redirect.html",
+      "bytes": 689,
+      "expected_sha256": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+      "actual_sha256": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+      "matched": true
+    },
+    {
+      "file": "web/refresh-rate.mjs",
+      "bytes": 2147,
+      "expected_sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "actual_sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "matched": true
+    },
+    {
+      "file": "web/rooms.mjs",
+      "bytes": 3535,
+      "expected_sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "actual_sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "matched": true
+    }
+  ],
+  "local_harness_import_closure": [
+    "scripts/client-feedback-helpers.mjs",
+    "scripts/live-deployment-helpers.mjs",
+    "scripts/online-hud-artifacts.mjs",
+    "scripts/online-hud-cases.mjs",
+    "scripts/online-hud-smoke.mjs",
+    "scripts/online-hud-startup.mjs",
+    "scripts/solo-bots-helpers.mjs"
+  ],
+  "imports": [
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:assert/strict"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:crypto"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:fs"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:http"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:path"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:child_process"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:module"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "node:url"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "./live-deployment-helpers.mjs"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "./online-hud-artifacts.mjs"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "./online-hud-startup.mjs"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "./online-hud-cases.mjs"
+    },
+    {
+      "importer": "scripts/online-hud-smoke.mjs",
+      "specifier": "./solo-bots-helpers.mjs"
+    },
+    {
+      "importer": "scripts/solo-bots-helpers.mjs",
+      "specifier": "node:assert/strict"
+    },
+    {
+      "importer": "scripts/solo-bots-helpers.mjs",
+      "specifier": "node:fs"
+    },
+    {
+      "importer": "scripts/solo-bots-helpers.mjs",
+      "specifier": "node:path"
+    },
+    {
+      "importer": "scripts/solo-bots-helpers.mjs",
+      "specifier": "node:crypto"
+    },
+    {
+      "importer": "scripts/solo-bots-helpers.mjs",
+      "specifier": "./client-feedback-helpers.mjs"
+    },
+    {
+      "importer": "scripts/client-feedback-helpers.mjs",
+      "specifier": "node:assert/strict"
+    },
+    {
+      "importer": "scripts/online-hud-cases.mjs",
+      "specifier": "node:assert/strict"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:assert/strict"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:fs"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:path"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:child_process"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:fs"
+    },
+    {
+      "importer": "scripts/online-hud-artifacts.mjs",
+      "specifier": "node:vm"
+    }
+  ],
+  "source_archive": "source-at-pass/",
+  "source_archive_created_during_packaging": true
+}

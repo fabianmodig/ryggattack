@@ -1,0 +1,3 @@
+{"status":"failed","evidence_directory":"/home/hermes/src/ryggattack-online-hud/verification/online-hud/2026-10-22T04-43-59-502Z-72de19","failure":"Error: ENOENT: no such file or directory, open '/home/hermes/src/ryggattack-online-hud/dist/web/pages-redirect.html'"}
+
+TIMING hud-browser: 4.980 s; exit=1

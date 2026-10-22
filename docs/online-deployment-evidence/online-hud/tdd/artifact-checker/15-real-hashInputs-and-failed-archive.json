@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-22T04:53:54.727691+00:00",
+  "command": [
+    "node",
+    "/home/hermes/.hermes/cache/scratch/exercise-online-hud-hash-inputs.mjs"
+  ],
+  "exit_code": 1,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "5e67d98c40a5dca3987375cf3222f28b90b480ba108ebddc95aeecc10f85acf4",
+    "scripts/online-hud-artifacts.mjs": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+    "scripts/online-hud-artifacts.test.mjs": "75ed90306e3c9c2a6dd57dacbc0e34ce2eddb32e657a714b1175d8691ad45177"
+  },
+  "output": "evalmachine.<anonymous>:27\n  assert(fs.readFileSync(path.join(web, 'ryggattack_bg.wasm')).subarray(0, 4).equals(Buffer.from([0, 97, 115, 109])), 'actual WASM magic');\n                                                                                     ^\n\nReferenceError: Buffer is not defined\n    at hashInputs (evalmachine.<anonymous>:27:86)\n    at evalmachine.<anonymous>:31:1\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at file:///home/hermes/.hermes/cache/scratch/exercise-online-hud-hash-inputs.mjs:13:19\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)\n\nNode.js v22.23.3\n"
+}

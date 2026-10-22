@@ -1,0 +1,3 @@
+{"status":"failed","evidence_directory":"/home/hermes/src/ryggattack-online-hud/verification/online-hud/2026-10-22T05-48-27-252Z-673520","failure":"AssertionError [ERR_ASSERTION]: unexpected browser/protocol/cleanup errors"}
+
+TIMING hud-browser-poll-transition: 104.966 s; exit=1

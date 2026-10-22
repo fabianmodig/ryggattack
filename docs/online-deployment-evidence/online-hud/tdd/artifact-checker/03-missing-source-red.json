@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T04:49:28.480418+00:00",
+  "command": [
+    "node",
+    "--test",
+    "scripts/online-hud-artifacts.test.mjs"
+  ],
+  "exit_code": 1,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "b9ba4323d9c885766b7d255c957463962d364cf8f1dc865e8de5e0bda3dd5148",
+    "scripts/online-hud-artifacts.mjs": "4ca771655af7f1b49a3b519445a80bff33891a34e459d540717860b5e1464d66",
+    "scripts/online-hud-artifacts.test.mjs": "d2097e12f0a8524a9df1ddd15da5d6801ff9a0575a5538733d0e1578ace68211"
+  },
+  "output": "TAP version 13\n# Subtest: unreferenced retired HTML is not a game artifact requirement\nok 1 - unreferenced retired HTML is not a game artifact requirement\n  ---\n  duration_ms: 4.744509\n  type: 'test'\n  ...\n# Subtest: missing reachable source module fails rather than silently skipping it\nnot ok 2 - missing reachable source module fails rather than silently skipping it\n  ---\n  duration_ms: 1.76387\n  type: 'test'\n  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:30:1'\n  failureType: 'testCodeFailure'\n  error: 'Missing expected exception.'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n  operator: 'throws'\n  stack: |-\n    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:33:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 74.977598\n"
+}

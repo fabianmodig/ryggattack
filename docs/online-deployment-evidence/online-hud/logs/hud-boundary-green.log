@@ -1,0 +1,10 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.60s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-db21e59a20f3f2b2)
+
+running 1 test
+test net_client::resilience_tests::coalesced_match_boundary_discards_old_winner_before_pump ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 0.01s
+
+
+TIMING hud-boundary-green: 0.658 s; exit=0

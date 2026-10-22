@@ -1,0 +1,1145 @@
+[
+  {
+    "sequence": 1,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 8284,
+    "case_id": null,
+    "classification": "startup-neutral"
+  },
+  {
+    "sequence": 2,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 11279,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 3,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 11691,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 4,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12067,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 5,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12816,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 6,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13192,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 7,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13629,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 8,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14006,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 9,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14747,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 10,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15145,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 11,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15530,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 12,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15908,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 13,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16278,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 14,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16651,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 15,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 17023,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 16,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 17487,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 17,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 17957,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 18,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 18910,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 19,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 19407,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 20,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 19912,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 21,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 20818,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 22,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 21284,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 23,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 22195,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 24,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 22647,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 25,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 23114,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 26,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 23569,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 27,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 24024,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 28,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 24482,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 29,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 25022,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 30,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 25425,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 31,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 25872,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 32,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 26333,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 33,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 26796,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 34,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 27254,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 35,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 27719,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 36,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 28180,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 37,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 28635,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 38,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 29089,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 39,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 29993,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 40,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 30451,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 41,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 31382,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 42,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 31837,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 43,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 32273,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 44,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 32720,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 45,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 33192,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 46,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 33651,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 47,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 34110,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 48,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 34564,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 49,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 35015,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 50,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 35474,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 51,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 35927,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 52,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 36374,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 53,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 36821,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 54,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 37272,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 55,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 37725,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 56,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 38169,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 57,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 38638,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 58,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39078,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 59,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39520,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 60,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39982,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 61,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 40447,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 62,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 40909,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 63,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 41378,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 64,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 41842,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 65,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 42851,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 66,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 43311,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 67,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 43774,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 68,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 44227,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 69,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 44691,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 70,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 45144,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 71,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 45657,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 72,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 46110,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 73,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 46558,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 74,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 47002,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 75,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 47464,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 76,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 47920,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 77,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 48384,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 78,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 48844,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 79,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 49323,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 80,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 49811,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 81,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 50282,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 82,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 50731,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 83,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 51634,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 84,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 52088,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 85,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 52539,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 86,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 52995,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 87,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 53439,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 88,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 53877,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 89,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 54315,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 90,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 54788,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 91,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 55246,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 92,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 55701,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 93,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 56153,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 94,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 56606,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 95,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 57068,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 96,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 57520,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 97,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 57975,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 98,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 58428,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 99,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 58892,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 100,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 59342,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 101,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 59789,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 102,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 60231,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 103,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 60678,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 104,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 61114,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 105,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 61593,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 106,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 62052,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 107,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 62511,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 108,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 62968,
+    "case_id": "preflight",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 109,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 76406,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 110,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 76774,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 111,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 77160,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 112,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 77537,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 113,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 78302,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 114,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 78689,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 115,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79063,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 116,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79450,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 117,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79826,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 118,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 80197,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 119,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 80567,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 120,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 81304,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 121,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 81703,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 122,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 82119,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 123,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 82599,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 124,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 83068,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 125,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 83620,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 126,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 84033,
+    "case_id": "natural",
+    "classification": "case-input"
+  },
+  {
+    "sequence": 127,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 84545,
+    "case_id": "natural",
+    "classification": "case-input"
+  }
+]

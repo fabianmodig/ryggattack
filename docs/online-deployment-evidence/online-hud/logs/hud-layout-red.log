@@ -1,0 +1,16 @@
+{"hudZ":10,"roomZ":5}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: expanded room controls must paint above HUD at narrow width
+    at file:///home/hermes/.hermes/cache/scratch/online-hud-layout-probe.mjs:7:39 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.3

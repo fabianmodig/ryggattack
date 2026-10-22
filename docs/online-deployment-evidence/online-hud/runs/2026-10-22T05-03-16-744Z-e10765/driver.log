@@ -1,0 +1,3 @@
+{"status":"failed","evidence_directory":"/home/hermes/src/ryggattack-online-hud/verification/online-hud/2026-10-22T05-03-16-744Z-e10765","failure":"AssertionError [ERR_ASSERTION]: focused form preserves editing and neutralizes Space: game ended before input window; not a pass"}
+
+TIMING hud-browser-640: 39.141 s; exit=1

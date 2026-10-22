@@ -1,0 +1,43 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-22T04:43:59.502Z",
+  "scope": "LOCAL ONLY: one real human, one bot, target 1, neutral steering + held Space; one natural match; no restart or forced result",
+  "budgets": {
+    "natural_completion_ms": 180000,
+    "screenshot_only_ms": 60000
+  },
+  "hashes": {},
+  "checks": [],
+  "errors": [],
+  "screenshots": [],
+  "protocol": [],
+  "lobbies": [],
+  "natural": {
+    "samples": 0,
+    "matched_frames": 0,
+    "dom_matches": 0,
+    "max_published_tick_lag": 0,
+    "outcomes": [],
+    "out": [],
+    "buffs": [],
+    "input": {
+      "count": 0,
+      "neutral_fire": 0
+    },
+    "buff_scope": "No natural buff observed; synthetic timer fixture is NOT natural buff proof."
+  },
+  "fixture": {
+    "label": "ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF",
+    "checks": []
+  },
+  "cleanup": {},
+  "failure": "Error: ENOENT: no such file or directory, open '/home/hermes/src/ryggattack-online-hud/dist/web/pages-redirect.html'\n    at Object.openSync (node:fs:560:18)\n    at Object.readFileSync (node:fs:444:35)\n    at hashInputs (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:85:25)\n    at file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:576:19\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)",
+  "finished_at": "2026-10-22T04:44:04.332Z",
+  "total_ms": 4829,
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 0,
+    "all_artifacts_exact_value_scan": true,
+    "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+  }
+}

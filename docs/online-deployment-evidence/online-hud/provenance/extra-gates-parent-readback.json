@@ -1,0 +1,12 @@
+{
+  "scope": "Parent readback after scoped native/chart gates; not CI or deployment evidence",
+  "process_id": "proc_255d107e1516",
+  "observed_status": "exited",
+  "exit_code": 0,
+  "completion_reason": "exited",
+  "gates": ["native WSS untrusted-certificate rejection", "server banner", "server production policy", "production smoke", "socket abuse", "actual headless executable", "strict Helm lint", "chart contract", "paired chart-version update"],
+  "log": "logs/hud-final-extra-gates.log",
+  "isolation": "TLS fixture generated in a private owned scratch directory and removed after execution; no fixture keys or certificates included",
+  "builds": "No new Cargo or WASM build; exercised the existing verified native binaries",
+  "elapsed_seconds": null
+}

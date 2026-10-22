@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T04:51:58.623358+00:00",
+  "command": [
+    "node",
+    "--test",
+    "scripts/online-hud-artifacts.test.mjs"
+  ],
+  "exit_code": 1,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "b9ba4323d9c885766b7d255c957463962d364cf8f1dc865e8de5e0bda3dd5148",
+    "scripts/online-hud-artifacts.mjs": "6495a386c3ee008c0663c48869d8e9099f7d128ba0ad956f35409c83c954392b",
+    "scripts/online-hud-artifacts.test.mjs": "75ed90306e3c9c2a6dd57dacbc0e34ce2eddb32e657a714b1175d8691ad45177"
+  },
+  "output": "TAP version 13\n# Subtest: unreferenced retired HTML is not a game artifact requirement\nok 1 - unreferenced retired HTML is not a game artifact requirement\n  ---\n  duration_ms: 86.81612\n  type: 'test'\n  ...\n# Subtest: mismatched reachable copied module bytes fail\nok 2 - mismatched reachable copied module bytes fail\n  ---\n  duration_ms: 42.276221\n  type: 'test'\n  ...\n# Subtest: module script src, nested re-exports, cycles and side-effect imports are traversed\nok 3 - module script src, nested re-exports, cycles and side-effect imports are traversed\n  ---\n  duration_ms: 86.924775\n  type: 'test'\n  ...\n# Subtest: missing reachable nested dist module fails\nok 4 - missing reachable nested dist module fails\n  ---\n  duration_ms: 83.870775\n  type: 'test'\n  ...\n# Subtest: mismatched nested mjs bytes fail\nok 5 - mismatched nested mjs bytes fail\n  ---\n  duration_ms: 80.301253\n  type: 'test'\n  ...\n# Subtest: dynamic imports cannot silently escape the static graph\nnot ok 6 - dynamic imports cannot silently escape the static graph\n  ---\n  duration_ms: 81.028359\n  type: 'test'\n  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:63:1'\n  failureType: 'testCodeFailure'\n  error: 'Missing expected exception.'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n  operator: 'throws'\n  stack: |-\n    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:66:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: missing reachable source module fails rather than silently skipping it\nok 7 - missing reachable source module fails rather than silently skipping it\n  ---\n  duration_ms: 43.605806\n  type: 'test'\n  ...\n1..7\n# tests 7\n# suites 0\n# pass 6\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 577.126462\n"
+}

@@ -1,0 +1,9 @@
+{
+  "scope": "Packaging-time comparison, not a new build",
+  "prebuild_equals_built_source_state": true,
+  "all_prebuild_sources_match_current_disk": true,
+  "built_artifacts_equal_passing_run_hashes": true,
+  "recorded_base_head": "1b0fd6a471ff9f470f9262db6310df88312b0164",
+  "wasm_sha256": "616a8724009a7d548190a50dfdfc205cb9e57a7c001b24d29ec5f32d80fea8a1",
+  "wasm_bytes": 39799188
+}
