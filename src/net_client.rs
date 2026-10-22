@@ -171,6 +171,7 @@ struct Inbox {
     lobby: Option<crate::rooms::Lobby>,
     notice: Option<String>,
     frame: Option<Frame>,
+    frame_barrier: bool,
     error: Option<String>,
 }
 pub struct NetworkClient {
@@ -393,6 +394,8 @@ impl NetworkClient {
                                 && valid_credential(&credential)
                                 && valid_topology(&edges) =>
                             {
+                                inbox.frame_barrier = true;
+                                inbox.frame = None;
                                 inbox.welcome =
                                     Some((seat, room, participant, edges, code, credential))
                             }
@@ -402,6 +405,10 @@ impl NetworkClient {
                             }
                             Some(ServerMessage::Error(err)) => inbox.error = Some(err),
                             Some(ServerMessage::Lobby(lobby)) if valid_lobby(&lobby) => {
+                                if lobby.phase != crate::rooms::Phase::Running {
+                                    inbox.frame_barrier = true;
+                                    inbox.frame = None;
+                                }
                                 inbox.lobby = Some(lobby)
                             }
                             Some(ServerMessage::Notice(notice)) if notice.len() <= 256 => {
@@ -484,6 +491,13 @@ impl NetworkClient {
             self.sent = Instant::now();
         }
         let inbox = std::mem::take(&mut *self.inbox.lock().unwrap());
+        // Latest-state coalescing may hide Lobby/Countdown behind Running.
+        // Preserve that boundary even when no non-running lobby reaches pump.
+        if inbox.frame_barrier {
+            self.frame = None;
+            self.previous = None;
+            self.acknowledged = true;
+        }
         if let Some((seat, room, participant, edges, code, credential)) = inbox.welcome {
             if self.participant.is_some_and(|id| id != participant)
                 || self.room.is_some_and(|id| id != room)
@@ -625,6 +639,75 @@ impl NetworkClient {
 #[cfg(test)]
 mod resilience_tests {
     use super::*;
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn coalesced_match_boundary_discards_old_winner_before_pump() {
+        use crate::rooms::Phase;
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = format!("ws://{}", listener.local_addr().unwrap());
+        let (release, hold) = std::sync::mpsc::channel();
+        let server = std::thread::spawn(move || {
+            let (stream, _) = listener.accept().unwrap();
+            let mut ws = tungstenite::accept(stream).unwrap();
+            let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+            let mut frame = sim.network_frame();
+            frame.tick = 90;
+            frame.winner = Some(0);
+            frame.wins[0] = 1;
+            frame.round_finished = true;
+            let mut lobby = crate::rooms::Lobby::new(1, "a".repeat(20), 1, "Ada".into());
+            lobby.humans[0].ready = true;
+            let mut messages = vec![
+                ServerMessage::Welcome {
+                    version: VERSION,
+                    seat: 0,
+                    room: 1,
+                    participant: 1,
+                    edges: sim.network_edges(),
+                    code: "a".repeat(20),
+                    credential: "b".repeat(64),
+                },
+                ServerMessage::State(frame),
+            ];
+            for phase in [
+                Phase::Lobby,
+                Phase::Countdown { ticks_left: 32 },
+                Phase::Running,
+            ] {
+                lobby.phase = phase;
+                messages.push(ServerMessage::Lobby(lobby.clone()));
+            }
+            messages.push(ServerMessage::Notice("barrier delivered".into()));
+            for message in messages {
+                ws.send(tungstenite::Message::Text(
+                    serde_json::to_string(&message).unwrap().into(),
+                ))
+                .unwrap();
+            }
+            hold.recv_timeout(std::time::Duration::from_secs(10)).ok();
+        });
+        let mut client = NetworkClient::connect(&address, "Ada").unwrap();
+        client.pump(Default::default());
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        while client.inbox.lock().unwrap().notice.as_deref() != Some("barrier delivered") {
+            assert!(
+                std::time::Instant::now() < deadline,
+                "callback did not receive boundary"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(1));
+        }
+        client.pump(Default::default());
+        release.send(()).unwrap();
+        server.join().unwrap();
+        assert_eq!(client.seat, Some(0));
+        assert_eq!(client.lobby.as_ref().unwrap().phase, Phase::Running);
+        assert!(
+            client.frame.is_none(),
+            "coalescing resurrected the previous match winner"
+        );
+        assert!(client.previous.is_none());
+        client.leave();
+    }
     #[test]
     #[cfg(not(target_arch = "wasm32"))]
     fn terminal_identity_mismatches_revoke_claim_close_transport_and_clear_notice() {

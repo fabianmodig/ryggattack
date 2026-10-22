@@ -63,6 +63,7 @@ jobs:
           node --test scripts/network-harness.test.mjs
           node --test scripts/client-feedback-helpers.test.mjs
           node --test scripts/solo-bots-helpers.test.mjs
+          node --test scripts/online-hud*.test.mjs
           node scripts/pages-redirect.test.mjs
           python3 scripts/update-chart-version.test.py
 
