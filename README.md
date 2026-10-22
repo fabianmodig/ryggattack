@@ -63,6 +63,12 @@ or type a code (Backspace edits) and press **Enter** to join. The launch name
 comes from `--name`. Browser controls also expose explicit buttons/settings
 and a selectable share link. Both show the host and every human's readiness.
 
+The browser online HUD shows active-seat names (with bot fallbacks), round wins,
+IN/OUT and coexisting effect timers, plus named authoritative results. Connection
+feedback stays visible; tick/RTT diagnostics are collapsible. Room controls remain
+separate, and native status/offline behavior are unchanged. See
+[HUD lifecycle, fallback and verification](docs/online-hud.md).
+
 All humans must ready up for a two-second server countdown. Joining, unreadying
 or disconnecting cancels it; changing host settings clears readiness. Bots
 run the actual shared AI and do not ready up. One human with bots works;

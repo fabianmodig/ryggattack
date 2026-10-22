@@ -1,0 +1,21 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-hud)
+    Finished `test` profile [optimized + debuginfo] target(s) in 44.88s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-db21e59a20f3f2b2)
+
+running 1 test
+
+thread 'online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries' (106967) panicked at src/online.rs:620:13:
+lobby leaked old winner/powerups: {"frame":{"carts":[{"active":true,"alive":true,"all_hits_seconds":6.0,"id":0,"speed_seconds":5.0},{"active":true,"alive":true,"all_hits_seconds":0.0,"id":1,"speed_seconds":0.0},{"active":true,"alive":true,"all_hits_seconds":0.0,"id":2,"speed_seconds":0.0},{"active":true,"alive":true,"all_hits_seconds":0.0,"id":3,"speed_seconds":0.0}],"names":[null,null,null,null],"round_finished":true,"simulation_tick":0,"tick":0,"transition":0.0,"winner":0,"wins":[3,0,0,0]},"lobby":{"id":1,"phase":"Lobby"},"menu":false,"notice":"","rtt_ms":null,"seat":0,"status":"Connecting…"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries ... FAILED
+
+failures:
+
+failures:
+    online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 172 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING hud-quarantine-red: 45.269 s; exit=101

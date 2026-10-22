@@ -1,0 +1,6 @@
+PASS node --check scripts/online-hud-smoke.mjs
+PASS node --check scripts/online-hud-startup.mjs
+PASS node --check scripts/online-hud-startup.test.mjs
+PASS scoped git diff --check (tracked main)
+PASS new-file whitespace check scripts/online-hud-startup.mjs (no-index raw exit 1: differences, no diagnostics)
+PASS new-file whitespace check scripts/online-hud-startup.test.mjs (no-index raw exit 1: differences, no diagnostics)

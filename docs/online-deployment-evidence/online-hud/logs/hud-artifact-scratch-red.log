@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: fixtures create a missing configured scratch parent
+not ok 1 - fixtures create a missing configured scratch parent
+  ---
+  duration_ms: 3.87465
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:24:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, mkdtemp '/home/hermes/.hermes/cache/scratch/online-hud-artifacts-d9pS25/missing/scratch/online-hud-artifacts-XXXXXX'"
+  code: 'ENOENT'
+  stack: |-
+    Object.mkdtempSync (node:fs:3054:18)
+    fixture (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:9:19)
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:30:20)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 78.78419

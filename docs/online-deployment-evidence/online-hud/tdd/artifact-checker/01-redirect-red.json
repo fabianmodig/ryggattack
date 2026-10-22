@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T04:48:47.022190+00:00",
+  "command": [
+    "node",
+    "--test",
+    "scripts/online-hud-artifacts.test.mjs"
+  ],
+  "exit_code": 1,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "b9ba4323d9c885766b7d255c957463962d364cf8f1dc865e8de5e0bda3dd5148",
+    "scripts/online-hud-artifacts.mjs": "ed9b3563eb827bf4b2a2b3338441d979ef3d9c5d796d58482c5a0f4726abf881",
+    "scripts/online-hud-artifacts.test.mjs": "d592b1fed837aaee8b8d1492c56150f48c28c9357969b741cc088bc9c9aeb80c"
+  },
+  "output": "TAP version 13\n# Subtest: unreferenced retired HTML is not a game artifact requirement\nnot ok 1 - unreferenced retired HTML is not a game artifact requirement\n  ---\n  duration_ms: 5.439037\n  type: 'test'\n  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:24:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Got unwanted exception.\n    Actual message: \"ENOENT: no such file or directory, open '/home/hermes/.hermes/cache/scratch/online-hud-artifacts-ZAp5v1/dist/pages-redirect.html'\"\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  actual:\n  error: \"ENOENT: no such file or directory, open '/home/hermes/.hermes/cache/scratch/online-hud-artifacts-ZAp5v1/dist/pages-redirect.html'\"\n  stack: |-\n    Object.openSync (node:fs:560:18)\n    Object.readFileSync (node:fs:444:35)\n    checkCopiedEntryArtifacts (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs:8:25)\n    file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:27:29\n    getActual (node:assert:609:5)\n    Function.doesNotThrow (node:assert:777:32)\n    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:27:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n  operator: 'doesNotThrow'\n  stack: |-\n    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.test.mjs:27:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 78.901011\n"
+}

@@ -292,6 +292,50 @@ fn presentation_ready(frames: &mut u8) -> bool {
 fn gameplay_active(menu: bool, window_focused: bool, canvas_focused: bool) -> bool {
     !menu && window_focused && canvas_focused
 }
+// Explicit presentation whitelist: never serialize NetworkClient, Lobby, or Frame
+// wholesale here. In particular, claims, invitation codes and scenery stay out.
+#[cfg(any(target_arch = "wasm32", test))]
+pub(crate) fn hud_snapshot(client: &NetworkClient, menu: bool) -> serde_json::Value {
+    let lobby = client.lobby.as_ref().filter(|lobby| {
+        Some(lobby.id) == client.room
+            && lobby.humans.iter().any(|human| {
+                Some(human.id) == client.participant && Some(human.seat) == client.seat
+            })
+    });
+    let frame = lobby
+        .filter(|lobby| lobby.phase == crate::rooms::Phase::Running)
+        .and(client.frame.as_ref())
+        .map(|frame| {
+            serde_json::json!({
+                "tick": frame.tick,
+                "simulation_tick": frame.simulation_tick,
+                "names": frame.names,
+                "wins": frame.wins,
+                "winner": frame.winner,
+                "round_finished": frame.round_finished,
+                "transition": frame.transition,
+                "carts": frame.carts.iter().map(|cart| serde_json::json!({
+                    "id": cart.id, "active": cart.active, "alive": cart.alive,
+                    "speed_seconds": cart.speed_seconds, "all_hits_seconds": cart.all_hits_seconds
+                })).collect::<Vec<_>>()
+            })
+        });
+    serde_json::json!({
+        "lobby": lobby.map(|lobby| serde_json::json!({
+            "id": lobby.id, "phase": lobby.phase
+        })),
+        "frame": frame, "seat": lobby.and(client.seat),
+        "status": client.status, "notice": client.notice,
+        "menu": menu, "rtt_ms": client.rtt_ms
+    })
+}
+#[cfg(any(target_arch = "wasm32", test))]
+fn publish_hud(client: &NetworkClient, menu: bool, write: impl FnOnce(&str, &str) -> bool) -> bool {
+    write("ryggattackHud", &hud_snapshot(client, menu).to_string())
+}
+fn canvas_status_text(label: String, dom_ready: bool) -> String {
+    if dom_ready { String::new() } else { label }
+}
 fn canvas_focused() -> bool {
     #[cfg(target_arch = "wasm32")]
     {
@@ -378,6 +422,24 @@ fn network_input(
             "suppress input"
         }
     );
+    #[cfg(not(target_arch = "wasm32"))]
+    let dom_hud_ready = false;
+    #[cfg(target_arch = "wasm32")]
+    let dom_hud_ready = {
+        let global = js_sys::global();
+        publish_hud(&client, *menu, |key, value| {
+            js_sys::Reflect::set(
+                &global,
+                &key.into(),
+                &wasm_bindgen::JsValue::from_str(value),
+            )
+            .unwrap_or(false)
+        }) && js_sys::Reflect::get(&global, &"ryggattackHudMounted".into())
+            .ok()
+            .and_then(|value| value.as_bool())
+            .unwrap_or(false)
+    };
+    let label = canvas_status_text(label, dom_hud_ready);
     for mut text in &mut status {
         **text = label.clone();
     }
@@ -518,6 +580,134 @@ fn body_transform(body: &crate::network::Body) -> Transform {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn hud_publication_is_atomic_and_legacy_status_has_a_safe_fallback() {
+        let client = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        let mut writes = Vec::new();
+        assert!(publish_hud(&client, true, |key, value| {
+            writes.push((key.to_owned(), value.to_owned()));
+            true
+        }));
+        assert_eq!(writes.len(), 1);
+        assert_eq!(writes[0].0, "ryggattackHud");
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&writes[0].1).unwrap(),
+            hud_snapshot(&client, true)
+        );
+        assert!(!publish_hud(&client, false, |_, _| false));
+        let failure = "Backend unavailable — reconnecting";
+        assert_eq!(canvas_status_text(failure.into(), false), failure);
+        assert_eq!(canvas_status_text(failure.into(), true), "");
+        assert_eq!(canvas_status_text(failure.into(), false), failure);
+    }
+    #[test]
+    fn hud_projection_is_a_small_whitelist_and_does_not_mutate_authority() {
+        let mut client = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        client.room = Some(1);
+        client.participant = Some(10);
+        client.seat = Some(0);
+        let mut lobby =
+            crate::rooms::Lobby::new(1, "abcdefabcdefabcdefab".into(), 10, "Ada".into());
+        lobby.phase = crate::rooms::Phase::Running;
+        client.lobby = Some(lobby);
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let mut frame = sim.network_frame();
+        frame.tick = 41;
+        frame.simulation_tick = 37;
+        frame.names[0] = Some("<Ada>".into());
+        frame.wins = [3, 0, 0, 0];
+        frame.winner = Some(0);
+        frame.round_finished = true;
+        frame.transition = 1.25;
+        frame.carts[0].speed_seconds = 2.5;
+        frame.carts[0].all_hits_seconds = 4.25;
+        client.frame = Some(frame);
+        client.status = "Online".into();
+        client.notice = "public notice".into();
+        client.rtt_ms = Some(12.5);
+        let before = serde_json::to_value(client.frame.as_ref().unwrap()).unwrap();
+        let value = hud_snapshot(&client, true);
+        let expected = serde_json::json!({
+            "lobby":{"id":1,"phase":"Running"},
+            "frame":{
+                "tick":41,"simulation_tick":37,"names":["<Ada>",null,null,null],
+                "wins":[3,0,0,0],"winner":0,"round_finished":true,"transition":1.25,
+                "carts":client.frame.as_ref().unwrap().carts.iter().map(|cart| serde_json::json!({
+                    "id":cart.id,"active":cart.active,"alive":cart.alive,
+                    "speed_seconds":cart.speed_seconds,"all_hits_seconds":cart.all_hits_seconds
+                })).collect::<Vec<_>>()
+            },
+            "status":"Online","notice":"public notice","seat":0,"menu":true,"rtt_ms":12.5
+        });
+        assert_eq!(
+            value, expected,
+            "HUD must whitelist fields rather than serialize full snapshots"
+        );
+        assert!(
+            !value.to_string().contains("abcdefabcdefabcdefab"),
+            "private room canary leaked"
+        );
+        assert_eq!(
+            serde_json::to_value(client.frame.as_ref().unwrap()).unwrap(),
+            before
+        );
+    }
+    #[test]
+    fn hud_frame_is_quarantined_at_phase_and_identity_boundaries() {
+        for boundary in [
+            "lobby",
+            "countdown",
+            "no lobby",
+            "room",
+            "participant",
+            "seat",
+            "no seat",
+            "leave",
+        ] {
+            let mut client = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+            client.room = Some(1);
+            client.participant = Some(10);
+            client.seat = Some(0);
+            let mut lobby = crate::rooms::Lobby::new(1, "a".repeat(20), 10, "Ada".into());
+            lobby.phase = crate::rooms::Phase::Running;
+            client.lobby = Some(lobby);
+            let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+            let mut frame = sim.network_frame();
+            frame.winner = Some(0);
+            frame.wins[0] = 3;
+            frame.round_finished = true;
+            frame.carts[0].speed_seconds = 5.;
+            frame.carts[0].all_hits_seconds = 6.;
+            client.frame = Some(frame);
+            assert!(!hud_snapshot(&client, false)["frame"].is_null());
+            match boundary {
+                "lobby" => client.lobby.as_mut().unwrap().phase = crate::rooms::Phase::Lobby,
+                "countdown" => {
+                    client.lobby.as_mut().unwrap().phase =
+                        crate::rooms::Phase::Countdown { ticks_left: 32 }
+                }
+                "no lobby" => client.lobby = None,
+                "room" => client.room = Some(2),
+                "participant" => client.participant = Some(11),
+                "seat" => client.seat = Some(1),
+                "no seat" => client.seat = None,
+                "leave" => client.leave(),
+                _ => unreachable!(),
+            }
+            let snapshot = hud_snapshot(&client, false);
+            assert!(
+                snapshot["frame"].is_null(),
+                "{boundary} leaked old winner/powerups: {snapshot}"
+            );
+            if !matches!(boundary, "lobby" | "countdown") {
+                assert!(
+                    snapshot["lobby"].is_null(),
+                    "{boundary}: lobby must agree with seat and room"
+                );
+                assert!(snapshot["seat"].is_null(), "{boundary}: no orphan seat");
+            }
+        }
+    }
     #[test]
     fn lobby_keys_use_server_identity_and_explicit_commands() {
         let lobby = crate::rooms::Lobby::new(1, "0123456789abcdef0123".into(), 10, "Ada".into());

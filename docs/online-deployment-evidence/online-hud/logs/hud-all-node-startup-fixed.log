@@ -1,0 +1,748 @@
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 3.624425
+  type: 'test'
+  ...
+# Subtest: inherited remote engine selectors fail closed even for Podman
+ok 2 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 0.925195
+  type: 'test'
+  ...
+# Subtest: every engine command pins its validated local transport
+ok 3 - every engine command pins its validated local transport
+  ---
+  duration_ms: 2.283424
+  type: 'test'
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+ok 4 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 430.809283
+  type: 'test'
+  ...
+# Subtest: actual process effective/bounding/ambient capability sets must all be zero
+ok 5 - actual process effective/bounding/ambient capability sets must all be zero
+  ---
+  duration_ms: 1.441051
+  type: 'test'
+  ...
+# Subtest: local authorization is mandatory; unknown and unsafe arguments fail closed
+ok 6 - local authorization is mandatory; unknown and unsafe arguments fail closed
+  ---
+  duration_ms: 0.565794
+  type: 'test'
+  ...
+# Subtest: only explicit IPv4 loopback published ports are accepted
+ok 7 - only explicit IPv4 loopback published ports are accepted
+  ---
+  duration_ms: 0.413763
+  type: 'test'
+  ...
+# Subtest: DOM text, not the diagnostic global, is authoritative; hidden notices fail
+ok 8 - DOM text, not the diagnostic global, is authoritative; hidden notices fail
+  ---
+  duration_ms: 0.336879
+  type: 'test'
+  ...
+# Subtest: CLI authorization and help are inert even without any browser dependency
+ok 9 - CLI authorization and help are inert even without any browser dependency
+  ---
+  duration_ms: 456.604988
+  type: 'test'
+  ...
+# Subtest: credential negative scan rejects exact known secrets and private key evidence
+ok 10 - credential negative scan rejects exact known secrets and private key evidence
+  ---
+  duration_ms: 0.727745
+  type: 'test'
+  ...
+# Subtest: local smoke publishes only random loopback ports
+ok 11 - local smoke publishes only random loopback ports
+  ---
+  duration_ms: 2.756102
+  type: 'test'
+  ...
+# Subtest: remote-daemon CI smoke shares the calling job network without host exposure
+ok 12 - remote-daemon CI smoke shares the calling job network without host exposure
+  ---
+  duration_ms: 0.26668
+  type: 'test'
+  ...
+# Subtest: network helper rejects malformed namespaces, ports and non-loopback publication
+ok 13 - network helper rejects malformed namespaces, ports and non-loopback publication
+  ---
+  duration_ms: 2.400935
+  type: 'test'
+  ...
+# Subtest: canonical snapshots sort keys and normalize native f32 promotion, not different states
+ok 14 - canonical snapshots sort keys and normalize native f32 promotion, not different states
+  ---
+  duration_ms: 1.774581
+  type: 'test'
+  ...
+# Subtest: redaction collects nested credential/token/reclaim values and scrubs free text without mutating input
+ok 15 - redaction collects nested credential/token/reclaim values and scrubs free text without mutating input
+  ---
+  duration_ms: 0.593155
+  type: 'test'
+  ...
+# Native shared adapter supports WSS and fails closed on an untrusted local TLS certificate
+# Subtest: scripts/native-tls.test.mjs
+ok 4 - scripts/native-tls.test.mjs
+  ---
+  duration_ms: 2147.158868
+  type: 'test'
+  ...
+# Subtest: a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+ok 17 - a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+  ---
+  duration_ms: 0.759006
+  type: 'test'
+  ...
+# Subtest: non-neutral form input always fails, including across a natural match boundary
+ok 18 - non-neutral form input always fails, including across a natural match boundary
+  ---
+  duration_ms: 0.417452
+  type: 'test'
+  ...
+# Subtest: fixtures create a missing configured scratch parent
+ok 19 - fixtures create a missing configured scratch parent
+  ---
+  duration_ms: 7.543289
+  type: 'test'
+  ...
+# Subtest: unreferenced retired HTML is not a game artifact requirement
+ok 20 - unreferenced retired HTML is not a game artifact requirement
+  ---
+  duration_ms: 105.214672
+  type: 'test'
+  ...
+# Subtest: mismatched reachable copied module bytes fail
+ok 21 - mismatched reachable copied module bytes fail
+  ---
+  duration_ms: 51.948169
+  type: 'test'
+  ...
+# Subtest: module script src, nested re-exports, cycles and side-effect imports are traversed
+ok 22 - module script src, nested re-exports, cycles and side-effect imports are traversed
+  ---
+  duration_ms: 89.290075
+  type: 'test'
+  ...
+# Subtest: missing reachable nested dist module fails
+ok 23 - missing reachable nested dist module fails
+  ---
+  duration_ms: 103.040258
+  type: 'test'
+  ...
+# Subtest: mismatched nested mjs bytes fail
+ok 24 - mismatched nested mjs bytes fail
+  ---
+  duration_ms: 90.928688
+  type: 'test'
+  ...
+# Subtest: dynamic imports cannot silently escape the static graph
+ok 25 - dynamic imports cannot silently escape the static graph
+  ---
+  duration_ms: 97.150331
+  type: 'test'
+  ...
+# Subtest: missing reachable source module fails rather than silently skipping it
+ok 26 - missing reachable source module fails rather than silently skipping it
+  ---
+  duration_ms: 42.605852
+  type: 'test'
+  ...
+# Subtest: web build packages every local entry-module dependency including nested HUD imports
+ok 27 - web build packages every local entry-module dependency including nested HUD imports
+  ---
+  duration_ms: 1.425721
+  type: 'test'
+  ...
+# Subtest: bootstrap mounts and atomically forwards parsed HUD data without room commands
+ok 28 - bootstrap mounts and atomically forwards parsed HUD data without room commands
+  ---
+  duration_ms: 2.78182
+  type: 'test'
+  ...
+# Subtest: missing offline or malformed bridge data clears HUD and enables canvas fallback
+ok 29 - missing offline or malformed bridge data clears HUD and enables canvas fallback
+  ---
+  duration_ms: 0.292012
+  type: 'test'
+  ...
+# Subtest: fresh coherent payload replaces old outcome and leave clears the roster
+ok 30 - fresh coherent payload replaces old outcome and leave clears the roster
+  ---
+  duration_ms: 0.17899
+  type: 'test'
+  ...
+# Subtest: ordinary same-room preflight precedes the target-one core, each capped at 180s
+ok 31 - ordinary same-room preflight precedes the target-one core, each capped at 180s
+  ---
+  duration_ms: 1.787847
+  type: 'test'
+  ...
+# Subtest: new core cannot inherit preflight winner, state ticks, outcomes, inputs or lobby history
+ok 32 - new core cannot inherit preflight winner, state ticks, outcomes, inputs or lobby history
+  ---
+  duration_ms: 0.321411
+  type: 'test'
+  ...
+# Subtest: queued preflight observations remain assigned to preflight after core starts
+ok 33 - queued preflight observations remain assigned to preflight after core starts
+  ---
+  duration_ms: 0.806629
+  type: 'test'
+  ...
+# Subtest: fresh reset rejects inherited winner, wins, timer buffs and finished rounds
+ok 34 - fresh reset rejects inherited winner, wins, timer buffs and finished rounds
+  ---
+  duration_ms: 0.484508
+  type: 'test'
+  ...
+# Subtest: delayed binding delivery uses page observation time, not the currently active case
+ok 35 - delayed binding delivery uses page observation time, not the currently active case
+  ---
+  duration_ms: 0.332598
+  type: 'test'
+  ...
+# Subtest: input windows, screenshot and publication-lag limits remain intact
+ok 36 - input windows, screenshot and publication-lag limits remain intact
+  ---
+  duration_ms: 0.160156
+  type: 'test'
+  ...
+# Subtest: actual wire-order sequence-one neutral is startup evidence, never case input proof
+ok 37 - actual wire-order sequence-one neutral is startup evidence, never case input proof
+  ---
+  duration_ms: 2.173709
+  type: 'test'
+  ...
+# Subtest: startup rejects fire
+ok 38 - startup rejects fire
+  ---
+  duration_ms: 0.196856
+  type: 'test'
+  ...
+# Subtest: startup rejects horizontal
+ok 39 - startup rejects horizontal
+  ---
+  duration_ms: 0.147084
+  type: 'test'
+  ...
+# Subtest: startup rejects vertical
+ok 40 - startup rejects vertical
+  ---
+  duration_ms: 0.114705
+  type: 'test'
+  ...
+# Subtest: startup rejects missing fire
+ok 41 - startup rejects missing fire
+  ---
+  duration_ms: 0.106579
+  type: 'test'
+  ...
+# Subtest: startup rejects missing horizontal
+ok 42 - startup rejects missing horizontal
+  ---
+  duration_ms: 0.093488
+  type: 'test'
+  ...
+# Subtest: startup rejects wrong sequence
+ok 43 - startup rejects wrong sequence
+  ---
+  duration_ms: 0.087857
+  type: 'test'
+  ...
+# Subtest: startup rejects zero sequence
+ok 44 - startup rejects zero sequence
+  ---
+  duration_ms: 0.093674
+  type: 'test'
+  ...
+# Subtest: startup rejects string sequence
+ok 45 - startup rejects string sequence
+  ---
+  duration_ms: 0.257901
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Case
+ok 46 - startup window closes permanently at first Case
+  ---
+  duration_ms: 0.347001
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Configure
+ok 47 - startup window closes permanently at first Configure
+  ---
+  duration_ms: 0.138941
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Lobby
+ok 48 - startup window closes permanently at first Lobby
+  ---
+  duration_ms: 0.078512
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Running
+ok 49 - startup window closes permanently at first Running
+  ---
+  duration_ms: 0.076456
+  type: 'test'
+  ...
+# Subtest: startup requires observed Hello then complete Welcome identity
+ok 50 - startup requires observed Hello then complete Welcome identity
+  ---
+  duration_ms: 0.179993
+  type: 'test'
+  ...
+# Subtest: second startup and retry after rejected Input cannot become startup proof
+ok 51 - second startup and retry after rejected Input cannot become startup proof
+  ---
+  duration_ms: 0.122652
+  type: 'test'
+  ...
+# Subtest: duplicate Hello or Welcome is not a startup handshake
+ok 52 - duplicate Hello or Welcome is not a startup handshake
+  ---
+  duration_ms: 0.111102
+  type: 'test'
+  ...
+# Subtest: actual main socket callback retains startup packet separately without errors or case counters
+ok 53 - actual main socket callback retains startup packet separately without errors or case counters
+  ---
+  duration_ms: 3.073135
+  type: 'test'
+  ...
+# Subtest: main callback rejects and retains illegal unscoped Input throughout handshake boundaries
+ok 54 - main callback rejects and retains illegal unscoped Input throughout handshake boundaries
+  ---
+  duration_ms: 7.405768
+  type: 'test'
+  ...
+# Subtest: main case input remains strict and unknown commands still fault
+ok 55 - main case input remains strict and unknown commands still fault
+  ---
+  duration_ms: 1.182419
+  type: 'test'
+  ...
+# Subtest: live completion drains actual clear samples before the temporal oracle and reports separate proof/tail
+ok 56 - live completion drains actual clear samples before the temporal oracle and reports separate proof/tail
+  ---
+  duration_ms: 1.105329
+  type: 'test'
+  ...
+# Subtest: live validation shares the case-local bounded transition rule, including capture-time drains
+ok 57 - live validation shares the case-local bounded transition rule, including capture-time drains
+  ---
+  duration_ms: 0.260768
+  type: 'test'
+  ...
+# Subtest: failed validation still publishes all captured and pending observations without trimming tails
+ok 58 - failed validation still publishes all captured and pending observations without trimming tails
+  ---
+  duration_ms: 0.973914
+  type: 'test'
+  ...
+# Subtest: all-after, one-before, and short-before persistence cannot borrow the tail
+ok 59 - all-after, one-before, and short-before persistence cannot borrow the tail
+  ---
+  duration_ms: 3.190422
+  type: 'test'
+  ...
+# Subtest: clear must be actual serialized HUD plus empty DOM, first observed within 1000ms of wire Lobby
+ok 60 - clear must be actual serialized HUD plus empty DOM, first observed within 1000ms of wire Lobby
+  ---
+  duration_ms: 3.97445
+  type: 'test'
+  ...
+# Subtest: case-local proof rejects foreign outcomes, clear samples, and return boundaries
+ok 61 - case-local proof rejects foreign outcomes, clear samples, and return boundaries
+  ---
+  duration_ms: 1.388653
+  type: 'test'
+  ...
+# Subtest: named proof must still match the authoritative winner and client Running
+ok 62 - named proof must still match the authoritative winner and client Running
+  ---
+  duration_ms: 1.381974
+  type: 'test'
+  ...
+# Subtest: raw Lobby may retain old DOM until the observed 100ms poll bound, then actually clears
+ok 63 - raw Lobby may retain old DOM until the observed 100ms poll bound, then actually clears
+  ---
+  duration_ms: 4.547333
+  type: 'test'
+  ...
+# Subtest: historical async clock sequence is reproducible without relabelling old incomplete evidence
+ok 64 - historical async clock sequence is reproducible without relabelling old incomplete evidence
+  ---
+  duration_ms: 1.153179
+  type: 'test'
+  ...
+# Subtest: over-100ms stale DOM and late actual clear fail even when wire-to-clear is under 1000ms
+ok 65 - over-100ms stale DOM and late actual clear fail even when wire-to-clear is under 1000ms
+  ---
+  duration_ms: 0.974672
+  type: 'test'
+  ...
+# Subtest: missing actual clear fails even with empty outcome or observations ending at the bound
+ok 66 - missing actual clear fails even with empty outcome or observations ending at the bound
+  ---
+  duration_ms: 1.014304
+  type: 'test'
+  ...
+# Subtest: post-clear outcome reappearance fails in any phase and even inside the original grace
+ok 67 - post-clear outcome reappearance fails in any phase and even inside the original grace
+  ---
+  duration_ms: 1.078288
+  type: 'test'
+  ...
+# Subtest: initial configuration Lobby does not arm return or poison a later natural winner
+ok 68 - initial configuration Lobby does not arm return or poison a later natural winner
+  ---
+  duration_ms: 0.297382
+  type: 'test'
+  ...
+# Subtest: new core case has fresh transition state and cannot borrow or inherit preflight clear
+ok 69 - new core case has fresh transition state and cannot borrow or inherit preflight clear
+  ---
+  duration_ms: 0.43058
+  type: 'test'
+  ...
+# Subtest: page clock, not delayed Node receipt, controls the independently bounded DOM transition
+ok 70 - page clock, not delayed Node receipt, controls the independently bounded DOM transition
+  ---
+  duration_ms: 1.123927
+  type: 'test'
+  ...
+# Subtest: initial Lobby cannot carry an outcome before this case has observed Running
+ok 71 - initial Lobby cannot carry an outcome before this case has observed Running
+  ---
+  duration_ms: 0.193711
+  type: 'test'
+  ...
+# Subtest: published room scope remains enforced after the clear observation
+ok 72 - published room scope remains enforced after the clear observation
+  ---
+  duration_ms: 0.464524
+  type: 'test'
+  ...
+# Subtest: initial Lobby with delayed receipt cannot be selected as the returned-match clear
+ok 73 - initial Lobby with delayed receipt cannot be selected as the returned-match clear
+  ---
+  duration_ms: 0.140086
+  type: 'test'
+  ...
+# Subtest: 42 before-return observations prove 2475ms; two Running in-transit tail samples are separate
+ok 74 - 42 before-return observations prove 2475ms; two Running in-transit tail samples are separate
+  ---
+  duration_ms: 0.258647
+  type: 'test'
+  ...
+# Subtest: DOM mount/update is compact, text-only, collapsible, focus-neutral and removes old rows/outcomes
+ok 75 - DOM mount/update is compact, text-only, collapsible, focus-neutral and removes old rows/outcomes
+  ---
+  duration_ms: 3.340923
+  type: 'test'
+  ...
+# Subtest: DOM staleness: room change clears old outcome until a fresh frame
+ok 76 - DOM staleness: room change clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.827191
+  type: 'test'
+  ...
+# Subtest: DOM staleness: Lobby clears old outcome until a fresh frame
+ok 77 - DOM staleness: Lobby clears old outcome until a fresh frame
+  ---
+  duration_ms: 1.172355
+  type: 'test'
+  ...
+# Subtest: DOM staleness: Countdown clears old outcome until a fresh frame
+ok 78 - DOM staleness: Countdown clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.332609
+  type: 'test'
+  ...
+# Subtest: DOM staleness: reset clears old outcome until a fresh frame
+ok 79 - DOM staleness: reset clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.281147
+  type: 'test'
+  ...
+# Subtest: DOM staleness: leave clears old outcome until a fresh frame
+ok 80 - DOM staleness: leave clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.276184
+  type: 'test'
+  ...
+# Subtest: active seats have names, bot fallback, score, OUT and simultaneous positive authoritative buffs
+ok 81 - active seats have names, bot fallback, score, OUT and simultaneous positive authoritative buffs
+  ---
+  duration_ms: 0.308765
+  type: 'test'
+  ...
+# Subtest: outcome: no score-based winner
+ok 82 - outcome: no score-based winner
+  ---
+  duration_ms: 0.123586
+  type: 'test'
+  ...
+# Subtest: outcome: named match winner
+ok 83 - outcome: named match winner
+  ---
+  duration_ms: 0.286468
+  type: 'test'
+  ...
+# Subtest: outcome: bot match winner
+ok 84 - outcome: bot match winner
+  ---
+  duration_ms: 0.317549
+  type: 'test'
+  ...
+# Subtest: outcome: sole survivor round
+ok 85 - outcome: sole survivor round
+  ---
+  duration_ms: 0.144553
+  type: 'test'
+  ...
+# Subtest: outcome: no survivors draw
+ok 86 - outcome: no survivors draw
+  ---
+  duration_ms: 0.088968
+  type: 'test'
+  ...
+# Subtest: outcome: multiple survivors unknown
+ok 87 - outcome: multiple survivors unknown
+  ---
+  duration_ms: 0.072909
+  type: 'test'
+  ...
+# Subtest: outcome: alive before finish
+ok 88 - outcome: alive before finish
+  ---
+  duration_ms: 0.068104
+  type: 'test'
+  ...
+# Subtest: outcome: inactive winner ignored
+ok 89 - outcome: inactive winner ignored
+  ---
+  duration_ms: 0.071191
+  type: 'test'
+  ...
+# Subtest: outcome: invalid winner ignored
+ok 90 - outcome: invalid winner ignored
+  ---
+  duration_ms: 0.068182
+  type: 'test'
+  ...
+# Subtest: clear stale game: Lobby
+ok 91 - clear stale game: Lobby
+  ---
+  duration_ms: 0.095337
+  type: 'test'
+  ...
+# Subtest: clear stale game: Countdown
+ok 92 - clear stale game: Countdown
+  ---
+  duration_ms: 0.081302
+  type: 'test'
+  ...
+# Subtest: clear stale game: leave
+ok 93 - clear stale game: leave
+  ---
+  duration_ms: 0.061155
+  type: 'test'
+  ...
+# Subtest: clear stale game: no assigned seat
+ok 94 - clear stale game: no assigned seat
+  ---
+  duration_ms: 0.060638
+  type: 'test'
+  ...
+# Subtest: clear stale game: reset
+ok 95 - clear stale game: reset
+  ---
+  duration_ms: 0.0594
+  type: 'test'
+  ...
+# Subtest: expired/invalid buffs are omitted, positive timers are never locally decremented, dead seat stays OUT
+ok 96 - expired/invalid buffs are omitted, positive timers are never locally decremented, dead seat stays OUT
+  ---
+  duration_ms: 0.379065
+  type: 'test'
+  ...
+# Subtest: diagnostics whitelist excludes all credential/reconnect metadata; failures remain visible outside diagnostics
+ok 97 - diagnostics whitelist excludes all credential/reconnect metadata; failures remain visible outside diagnostics
+  ---
+  duration_ms: 0.556691
+  type: 'test'
+  ...
+# Pages canonical redirect preserves room/settings, replaces obsolete backends, retains offline entry
+# Subtest: scripts/pages-redirect.test.mjs
+ok 13 - scripts/pages-redirect.test.mjs
+  ---
+  duration_ms: 47.175935
+  type: 'test'
+  ...
+# Portable Bookworm Docker build contract passed; image runtime checks remain required
+# Subtest: scripts/portable-container-build.test.mjs
+ok 14 - scripts/portable-container-build.test.mjs
+  ---
+  duration_ms: 41.936543
+  type: 'test'
+  ...
+# Subtest: page pointer routing respects room and HUD controls without stealing focus
+ok 100 - page pointer routing respects room and HUD controls without stealing focus
+  ---
+  duration_ms: 3.869882
+  type: 'test'
+  ...
+# Subtest: perf servers serve the calibration module with a JavaScript MIME type
+ok 101 - perf servers serve the calibration module with a JavaScript MIME type
+  ---
+  duration_ms: 0.61655
+  type: 'test'
+  ...
+# Subtest: page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+ok 102 - page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+  ---
+  duration_ms: 3.671106
+  type: 'test'
+  ...
+# Subtest: page still starts wasm if calibration unexpectedly rejects
+ok 103 - page still starts wasm if calibration unexpectedly rejects
+  ---
+  duration_ms: 2.646207
+  type: 'test'
+  ...
+# Subtest: hidden pages discard calibration without scheduling rAF
+ok 104 - hidden pages discard calibration without scheduling rAF
+  ---
+  duration_ms: 0.237363
+  type: 'test'
+  ...
+# Subtest: missing or failing rAF resolves null instead of blocking startup
+ok 105 - missing or failing rAF resolves null instead of blocking startup
+  ---
+  duration_ms: 0.285959
+  type: 'test'
+  ...
+# Subtest: stalled or incomplete calibration has a bounded timeout and cleanup
+ok 106 - stalled or incomplete calibration has a bounded timeout and cleanup
+  ---
+  duration_ms: 0.346783
+  type: 'test'
+  ...
+# Subtest: visibility changes invalidate partially measured cadence
+ok 107 - visibility changes invalidate partially measured cadence
+  ---
+  duration_ms: 1.083351
+  type: 'test'
+  ...
+# Subtest: implausible or invalid timestamps never become tiny or invalid targets
+ok 108 - implausible or invalid timestamps never become tiny or invalid targets
+  ---
+  duration_ms: 0.719876
+  type: 'test'
+  ...
+# Subtest: one scheduling hitch does not lower an otherwise stable 40 Hz target
+ok 109 - one scheduling hitch does not lower an otherwise stable 40 Hz target
+  ---
+  duration_ms: 0.547405
+  type: 'test'
+  ...
+# Subtest: unstable throttled cadence is not accepted as a low-refresh display
+ok 110 - unstable throttled cadence is not accepted as a low-refresh display
+  ---
+  duration_ms: 0.265932
+  type: 'test'
+  ...
+# Subtest: status waits tolerate only unpublished initialization and require the actual expected status
+ok 111 - status waits tolerate only unpublished initialization and require the actual expected status
+  ---
+  duration_ms: 0.847567
+  type: 'test'
+  ...
+# rooms UI helpers and visible validation passed
+# Subtest: scripts/rooms-ui.test.mjs
+ok 17 - scripts/rooms-ui.test.mjs
+  ---
+  duration_ms: 58.052939
+  type: 'test'
+  ...
+# private-room server banner passed
+# Subtest: scripts/server-banner.test.mjs
+ok 18 - scripts/server-banner.test.mjs
+  ---
+  duration_ms: 68.351188
+  type: 'test'
+  ...
+# Production origin/mode configuration fails closed for missing, wildcard, null, malformed and mismatched policies
+# Subtest: scripts/server-policy.test.mjs
+ok 19 - scripts/server-policy.test.mjs
+  ---
+  duration_ms: 124.731772
+  type: 'test'
+  ...
+# Subtest: visible DOM credentials block screenshots before capture
+ok 115 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 2.911554
+  type: 'test'
+  ...
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+ok 116 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 19.113897
+  type: 'test'
+  ...
+# Subtest: privacy fixture initializes missing HOME and TMPDIR scratch parents
+ok 117 - privacy fixture initializes missing HOME and TMPDIR scratch parents
+  ---
+  duration_ms: 310.683258
+  type: 'test'
+  ...
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+ok 118 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 0.576918
+  type: 'test'
+  ...
+# Subtest: solo help and invalid CLI are inert with a missing Playwright module
+ok 119 - solo help and invalid CLI are inert with a missing Playwright module
+  ---
+  duration_ms: 471.814343
+  type: 'test'
+  ...
+# Subtest: unchanged default creates the original three-bot configuration
+ok 120 - unchanged default creates the original three-bot configuration
+  ---
+  duration_ms: 0.18534
+  type: 'test'
+  ...
+# Subtest: explicit bot configuration covers all supported non-practice rosters
+ok 121 - explicit bot configuration covers all supported non-practice rosters
+  ---
+  duration_ms: 0.271763
+  type: 'test'
+  ...
+# Subtest: authorization and bot count fail closed before any live side effects
+ok 122 - authorization and bot count fail closed before any live side effects
+  ---
+  duration_ms: 0.570292
+  type: 'test'
+  ...
+1..122
+# tests 122
+# suites 0
+# pass 122
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2168.643694

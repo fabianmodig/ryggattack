@@ -1,0 +1,52 @@
+{
+  "scope": "ISOLATED SYNTHETIC PRESENTATION DIAGNOSTIC ONLY; no native backend, WASM bootstrap, natural game or credential",
+  "fixture": {
+    "label": "ISOLATED SYNTHETIC PRESENTATION ONLY",
+    "checks": [
+      {
+        "width": 1024,
+        "names_escaped": true,
+        "timers_coexist": true,
+        "out": true,
+        "long_failure_fully_visible": true,
+        "diagnostics_stable": true,
+        "computed_z": {
+          "hud": 4,
+          "room": 5
+        },
+        "real_index_room_controls_clickable": true,
+        "form_focus": true
+      },
+      {
+        "width": 375,
+        "names_escaped": true,
+        "timers_coexist": true,
+        "out": true,
+        "long_failure_fully_visible": true,
+        "diagnostics_stable": true,
+        "computed_z": {
+          "hud": 4,
+          "room": 5
+        },
+        "real_index_room_controls_clickable": true,
+        "form_focus": true
+      },
+      "synthetic draw and named bot round result"
+    ]
+  },
+  "screenshots": [
+    {
+      "name": "fixture-1024",
+      "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY",
+      "sha256": "a56c58bf52d988a0193edbebf4f9599a067787a063f9d4eee97cdd32b5fa870e"
+    },
+    {
+      "name": "fixture-375",
+      "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY",
+      "sha256": "901087e06589a2b5b45c270c780f1b79bbf1102e617ce45dc023949a4f6d8e69"
+    }
+  ],
+  "errors": [],
+  "archived_script_sha256": "1fec0bb9f368962e6b82d353c500d3948c16a9e83406fc09013ede1cdf66740a",
+  "status": "passed"
+}

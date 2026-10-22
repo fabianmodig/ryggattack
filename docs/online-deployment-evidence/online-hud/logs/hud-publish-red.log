@@ -1,0 +1,35 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-hud)
+error[E0425]: cannot find function `publish_hud` in this scope
+   --> src/online.rs:560:17
+    |
+560 |         assert!(publish_hud(&client, true, |key, value| {
+    |                 ^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `publish_hud` in this scope
+   --> src/online.rs:567:18
+    |
+567 |         assert!(!publish_hud(&client, false, |_, _| false));
+    |                  ^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `canvas_status_text` in this scope
+   --> src/online.rs:569:20
+    |
+569 |         assert_eq!(canvas_status_text(failure.into(), false), failure);
+    |                    ^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `canvas_status_text` in this scope
+   --> src/online.rs:570:20
+    |
+570 |         assert_eq!(canvas_status_text(failure.into(), true), "");
+    |                    ^^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `canvas_status_text` in this scope
+   --> src/online.rs:571:20
+    |
+571 |         assert_eq!(canvas_status_text(failure.into(), false), failure);
+    |                    ^^^^^^^^^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `ryggattack` (lib test) due to 5 previous errors
+
+TIMING hud-publish-red: 2.070 s; exit=101

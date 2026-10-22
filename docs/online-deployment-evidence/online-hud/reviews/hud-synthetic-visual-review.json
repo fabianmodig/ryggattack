@@ -1,0 +1,16 @@
+{
+  "scope": "Isolated synthetic presentation only; not natural gameplay, buff collection, native graphics or full-browser acceptance",
+  "result": "passed",
+  "seconds": 1.111,
+  "directory": "verification/online-hud-synthetic-diagnostic-same-realm",
+  "visually_reviewed": ["fixture-1024.png", "fixture-375.png"],
+  "observations": [
+    "Four-column desktop and two-column 375px player cards are readable.",
+    "Markup-like names remain literal text, with truncation in cards and wrapping in the outcome.",
+    "Win totals, OUT and both timer labels are visible; the narrow All-hits label wraps across lines.",
+    "Long status/notice text wraps within the tested 900px-high viewports.",
+    "Diagnostics and room disclosure remain accessible; real index form/control click-focus assertions passed."
+  ],
+  "diagnostic_runner_caveat": "The initial throwaway extraction failed on Node VM cross-realm deepStrictEqual prototypes. Its result and executed probe are retained in verification/online-hud-synthetic-diagnostic. Running the identical archived fixture function in the current Node realm passed; no product or assertion change was made.",
+  "full_game_gate": "Still failed separately at the original all-winner-samples-before-wire-Lobby oracle; target-one case not reached."
+}

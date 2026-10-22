@@ -41,6 +41,7 @@ async function startPage(hz) {
   const window = { addEventListener() {} };
   const starts = [];
   let roomInstalls = 0;
+  let hudInstalls = 0;
   const source = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1]
     .replace(/^\s*import .*;$/gm, "");
   const startup = vm.runInNewContext(`(async () => {${source}})()`, {
@@ -48,6 +49,7 @@ async function startPage(hz) {
     // Imported room UI is tested separately and by real browser replay. This
     // VM isolates calibration/startup, but still verifies installation is wired.
     installRoomControls: () => { roomInstalls++; },
+    installOnlineHud: () => { hudInstalls++; },
     calibrateRefreshRate: () => calibrateRefreshRate(clock.env),
     init: async () => starts.push(window.ryggattackRefreshRate),
   });
@@ -55,12 +57,27 @@ async function startPage(hz) {
   for (let frame = 0; frame <= 30; frame++) clock.frame(frame * 1000 / hz);
   await startup;
   assert.equal(roomInstalls, 1, "room controls install once before game startup");
+  assert.equal(hudInstalls, 1, 'outcome HUD installs once before game startup');
   assert.equal(starts.length, 1);
   assert.ok(Math.abs(starts[0] - Math.min(hz, 60)) < 0.1,
     `init received ${starts[0]} Hz instead of ${Math.min(hz, 60)}`);
   assert.equal(clock.rafs.size, 0);
   assert.equal(clock.timers.size, 0);
 }
+
+test('page pointer routing respects room and HUD controls without stealing focus',async()=>{
+ const clock=environment();let focus=0;const handlers=new Map();
+ const window={addEventListener:(name,fn)=>handlers.set(name,fn)};
+ clock.env.document.getElementById=id=>({focus(){assert.equal(id,'ryggattack-canvas');focus++;},remove(){},classList:{add(){}}});
+ const source=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*;$/gm,'');
+ await vm.runInNewContext(`(async()=>{${source}})()`,{...clock.env,window,installRoomControls(){},installOnlineHud(){},calibrateRefreshRate:async()=>null,init:async()=>{}});
+ assert.equal(focus,1);
+ for(const selector of ['#online-entry','.rygg-online-hud']) {
+  handlers.get('pointerdown')({target:{closest:selectors=>selectors.split(',').map(s=>s.trim()).includes(selector)?{}:null}});
+  assert.equal(focus,1,'interactive room/HUD content must retain its own focus');
+ }
+ handlers.get('pointerdown')({target:{closest:()=>null}});assert.equal(focus,2,'game clicks still refocus canvas');
+});
 
 test("perf servers serve the calibration module with a JavaScript MIME type", () => {
   for (const name of ["anatomy", "ingame", "shots"]) {
@@ -79,6 +96,7 @@ test("page still starts wasm if calibration unexpectedly rejects", async () => {
   const window = { addEventListener() {} };
   const starts = [];
   let roomInstalls = 0;
+  let hudInstalls = 0;
   const source = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1]
     .replace(/^\s*import .*;$/gm, "");
   await vm.runInNewContext(`(async () => {${source}})()`, {
@@ -86,10 +104,12 @@ test("page still starts wasm if calibration unexpectedly rejects", async () => {
     // Imported room UI is tested separately and by real browser replay. This
     // VM isolates calibration/startup, but still verifies installation is wired.
     installRoomControls: () => { roomInstalls++; },
+    installOnlineHud: () => { hudInstalls++; },
     calibrateRefreshRate: async () => { throw new Error("calibration unavailable"); },
     init: async () => starts.push(window.ryggattackRefreshRate),
   });
   assert.equal(roomInstalls, 1);
+  assert.equal(hudInstalls, 1, 'outcome HUD installs even when calibration rejects');
   assert.deepEqual(starts, [null]);
 });
 

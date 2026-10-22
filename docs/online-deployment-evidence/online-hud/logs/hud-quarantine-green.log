@@ -1,0 +1,12 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-hud)
+    Finished `test` profile [optimized + debuginfo] target(s) in 19.42s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-db21e59a20f3f2b2)
+
+running 2 tests
+test online::tests::hud_projection_is_a_small_whitelist_and_does_not_mutate_authority ... ok
+test online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 0.04s
+
+
+TIMING hud-quarantine-green: 19.570 s; exit=0

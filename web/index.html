@@ -81,7 +81,9 @@
       import init from "./ryggattack.js";
       import { calibrateRefreshRate } from "./refresh-rate.mjs";
       import { installRoomControls } from "./rooms.mjs";
+      import { installOnlineHud } from "./online-hud-bridge.mjs";
       installRoomControls();
+      installOnlineHud();
 
       const status = document.getElementById("status");
       const canvas = document.getElementById("ryggattack-canvas");
@@ -90,7 +92,7 @@
       // for the keyboard controls to work.
       canvas.focus();
       window.addEventListener("pointerdown", (event) => {
-        if (!event.target.closest("#online-entry")) canvas.focus();
+        if (!event.target.closest("#online-entry, .rygg-online-hud")) canvas.focus();
       });
 
       try {

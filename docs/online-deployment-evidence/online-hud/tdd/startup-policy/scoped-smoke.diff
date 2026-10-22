@@ -1,0 +1,81 @@
+diff --git a/scripts/online-hud-smoke.mjs b/scripts/online-hud-smoke.mjs
+index 593bfd1..a568e79 100644
+--- a/scripts/online-hud-smoke.mjs
++++ b/scripts/online-hud-smoke.mjs
+@@ -13,6 +13,7 @@ import {createRequire} from 'node:module';
+ import {fileURLToPath} from 'node:url';
+ import {canonical, redact} from './live-deployment-helpers.mjs';
+ import {checkCopiedEntryArtifacts} from './online-hud-artifacts.mjs';
++import {startupInputPolicy} from './online-hud-startup.mjs';
+ import {MATCH_CASES, createMatchCase, caseForSample, caseAtPageTime, assertFreshReset, isLobbyClear, assertOutcomeTimeline, observeOutcomeTransition} from './online-hud-cases.mjs';
+ import {capturePrivateScreenshot, PrivacyViolation, publishSoloEvidence} from './solo-bots-helpers.mjs';
+ 
+@@ -46,6 +47,7 @@ const report = {
+   status: 'running', started_at: new Date().toISOString(), scope: 'LOCAL ONLY: same one real WASM human + one bot, same owned room/socket; target-seven real input/UI preflight naturally completes, then original target-one natural core with early held Space; no forced result or restart',
+   budgets: {preflight_completion_ms: 180000, natural_completion_ms: 180000, screenshot_only_ms: 60000},
+   hashes: {}, checks: [], errors: [], screenshots: [], protocol: [], lobbies: [],
++  startup: {label: 'STARTUP NEUTRAL ONLY — NOT PREFLIGHT/CORE INPUT PROOF', inputs: [], window: null},
+   preflight: createMatchCase(MATCH_CASES[0], null).stats,
+   natural: createMatchCase(MATCH_CASES[1], null).stats,
+   fixture: {label: 'ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF', checks: []}, cleanup: {}
+@@ -254,6 +256,11 @@ async function startBackend() {
+   });
+   report.origin = origin; report.backend = address;
+ }
++function observeStartup(event) {
++  const result = startupInputPolicy(report.startup.window, event);
++  report.startup.window = result.state;
++  return result;
++}
+ function observeSocket(ws) {
+   // Browser URL serialization adds '/' to a bare ws://host:port. Compare URL
+   // identities rather than rejecting that harmless normalization. Event handlers
+@@ -269,9 +276,11 @@ function observeSocket(ws) {
+         assert(!identity, 'one admission only');
+         identity = Object.fromEntries(['version', 'room', 'participant', 'seat', 'code'].map(key => [key, message.Welcome[key]]));
+         report.identity = identity;
++        observeStartup({kind: 'Welcome', identity, at_ms: elapsed()});
+       }
+       if (message.Lobby) {
+         lobby = message.Lobby;
++        observeStartup({kind: 'Lobby', phase: lobby.phase, at_ms: elapsed()});
+         assert.equal(lobby.humans.length, 1, 'only one human in owned room');
+         const observed = {...lobby, at_ms: elapsed(), case_id: activeCase?.plan.id ?? null};
+         report.lobbies.push(observed);
+@@ -303,14 +312,26 @@ function observeSocket(ws) {
+       const kind = typeof message === 'string' ? message : Object.keys(message)[0];
+       assert(['Hello', 'Configure', 'Ready', 'Input', 'Leave'].includes(kind), 'no accidental room/game commands');
+       if (kind === 'Input') {
+-        const input = message.Input; inputs.push({...input, at_ms: elapsed(), case_id: activeCase?.plan.id ?? null});
++        const input = message.Input, observed = {...input, at_ms: elapsed(), case_id: activeCase?.plan.id ?? null};
++        inputs.push(observed); // Retain EVERY Input, including rejected ones.
++        const result = observeStartup({kind, input, at_ms: observed.at_ms, case_id: observed.case_id});
++        observed.classification = result.classification;
++        assert.notEqual(result.classification, 'rejected', result.reason);
++        if (result.classification === 'startup-neutral') {
++          report.startup.inputs.push(observed);
++          return; // Never count this packet as either match's input proof.
++        }
+         assert(activeCase, 'Input belongs to an active case'); activeCase.stats.input.count++;
+         assert.equal(input.horizontal, 0, 'neutral steering only'); assert.equal(input.vertical, 0, 'neutral steering only');
+         if (input.fire) activeCase.stats.input.neutral_fire++;
+       } else {
+         commands.push(kind); report.protocol.push({kind, at_ms: elapsed(), case_id: activeCase?.plan.id ?? null});
+-        if (kind === 'Hello') { assert.equal(message.Hello.name, 'HudLocal'); assert.equal(message.Hello.room ?? null, null); }
++        if (kind === 'Hello') {
++          assert.equal(message.Hello.name, 'HudLocal'); assert.equal(message.Hello.room ?? null, null);
++          observeStartup({kind, at_ms: elapsed()});
++        }
+         if (kind === 'Configure') {
++          observeStartup({kind, at_ms: elapsed()});
+           assert(activeCase && !activeCase.stats.configure_sent, 'one intentional Configure per case');
+           assert.equal(message.Configure.bots, 1); assert.equal(message.Configure.wins_target, activeCase.plan.target);
+           activeCase.stats.configure_sent = true;
+@@ -417,6 +438,7 @@ async function runNatural() {
+     await drainSamples();
+     const pageBoundary = await page.evaluate(() => performance.now());
+     activeCase = createMatchCase(plan, elapsed()); cases.set(plan.id, activeCase);
++    observeStartup({kind: 'Case', case_id: plan.id, at_ms: elapsed()});
+     activeCase.observed_from_page_ms = pageBoundary;
+     // Include this case's actual initial Lobby (not another case's Running or
+     // return history), so publications during ordinary settings edits are valid.

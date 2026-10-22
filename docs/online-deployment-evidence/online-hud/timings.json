@@ -1,0 +1,437 @@
+{
+  "scope": "Packaging-time extraction of original timing values; no inferred timings",
+  "log_timings": [
+    {
+      "file": "logs/hud-all-node-packaging-fixed.log",
+      "line": 478,
+      "original_timing_line": "# duration_ms 2173.43428"
+    },
+    {
+      "file": "logs/hud-all-node-poll-transition.log",
+      "line": 634,
+      "original_timing_line": "# duration_ms 2161.009832"
+    },
+    {
+      "file": "logs/hud-all-node-startup-fixed.log",
+      "line": 748,
+      "original_timing_line": "# duration_ms 2168.643694"
+    },
+    {
+      "file": "logs/hud-all-node-temporal.log",
+      "line": 568,
+      "original_timing_line": "# duration_ms 2201.263357"
+    },
+    {
+      "file": "logs/hud-all-node-two-cases.log",
+      "line": 520,
+      "original_timing_line": "# duration_ms 2166.951424"
+    },
+    {
+      "file": "logs/hud-artifact-scratch-red.log",
+      "line": 28,
+      "original_timing_line": "# duration_ms 78.78419"
+    },
+    {
+      "file": "logs/hud-artifacts-clean-env.log",
+      "line": 58,
+      "original_timing_line": "# duration_ms 572.544922"
+    },
+    {
+      "file": "logs/hud-boundary-green.log",
+      "line": 10,
+      "original_timing_line": "TIMING hud-boundary-green: 0.658 s; exit=0"
+    },
+    {
+      "file": "logs/hud-boundary-red.log",
+      "line": 21,
+      "original_timing_line": "TIMING hud-boundary-red: 298.267 s; exit=101"
+    },
+    {
+      "file": "logs/hud-native-final.log",
+      "line": 304,
+      "original_timing_line": "TIMING hud-rust: 171.139 s; exit=0"
+    },
+    {
+      "file": "logs/hud-native-final.log",
+      "line": 350,
+      "original_timing_line": "TIMING hud-clippy: 4.858 s; exit=0"
+    },
+    {
+      "file": "logs/hud-native-final.log",
+      "line": 353,
+      "original_timing_line": "TIMING hud-native-build: 0.543 s; exit=0"
+    },
+    {
+      "file": "logs/hud-projection-green.log",
+      "line": 11,
+      "original_timing_line": "TIMING hud-projection-green: 52.682 s; exit=0"
+    },
+    {
+      "file": "logs/hud-projection-red.log",
+      "line": 11,
+      "original_timing_line": "TIMING hud-projection-red: 3.943 s; exit=101"
+    },
+    {
+      "file": "logs/hud-publish-red.log",
+      "line": 35,
+      "original_timing_line": "TIMING hud-publish-red: 2.070 s; exit=101"
+    },
+    {
+      "file": "logs/hud-quarantine-green.log",
+      "line": 12,
+      "original_timing_line": "TIMING hud-quarantine-green: 19.570 s; exit=0"
+    },
+    {
+      "file": "logs/hud-quarantine-red.log",
+      "line": 21,
+      "original_timing_line": "TIMING hud-quarantine-red: 45.269 s; exit=101"
+    },
+    {
+      "file": "logs/hud-synthetic-diagnostic.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-synthetic-diagnostic: 0.512 s; exit=1"
+    },
+    {
+      "file": "logs/hud-synthetic-same-realm.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-synthetic-same-realm: 1.111 s; exit=0"
+    },
+    {
+      "file": "logs/hud-wasm-build.log",
+      "line": 8,
+      "original_timing_line": "TIMING hud-wasm-build: 208.933 s; exit=0"
+    },
+    {
+      "file": "runs/2026-10-22T04-43-59-502Z-72de19/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser: 4.980 s; exit=1"
+    },
+    {
+      "file": "runs/2026-10-22T04-57-52-865Z-e99f1f/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser-packaging-fixed: 44.895 s; exit=1"
+    },
+    {
+      "file": "runs/2026-10-22T05-03-16-744Z-e10765/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser-640: 39.141 s; exit=1"
+    },
+    {
+      "file": "runs/2026-10-22T05-19-34-575Z-f85bd2/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser-two-cases: 82.562 s; exit=1"
+    },
+    {
+      "file": "runs/2026-10-22T05-48-27-252Z-673520/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser-poll-transition: 104.966 s; exit=1"
+    },
+    {
+      "file": "runs/2026-10-22T06-00-41-915Z-8658f8/driver.log",
+      "line": 3,
+      "original_timing_line": "TIMING hud-browser-startup-fixed: 110.396 s; exit=0"
+    },
+    {
+      "file": "tdd/startup-policy/green-full-node.log",
+      "line": 748,
+      "original_timing_line": "# duration_ms 2248.958113"
+    },
+    {
+      "file": "tdd/startup-policy/red-callback.log",
+      "line": 148,
+      "original_timing_line": "# duration_ms 92.349332"
+    },
+    {
+      "file": "tdd/startup-policy/red-details.log",
+      "line": 137,
+      "original_timing_line": "# duration_ms 89.837431"
+    },
+    {
+      "file": "tdd/startup-policy/red.log",
+      "line": 36,
+      "original_timing_line": "# duration_ms 73.10341"
+    }
+  ],
+  "runs": [
+    {
+      "run": "2026-10-22T04-43-59-502Z-72de19",
+      "status": "failed",
+      "started_at": "2026-10-22T04:43:59.502Z",
+      "finished_at": "2026-10-22T04:44:04.332Z",
+      "report_total_ms": 4829,
+      "case_completion_ms": {
+        "natural": null
+      },
+      "screenshots": []
+    },
+    {
+      "run": "2026-10-22T04-57-52-865Z-e99f1f",
+      "status": "failed",
+      "started_at": "2026-10-22T04:57:52.866Z",
+      "finished_at": "2026-10-22T04:58:32.709Z",
+      "report_total_ms": 39843,
+      "case_completion_ms": {
+        "natural": null
+      },
+      "screenshots": [
+        {
+          "file": "actual-failure.png",
+          "scope": "failure-time actual app; not proof of earlier phases",
+          "started_ms": 17927,
+          "duration_ms": 14487,
+          "phase_at_start": "Running",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "eb535e21a6901e50f6a6c66644c50675e9d21b4fe1a2d2035211ba7ae794a529"
+        }
+      ]
+    },
+    {
+      "run": "2026-10-22T05-03-16-744Z-e10765",
+      "status": "failed",
+      "started_at": "2026-10-22T05:03:16.745Z",
+      "finished_at": "2026-10-22T05:03:50.827Z",
+      "report_total_ms": 34082,
+      "case_completion_ms": {
+        "natural": null
+      },
+      "screenshots": [
+        {
+          "file": "actual-failure.png",
+          "scope": "failure-time actual app; not proof of earlier phases",
+          "started_ms": 21711,
+          "duration_ms": 6449,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "121c915ec9da40dfcf4a5e39436546c30ba18ee97a3c8ed2455e191108c8245e"
+        }
+      ]
+    },
+    {
+      "run": "2026-10-22T05-19-34-575Z-f85bd2",
+      "status": "failed",
+      "started_at": "2026-10-22T05:19:34.576Z",
+      "finished_at": "2026-10-22T05:20:52.071Z",
+      "report_total_ms": 77495,
+      "case_completion_ms": {
+        "preflight": 52022,
+        "natural": null
+      },
+      "screenshots": [
+        {
+          "file": "preflight-playing.png",
+          "scope": "preflight: actual WASM game; phase labels bracket capture; fast DOM observations, not this image, prove the result",
+          "case_id": "preflight",
+          "started_ms": 17328,
+          "duration_ms": 7439,
+          "phase_at_start": "Running",
+          "phase_at_end": "Running",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Running",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "c0d57a9340c3e6e7463c03e602ff135e2486ddd016486aac365931df37cf218a"
+        },
+        {
+          "file": "actual-failure.png",
+          "scope": "failure-time actual app; not proof of earlier phases",
+          "case_id": "preflight",
+          "started_ms": 63355,
+          "duration_ms": 6830,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "c8ad1ed5e94e930cb204e8012d7a92d53710c48229db42253c70a9f248fc6581"
+        }
+      ]
+    },
+    {
+      "run": "2026-10-22T05-48-27-252Z-673520",
+      "status": "failed",
+      "started_at": "2026-10-22T05:48:27.252Z",
+      "finished_at": "2026-10-22T05:50:07.157Z",
+      "report_total_ms": 99905,
+      "case_completion_ms": {
+        "preflight": 52011,
+        "natural": 8698
+      },
+      "screenshots": [
+        {
+          "file": "preflight-playing.png",
+          "scope": "preflight: actual WASM game; phase labels bracket capture; fast DOM observations, not this image, prove the result",
+          "case_id": "preflight",
+          "started_ms": 16944,
+          "duration_ms": 7621,
+          "phase_at_start": "Running",
+          "phase_at_end": "Running",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Running",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "ba763992804a528102d80f9aa5641b0f8803594f4450f03ab440b5962b7b932a"
+        },
+        {
+          "file": "preflight-returned-lobby.png",
+          "scope": "preflight: actual WASM client after natural completion; not winner proof",
+          "case_id": "preflight",
+          "started_ms": 63076,
+          "duration_ms": 7341,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "f4fef39f0b4b2a6037e41acbbfefed47ed48e43cf10314c1028b3c0d0e8514f5"
+        },
+        {
+          "file": "actual-playing.png",
+          "scope": "natural: actual WASM game; phase labels bracket capture; fast DOM observations, not this image, prove the result",
+          "case_id": "natural",
+          "started_ms": 76619,
+          "duration_ms": 6780,
+          "phase_at_start": "Running",
+          "phase_at_end": "Running",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Running",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "6633f1b6e8d8bc1b0a370d4ebab612c96ae10ad8c403b4c81b10a82aaac77d36"
+        },
+        {
+          "file": "actual-returned-lobby.png",
+          "scope": "natural: actual WASM client after natural completion; not winner proof",
+          "case_id": "natural",
+          "started_ms": 85169,
+          "duration_ms": 7286,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "e42147b9bad898763b2daaf6c254d6f49eca5551831a17678c2a08de0aada803"
+        },
+        {
+          "file": "fixture-1024.png",
+          "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF",
+          "case_id": "natural",
+          "started_ms": 99367,
+          "duration_ms": 120,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": null,
+          "published_phase_at_end": null,
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "6e4e13da6de714538261bfecffc04402a3b66d9f4a585f4dfbfb332d99d11480"
+        },
+        {
+          "file": "fixture-375.png",
+          "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF",
+          "case_id": "natural",
+          "started_ms": 99750,
+          "duration_ms": 89,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": null,
+          "published_phase_at_end": null,
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "1afd6f7a54fbc8483b38c620fe93af830ca25db73433bcd913dd8ea51c45ae6a"
+        }
+      ]
+    },
+    {
+      "run": "2026-10-22T06-00-41-915Z-8658f8",
+      "status": "passed",
+      "started_at": "2026-10-22T06:00:41.915Z",
+      "finished_at": "2026-10-22T06:02:27.259Z",
+      "report_total_ms": 105344,
+      "case_completion_ms": {
+        "preflight": 52013,
+        "natural": 8708
+      },
+      "screenshots": [
+        {
+          "file": "preflight-playing.png",
+          "scope": "preflight: actual WASM game; phase labels bracket capture; fast DOM observations, not this image, prove the result",
+          "case_id": "preflight",
+          "started_ms": 17035,
+          "duration_ms": 8005,
+          "phase_at_start": "Running",
+          "phase_at_end": "Running",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Running",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "97cc0ddf10a3c2bebb4ed73bdab91d3c83c9b86360c8794e8ca490420c45010d"
+        },
+        {
+          "file": "preflight-returned-lobby.png",
+          "scope": "preflight: actual WASM client after natural completion; not winner proof",
+          "case_id": "preflight",
+          "started_ms": 63528,
+          "duration_ms": 7771,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "28c8d7cd6d994d5bd449828da1c39d861c4a9c05b4f31a3f5b8ab543e757786e"
+        },
+        {
+          "file": "actual-playing.png",
+          "scope": "natural: actual WASM game; phase labels bracket capture; fast DOM observations, not this image, prove the result",
+          "case_id": "natural",
+          "started_ms": 76784,
+          "duration_ms": 6856,
+          "phase_at_start": "Running",
+          "phase_at_end": "Running",
+          "published_phase_at_start": "Running",
+          "published_phase_at_end": "Running",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "a4cbfa338ef6166d75ec6dd8d0241ffc8941528ab65e62771747d7285dc08c1d"
+        },
+        {
+          "file": "actual-returned-lobby.png",
+          "scope": "natural: actual WASM client after natural completion; not winner proof",
+          "case_id": "natural",
+          "started_ms": 85524,
+          "duration_ms": 6860,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": "Lobby",
+          "published_phase_at_end": "Lobby",
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "31d4ce4caefe9039b1cf40983acefbce8c7a486c3925980cc984050b918d3add"
+        },
+        {
+          "file": "fixture-1024.png",
+          "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF",
+          "case_id": "natural",
+          "started_ms": 99608,
+          "duration_ms": 118,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": null,
+          "published_phase_at_end": null,
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "6e4e13da6de714538261bfecffc04402a3b66d9f4a585f4dfbfb332d99d11480"
+        },
+        {
+          "file": "fixture-375.png",
+          "scope": "ISOLATED SYNTHETIC PRESENTATION ONLY — NOT NATURAL GAMEPLAY OR BUFF PROOF",
+          "case_id": "natural",
+          "started_ms": 100008,
+          "duration_ms": 87,
+          "phase_at_start": "Lobby",
+          "phase_at_end": "Lobby",
+          "published_phase_at_start": null,
+          "published_phase_at_end": null,
+          "caveat": "Capture can span phase changes; does not prove an earlier winner. Fast DOM observations supply result proof.",
+          "sha256": "1afd6f7a54fbc8483b38c620fe93af830ca25db73433bcd913dd8ea51c45ae6a"
+        }
+      ]
+    }
+  ]
+}

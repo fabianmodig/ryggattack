@@ -1,0 +1,10 @@
+{
+  "runtime_changed": false,
+  "attempts": [
+    {"directory":"verification/online-hud/2026-10-22T04-43-59-502Z-72de19","status":"failed","seconds":4.980,"stage":"before browser/backend","cause":"Verifier compared intentionally unshipped Pages redirect with game artifact","correction":"Reachable static app entry graph; missing/mismatched reachable imports still fail; generated JS/WASM gates retained"},
+    {"directory":"verification/online-hud/2026-10-22T04-57-52-865Z-e99f1f","status":"failed","seconds":44.895,"viewport":{"width":1024,"height":768},"cause":"Published HUD exceeded unchanged 64-tick freshness threshold under software rendering","evidence":{"node_binding_offset_range_ms":[6093.29999999702,6098.5999999940395],"bad_frame_tick":588,"wire_tick":656,"publication_group_spans_ms":[824.7000000029802,725.0999999940395,999.0]},"cleanup":"Actual Leave/readback/backend0/HTTP close, but browser required forced shutdown; not a clean pass"},
+    {"directory":"verification/online-hud/2026-10-22T05-03-16-744Z-e10765","status":"failed","seconds":39.141,"viewport":{"width":640,"height":480},"cause":"Natural target-one game ended before focus-neutral input window completed","evidence":{"max_observed_tick_lag":44,"matched_frames":138,"running_ms":11127,"lobby_return_ms":19808,"neutral_fire_packets":0},"cleanup":"Leave/readback, game page close, browser close, backend0 and HTTP close all clean; full acceptance still failed"}
+  ],
+  "archives":"Each failed directory has exact executed main/imported helper source archives and SHA manifests added after its original report; original results stay unchanged.",
+  "next_experiment":"Separate input/menu/diagnostic preflight in a longer legal match from original target-one core match, using same one-human/one-bot room and real controls. Preserve freshness threshold, per-case natural deadline, capture budget and all failure assertions; isolate per-case winners/outcomes. No forced result, gameplay modification or production operation."
+}

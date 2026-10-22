@@ -1,0 +1,137 @@
+TAP version 13
+# Subtest: actual wire-order sequence-one neutral is startup evidence, never case input proof
+not ok 1 - actual wire-order sequence-one neutral is startup evidence, never case input proof
+  ---
+  duration_ms: 2.604813
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-startup.test.mjs:22:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 8230
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 8230
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-startup.test.mjs:30:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: startup rejects fire
+ok 2 - startup rejects fire
+  ---
+  duration_ms: 0.174521
+  type: 'test'
+  ...
+# Subtest: startup rejects horizontal
+ok 3 - startup rejects horizontal
+  ---
+  duration_ms: 0.110746
+  type: 'test'
+  ...
+# Subtest: startup rejects vertical
+ok 4 - startup rejects vertical
+  ---
+  duration_ms: 0.100719
+  type: 'test'
+  ...
+# Subtest: startup rejects missing fire
+ok 5 - startup rejects missing fire
+  ---
+  duration_ms: 0.173645
+  type: 'test'
+  ...
+# Subtest: startup rejects missing horizontal
+ok 6 - startup rejects missing horizontal
+  ---
+  duration_ms: 0.102048
+  type: 'test'
+  ...
+# Subtest: startup rejects wrong sequence
+ok 7 - startup rejects wrong sequence
+  ---
+  duration_ms: 0.140873
+  type: 'test'
+  ...
+# Subtest: startup rejects zero sequence
+ok 8 - startup rejects zero sequence
+  ---
+  duration_ms: 0.086758
+  type: 'test'
+  ...
+# Subtest: startup rejects string sequence
+ok 9 - startup rejects string sequence
+  ---
+  duration_ms: 0.261407
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Case
+ok 10 - startup window closes permanently at first Case
+  ---
+  duration_ms: 0.356356
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Configure
+ok 11 - startup window closes permanently at first Configure
+  ---
+  duration_ms: 0.139745
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Lobby
+ok 12 - startup window closes permanently at first Lobby
+  ---
+  duration_ms: 0.077678
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Running
+ok 13 - startup window closes permanently at first Running
+  ---
+  duration_ms: 0.064163
+  type: 'test'
+  ...
+# Subtest: startup requires observed Hello then complete Welcome identity
+ok 14 - startup requires observed Hello then complete Welcome identity
+  ---
+  duration_ms: 0.147859
+  type: 'test'
+  ...
+# Subtest: second startup and retry after rejected Input cannot become startup proof
+ok 15 - second startup and retry after rejected Input cannot become startup proof
+  ---
+  duration_ms: 0.106753
+  type: 'test'
+  ...
+# Subtest: duplicate Hello or Welcome is not a startup handshake
+ok 16 - duplicate Hello or Welcome is not a startup handshake
+  ---
+  duration_ms: 0.10657
+  type: 'test'
+  ...
+# Subtest: actual main socket callback retains startup packet separately without errors or case counters
+ok 17 - actual main socket callback retains startup packet separately without errors or case counters
+  ---
+  duration_ms: 2.596654
+  type: 'test'
+  ...
+# Subtest: main case input remains strict and unknown commands still fault
+ok 18 - main case input remains strict and unknown commands still fault
+  ---
+  duration_ms: 0.926759
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 17
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 89.837431

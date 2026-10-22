@@ -1,0 +1,14 @@
+// Diagnostic only: run the archived synthetic fixture, NEVER the game or protocol.
+import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import vm from 'node:vm';import assert from 'node:assert/strict';import crypto from 'node:crypto';import {createRequire} from 'node:module';
+const repo='/home/hermes/src/ryggattack-online-hud',web=path.join(repo,'dist/web');
+const archived=path.join(repo,'verification/online-hud/2026-10-22T05-19-34-575Z-f85bd2/executed-source/online-hud-smoke.mjs');
+const text=fs.readFileSync(archived,'utf8'),start=text.indexOf('async function runPresentationFixture()'),end=text.indexOf('async function shutdown()',start);assert(start>=0&&end>start);
+const out=path.join(repo,'verification/online-hud-synthetic-diagnostic');fs.mkdirSync(out,{recursive:true});
+const report={scope:'ISOLATED SYNTHETIC PRESENTATION DIAGNOSTIC ONLY; no native backend, WASM bootstrap, natural game or credential',fixture:{label:'ISOLATED SYNTHETIC PRESENTATION ONLY',checks:[]},screenshots:[],errors:[]};
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');report.archived_script_sha256=sha(fs.readFileSync(archived));
+const server=http.createServer((req,res)=>{let file;try{const p=decodeURIComponent(req.url.split('?')[0]);assert(!p.includes('\0'));file=path.resolve(web,'.'+p);}catch{res.writeHead(400).end();return;}if(!file.startsWith(web+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(e,b)=>{if(e){res.writeHead(404).end();return;}res.writeHead(200,{'content-type':file.endsWith('.mjs')?'text/javascript':'text/html'}).end(b);});});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+const {chromium}=createRequire('/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json')('playwright');let browser,ctx;
+try{browser=await chromium.launch();ctx=vm.createContext({browser,fixture:null,origin,web,fs,path,assert,structuredClone,report,fault:(s,m)=>report.errors.push({source:s,message:String(m)}),screenshot:async(page,name,scope)=>{const file=path.join(out,name+'.png');await page.screenshot({path:file,timeout:60000});report.screenshots.push({name,scope,sha256:sha(fs.readFileSync(file))});}});await vm.runInContext('('+text.slice(start,end)+')()',ctx);assert.equal(report.errors.length,0);report.status='passed';}
+catch(e){report.status='failed';report.failure=String(e.stack??e);process.exitCode=1;if(ctx?.fixture&&!ctx.fixture.isClosed())try{await ctx.fixture.screenshot({path:path.join(out,'failure.png'),timeout:10000});}catch{}}
+finally{if(browser)await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({status:report.status,out,failure:report.failure?.split('\n')[0]}));}

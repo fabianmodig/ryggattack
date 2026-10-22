@@ -1,0 +1,1050 @@
+[
+  {
+    "sequence": 1,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 8257,
+    "case_id": null
+  },
+  {
+    "sequence": 2,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 11142,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 3,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 11571,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 4,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12005,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 5,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12420,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 6,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 12794,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 7,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13169,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 8,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 13902,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 9,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14275,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 10,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 14699,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 11,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15070,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 12,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15443,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 13,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 15816,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 14,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16185,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 15,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 16561,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 16,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 16935,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 17,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 17402,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 18,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 17854,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 19,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 18330,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 20,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 18785,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 21,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 19236,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 22,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 19712,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 23,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 20176,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 24,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 20647,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 25,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 21151,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 26,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 21635,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 27,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 22095,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 28,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 22552,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 29,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 23004,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 30,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 23451,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 31,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 23922,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 32,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 24461,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 33,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 24975,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 34,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 25883,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 35,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 26793,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 36,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 27256,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 37,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 27711,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 38,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 28162,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 39,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 28618,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 40,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 29070,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 41,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 29517,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 42,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 29993,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 43,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 30453,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 44,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 30925,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 45,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 31359,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 46,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 31799,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 47,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 32230,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 48,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 32696,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 49,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 33142,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 50,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 33608,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 51,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 34059,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 52,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 34516,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 53,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 34966,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 54,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 35424,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 55,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 35875,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 56,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 36778,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 57,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 37225,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 58,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 37673,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 59,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 38120,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 60,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 38566,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 61,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39004,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 62,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39441,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 63,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 39899,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 64,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 40356,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 65,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 40820,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 66,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 41282,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 67,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 41745,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 68,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 42204,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 69,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 42653,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 70,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 43104,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 71,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 43553,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 72,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 44005,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 73,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 44452,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 74,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 44904,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 75,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 45344,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 76,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 45835,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 77,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 46282,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 78,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 46744,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 79,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 47204,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 80,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 47659,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 81,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 48113,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 82,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 48566,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 83,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 49023,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 84,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 49473,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 85,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 49936,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 86,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 50396,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 87,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 51290,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 88,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 51735,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 89,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 52183,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 90,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 52635,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 91,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 53076,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 92,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 53514,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 93,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 53952,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 94,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 54413,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 95,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 54871,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 96,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 55327,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 97,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 55778,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 98,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 56230,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 99,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 56705,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 100,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 57166,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 101,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 57615,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 102,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 58063,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 103,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 58534,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 104,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 58983,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 105,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 59426,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 106,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 59872,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 107,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 60306,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 108,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 60749,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 109,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 61211,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 110,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 61667,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 111,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 62120,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 112,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 62571,
+    "case_id": "preflight"
+  },
+  {
+    "sequence": 113,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": false,
+    "at_ms": 75876,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 114,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 76613,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 115,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 77003,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 116,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 77761,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 117,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 78138,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 118,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 78504,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 119,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 78877,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 120,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79249,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 121,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79620,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 122,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 79991,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 123,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 80358,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 124,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 80729,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 125,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 81092,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 126,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 81468,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 127,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 81926,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 128,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 82831,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 129,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 83377,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 130,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 83785,
+    "case_id": "natural"
+  },
+  {
+    "sequence": 131,
+    "horizontal": 0,
+    "vertical": 0,
+    "fire": true,
+    "at_ms": 84238,
+    "case_id": "natural"
+  }
+]

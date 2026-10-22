@@ -1,0 +1,7 @@
+{
+  "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs": "7ec1b834fcad4da54388dd1336f95c41578cf4013222e0ec87c4483365f29936",
+  "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+  "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+  "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+  "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d"
+}

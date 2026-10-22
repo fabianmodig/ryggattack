@@ -1,0 +1,148 @@
+TAP version 13
+# Subtest: actual wire-order sequence-one neutral is startup evidence, never case input proof
+ok 1 - actual wire-order sequence-one neutral is startup evidence, never case input proof
+  ---
+  duration_ms: 2.056861
+  type: 'test'
+  ...
+# Subtest: startup rejects fire
+ok 2 - startup rejects fire
+  ---
+  duration_ms: 0.189575
+  type: 'test'
+  ...
+# Subtest: startup rejects horizontal
+ok 3 - startup rejects horizontal
+  ---
+  duration_ms: 0.146941
+  type: 'test'
+  ...
+# Subtest: startup rejects vertical
+ok 4 - startup rejects vertical
+  ---
+  duration_ms: 0.187557
+  type: 'test'
+  ...
+# Subtest: startup rejects missing fire
+ok 5 - startup rejects missing fire
+  ---
+  duration_ms: 0.112739
+  type: 'test'
+  ...
+# Subtest: startup rejects missing horizontal
+ok 6 - startup rejects missing horizontal
+  ---
+  duration_ms: 0.090555
+  type: 'test'
+  ...
+# Subtest: startup rejects wrong sequence
+ok 7 - startup rejects wrong sequence
+  ---
+  duration_ms: 0.145565
+  type: 'test'
+  ...
+# Subtest: startup rejects zero sequence
+ok 8 - startup rejects zero sequence
+  ---
+  duration_ms: 0.095339
+  type: 'test'
+  ...
+# Subtest: startup rejects string sequence
+ok 9 - startup rejects string sequence
+  ---
+  duration_ms: 0.357206
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Case
+ok 10 - startup window closes permanently at first Case
+  ---
+  duration_ms: 0.333341
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Configure
+ok 11 - startup window closes permanently at first Configure
+  ---
+  duration_ms: 0.133893
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Lobby
+ok 12 - startup window closes permanently at first Lobby
+  ---
+  duration_ms: 0.110636
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Running
+ok 13 - startup window closes permanently at first Running
+  ---
+  duration_ms: 0.093353
+  type: 'test'
+  ...
+# Subtest: startup requires observed Hello then complete Welcome identity
+ok 14 - startup requires observed Hello then complete Welcome identity
+  ---
+  duration_ms: 0.173155
+  type: 'test'
+  ...
+# Subtest: second startup and retry after rejected Input cannot become startup proof
+ok 15 - second startup and retry after rejected Input cannot become startup proof
+  ---
+  duration_ms: 0.10745
+  type: 'test'
+  ...
+# Subtest: duplicate Hello or Welcome is not a startup handshake
+ok 16 - duplicate Hello or Welcome is not a startup handshake
+  ---
+  duration_ms: 0.104947
+  type: 'test'
+  ...
+# Subtest: actual main socket callback retains startup packet separately without errors or case counters
+not ok 17 - actual main socket callback retains startup packet separately without errors or case counters
+  ---
+  duration_ms: 3.539913
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-online-hud/scripts/online-hud-startup.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   {
+    +     message: 'Input belongs to an active case',
+    +     source: 'sent-frame'
+    +   }
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      source: 'sent-frame'
+      message: 'Input belongs to an active case'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-startup.test.mjs:89:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: main case input remains strict and unknown commands still fault
+ok 18 - main case input remains strict and unknown commands still fault
+  ---
+  duration_ms: 0.94687
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 17
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 92.349332

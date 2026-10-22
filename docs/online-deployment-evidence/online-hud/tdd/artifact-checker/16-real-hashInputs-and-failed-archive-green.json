@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-22T04:54:08.514844+00:00",
+  "command": [
+    "node",
+    "/home/hermes/.hermes/cache/scratch/exercise-online-hud-hash-inputs.mjs"
+  ],
+  "exit_code": 0,
+  "sha256": {
+    "scripts/online-hud-smoke.mjs": "5e67d98c40a5dca3987375cf3222f28b90b480ba108ebddc95aeecc10f85acf4",
+    "scripts/online-hud-artifacts.mjs": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+    "scripts/online-hud-artifacts.test.mjs": "75ed90306e3c9c2a6dd57dacbc0e34ce2eddb32e657a714b1175d8691ad45177"
+  },
+  "output": "{\n  \"hashInputs\": \"passed\",\n  \"hashed_files\": 99,\n  \"retired_redirect_still_source_hashed\": true,\n  \"helper_and_test_hashed\": true,\n  \"generated\": {\n    \"ryggattack.js\": {\n      \"sha256\": \"13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a\",\n      \"bytes\": 118877\n    },\n    \"ryggattack_bg.wasm\": {\n      \"sha256\": \"616a8724009a7d548190a50dfdfc205cb9e57a7c001b24d29ec5f32d80fea8a1\",\n      \"bytes\": 39799188\n    }\n  },\n  \"archived_source_hashes_verified\": 4,\n  \"archived_artifact_hashes_verified\": 4\n}\n"
+}

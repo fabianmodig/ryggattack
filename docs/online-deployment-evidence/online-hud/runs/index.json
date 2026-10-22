@@ -1,0 +1,239 @@
+[
+  {
+    "run": "2026-10-22T04-43-59-502Z-72de19",
+    "status": "failed",
+    "started_at": "2026-10-22T04:43:59.502Z",
+    "finished_at": "2026-10-22T04:44:04.332Z",
+    "report_total_ms": 4829,
+    "driver": "runs/2026-10-22T04-43-59-502Z-72de19/driver.log",
+    "failure": "Error: ENOENT: no such file or directory, open '/home/hermes/src/ryggattack-online-hud/dist/web/pages-redirect.html'\n    at Object.openSync (node:fs:560:18)\n    at Object.readFileSync (node:fs:444:35)\n    at hashInputs (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:85:25)\n    at file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:576:19\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)",
+    "source_checks": [
+      {
+        "original": "scripts/online-hud-smoke.mjs",
+        "archive_sha256": "b9ba4323d9c885766b7d255c957463962d364cf8f1dc865e8de5e0bda3dd5148",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs",
+        "archive_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs",
+        "archive_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs",
+        "archive_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+        "matched": true
+      }
+    ],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 0,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  },
+  {
+    "run": "2026-10-22T04-57-52-865Z-e99f1f",
+    "status": "failed",
+    "started_at": "2026-10-22T04:57:52.866Z",
+    "finished_at": "2026-10-22T04:58:32.709Z",
+    "report_total_ms": 39843,
+    "driver": "runs/2026-10-22T04-57-52-865Z-e99f1f/driver.log",
+    "failure": "AssertionError [ERR_ASSERTION]: published HUD may not lag latest observed authoritative State by >1 second\n    at validateSample (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:132:5)\n    at drainSamples (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:163:5)\n    at neutralWindow (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:331:9)\n    at async runNatural (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:385:3)\n    at async file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:576:44",
+    "source_checks": [
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs",
+        "archive_sha256": "38f965d73dbe7c270c6256a9f42b65e78e1ed8bd7f128e3cb6562b971d79b4bb",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs",
+        "archive_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs",
+        "archive_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs",
+        "archive_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs",
+        "archive_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+        "matched": true
+      }
+    ],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 1,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  },
+  {
+    "run": "2026-10-22T05-03-16-744Z-e10765",
+    "status": "failed",
+    "started_at": "2026-10-22T05:03:16.745Z",
+    "finished_at": "2026-10-22T05:03:50.827Z",
+    "report_total_ms": 34082,
+    "driver": "runs/2026-10-22T05-03-16-744Z-e10765/driver.log",
+    "failure": "AssertionError [ERR_ASSERTION]: focused form preserves editing and neutralizes Space: game ended before input window; not a pass\n\n'Lobby' !== 'Running'\n\n    at neutralWindow (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:326:10)\n    at async runNatural (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:389:3)\n    at async file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:580:44",
+    "source_checks": [
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs",
+        "archive_sha256": "7ec1b834fcad4da54388dd1336f95c41578cf4013222e0ec87c4483365f29936",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs",
+        "archive_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs",
+        "archive_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs",
+        "archive_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs",
+        "archive_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+        "matched": true
+      }
+    ],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 1,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  },
+  {
+    "run": "2026-10-22T05-19-34-575Z-f85bd2",
+    "status": "failed",
+    "started_at": "2026-10-22T05:19:34.576Z",
+    "finished_at": "2026-10-22T05:20:52.071Z",
+    "report_total_ms": 77495,
+    "driver": "runs/2026-10-22T05-19-34-575Z-f85bd2/driver.log",
+    "failure": "AssertionError [ERR_ASSERTION]: outcome DOM proof was observed BEFORE actual lobby return\n    at completeMatch (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:488:3)\n    at async runNatural (file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:432:5)\n    at async file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:645:44",
+    "source_checks": [
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs",
+        "archive_sha256": "1fec0bb9f368962e6b82d353c500d3948c16a9e83406fc09013ede1cdf66740a",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs",
+        "archive_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs",
+        "archive_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-cases.mjs",
+        "archive_sha256": "985d2e55cae4960644adc4406ebfe7d6471c4af50e4537bcc314a47182dea936",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs",
+        "archive_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs",
+        "archive_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+        "matched": true
+      }
+    ],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 1,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  },
+  {
+    "run": "2026-10-22T05-48-27-252Z-673520",
+    "status": "failed",
+    "started_at": "2026-10-22T05:48:27.252Z",
+    "finished_at": "2026-10-22T05:50:07.157Z",
+    "report_total_ms": 99905,
+    "driver": "runs/2026-10-22T05-48-27-252Z-673520/driver.log",
+    "failure": "AssertionError [ERR_ASSERTION]: unexpected browser/protocol/cleanup errors\n\n1 !== 0\n\n    at file:///home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs:667:10",
+    "source_checks": [
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-smoke.mjs",
+        "archive_sha256": "262d78b7a3d0321db0269592ca21dcc13b0e9e8c272815a1497b05d523dc5f6b",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/solo-bots-helpers.mjs",
+        "archive_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/client-feedback-helpers.mjs",
+        "archive_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-cases.mjs",
+        "archive_sha256": "4648a0fe34da71add1332d0e85b8231eb8f14e0913e6282091dea2f87f0cd050",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/online-hud-artifacts.mjs",
+        "archive_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+        "matched": true
+      },
+      {
+        "original": "/home/hermes/src/ryggattack-online-hud/scripts/live-deployment-helpers.mjs",
+        "archive_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+        "matched": true
+      }
+    ],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 1,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  },
+  {
+    "run": "2026-10-22T06-00-41-915Z-8658f8",
+    "status": "passed",
+    "started_at": "2026-10-22T06:00:41.915Z",
+    "finished_at": "2026-10-22T06:02:27.259Z",
+    "report_total_ms": 105344,
+    "driver": "runs/2026-10-22T06-00-41-915Z-8658f8/driver.log",
+    "failure": null,
+    "source_checks": [],
+    "original_artifact_manifest_verified": true,
+    "private_material_negative_scan": {
+      "passed": true,
+      "known_values_checked": 1,
+      "all_artifacts_exact_value_scan": true,
+      "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+    }
+  }
+]

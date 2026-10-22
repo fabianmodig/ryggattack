@@ -1,0 +1,42 @@
+[
+  {
+    "file": "actual-playing.png",
+    "sha256": "a4cbfa338ef6166d75ec6dd8d0241ffc8941528ab65e62771747d7285dc08c1d"
+  },
+  {
+    "file": "actual-returned-lobby.png",
+    "sha256": "31d4ce4caefe9039b1cf40983acefbce8c7a486c3925980cc984050b918d3add"
+  },
+  {
+    "file": "authoritative-state-projections.json",
+    "sha256": "826049ddb1da071794ebd829630257eb77153fe9d2e3b32de28f0a92faec70d5"
+  },
+  {
+    "file": "dom-observations.json",
+    "sha256": "ebb224e6c165bdbd6f311803fdef0b67c183c09d04dc4e6e41241bdf2eef5013"
+  },
+  {
+    "file": "fixture-1024.png",
+    "sha256": "6e4e13da6de714538261bfecffc04402a3b66d9f4a585f4dfbfb332d99d11480"
+  },
+  {
+    "file": "fixture-375.png",
+    "sha256": "1afd6f7a54fbc8483b38c620fe93af830ca25db73433bcd913dd8ea51c45ae6a"
+  },
+  {
+    "file": "input-observations.json",
+    "sha256": "e75aaf21e1c0461814338c71cf811c62c2ea922650edcf735d8a8948131c7e25"
+  },
+  {
+    "file": "preflight-playing.png",
+    "sha256": "97cc0ddf10a3c2bebb4ed73bdab91d3c83c9b86360c8794e8ca490420c45010d"
+  },
+  {
+    "file": "preflight-returned-lobby.png",
+    "sha256": "28c8d7cd6d994d5bd449828da1c39d861c4a9c05b4f31a3f5b8ab543e757786e"
+  },
+  {
+    "file": "results.json",
+    "sha256": "789df5620874fb35ecb1c7a43969225adb79258d6e55ec3a14f26bdcbb09e1a9"
+  }
+]

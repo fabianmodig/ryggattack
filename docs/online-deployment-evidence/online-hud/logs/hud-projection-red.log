@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-hud)
+error[E0425]: cannot find function `hud_snapshot` in this scope
+   --> src/online.rs:546:21
+    |
+546 |         let value = hud_snapshot(&client, true);
+    |                     ^^^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `ryggattack` (lib test) due to 1 previous error
+
+TIMING hud-projection-red: 3.943 s; exit=101

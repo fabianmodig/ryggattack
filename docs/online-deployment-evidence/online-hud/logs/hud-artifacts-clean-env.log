@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: fixtures create a missing configured scratch parent
+ok 1 - fixtures create a missing configured scratch parent
+  ---
+  duration_ms: 5.849129
+  type: 'test'
+  ...
+# Subtest: unreferenced retired HTML is not a game artifact requirement
+ok 2 - unreferenced retired HTML is not a game artifact requirement
+  ---
+  duration_ms: 84.999723
+  type: 'test'
+  ...
+# Subtest: mismatched reachable copied module bytes fail
+ok 3 - mismatched reachable copied module bytes fail
+  ---
+  duration_ms: 42.560027
+  type: 'test'
+  ...
+# Subtest: module script src, nested re-exports, cycles and side-effect imports are traversed
+ok 4 - module script src, nested re-exports, cycles and side-effect imports are traversed
+  ---
+  duration_ms: 78.629236
+  type: 'test'
+  ...
+# Subtest: missing reachable nested dist module fails
+ok 5 - missing reachable nested dist module fails
+  ---
+  duration_ms: 84.451098
+  type: 'test'
+  ...
+# Subtest: mismatched nested mjs bytes fail
+ok 6 - mismatched nested mjs bytes fail
+  ---
+  duration_ms: 78.611802
+  type: 'test'
+  ...
+# Subtest: dynamic imports cannot silently escape the static graph
+ok 7 - dynamic imports cannot silently escape the static graph
+  ---
+  duration_ms: 84.113352
+  type: 'test'
+  ...
+# Subtest: missing reachable source module fails rather than silently skipping it
+ok 8 - missing reachable source module fails rather than silently skipping it
+  ---
+  duration_ms: 39.088168
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 572.544922
