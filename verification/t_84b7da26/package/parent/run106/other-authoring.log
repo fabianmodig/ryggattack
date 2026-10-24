@@ -1,0 +1,3 @@
+rooms UI helpers and visible validation passed
+Pages canonical redirect preserves room/settings, replaces obsolete backends, retains offline entry
+Chart update validates paired immutable tag and preserves non-version fields

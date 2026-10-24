@@ -1,0 +1,87 @@
+CPU/WASM candidate handoff for t_621f9087
+
+Workspace: /home/hermes/src/ryggattack-online-explosions
+Branch: fix/online-explosion-scale
+Base HEAD: f5ae645545babe5e4127d27c8d22ca123839ff66
+This is a DIRTY candidate, not a committed proposed head. No commit was authorized or made.
+All 119 source manifest members match the retained run106 and successful standalone packaging inputs.
+Source manifest SHA256: d5b6ff99e2d5fff7861a067d951d646d0e5133af98b8cd6cda751b2603aebcd4
+Tracked candidate patch SHA256: a5118f24a2ffe925151573da0d5cce3cb6eace6bce84f53d74a66a4e17fa63de
+Current tracked patch equals verification/t_621f9087-run106/candidate.patch byte-for-byte.
+The manifest includes the untracked candidate source files; the tracked patch alone is insufficient.
+
+Changes retained
+- Shared unit-radius ico(2) fireball mesh in src/explosions.rs:77, used by offline effects and online kind-4 replicas (src/online.rs:484,559).
+- Projectile radius-0.16 geometry and other pickup meshes unchanged.
+- Real source spawning, animation, authoritative serialization and client rendering regression measures actual Mesh vertex bounds for primary and chains, varied poses, lifecycle, identity/update/despawn and absence of client-side gameplay effects.
+- Browser harness, cleanup/evidence/privacy regressions, documentation and CI authoring gate retained.
+- Negative privacy fixtures assemble the same forbidden header at execution time, avoiding false positives on copied test source without exempting it from scanning.
+- No networking rewrite, gameplay-rule edits, auth changes or offline-rule changes.
+This resumed run needed no further product repairs and preserved all existing modifications.
+
+Verified retained execution (not rerun in this continuation)
+Run106 directory: /home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106
+- cargo-test.log/.time: 203 tests passed, 0 failed; 176 library tests plus integration tests; elapsed 231.934s (including compilation).
+- Exact real-mesh regression and unchanged-projectile/pickup geometry regression both passed.
+- src/server/parity_tests.rs:144 regression passed for both front-seat choices: only leader gets 0.4 rail-unit push on top of ordinary movement, both keep forward route/direction and remain alive; real offline/server paired entry paths compared. Existing rear-contact, bends/seams, inactive/dead/cooling and diverging-route tests also passed.
+- node.log/.time: 157 passed, 0 failed; elapsed 1.194s. Authoring tests only, NOT rendered evidence.
+- clippy.log/.time: exit 0; 3.530s, four warnings retained (one argument-count, three type-complexity); not warning-clean.
+- native-build.log/.time: exit 0; 0.446s cached build.
+- headless.log/.time: no-display simulation smoke PASS; 1.444s.
+- other-authoring.log/.time: rooms UI, Pages redirect and chart checks; exit 0; 0.346s.
+Exact prior CPU invocation arguments were not stored in these logs; do not invent missing flags. The durations and outcomes above are read from retained records, not newly measured execution times.
+
+RED/failure history retained, never relabeled GREEN
+- red.log/.time: cargo unavailable, exit 127, 0.000s; not a valid product RED.
+- red-retry.log/.time: actual mesh test failed with old projectile geometry; source and replica bounds differ; exit 101, 16.684s, one test failed.
+- red-source.sha256 and green-source.sha256 retained.
+- wasm-build.log shows release compiler completion in 3m55s, but wrapper wasm-build.time ended exit 143 after 240.506s. This is not a successful full packaging invocation.
+- run109 cached release compiler log retained; not independently full packaging proof.
+- Earlier browser failures and failed privacy marker remain unchanged under prior verification/baseline evidence; no old failure was removed or converted to success.
+
+Successful WASM packaging, independently reverified now
+Evidence: /home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/result.json
+Bundle: /home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle
+- cargo build --frozen --release --bin ryggattack --target wasm32-unknown-unknown --message-format=json: cached artifact fresh, exit 0, 0.675s.
+- wasm-bindgen 0.2.128, --target web --no-typescript --remove-name-section --remove-producers-section: exit 0, 9.641s.
+- wasm-opt 131, -Oz --enable-bulk-memory --enable-nontrapping-float-to-int, BINARYEN_CORES=1: exit 0, 223.154s.
+Exact complete packaging argv is in result.json and the sanitized retained-verification.json derivative.
+- All nine bundle members rehashed and byte lengths checked against result.json.
+- Current JS syntax check and WebAssembly.validate passed.
+Input WASM SHA256: 90b7c369b59b517f88239f38ab77d5dbe0a3c9f7e550a25e549a54f2a7a0b625
+Optimized WASM SHA256: fbe27a35a166a38a897118c580ee789063c3da4df28bf7bf1100e50430b2db52
+Current native server SHA256: 90af59595497af21b5c0ba6e738a290183214760be298ecefb2ff212fc1a8dea
+Current native headless SHA256: 7a3d72e0ac91d84292d8ecc1bd11a69badaf50fd4f75d50936c3b1835212c846
+Native hashes were measured now; prior native build logs did not bind historical binary hashes.
+Standalone packaging service peak was 3.580 GiB with zero OOM events. Do not repeat packaging under the 4 GiB agent scope; preserve/reuse this output.
+
+Current continuation checks actually executed
+- ps -C cargo,rustc,rust-lld,wasm-opt -o pid,ppid,etime,comm: no build processes at initial inspection; no Cargo/build launched this run.
+- sha256sum -c verification/t_621f9087-run106/source-inputs.sha256: all 119 members OK.
+- git diff --check: passed.
+- node verification/t_621f9087-run113/verify-retained.mjs: passed. This validates source hashes, tracked patch identity, retained log result assertions, nine bundle hashes/sizes, input WASM, JS syntax and WebAssembly validity. It creates a new immutable output and intentionally fails rather than overwriting it on rerun.
+- sha256sum explicit source/native/WASM/report paths: passed; recorded in derivative.
+The attempted inline Python and execute_code inspections were denied by unattended approval policy and did not run; verification used an explicit Node file instead. No policy/config modifications were attempted.
+
+Review and downstream work
+- Independent same-card native review requested per explicit continuation instruction; no acceptance or release claimed.
+- Downstream browser card t_84b7da26 currently names /home/hermes/src/ryggattack, NOT this feature checkout. Use the candidate checkout and source-bound artifacts above; never silently test main or stale dist/web. Review the required artifact preparation step before starting browsers.
+- No browser acceptance run here. Controlled local two-client explosion/HUD/offline/rear-contact checks, six actual PNGs plus manual image review, served-artifact identity, and disk/index evidence manifest reconciliation remain downstream.
+- Harness defaults to dist/web; standalone output is separate and has NOT been installed there. Stage verified bytes deliberately before browser work, without rebuilding during acceptance.
+- Any product-code change invalidates affected source-bound checks. Candidate remains uncommitted; final proposed head and evidence-only commit distinctions belong to delivery preparation.
+- Anonymous-bearer theft limitation remains as documented in docs/online-resilience.md: possession of a currently valid bearer is not theft-resistant. No new protection claimed.
+- Native manual graphics deferred separately; no web blocker inferred from that deferral.
+- Historical HUD runtime 11b9afce48aec0d9ff7ea878003c4ca5365e6f6b and chart/main/Flux f5ae645545babe5e4127d27c8d22ca123839ff66 are historical only, not fresh browser acceptance.
+- Preserved baseline: /home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/BASELINE.txt (SHA256 b184cf14cf84f693a04d92d55b2437d6fe65421bbc10594a7c214253eef39db5).
+- HUD original: /home/hermes/.hermes/artifacts/ryggattack/rollout-2026-10-23/ryggattack-hud-11b9afc-verified.json (SHA256 4ddd0c29cdfbccc4857bfa9e9a1ed2876c98b6e1894f9bc9877c5fb1e3183453); historical preservation handoff, not reread or republished here.
+- Keep sensitive/unreviewed originals private. Only this allowlisted handoff and derivative summary are suitable for review transfer; no blanket add or publication. No tokens, private claims, raw auth/environment or TLS key material collected.
+- No source cleanup, commit, push, public-room acceptance, deployment, restart or production operation performed.
+
+Reproduction commands for reviewer (NOT newly executed product tests)
+After checking no other Cargo/build is active, run one build at a time from the candidate checkout with Cargo available:
+  cargo test --locked
+  cargo clippy --locked --all-targets
+  cargo build --locked --bins
+  python3 scripts/headless-smoke.py
+  node --test scripts/online-explosion*.test.mjs scripts/client-feedback-helpers.test.mjs scripts/solo-bots-helpers.test.mjs scripts/online-hud*.test.mjs
+Use the retained packaging bundle rather than rerunning heavy packaging. Do not run build commands during browser acceptance.

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Ryggattack</title>
+    <link rel="icon" href="data:," />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #090b13;
+        color: #c8d2e6;
+        font-family: system-ui, sans-serif;
+      }
+
+      #game {
+        position: absolute;
+        inset: 0;
+      }
+
+      #game canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+
+      #status {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 1.5rem;
+        line-height: 1.5;
+        pointer-events: none;
+      }
+
+      #status.failed {
+        color: #ff8080;
+        pointer-events: auto;
+        user-select: text;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"><canvas id="ryggattack-canvas" tabindex="0"></canvas></div>
+    <div id="status">Loading Ryggattack…</div>
+    <details id="online-entry" style="position:absolute;right:12px;bottom:12px;padding:10px;background:#17212e;z-index:5;max-height:85vh;overflow:auto;max-width:90vw;font-size:13px">
+      <summary>Private online rooms</summary>
+      <form method="get" style="display:grid;gap:8px;padding-top:8px">
+        <label>Backend <input id="backend" name="online" required aria-label="Backend address"></label>
+        <label>Name <input id="player-name" name="name" value="Player" maxlength="24" required aria-label="Player name"></label>
+        <label>Room code <input id="room-code" name="room" maxlength="20" pattern="[a-f0-9]{20}" aria-label="Room code"></label>
+        <button id="create-room" type="submit">Create private room</button>
+        <button id="join-room" type="submit">Join room</button>
+        <small>Possession of a room link grants entry. Disconnect reserves your seat for 60 wall-clock seconds. Leave room revokes it.</small>
+        <a href="?">Offline (disconnect)</a>
+      </form>
+      <section id="room-controls" hidden>
+        <pre id="room-info" style="white-space:pre-wrap"></pre>
+        <label>Share link <input id="share-room" readonly aria-label="Share link"></label><button id="copy-room">Copy link</button>
+        <div id="room-settings">
+          <label>Arena <select id="arena-room" aria-label="Room arena"><option>Forest</option><option>Volcano</option></select></label>
+          <label>First to <select id="target-room" aria-label="Win target"><option>1</option><option selected>3</option><option>5</option><option>7</option></select></label>
+          <label>Bots <input id="bots-room" type="number" min="0" max="3" value="3" aria-label="Bot count"></label>
+          <button id="apply-room">Apply host settings</button>
+        </div>
+        <button id="ready-room">Ready</button><button id="leave-room">Leave room</button>
+      </section>
+      <p id="room-notice" role="status"></p>
+    </details>
+
+    <script type="module">
+      import init from "./ryggattack.js";
+      import { calibrateRefreshRate } from "./refresh-rate.mjs";
+      import { installRoomControls } from "./rooms.mjs";
+      import { installOnlineHud } from "./online-hud-bridge.mjs";
+      installRoomControls();
+      installOnlineHud();
+
+      const status = document.getElementById("status");
+      const canvas = document.getElementById("ryggattack-canvas");
+
+      // Winit listens for key events on the canvas, so it has to hold focus
+      // for the keyboard controls to work.
+      canvas.focus();
+      window.addEventListener("pointerdown", (event) => {
+        if (!event.target.closest("#online-entry, .rygg-online-hud")) canvas.focus();
+      });
+
+      try {
+        // No game/GPU work during calibration: slow gameplay must never be
+        // mistaken for a low-refresh display. Rust validates this hint too.
+        window.ryggattackRefreshRate = await calibrateRefreshRate().catch(() => null);
+        await init();
+        status.remove();
+      } catch (error) {
+        // Winit stops its web event loop by throwing, so this particular
+        // exception means the game started rather than that it failed.
+        if (String(error.message).startsWith("Using exceptions for control flow")) {
+          status.remove();
+        } else {
+          status.classList.add("failed");
+          status.textContent = `Ryggattack failed to start: ${error}`;
+          throw error;
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -94,5 +94,7 @@ test('CLI authorization and help are inert even without any browser dependency',
 test('credential negative scan rejects exact known secrets and private key evidence', () => {
   assert.doesNotThrow(()=>requirePrivateScan('safe text',new Set(['memory-only-secret'])));
   assert.throws(()=>requirePrivateScan('oops memory-only-secret',new Set(['memory-only-secret'])));
-  assert.throws(()=>requirePrivateScan('-----BEGIN PRIVATE KEY-----',new Set()));
+  // Keep copied test source publishable; the executed negative fixture still
+  // feeds the identical complete header bytes to the unchanged scanner.
+  assert.throws(()=>requirePrivateScan(['-----BEGIN ', 'PRIVATE KEY', '-----'].join(''),new Set()));
 });

@@ -1,0 +1,88 @@
+{
+  "historical_only": true,
+  "preserved": [
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-built-artifact.json",
+      "sha256": "b6da0b0e7a230a88895edb16906436be379f14636e066488c737759bf495f98a",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-green.log",
+      "sha256": "7e31469e07f3376fdfb4b2b96a72bf0b1c1cd030c2836dba8666a64bef747dc4",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-independent-review-approved.json",
+      "sha256": "99e80b7c534de422a344d6026339b4a140e517207a9cbed11e8e96addb732078",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-independent-review-blocked.json",
+      "sha256": "ac3ae6ccfd71026626cf1c6224f93b4b0fa453fa6e0162ba2dc7c76acf7f62c4",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-RED.log",
+      "sha256": "53a0831d33a8ae1cde23d0ec463c09d2c8f568e5f989905af7f0f6ac834ad3f3",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-diagnosis.json",
+      "sha256": "cb0849a46694b339cfa19a764259ade3e4984affdffa209e0ebc5d27d29ff75c",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-run28-verified.json",
+      "sha256": "13809e97090956c18f5bf94fdf00043079b6d9f1ce0a33f1545d6309e2a1325e",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-red-source.json",
+      "sha256": "d112e4dbc396eb3ffc58ea3857fd9dc919eb72421bbd68a7a53d08bd72739e54",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-red.log",
+      "sha256": "df2eedc61cb48759c8df59981e127cbf31910db7f10497b32ba3ef51cf3676f9",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-repair-run31-approved.json",
+      "sha256": "d81a00ab0f1cc43096e35f91abbf5c7eed16ec29d1c0ee441bef01cd6ef51966",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-run33-visual-review.json",
+      "sha256": "55913a6f05590ad8cb138b961c6e79d4c5e83120300689c00f63a617e201ff57",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-tested-source.json",
+      "sha256": "6273a9c4d57c363086f46fe3e541e7caf03b16415b81d1bed9a2f5d4372756cc",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-verification.json",
+      "sha256": "cca5d471f254d0929a41809e6b2b5675e1ec5fdeac74c308da41d6fa18d0bccb",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/failed-privacy-attempt-original.json",
+      "sha256": "35b1845718e01f1073eeb455f3b248efdd7761655ebf3c8d37a583c823d4aa43",
+      "mode": 384
+    },
+    {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/timings.tsv",
+      "sha256": "b263f4e5fabb67e07173fcc59ea73ce1dc0c9bc12f8fcafcab548f397e5762ab",
+      "mode": 384
+    }
+  ],
+  "HUD": {
+    "path": "/home/hermes/.hermes/artifacts/ryggattack/rollout-2026-10-23/ryggattack-hud-11b9afc-verified.json",
+    "sha256": "4ddd0c29cdfbccc4857bfa9e9a1ed2876c98b6e1894f9bc9877c5fb1e3183453",
+    "mode": 384
+  },
+  "historical_runtime": "11b9afce48aec0d9ff7ea878003c4ca5365e6f6b",
+  "historical_chart_main_flux": "f5ae645545babe5e4127d27c8d22ca123839ff66",
+  "private_originals_published": false
+}

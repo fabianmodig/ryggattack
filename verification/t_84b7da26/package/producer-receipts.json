@@ -1,0 +1,1361 @@
+[
+  {
+    "path": "source-inputs/Cargo.lock",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/Cargo.lock",
+    "original_sha256": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+    "original_bytes": 150156,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/Cargo.toml",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/Cargo.toml",
+    "original_sha256": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+    "original_bytes": 1194,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/assets/players/cart-riders.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/assets/players/cart-riders.png",
+    "original_sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+    "original_bytes": 1165424,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/assets/players/riders.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/assets/players/riders.png",
+    "original_sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+    "original_bytes": 1118713,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/build-web.sh",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/build-web.sh",
+    "original_sha256": "45e5683d9a4651966c9c1c8389aaad4c09e2dc58267fa426442900c9c2fb43a5",
+    "original_bytes": 3368,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/chart-test.py",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/chart-test.py",
+    "original_sha256": "f46081bda90f4a4523b7ac641c17df47593939aa72d29bf16890c6e90cfaa510",
+    "original_bytes": 5353,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/client-feedback-helpers.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/client-feedback-helpers.mjs",
+    "original_sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+    "original_bytes": 3911,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/client-feedback-helpers.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/client-feedback-helpers.test.mjs",
+    "original_sha256": "df0618d0283238c94b81365599477bf69361b6ad6a892a1070e833968056ff81",
+    "original_bytes": 7796,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/client-feedback-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/client-feedback-smoke.mjs",
+    "original_sha256": "a940dfbaf43902896cf16e4ac0efcbe4fad53b8f7f66a0630ff8318fee159d4d",
+    "original_bytes": 26429,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/container-smoke-network.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/container-smoke-network.mjs",
+    "original_sha256": "d35c0683d62c22405ae796f124a185de5ac67a7077ddb8d923d7f0f7a7b6fa62",
+    "original_bytes": 837,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/container-smoke-network.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/container-smoke-network.test.mjs",
+    "original_sha256": "19136397570c7f2f5fe25bcd4712bef60e8dfc76d426af90c6f34c904b6ce782",
+    "original_bytes": 1018,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/container-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/container-smoke.mjs",
+    "original_sha256": "5e1df4f98612065fbc65db10f7db1b3a070f7d9c4f99d9b84a97b7f679b77a03",
+    "original_bytes": 8043,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/headless-smoke.py",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/headless-smoke.py",
+    "original_sha256": "f87e1e794c77deb2a695355175faa18463e09711adb463f75ae65f0d3ef869d9",
+    "original_bytes": 2551,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/live-deployment-helpers.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/live-deployment-helpers.mjs",
+    "original_sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+    "original_bytes": 1545,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/live-deployment-helpers.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/live-deployment-helpers.test.mjs",
+    "original_sha256": "66d8de3fc03c39ab3ec9bed5887ff9945514fd15d2743585b4e049edea819d64",
+    "original_bytes": 1543,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/live-deployment-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/live-deployment-smoke.mjs",
+    "original_sha256": "9f855e97d439335906cd0d0b5653d61efeef47ae45047c7ba221a28e9d364c39",
+    "original_bytes": 23464,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/native-tls.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/native-tls.test.mjs",
+    "original_sha256": "ff62a26041c5bbf4bd625c622339344e3068553841cefa6cf4b91530a8f0ddb7",
+    "original_bytes": 2451,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/network-harness-helpers.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/network-harness-helpers.mjs",
+    "original_sha256": "dcad4365c233fa1df860fcdaf7927e91c24b3476c47ed5a6b2568f1400cce2e2",
+    "original_bytes": 395,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/network-harness.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/network-harness.test.mjs",
+    "original_sha256": "9060a68ba94162802b57b9a509a2cdb96220fbe233e3f346bb6b79dc4905ac1a",
+    "original_bytes": 911,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/network-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/network-smoke.mjs",
+    "original_sha256": "d31140d15b39a865d2e87e40dc4a7740e9e02353eecc5d81d89f78068891378e",
+    "original_bytes": 30232,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/network-sockets.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/network-sockets.mjs",
+    "original_sha256": "9c6370d8a33945593124eac0d73ef01707e1834e543c6437251c0b7da732c20d",
+    "original_bytes": 7492,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-artifacts.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-artifacts.mjs",
+    "original_sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+    "original_bytes": 2722,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-artifacts.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-artifacts.test.mjs",
+    "original_sha256": "4105d0bd301838eb26e6ea77facfbe72894836f7adf3a0d68bdf1b36d53aad4b",
+    "original_bytes": 4067,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-assets.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-assets.test.mjs",
+    "original_sha256": "f87d298b1967dfe363b677a78056410243230dbb50dfe21e6e887eca33dfc5c6",
+    "original_bytes": 1000,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-bridge.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-bridge.test.mjs",
+    "original_sha256": "f0d563a9548b681317a1e84e36f180b02505f81f5d9a250a866367ac6d4b0436",
+    "original_bytes": 2876,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-cases.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-cases.mjs",
+    "original_sha256": "4648a0fe34da71add1332d0e85b8231eb8f14e0913e6282091dea2f87f0cd050",
+    "original_bytes": 7332,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-cases.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-cases.test.mjs",
+    "original_sha256": "ec072a2898aa5160a0270fb7bf6e6c984649d3da5f3df24298865f1869d8465f",
+    "original_bytes": 3863,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-smoke.mjs",
+    "original_sha256": "2d84061b09ab6260ec4acec63f0900beca0457d0a2fcd94eae788414f3d36b96",
+    "original_bytes": 49550,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-startup.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-startup.mjs",
+    "original_sha256": "7c519f9ee0f39a1a3156ba05ca1aacc9bb8fb529bc435b1afc30a2c7c9f50a14",
+    "original_bytes": 1757,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-startup.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-startup.test.mjs",
+    "original_sha256": "d0ecfddc1f9aafe8ffe8ddd624e74ca593276971bb5e2443d01cdefd6182bdd0",
+    "original_bytes": 7744,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud-temporal.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud-temporal.test.mjs",
+    "original_sha256": "d3ffb6b89dcf2b541a8a747c22953144c16a7a4008e7ec27058f1b307797b2ed",
+    "original_bytes": 13583,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-hud.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-hud.test.mjs",
+    "original_sha256": "7788cc1ca43f6acb3d93a00069308fa31644307fc13614c34c6efe441c039424",
+    "original_bytes": 9606,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/pages-redirect.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/pages-redirect.test.mjs",
+    "original_sha256": "4a443379c687b11f35ac83c67df9fddd920b0bfd66d12f97909c3e2fe811a1e4",
+    "original_bytes": 776,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/perf/anatomy.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/perf/anatomy.mjs",
+    "original_sha256": "4d5cab1ad96aff58a57095b97a4d592e2bb4e653e42465120abbe301ab63f877",
+    "original_bytes": 4242,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/perf/foundation.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/perf/foundation.mjs",
+    "original_sha256": "64e9a42e6a6be2f9c774a4d8970f44074fe5e8bc25165a6a58cda74e656f602d",
+    "original_bytes": 5096,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/perf/ingame.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/perf/ingame.mjs",
+    "original_sha256": "1fcda27496ce484016ad25de88a0429eff3ebbf8641d924fae46dbfe3235040f",
+    "original_bytes": 9125,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/perf/powerups.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/perf/powerups.mjs",
+    "original_sha256": "c322a9938a2932eeff875c2e62d1804f2fef8608be938f2b9774b5b4b9c61cf3",
+    "original_bytes": 4314,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/perf/shots.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/perf/shots.mjs",
+    "original_sha256": "a540c7a7c9549946fbddb3facd6c4acae3ec404e976ba60a997c8901b2b2bc88",
+    "original_bytes": 3590,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/portable-container-build.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/portable-container-build.test.mjs",
+    "original_sha256": "13e86a6f0dc990f60c5ce4501775fe4ea056007719017cd02032913bc39bd74a",
+    "original_bytes": 1083,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/production-browser.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/production-browser.mjs",
+    "original_sha256": "1dd057622271630b6f997dc63d4ae16c360be3119715921bb4526fad3809919d",
+    "original_bytes": 11140,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/production-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/production-smoke.mjs",
+    "original_sha256": "e13690e5e77093310cc0f06e476b8194f9ec358598278a506fb3a80b28bb403a",
+    "original_bytes": 6986,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/refresh-rate.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/refresh-rate.test.mjs",
+    "original_sha256": "4d16b29d1b21d3312ba075eee8e636e88cf9b405c6fb110e77d5129af4f4de75",
+    "original_bytes": 7910,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/resilience-harness.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/resilience-harness.test.mjs",
+    "original_sha256": "c5630c17428a1f76b64261d5728c5f62e1d2af25bda062006788766d2554d705",
+    "original_bytes": 751,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/resilience-helpers.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/resilience-helpers.mjs",
+    "original_sha256": "2286520b87c64858b80e1db5cdb645f0f1da2f1d50da4a2d398bd5e366d2d575",
+    "original_bytes": 405,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/resilience-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/resilience-smoke.mjs",
+    "original_sha256": "c8c5abc09f91abefa279b2d5d74448c6081ced76832bd175ce7d674b922986f0",
+    "original_bytes": 19519,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/rooms-load.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/rooms-load.mjs",
+    "original_sha256": "575c35e09e18a6478fa92dab5d2cfa20fa45e6558beb1e03b781033bd836c57a",
+    "original_bytes": 3373,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/rooms-ui.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/rooms-ui.test.mjs",
+    "original_sha256": "1bdc825ce1645c43372781dd88aa8ee72ad0174876e2f218a4284d79f189f179",
+    "original_bytes": 3072,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/server-banner.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/server-banner.test.mjs",
+    "original_sha256": "2af88fc5c7d14892d7d8f68809b28f4445e166d8ecaee36d73fd5dd3eea47f37",
+    "original_bytes": 722,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/server-policy.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/server-policy.test.mjs",
+    "original_sha256": "7aedd3cfb1623dad84a9f6f03f06e1b60ea039d0891a32ad02ce9d8ce84dac19",
+    "original_bytes": 1127,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/solo-bots-helpers.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/solo-bots-helpers.mjs",
+    "original_sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+    "original_bytes": 3574,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/solo-bots-helpers.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/solo-bots-helpers.test.mjs",
+    "original_sha256": "0d0ce571a04de5f5efabc10fc8d803646b6faffd0783650eb52944bd2570b66e",
+    "original_bytes": 7469,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/solo-bots-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/solo-bots-smoke.mjs",
+    "original_sha256": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
+    "original_bytes": 12970,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/timed-check.py",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/timed-check.py",
+    "original_sha256": "4230ce642edb928959f60930269bb8ad9e66faebee0a92acfa504fe13cf5befb",
+    "original_bytes": 1047,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/update-chart-version.py",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/update-chart-version.py",
+    "original_sha256": "2deaa80b3b2957d431dfabbb503fa4b54fe27e9c0c803b5be7f344d1b75fa442",
+    "original_bytes": 558,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/update-chart-version.test.py",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/update-chart-version.test.py",
+    "original_sha256": "85f513dd5c170efee6989f4840f3011e87244bfb688cf3d2336666115933e65d",
+    "original_bytes": 811,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/wasm-bindgen-version.sh",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/wasm-bindgen-version.sh",
+    "original_sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+    "original_bytes": 547,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/arena.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/arena.rs",
+    "original_sha256": "071ed5c9adcfbdbfd928edd0aa7db15a3754230e1b8627481602580cab8df923",
+    "original_bytes": 11457,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/batch.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/batch.rs",
+    "original_sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+    "original_bytes": 7669,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/bin/ryggattack-headless.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/bin/ryggattack-headless.rs",
+    "original_sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+    "original_bytes": 2164,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/bin/ryggattack-net-probe.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/bin/ryggattack-net-probe.rs",
+    "original_sha256": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+    "original_bytes": 2657,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/bin/ryggattack-server.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/bin/ryggattack-server.rs",
+    "original_sha256": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+    "original_bytes": 1868,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/combat.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/combat.rs",
+    "original_sha256": "6d99fee7f172fdf0667be748329a87a59872275fd114f47aef10d792d07de0b6",
+    "original_bytes": 21253,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/explosions.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/explosions.rs",
+    "original_sha256": "2c26f4fb71d48303d9fe745a2b94f904a3e647a2e6919f6153b3743f482912c5",
+    "original_bytes": 20532,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/game.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/game.rs",
+    "original_sha256": "26017559a256b87d48d91020e6d3413e41d09e2ae2cbf03df41aa9c7715c1204",
+    "original_bytes": 12942,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/headless.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/headless.rs",
+    "original_sha256": "be15d72e7e21eb7a4cbded61a796cc9af5464da7d3885d76b99f52f49ce61510",
+    "original_bytes": 15335,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/input.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/input.rs",
+    "original_sha256": "4ac3b4c63b0284af8410db83f843547b164ce516d58093f73ff7c44b80b3e8cf",
+    "original_bytes": 1730,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/lib.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/lib.rs",
+    "original_sha256": "d0260c99b07b3aff3054359ac974573c9bba0aca4afc7f217227aa5a38873ae5",
+    "original_bytes": 4865,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/main.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/main.rs",
+    "original_sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+    "original_bytes": 44,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/management.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/management.rs",
+    "original_sha256": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+    "original_bytes": 4007,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/match_settings.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/match_settings.rs",
+    "original_sha256": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+    "original_bytes": 1486,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/net_client.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/net_client.rs",
+    "original_sha256": "44da75daab8712feb5c5176c936afce715d0d3c1b5d786685f9fbeb5fe70ceee",
+    "original_bytes": 30450,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/network.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/network.rs",
+    "original_sha256": "d8a6d2d3f5f8115ad627dfe46f1b5f547ca1d2d7dc94a4a377ce54f5366f74b3",
+    "original_bytes": 5436,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/online.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/online.rs",
+    "original_sha256": "1acacea02ce999e1d727897d8fe620339d2da04935842d0ea60fa650bdefeecf",
+    "original_bytes": 44675,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/players/mod.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/players/mod.rs",
+    "original_sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+    "original_bytes": 38902,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/players/roster.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/players/roster.rs",
+    "original_sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+    "original_bytes": 5073,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/players/visuals.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/players/visuals.rs",
+    "original_sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+    "original_bytes": 9219,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/powerups.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/powerups.rs",
+    "original_sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+    "original_bytes": 12546,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/rooms.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/rooms.rs",
+    "original_sha256": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+    "original_bytes": 7472,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/scene.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/scene.rs",
+    "original_sha256": "faa40c36a863e830107eb1cbe90ee340f0b2b67ffa8149bade6195d69cccdb79",
+    "original_bytes": 6271,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/scenery.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/scenery.rs",
+    "original_sha256": "8b9fa833ce2434564b78ee158457beff2fa4612e24caa96696d7337af557197c",
+    "original_bytes": 22370,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/server.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/server.rs",
+    "original_sha256": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+    "original_bytes": 59031,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/server/authority_tests.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/server/authority_tests.rs",
+    "original_sha256": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+    "original_bytes": 6640,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/server/parity_tests.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/server/parity_tests.rs",
+    "original_sha256": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+    "original_bytes": 37616,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/settings.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/settings.rs",
+    "original_sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+    "original_bytes": 38787,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/simulation.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/simulation.rs",
+    "original_sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+    "original_bytes": 8797,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/tracks/map.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/tracks/map.rs",
+    "original_sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+    "original_bytes": 9218,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/tracks/mod.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/tracks/mod.rs",
+    "original_sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+    "original_bytes": 316,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/tracks/path.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/tracks/path.rs",
+    "original_sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+    "original_bytes": 13199,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/tracks/render.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/tracks/render.rs",
+    "original_sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+    "original_bytes": 10271,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/ui/lobby.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/ui/lobby.rs",
+    "original_sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+    "original_bytes": 13758,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/ui/mod.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/ui/mod.rs",
+    "original_sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+    "original_bytes": 22938,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/src/ui/nav.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/src/ui/nav.rs",
+    "original_sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+    "original_bytes": 7277,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/Dockerfile",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/Dockerfile",
+    "original_sha256": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+    "original_bytes": 1508,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/index.html",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/index.html",
+    "original_sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+    "original_bytes": 4677,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/nginx-main.conf",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/nginx-main.conf",
+    "original_sha256": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+    "original_bytes": 660,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/nginx.conf",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/nginx.conf",
+    "original_sha256": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+    "original_bytes": 1735,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/online-hud-bridge.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/online-hud-bridge.mjs",
+    "original_sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+    "original_bytes": 1029,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/online-hud.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/online-hud.mjs",
+    "original_sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+    "original_bytes": 8755,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/pages-redirect.html",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/pages-redirect.html",
+    "original_sha256": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+    "original_bytes": 689,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/refresh-rate.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/refresh-rate.mjs",
+    "original_sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+    "original_bytes": 2147,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/web/rooms.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/web/rooms.mjs",
+    "original_sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+    "original_bytes": 3535,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-cleanup.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-cleanup.mjs",
+    "original_sha256": "23e82c5f646495140a379a4b121a513a45e7f20ca947c4b7b7e268e01ba61f63",
+    "original_bytes": 5060,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-cleanup.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-cleanup.test.mjs",
+    "original_sha256": "cecbb3a49a8f038e69e073ab7c57d3e0a0b4c88669a59d89e269c5020e761547",
+    "original_bytes": 12918,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-evidence.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-evidence.mjs",
+    "original_sha256": "e2963b66b58aba4bf36c1dcf0670302c6b3593f91e4383eece29b351bcb2d602",
+    "original_bytes": 4657,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-evidence.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-evidence.test.mjs",
+    "original_sha256": "5561e5f81183a27ab64e796cdae271eb0af9986c6384ef9f8c3071eb06d09864",
+    "original_bytes": 4739,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-privacy.test.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-privacy.test.mjs",
+    "original_sha256": "5508f0b37f2aa4703e2f4e85a62e18fd6679c5680b039b5c940a6d16b522e318",
+    "original_bytes": 4820,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/scripts/online-explosion-smoke.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/scripts/online-explosion-smoke.mjs",
+    "original_sha256": "d46cda804fa29d77ce4c82a95345798d468dcfe40f702d640b7aa097256211e5",
+    "original_bytes": 26116,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/docs/online-explosion.md",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/docs/online-explosion.md",
+    "original_sha256": "27f7a27123f704ccadf891505ae3c880e4ea41f5da811260a0d3a1beb6e1432b",
+    "original_bytes": 13835,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/.forgejo/workflows/ci.yml",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/.forgejo/workflows/ci.yml",
+    "original_sha256": "7eeabdbecdb7894fb8bcb873fd807f465129a2e883bcb20daadaa3b6f86c8583",
+    "original_bytes": 4431,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/management.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/management.rs",
+    "original_sha256": "137b254d39872b94a7cebb9fe047bec68039d6633f8b7c06aea0145187ff26fe",
+    "original_bytes": 1272,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/net_client.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/net_client.rs",
+    "original_sha256": "99c38fda9a52dc52b53cbe876f1ef9258afc7379375a037ff2f268b1e4f12a4e",
+    "original_bytes": 9798,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/network.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/network.rs",
+    "original_sha256": "4ed21da3f88ec7536f30828374105a5d6cb2a36ffa56f9620965ad93a6049712",
+    "original_bytes": 4121,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/resilience_server.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/resilience_server.rs",
+    "original_sha256": "b0f65eb2ff68f9c0280ee3459c2eb3fe6029f04b7ece2605847d6672b21fabf1",
+    "original_bytes": 4946,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/room_completion_fixture.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/room_completion_fixture.rs",
+    "original_sha256": "ff69f0d001ede02509b214fe4ba404bf1b21588290518f1a80e2720243278806",
+    "original_bytes": 2527,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/rooms.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/rooms.rs",
+    "original_sha256": "ecb0df142f913de3464c9d4c1579e173649414001a7c5d3b16f3eba3bcc4f841",
+    "original_bytes": 2492,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/rooms_protocol.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/rooms_protocol.rs",
+    "original_sha256": "0f5afb7857454be2d4672153949dd3f54ec0ad768a80cc9a1f61e1705af935ff",
+    "original_bytes": 623,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/rooms_server.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/rooms_server.rs",
+    "original_sha256": "2dc0b9b25a5b97f195d7838144178086c3721c79dd64a33d8299f6089fc86891",
+    "original_bytes": 4056,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/server.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/server.rs",
+    "original_sha256": "be03041ef2c194338c9871ddce35b2c51ad2aa451f08275b4c3b4fd69fdfb40a",
+    "original_bytes": 14066,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "source-inputs/tests/shared_simulation.rs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/tests/shared_simulation.rs",
+    "original_sha256": "42a7f166f5e64468b89bd3e2ec9de70bf9b2258e6ef1decdf79edaef255535e0",
+    "original_bytes": 3821,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/source-inputs.sha256",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/source-inputs.sha256",
+    "original_sha256": "d5b6ff99e2d5fff7861a067d951d646d0e5133af98b8cd6cda751b2603aebcd4",
+    "original_bytes": 10884,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/HANDOFF.txt",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run113/HANDOFF.txt",
+    "original_sha256": "7a77a11f27db4b26fd7e45c3aacb6fb23b2d88289f4aea8b4fe1b4693921e551",
+    "original_bytes": 9058,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/retained-verification.json",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run113/retained-verification.json",
+    "original_sha256": "6ee200751728204170538a91c98b7722955b8e7f3aa31392876f0ecb234d9587",
+    "original_bytes": 11449,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/verify-retained.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run113/verify-retained.mjs",
+    "original_sha256": "ecc6956439424d4a82ecb2d54542743fb3970fd9e7217cf5d928dc9589a74d8b",
+    "original_bytes": 6781,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/red.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red.log",
+    "original_sha256": "15ebc8cf3fa9c24b3a83ea461998517e4a4edd41c1ed4576cf8463fb233b3293",
+    "original_bytes": 31,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/red.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red.time",
+    "original_sha256": "624beaee08e1aaae2d9c6f49fc6b016f0a93ba53934d793529ecab1b04da45e5",
+    "original_bytes": 36,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/red-retry.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red-retry.log",
+    "original_sha256": "717856d1e1e5d72c5fbbe822b3e09d5287fcbb7a2ade0dbf6ea15b26e524b3ee",
+    "original_bytes": 1363,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/red-retry.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red-retry.time",
+    "original_sha256": "d3e9cbe2b72aa328207c22da76b23818913b2cfc4c620cae8a0c77ab51dd6e29",
+    "original_bytes": 37,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/cargo-test.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/cargo-test.log",
+    "original_sha256": "db68b02767986a6ab7dad3f41379e41feae0ff7dc25d8eca4f57cb2d482fef5b",
+    "original_bytes": 19796,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/cargo-test.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/cargo-test.time",
+    "original_sha256": "ae845d23e8005456d42370a448fc57bcebc4b6d509864aa74ec9bf8366b798da",
+    "original_bytes": 36,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/clippy.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/clippy.log",
+    "original_sha256": "cd3a9eb6a545b75a6425fa466fec21777e4d5bc4d91b0c30e2f024694cf19f6d",
+    "original_bytes": 2145,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/clippy.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/clippy.time",
+    "original_sha256": "f82ebb50d0bcc831cfd48b52afa4b3e327712b126b9ac8055c02fef8255add56",
+    "original_bytes": 34,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/native-build.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/native-build.log",
+    "original_sha256": "b755f1104ea3a776280bde677ead98733fed9faf471758837e9653a37c70ae2f",
+    "original_bytes": 70,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/native-build.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/native-build.time",
+    "original_sha256": "75aac7f48fa8aca3ca36d749ab4e2fe3a9c29e9f79cfae48bda957c30414f525",
+    "original_bytes": 34,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/headless.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/headless.log",
+    "original_sha256": "2ddbca5c9c10f08a819ff6863116707efe5217ed65b8aea5ae3a6b9a9599b1c4",
+    "original_bytes": 14869,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/headless.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/headless.time",
+    "original_sha256": "46903a98c8f844c0e5da47a364d89df4bab59548434c1508a35ffc83f5212731",
+    "original_bytes": 34,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/node.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/node.log",
+    "original_sha256": "1473d87b2c9d521944a9838db5797887c852aed159f2077d5884961060374e3e",
+    "original_bytes": 31912,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/node.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/node.time",
+    "original_sha256": "ae89cb21f966165b344261548694399301efdea76ec7965cf93b81c9c52f504f",
+    "original_bytes": 34,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/other-authoring.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/other-authoring.log",
+    "original_sha256": "0a51d4d687280132f03dc2ccd5488c0dadca68264d2a87b58038c8f1b4d118c3",
+    "original_bytes": 224,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/other-authoring.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/other-authoring.time",
+    "original_sha256": "a7b9e678025d4d8603cec37de556b224ce50b31085c88da86c42a6478be8fcab",
+    "original_bytes": 34,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/wasm-build.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/wasm-build.log",
+    "original_sha256": "764d25b6ea614316cf479a016efaa021739f902b7ab485c39bdbe20cfe100da9",
+    "original_bytes": 142,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/run106/wasm-build.time",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/wasm-build.time",
+    "original_sha256": "dab1ba620d2adc19421a5addf6c5448af34646e95b6ffa4e78f1d9fadf234059",
+    "original_bytes": 104,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/reviewer116/check.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-review116/check.mjs",
+    "original_sha256": "1a4394ee6b2e6906a7e11050d8a3d39d4c2023016599364462b8bb1a7efaa493",
+    "original_bytes": 2613,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "parent/reviewer116/check.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-review116/check.log",
+    "original_sha256": "6cd0469e2161a85cf7fe5cc38874ead65e0c250a80a47a1f8f61e06c4e490f86",
+    "original_bytes": 2607,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "assemble.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/assemble.mjs",
+    "original_sha256": "91600a499ceb2ddd586176055885876cf40ee9770351d9f9ac6f3cb51773df50",
+    "original_bytes": 7345,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "packaging-attempt1-failure.json",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/packaging-attempt1-failure.json",
+    "original_sha256": "3261df933e04a94f146e270a5085f51da6b95dc3563f60ce9c1182c8282471fa",
+    "original_bytes": 667,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "preflight.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/preflight.mjs",
+    "original_sha256": "aa1c35d9b9aafb24e1f7c1fff97f9d2c191a6ba80f23590cab1d68af4c939318",
+    "original_bytes": 1639,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "preflight.json",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/preflight.json",
+    "original_sha256": "2ccdcb08580d7d650564b6538cc81f422672ca595fd230bedc4d3e0b3d7e2584",
+    "original_bytes": 2328,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "offline.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline.mjs",
+    "original_sha256": "f37b2c0030a65c3104743f1ff1bca2f29a09d1bb32e80bfb3b8c8f43bc4418b4",
+    "original_bytes": 4982,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "rear-wire.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-wire.mjs",
+    "original_sha256": "179bb582f77dc720d617bb3da322a8adfab85311b48d65ee2996304b14e58dc7",
+    "original_bytes": 2740,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "rear-wire.json",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-wire.json",
+    "original_sha256": "325856ba577ab0c51dd9cdba21cc4215d438d0a6ec802280757532110c207f13",
+    "original_bytes": 412,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "cached-cpu-node.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/cached-cpu-node.log",
+    "original_sha256": "2c86f69b03de023b76fc8236f0153a5126f59ad7c0916c2ceff24128b6b04627",
+    "original_bytes": 2607,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser-attempt1.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/browser-attempt1.log",
+    "original_sha256": "28df9f84a008ed0816bfbde3ea63ac48e697ca11dc0a59d7a46f6e1a379dda55",
+    "original_bytes": 175,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "hud-attempt1.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/hud-attempt1.log",
+    "original_sha256": "5f33cf67141f3067e57998a07a4a690bf987a7aebb8f19f303eee9612841dcc4",
+    "original_bytes": 145,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "offline-attempt1.log",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline-attempt1.log",
+    "original_sha256": "5a8ef3b728b9b45107d69d6caf8bfe4535abeb2b6e79999ca6b5a68255d7fa73",
+    "original_bytes": 124,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "README.txt",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/README.txt",
+    "original_sha256": "6fc7e429da887ee70f24978d41546ef1244f2daf4629e46496cd55cad1377f9b",
+    "original_bytes": 9223,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "verify.mjs",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/verify-template.mjs",
+    "original_sha256": "dfd6b71efa9e0e7dc23f25c77a55c509756f3730da11092113b29a3108360c13",
+    "original_bytes": 2575,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastA-1.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastA-1.png",
+    "original_sha256": "40c9ff7444fb7f19fc07e61a0167c7a67e47bdea5ffe7f6560866443166a4ee0",
+    "original_bytes": 234659,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastA-2.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastA-2.png",
+    "original_sha256": "4072a92da728b25a5f7f001b0eae60d7c112a87105efb75cf383b703e2cf9bf4",
+    "original_bytes": 232754,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastA-3.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastA-3.png",
+    "original_sha256": "78a1c4fc0f05c5adb75dcf4ffa539e0883a3c7299cf44f0ecb457019eb1dcb96",
+    "original_bytes": 234137,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastB-1.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastB-1.png",
+    "original_sha256": "50e54ab91d2a6140507b861c1082e836a4743dc66d9bcbb45460e9508878f65e",
+    "original_bytes": 231519,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastB-2.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastB-2.png",
+    "original_sha256": "826139b7d8fbabcd59a981a4eb23c96be9f16208499cde834bfefc935c491a19",
+    "original_bytes": 229023,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/BlastB-3.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/BlastB-3.png",
+    "original_sha256": "c48d0c0f8190b5a51683226d5c89fd6f32e5da79dab41881ad452a71dc496a01",
+    "original_bytes": 224930,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/explosion/inputs.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/inputs.json",
+    "original_sha256": "651debc8421e4f14cd04de49fe6e3da1a1ca4fa0b385a48b4762567df2e8aacd",
+    "original_bytes": 25593,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "651debc8421e4f14cd04de49fe6e3da1a1ca4fa0b385a48b4762567df2e8aacd",
+    "decoded_bytes": 25593
+  },
+  {
+    "path": "browser/explosion/lobbies.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/lobbies.json",
+    "original_sha256": "5cdb53682732f422120c7d93a10fbfe2b6e8c961559d3e24a48f5203d3d69352",
+    "original_bytes": 1030057,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "5cdb53682732f422120c7d93a10fbfe2b6e8c961559d3e24a48f5203d3d69352",
+    "decoded_bytes": 1030057
+  },
+  {
+    "path": "browser/explosion/results.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/results.json",
+    "original_sha256": "eca29b574aa7634d330cac7d93dbc9c134a33e3802555ae7ebe628439b81f43b",
+    "original_bytes": 405757,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "eca29b574aa7634d330cac7d93dbc9c134a33e3802555ae7ebe628439b81f43b",
+    "decoded_bytes": 405757
+  },
+  {
+    "path": "browser/explosion/sha256.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/sha256.json",
+    "original_sha256": "d501169b2de8eac660dff0dacfa465107a1ad23b8a09c715523a35f424aa3b43",
+    "original_bytes": 15786,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "d501169b2de8eac660dff0dacfa465107a1ad23b8a09c715523a35f424aa3b43",
+    "decoded_bytes": 15786
+  },
+  {
+    "path": "browser/explosion/states.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-explosion/2026-10-24T15-30-37-066Z-fe8307a389d1/states.json",
+    "original_sha256": "49da6d9e128f7d411c7facaf49fe0c5fd905351196f0fbe6eb1b6d3138a3e91c",
+    "original_bytes": 63650169,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "49da6d9e128f7d411c7facaf49fe0c5fd905351196f0fbe6eb1b6d3138a3e91c",
+    "decoded_bytes": 63650169
+  },
+  {
+    "path": "browser/hud/actual-playing.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/actual-playing.png",
+    "original_sha256": "c86d06513a015222b70af084853531fe2bb54bd29bfe345fd4b5fa6054fdea9c",
+    "original_bytes": 242349,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/actual-returned-lobby.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/actual-returned-lobby.png",
+    "original_sha256": "03e572f681550cc8e8361d3a1acf05244bb095a0f39208b6274b8478d4fa4ed6",
+    "original_bytes": 175982,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/authoritative-state-projections.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/authoritative-state-projections.json",
+    "original_sha256": "16b93904d61d70493ce13545fd81682dff1af3d53b5a43ce721b9882a0cb3321",
+    "original_bytes": 951333,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "16b93904d61d70493ce13545fd81682dff1af3d53b5a43ce721b9882a0cb3321",
+    "decoded_bytes": 951333
+  },
+  {
+    "path": "browser/hud/dom-observations.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/dom-observations.json",
+    "original_sha256": "ae0ac58308bb9d09084800415fe71fb9f8036066ab41d5549514f1543052b89a",
+    "original_bytes": 3736969,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "155487a161150db8a2506b924eef5372613536cb1531625a6ab4ece50b685cbc",
+    "decoded_bytes": 3736969
+  },
+  {
+    "path": "browser/hud/fixture-1024.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/fixture-1024.png",
+    "original_sha256": "6e4e13da6de714538261bfecffc04402a3b66d9f4a585f4dfbfb332d99d11480",
+    "original_bytes": 91737,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/fixture-375.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/fixture-375.png",
+    "original_sha256": "1afd6f7a54fbc8483b38c620fe93af830ca25db73433bcd913dd8ea51c45ae6a",
+    "original_bytes": 78102,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/input-observations.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/input-observations.json",
+    "original_sha256": "13997349245e0eb78d025bc6a402b9530f040d2cbc0ede1ba6052f110ea1a5e3",
+    "original_bytes": 20734,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "13997349245e0eb78d025bc6a402b9530f040d2cbc0ede1ba6052f110ea1a5e3",
+    "decoded_bytes": 20734
+  },
+  {
+    "path": "browser/hud/preflight-playing.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/preflight-playing.png",
+    "original_sha256": "0afa3fb9f398e23bf1eac3c765f3ec516ccc84ad94ea492dce7be1d20bc01789",
+    "original_bytes": 240098,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/preflight-returned-lobby.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/preflight-returned-lobby.png",
+    "original_sha256": "47b5c7bd78f8d6fe4dfeeb93eb0c266c3972bbe4eaef7b3fab6b9dec0022891a",
+    "original_bytes": 176031,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/hud/results.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/results.json",
+    "original_sha256": "41a993f7c2230c1455a1a435b940b08d7464d79aa055eda762e5304d60ce271e",
+    "original_bytes": 880718,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "e5516e1697c447abd01ff067d46eeb566de4d6c0d6008225baaaeef75ada3f24",
+    "decoded_bytes": 880729
+  },
+  {
+    "path": "browser/hud/sha256.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/online-hud/2026-10-24T15-33-35-458Z-901957/sha256.json",
+    "original_sha256": "ee5936041d513669316936c34b84e3b4d09bf8030375f11f6638353822be85a0",
+    "original_bytes": 1278,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "ee5936041d513669316936c34b84e3b4d09bf8030375f11f6638353822be85a0",
+    "decoded_bytes": 1278
+  },
+  {
+    "path": "browser/offline/firing.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/firing.png",
+    "original_sha256": "de03b5bac80ea553c80035b784b418e23523d50e5645da8dd2a5941fb0ea2231",
+    "original_bytes": 257675,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/lobby.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/lobby.png",
+    "original_sha256": "45ff9493ccf3c2b2c81bb68ec1cc68bfe955e1169938d845dd3c7b310bb53271",
+    "original_bytes": 35133,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/menu.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/menu.png",
+    "original_sha256": "d3fe1252bc4a9efadd7be25ded1c803b1bea2bd6bbf5cd73d9e1410c98f85a2d",
+    "original_bytes": 22170,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/pause.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/pause.png",
+    "original_sha256": "5e016f32abed83260ae6d5f302f06a94571ad953cba1e629a9f37a9a9b96ce84",
+    "original_bytes": 113378,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/playing.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/playing.png",
+    "original_sha256": "15e6a05adf5aea7e6a5fc921710c92790a52b4c57f42b761595e44eb31ef7ab0",
+    "original_bytes": 264052,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/results.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/results.json",
+    "original_sha256": "503f23de6c5f8b63f2068e1f6b9f035bcc2a008589d383bfdfb0c46398e05d36",
+    "original_bytes": 3093,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "503f23de6c5f8b63f2068e1f6b9f035bcc2a008589d383bfdfb0c46398e05d36",
+    "decoded_bytes": 3093
+  },
+  {
+    "path": "browser/offline/resumed.png",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/resumed.png",
+    "original_sha256": "5ee399b3706d205d5d324cc8fd18b401acf66d5bd4c8af64be67741054feb41b",
+    "original_bytes": 251629,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "browser/offline/sha256.json.gz",
+    "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/offline/sha256.json",
+    "original_sha256": "9f840a20ae891d7471ddd297cdf05520617183cd867d456a9f8eeaac036e5449",
+    "original_bytes": 815,
+    "transformation": "Removed invitation values and endpoint URLs; all result statuses preserved.",
+    "encoding": "gzip",
+    "decoded_sha256": "9f840a20ae891d7471ddd297cdf05520617183cd867d456a9f8eeaac036e5449",
+    "decoded_bytes": 815
+  },
+  {
+    "path": "history/BASELINE.txt",
+    "original_path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/BASELINE.txt",
+    "original_sha256": "b184cf14cf84f693a04d92d55b2437d6fe65421bbc10594a7c214253eef39db5",
+    "original_bytes": 9419,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "history/preserved-sha256.txt",
+    "original_path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/preserved-sha256.txt",
+    "original_sha256": "4c843e2fabe69c735238402e3d8f0e6765e6045df3a993e10fc84c50e0bd18a2",
+    "original_bytes": 2539,
+    "transformation": "byte-for-byte"
+  },
+  {
+    "path": "history/failed-privacy-attempt-original.json",
+    "original_path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/failed-privacy-attempt-original.json",
+    "original_sha256": "35b1845718e01f1073eeb455f3b248efdd7761655ebf3c8d37a583c823d4aa43",
+    "original_bytes": 81,
+    "transformation": "byte-for-byte"
+  }
+]

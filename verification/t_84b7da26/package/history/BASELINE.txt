@@ -1,0 +1,54 @@
+Baseline handoff — t_7969543b
+Scope: preservation and read-only inventory for Forgejo ryggattack issue 6. No product edits, build, test rerun, browser, public-room acceptance, deployment, restart, pruning, staging, commit or publication performed.
+
+Historical HUD preservation
+Durable original: /home/hermes/.hermes/artifacts/ryggattack/rollout-2026-10-23/ryggattack-hud-11b9afc-verified.json
+Observed bytes: 24841; observed mode: 0600.
+Independently recomputed SHA256 in this attempt:
+4ddd0c29cdfbccc4857bfa9e9a1ed2876c98b6e1894f9bc9877c5fb1e3183453
+Matches the pre-loss hash and successful original-copy receipt identified by the operator. Original bytes untouched. Missing scratch source was not recreated.
+Recovery receipt: /home/hermes/.hermes/artifacts/ryggattack/hud-original-recovery-receipt.json
+The receipt cites historical session 20261019_203119_27d9c9, messages 27995/27996 and 31059/31060. The operator independently read these records; this worker read the receipt and recomputed the durable file hash, not the historical database.
+Historical HUD runtime: 11b9afce48aec0d9ff7ea878003c4ca5365e6f6b
+Historical chart/main/Flux: f5ae645545babe5e4127d27c8d22ca123839ff66
+The receipt records 63 passing historical HUD checks. This is not fresh explosion-release or production verification.
+
+Source and worktrees
+/home/hermes/src/ryggattack: main, 11b9afce48aec0d9ff7ea878003c4ca5365e6f6b, clean before/after inventory.
+/home/hermes/src/ryggattack-online-explosions: fix/online-explosion-scale, f5ae645545babe5e4127d27c8d22ca123839ff66, existing dirty changes preserved.
+/home/hermes/src/ryggattack-elimination: feat/elimination-volcano, e7fd870d68df76e71017cd7d42cf88f724568d65; listed only, contents/status not examined.
+Feature worktree modified tracked files: .forgejo/workflows/ci.yml, scripts/client-feedback-helpers.test.mjs, scripts/solo-bots-helpers.test.mjs, src/explosions.rs, src/online.rs.
+Untracked: docs/online-explosion.md plus scripts/online-explosion-cleanup.mjs, online-explosion-cleanup.test.mjs, online-explosion-evidence.mjs, online-explosion-evidence.test.mjs, online-explosion-privacy.test.mjs, online-explosion-smoke.mjs.
+Ignored roots observed: dist/, target, verification/. No index modifications made. git diff --check exited zero.
+Full status/worktree inventories: git-status.txt, worktrees.txt.
+Existing tracked patch preserved privately: restricted/existing-tracked-changes.patch. Untracked source remains in the original checkout; hashes are in source-sha256.txt.
+Current src/explosions.rs SHA256: 2c26f4fb71d48303d9fe745a2b94f904a3e647a2e6919f6153b3743f482912c5
+Current src/online.rs SHA256: 1acacea02ce999e1d727897d8fe620339d2da04935842d0ea60fa650bdefeecf
+Both match historical tested-source records. Later cleanup/smoke/doc hashes match the read historical run31 approval record. A dirty checkout is not an exact proposed commit.
+
+Evidence inventory and retention
+ignored-evidence-paths.txt contains 1113 Git-ignored verification paths. index-evidence-paths.txt is empty: no verification files are tracked in this feature-worktree index. These are enumerated disk paths, not 1113 accepted proofs; local TLS material is also present and must not be staged or published. No broad force-add or manifest-membership acceptance was performed.
+Nine attempt results.json paths are recorded with fresh SHA256s in attempt-results-sha256.txt. The failed privacy attempt and historical run33 result hashes match their existing records. Other attempt statuses were not individually reaccepted.
+Reviewed historical records were copied without changing originals into restricted/; source and destination hashes were compared, and sha256sum -c preserved-sha256.txt passed for every listed preserved file. The inventory and restricted directories are mode0700. Original evidence is outside scratch already; unreviewed evidence stays in place and must not be removed or published merely because its filename is inventoried.
+Preserved records include real Rust RED/GREEN, privacy RED/diagnosis/run28, source/built-artifact provenance, timings, failed privacy marker, independent blocked/approved harness reviews, run31 approval and run33 visual review. File hashes and durable paths: preserved-sha256.txt. The tracked patch was created afterwards and is covered by the final baseline checksum file.
+Existing additional evidence families visible in the disk inventory include explosion-harness-review-fix, privacy-single-writer RED/GREEN, run30 and run31 shutdown repairs, browser attempts, full-test/clippy/WASM logs and source-input snapshots. Their presence does not mean this worker reran or fully audited them.
+
+Historical results (not rerun here)
+Rust lifecycle mesh test RED: one failure, exit101, 268.722s. Measured source Y bounds 1.6..2.4 versus replica 1.936..2.064. GREEN: one pass, exit0, 168.880s. These actual logs were read, copied and hash-verified.
+Historical verification record reports full Rust suite 203 passes (280.655s), clippy pass with existing warnings (12.350s), native bins pass (0.740s). timings.tsv records WASM exit0 (510.924s) and first browser attempt exit1 (158.494s). These broader outcomes remain historical records, not fresh execution claims.
+Historical built-artifact record ties dirty source based on 11b9afc to WASM fbe27a35a166a38a897118c580ee789063c3da4df28bf7bf1100e50430b2db52 and backend 90af59595497af21b5c0ba6e738a290183214760be298ecefb2ff212fc1a8dea. Current binaries were not rehashed here.
+Run31 record reports cleanup repair RED 3 failures, focused GREEN35/all-node GREEN168 and successful local process cleanup; this was not release acceptance.
+Run33 visual-review record reports accepted local two-browser artifact, six inspected images with BlastA3/BlastB2 positive enlarged-blast images, result hash a3a09199514a970d4f7288a44f2e7ba3d663ffe347410d196d21de23a860afe8. That result file's hash matches now. Review provenance, limitations, historical failures and publication_authorized:false are preserved. This worker did not independently inspect screenshots or reverify the 111-entry manifest, wire replay, binaries or historical processes.
+
+Privacy findings
+Original failed attempt: verification/online-explosion/2026-10-22T16-03-01-298Z-464f06ba6a42/results.json. Its retained 81-byte marker says failed/private-material scan failed; artifacts withheld. SHA256 35b1845718e01f1073eeb455f3b248efdd7761655ebf3c8d37a583c823d4aa43. Same bytes copied to restricted/failed-privacy-attempt-original.json; never changed to passing status. Purged private artifacts were not reconstructed.
+Privacy RED log records the full source snapshot failing the unchanged publication gate, while private-key negative gates still pass. Later diagnosis records no hits/mismatches and run28 records 163 Node passes plus preservation of the original failure. Their limited scopes do not authorize general publication or constitute OCR/image privacy clearance.
+Original verification directory mode775 and failed marker mode664 were observed; copies are beneath mode0700 durable directories. TLS files were identified by filename only; their bytes were not read, copied, hashed, or exposed. Unreviewed originals are not certified secret-free. No raw credentials, claims, authentication/environment dumps, or TLS keys were included in this report or copied into this baseline. Public sharing requires explicit allowlisting and privacy review, not wholesale copying of verification/.
+Existing explosion-release-candidate and explosion-release-public-candidate durable directories were discovered by filename only; their packaging/privacy conclusions were not audited or superseded by this baseline.
+
+Execution constraints and remaining work
+Python -c inspection and execute_code were refused by unattended approval gates and did not execute. No approval configuration was changed and no equivalent script was run through shell to bypass them. Native sha256sum/stat/git/cp and file-read tools provided the bounded baseline instead. This is not permission to retry previously denied arbitrary commands.
+No task-owned browser, server, renderer, Cargo worker, delegated agent or persistent job was launched. All inventory commands were foreground and returned; the observed foreground shell PID708374 was absent on a later ps readback. Runtime tool-helper processes were not signaled or treated as game/build workers.
+Next workers must bind any candidate to exact source/artifact hashes, preserve all failures and dirty work, establish single-Cargo ownership before tests/builds, and use the existing bounded local browser gate without public-room activity. Revalidate rear contact: only front cart moves forward by0.4 rail units, neither reverses; preserve server authority, offline behavior and documented anonymous-bearer theft limitation. Inventory does not prove these acceptance requirements.
+Finish disk-versus-index manifest reconciliation, individually review any ignored proof logs before staging, perform privacy-safe packaging, retain real exact-head CPU/WASM results and durations, and validate local browser evidence as required. Native manual graphics remains separately deferred, not a web blocker. No production/public-room/restart/publication authority is implied.
+Dependent cards inspected: t_621f9087 and t_84e4a639. This baseline is submitted for native same-card reviewer review; it does not self-accept changes or release downstream dependencies.

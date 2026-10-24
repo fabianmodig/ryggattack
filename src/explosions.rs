@@ -73,6 +73,14 @@ pub(crate) struct EffectAssets {
     scorch: Handle<StandardMaterial>,
 }
 
+/// Unit-radius geometry: fireball transforms already encode their world radius.
+pub(crate) fn fireball_mesh() -> Mesh {
+    Sphere::new(1.0)
+        .mesh()
+        .ico(2)
+        .expect("two subdivisions are well within the limit")
+}
+
 impl EffectAssets {
     pub(crate) fn new(meshes: &mut Assets<Mesh>, materials: &mut Assets<StandardMaterial>) -> Self {
         let glow = |color: Color| StandardMaterial {
@@ -90,12 +98,7 @@ impl EffectAssets {
             ..default()
         };
         Self {
-            sphere: meshes.add(
-                Sphere::new(1.0)
-                    .mesh()
-                    .ico(2)
-                    .expect("two subdivisions are well within the limit"),
-            ),
+            sphere: meshes.add(fireball_mesh()),
             cube: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
             disc: meshes.add(Cylinder::new(1.0, 0.02)),
             fireball: [
@@ -586,6 +589,29 @@ pub(crate) fn parity_test_detonations(world: &mut World) -> Vec<([f32; 3], usize
         .iter(world)
         .map(|d| (d.position.to_array(), d.chain, d.fuse))
         .collect()
+}
+
+/// Drive real source spawning/animation for the online mesh regression.
+#[cfg(test)]
+pub(crate) fn replication_test_burst(world: &mut World, chain: usize) {
+    use bevy::ecs::system::RunSystemOnce;
+    world.spawn(Detonation {
+        position: Vec3::new(100.0, 2.0, -100.0),
+        chain,
+        fuse: 0.0,
+    });
+    world.run_system_once(run_detonations).unwrap();
+}
+
+#[cfg(test)]
+pub(crate) fn replication_test_progress(world: &mut World, progress: f32) {
+    use bevy::ecs::system::RunSystemOnce;
+    // Zero delta makes each observation independent of wall-clock scheduling.
+    *world.resource_mut::<Time>() = Time::default();
+    for mut ball in world.query::<&mut Fireball>().iter_mut(world) {
+        ball.age = ball.duration * progress;
+    }
+    world.run_system_once(animate_fireballs).unwrap();
 }
 
 #[cfg(test)]

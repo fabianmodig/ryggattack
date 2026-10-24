@@ -1,0 +1,46 @@
+Independent hashes/log audit passed; 203 retained Rust passes; 9 bundle files; JS syntax and WASM validity passed.
+Fresh cached binary execution online::tests::
+
+running 14 tests
+test online::tests::development_entry_requires_explicit_address_and_preserves_offline_default ... ok
+test online::tests::invalid_invite_is_visible_in_the_entry_ui_instead_of_exiting_before_hud ... ok
+test online::tests::lobby_keys_use_server_identity_and_explicit_commands ... ok
+test online::tests::menu_blur_and_form_focus_suppress_gameplay_without_pausing ... ok
+test online::tests::hud_publication_is_atomic_and_legacy_status_has_a_safe_fallback ... ok
+test online::tests::native_code_entry_creates_a_validated_join_adapter_after_deliberate_leave ... ok
+test online::tests::native_room_switch_preserves_ground_and_removes_old_cart_roots ... ok
+test online::tests::hud_projection_is_a_small_whitelist_and_does_not_mutate_authority ... ok
+test online::tests::socket_polling_waits_until_initial_presentations_have_yielded ... ok
+test online::tests::projectile_and_pickup_replica_geometry_stays_unchanged ... ok
+test online::tests::lobby_boundary_removes_old_match_replicas_before_ids_can_restart ... ok
+test online::tests::client_only_renders_server_state_and_removes_destroyed_bodies ... ok
+test online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries ... ok
+test online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 162 filtered out; finished in 0.08s
+
+
+Fresh cached binary execution server::parity_tests::offline_server_entry_physical_rear_contact
+
+running 1 test
+test server::parity_tests::offline_server_entry_physical_rear_contact_pushes_only_leader_point_four_without_reversals ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 175 filtered out; finished in 0.04s
+
+
+Fresh cached binary execution players::tests::shared_fixed_tick_rear_end
+
+running 4 tests
+test players::tests::shared_fixed_tick_rear_end_pushes_only_front_without_reversing ... ok
+test players::tests::shared_fixed_tick_rear_end_ignores_inactive_dead_and_cooling_carts ... ok
+test players::tests::shared_fixed_tick_rear_end_crosses_bends_and_route_seams_without_reversal ... ok
+test players::tests::shared_fixed_tick_rear_end_on_bends_and_overlaps_has_one_bounded_push ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 172 filtered out; finished in 0.91s
+
+
+# tests 143
+# pass 143
+# fail 0
+# duration_ms 926.191686
+No Cargo builds, product edits, browser runs or production operations performed.

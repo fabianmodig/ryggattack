@@ -1,0 +1,31 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-online-explosions)
+warning: field `fireball` is never read
+  --> src/online.rs:27:5
+   |
+24 | struct VisualAssets {
+   |        ------------ field in this struct
+...
+27 |     fireball: Handle<Mesh>,
+   |     ^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `ryggattack` (lib test) generated 1 warning
+    Finished `test` profile [optimized + debuginfo] target(s) in 16.58s
+     Running unittests src/lib.rs (target/debug/deps/ryggattack-db21e59a20f3f2b2)
+
+running 1 test
+
+thread 'online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle' (855370) panicked at src/online.rs:691:25:
+chain=0 posed=false progress=0: source bounds (Vec3(99.60784, 1.6, -100.39321), Vec3(100.39216, 2.4, -99.60679)), replica bounds (Vec3(99.93913, 1.936, -100.064), Vec3(100.06087, 2.064, -99.936))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle ... FAILED
+
+failures:
+
+failures:
+    online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 175 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
