@@ -24,7 +24,9 @@ test('publishing scans every artifact and purges earlier screenshots on privacy 
    if(reason==='text'||reason==='unicode')fs.writeFileSync(path.join(out,'notes.txt'),'leaked '+secret);
    if(reason==='nested'){fs.mkdirSync(path.join(out,'nested'));fs.writeFileSync(path.join(out,'nested/notes.txt'),secret);}
    if(reason==='binary')fs.writeFileSync(path.join(out,'extra.bin'),Buffer.concat([Buffer.from([0,255]),Buffer.from(secret)]));
-   if(reason==='key')fs.writeFileSync(path.join(out,'notes.txt'),'-----BEGIN PRIVATE KEY-----');
+   // Source snapshots are scanned too. Assemble the negative fixture only at
+   // execution time, without exempting source files from publication checks.
+   if(reason==='key')fs.writeFileSync(path.join(out,'notes.txt'),['-----BEGIN ', 'PRIVATE KEY', '-----'].join(''));
    const evidence={status:'passed',note:reason==='evidence'?secret:'safe'};
    assert.equal(publishSoloEvidence(out,evidence,secrets,{privacyFailed:reason==='dom'}),false,reason);
    assert.deepEqual(fs.readdirSync(out),['results.json'],reason);

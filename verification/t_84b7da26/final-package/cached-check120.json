@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "source_head": "f50904f6b8cadcd11f6ba86f4a7f26c49b672621",
+  "native_binary": {
+    "path": "target/debug/deps/ryggattack-db21e59a20f3f2b2",
+    "sha256": "df44588ba51cfab07e30e6986484515cdb23f22ecd510419c14cc09c43c31fe2"
+  },
+  "native_passed": 19,
+  "runs": [
+    {
+      "command": [
+        "./target/debug/deps/ryggattack-db21e59a20f3f2b2",
+        "online::tests::",
+        "--nocapture"
+      ],
+      "passed": 14,
+      "duration_ms": 103.69997400000011,
+      "output": "\nrunning 14 tests\ntest online::tests::development_entry_requires_explicit_address_and_preserves_offline_default ... ok\ntest online::tests::invalid_invite_is_visible_in_the_entry_ui_instead_of_exiting_before_hud ... ok\ntest online::tests::hud_publication_is_atomic_and_legacy_status_has_a_safe_fallback ... ok\ntest online::tests::lobby_keys_use_server_identity_and_explicit_commands ... ok\ntest online::tests::menu_blur_and_form_focus_suppress_gameplay_without_pausing ... ok\ntest online::tests::native_room_switch_preserves_ground_and_removes_old_cart_roots ... ok\ntest online::tests::native_code_entry_creates_a_validated_join_adapter_after_deliberate_leave ... ok\ntest online::tests::hud_projection_is_a_small_whitelist_and_does_not_mutate_authority ... ok\ntest online::tests::socket_polling_waits_until_initial_presentations_have_yielded ... ok\ntest online::tests::projectile_and_pickup_replica_geometry_stays_unchanged ... ok\ntest online::tests::lobby_boundary_removes_old_match_replicas_before_ids_can_restart ... ok\ntest online::tests::client_only_renders_server_state_and_removes_destroyed_bodies ... ok\ntest online::tests::hud_frame_is_quarantined_at_phase_and_identity_boundaries ... ok\ntest online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle ... ok\n\ntest result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 162 filtered out; finished in 0.05s\n\n"
+    },
+    {
+      "command": [
+        "./target/debug/deps/ryggattack-db21e59a20f3f2b2",
+        "server::parity_tests::offline_server_entry_physical_rear_contact",
+        "--nocapture"
+      ],
+      "passed": 1,
+      "duration_ms": 84.38746400000036,
+      "output": "\nrunning 1 test\ntest server::parity_tests::offline_server_entry_physical_rear_contact_pushes_only_leader_point_four_without_reversals ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 175 filtered out; finished in 0.04s\n\n"
+    },
+    {
+      "command": [
+        "./target/debug/deps/ryggattack-db21e59a20f3f2b2",
+        "players::tests::shared_fixed_tick_rear_end",
+        "--nocapture"
+      ],
+      "passed": 4,
+      "duration_ms": 951.9886329999999,
+      "output": "\nrunning 4 tests\ntest players::tests::shared_fixed_tick_rear_end_pushes_only_front_without_reversing ... ok\ntest players::tests::shared_fixed_tick_rear_end_ignores_inactive_dead_and_cooling_carts ... ok\ntest players::tests::shared_fixed_tick_rear_end_crosses_bends_and_route_seams_without_reversal ... ok\ntest players::tests::shared_fixed_tick_rear_end_on_bends_and_overlaps_has_one_bounded_push ... ok\n\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 172 filtered out; finished in 0.90s\n\n"
+    }
+  ],
+  "node": {
+    "command": [
+      "node",
+      "--test",
+      "scripts/client-feedback-helpers.test.mjs",
+      "scripts/online-explosion-cleanup.test.mjs",
+      "scripts/online-explosion-evidence.test.mjs",
+      "scripts/online-explosion-privacy.test.mjs",
+      "scripts/online-hud-artifacts.test.mjs",
+      "scripts/online-hud-assets.test.mjs",
+      "scripts/online-hud-bridge.test.mjs",
+      "scripts/online-hud-cases.test.mjs",
+      "scripts/online-hud-startup.test.mjs",
+      "scripts/online-hud-temporal.test.mjs",
+      "scripts/online-hud.test.mjs",
+      "scripts/solo-bots-helpers.test.mjs"
+    ],
+    "passed": 143,
+    "duration_ms": 5649.468308,
+    "summary": [
+      "# tests 143",
+      "# pass 143",
+      "# fail 0",
+      "# duration_ms 909.911092"
+    ]
+  },
+  "scope": "Fresh cached native test binary and Node execution, not a Cargo compile or full203 Rust rerun; no browser operation in this script."
+}

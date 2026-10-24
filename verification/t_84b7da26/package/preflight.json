@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "source_manifest": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/source-inputs.sha256",
+  "source_manifest_sha256": "d5b6ff99e2d5fff7861a067d951d646d0e5133af98b8cd6cda751b2603aebcd4",
+  "tracked_patch_sha256": "a5118f24a2ffe925151573da0d5cce3cb6eace6bce84f53d74a66a4e17fa63de",
+  "bundle": "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle",
+  "previous_bundle": "dist/web-before-t_84b7da26",
+  "staged_bundle": "dist/web",
+  "outputs": [
+    {
+      "path": "assets/players/cart-riders.png",
+      "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "bytes": 1165424
+    },
+    {
+      "path": "assets/players/riders.png",
+      "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "bytes": 1118713
+    },
+    {
+      "path": "index.html",
+      "sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "bytes": 4677
+    },
+    {
+      "path": "online-hud-bridge.mjs",
+      "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "bytes": 1029
+    },
+    {
+      "path": "online-hud.mjs",
+      "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "bytes": 8755
+    },
+    {
+      "path": "refresh-rate.mjs",
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    {
+      "path": "rooms.mjs",
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "bytes": 3535
+    },
+    {
+      "path": "ryggattack.js",
+      "sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+      "bytes": 118877
+    },
+    {
+      "path": "ryggattack_bg.wasm",
+      "sha256": "fbe27a35a166a38a897118c580ee789063c3da4df28bf7bf1100e50430b2db52",
+      "bytes": 39799842
+    }
+  ],
+  "native": [
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/target/debug/ryggattack-server",
+      "sha256": "90af59595497af21b5c0ba6e738a290183214760be298ecefb2ff212fc1a8dea"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/target/debug/ryggattack-headless",
+      "sha256": "7a3d72e0ac91d84292d8ecc1bd11a69badaf50fd4f75d50936c3b1835212c846"
+    }
+  ],
+  "builds_run": 0
+}

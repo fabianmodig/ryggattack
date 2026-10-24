@@ -1,0 +1,9 @@
+{
+  "status": "no-qualifying-rail-contact",
+  "scope": "Independent read-only rail-distance analysis of equal adjacent actual browser snapshots. Shared directed segment or continuous seam, positive forward travel for both, leader ordinary+0.4 rail unit and rear ordinary only. Curves measured by arc length, not chord. Geometry uses full grid superset only to locate observed poses; does not fabricate topology or input, nor claim exact pixels/causal isolation. CPU paired-entry fixture remains causal oracle.",
+  "states_sha256": "1f41ebbf0d39505a79777f027ecd424a059ef95678f8512e5c33a86bc18e4f69",
+  "shared_adjacent_pairs": 2797,
+  "event_count": 0,
+  "events": [],
+  "geometry_self_tests": 4
+}

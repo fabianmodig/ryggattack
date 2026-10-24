@@ -1,0 +1,37 @@
+[package]
+name = "ryggattack"
+version = "0.1.0"
+edition = "2024"
+default-run = "ryggattack"
+
+[dependencies]
+bevy = { version = "0.19.1", default-features = false, features = ["3d", "ui"] }
+# Re-exports `std::time` everywhere except the web, where it reads the clock
+# through the browser instead of panicking.
+web-time = "1.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ewebsock = { version = "0.8", features = ["tls"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tungstenite = "0.29"
+libc = "0.2"
+# ewebsock's TLS feature deliberately leaves provider selection to the app.
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+
+# The browser build keeps video settings in localStorage. Both crates are
+# already in the dependency tree through Bevy, so this compiles nothing new.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["Window", "Location", "UrlSearchParams", "Document", "Element", "Storage", "History"] }
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

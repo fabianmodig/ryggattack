@@ -1,0 +1,274 @@
+{
+  "receipts": [
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser/2026-10-24T16-15-17-107Z-163de33ab7b6/results.json",
+      "published_path": "attempt118/results.json.gz",
+      "original_sha256": "3a2c2ec8b173eb2930258dc81254899d64ba38b1356ea07e8d9f0eb7f3cb3d48",
+      "original_bytes": 109557,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser/2026-10-24T16-15-17-107Z-163de33ab7b6/states.json",
+      "published_path": "attempt118/states.json.gz",
+      "original_sha256": "1f41ebbf0d39505a79777f027ecd424a059ef95678f8512e5c33a86bc18e4f69",
+      "original_bytes": 113655042,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser/2026-10-24T16-15-17-107Z-163de33ab7b6/inputs.json",
+      "published_path": "attempt118/inputs.json.gz",
+      "original_sha256": "37689af338460340992e9273f15f16213e19e3605be40d829526bb7d82ac3f6f",
+      "original_bytes": 35418,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser/2026-10-24T16-15-17-107Z-163de33ab7b6/lobbies.json",
+      "published_path": "attempt118/lobbies.json.gz",
+      "original_sha256": "28928fdc51451449ac861f050839ce0077550fc6259c88a4fd9cec4e56f92e3f",
+      "original_bytes": 1529739,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser/2026-10-24T16-15-17-107Z-163de33ab7b6/sha256.json",
+      "published_path": "attempt118/sha256.json.gz",
+      "original_sha256": "8de8a75762775dc3d455bbcdbe33a69e9b484c7875d0a8f81009a99ff3e4522b",
+      "original_bytes": 15078,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser120/2026-10-24T18-18-47-479Z-4b0bcd130a67/results.json",
+      "published_path": "attempt120/results.json.gz",
+      "original_sha256": "058aca62e013e13703efd11b6c39941921ad2d7d2c342c560affd3d6bcab824e",
+      "original_bytes": 20978,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser120/2026-10-24T18-18-47-479Z-4b0bcd130a67/states.json",
+      "published_path": "attempt120/states.json.gz",
+      "original_sha256": "ffcbbc06f25676e497289ebd3ad92af6bb44a8321cf8740e8ece801be41d9156",
+      "original_bytes": 316561586,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser120/2026-10-24T18-18-47-479Z-4b0bcd130a67/inputs.json",
+      "published_path": "attempt120/inputs.json.gz",
+      "original_sha256": "4256fc0f7687f7077a7b86fbd08ef3e2dcede1c0ca80c2462317e1f3b08a7f79",
+      "original_bytes": 96336,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser120/2026-10-24T18-18-47-479Z-4b0bcd130a67/lobbies.json",
+      "published_path": "attempt120/lobbies.json.gz",
+      "original_sha256": "e9e8a9930184da10f74d660ecc7522a5bd650905df3b57ed58cac825e8a2748f",
+      "original_bytes": 4082007,
+      "transformation": "JSON reserialization, invitation/endpoint removal; failure stack omitted after first line; statuses and wire geometry retained. gzip."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/rear-browser120/2026-10-24T18-18-47-479Z-4b0bcd130a67/sha256.json",
+      "published": false,
+      "reason": "Not emitted by failed launcher; hash inputs remain embedded in results.json. Not fabricated."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-browser.mjs",
+      "published_path": "provenance/rear-browser118.mjs",
+      "original_sha256": "c29e391b19d24afcfdc15a1158b607740cf238e4c69b6944c9420bc1c5680442",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-replay-provenance/executed.mjs",
+      "published_path": "provenance/executed118.mjs",
+      "original_sha256": "33da12d04e2a1e59eb1f4a9da4b3a1d1fe09fe9755c38e329d44cc2591f935ca",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-browser120.mjs",
+      "published_path": "provenance/rear-browser120.mjs",
+      "original_sha256": "2b4ffbc52831079382fc6a16af67df17e581ea7c86a7c03406029141181a4541",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear120-provenance/executed.mjs",
+      "published_path": "provenance/executed120.mjs",
+      "original_sha256": "6b1815fcc347392b3a97e3c76baada5b4e3871e92680645995f4e62b27d2b0bb",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear120-provenance/receipt.json",
+      "published_path": "provenance/receipt120.json",
+      "original_sha256": "194b64954a33a115c00c03cc9ec31dfed4d46fa32a684e5721704db5d8270fd2",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-rail-analysis120.mjs",
+      "published_path": "rear-rail-analysis120.mjs",
+      "original_sha256": "729b3cda2fb68e0efee90990106892e00fddda80fc60421f03d715f0d8c11377",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-rail-analysis118.json",
+      "published_path": "rear-rail-analysis118.json",
+      "original_sha256": "483d14c29a0c70d7ec6fec1704e59984a6b1957f52f3b375127c5f406c23e669",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-rail-analysis120.json",
+      "published_path": "rear-rail-analysis120.json",
+      "original_sha256": "6bfb16dc1f88b1b850a018952ce8fef3cc09d504cb051fd467c1cd8e28793ddf",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/final-verify-template.mjs",
+      "published_path": "verify.mjs",
+      "original_sha256": "e41e00b8b88f85060cd49113b12f97f21b02c29fdc078204cd12f3fc9d36f187",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/assemble-final120.mjs",
+      "published_path": "assemble-final120.mjs",
+      "original_sha256": "bb73d5214e07ab1ee15b2021e5d2bd067bbe2285dda77dad4492057953e555e9",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/FINAL-README.txt",
+      "published_path": "README.txt",
+      "original_sha256": "d44c3a405fb27166d8445416551e5ee7f6c0546ab777d23d4571b99bee638eab",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/index-audit-receipt.json",
+      "published_path": "prior-index-audit-receipt.json",
+      "original_sha256": "080c75b695afe7117c32800cb1e134db6498125b96819cc1eadd6b686766366b",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/tamper-test-results.json",
+      "published_path": "prior-tamper-test-results.json",
+      "original_sha256": "f6797f8f3d75aa23d445eb7bfe97fa3aa673b1bc562d42539484ac5e313a3e99",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/cached-check120.mjs",
+      "published_path": "cached-check120.mjs",
+      "original_sha256": "f5d77519a3e1c4114cd57ff17b8d21f02c9b4a4f35996ea6831b6c08b2b96cf9",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/cached-check120.json",
+      "published_path": "cached-check120.json",
+      "original_sha256": "78b039bb1da1566976e931e6aa44452cc1b2e83f9eaf0ce8aea373bf7b2aa555",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/audit121.mjs",
+      "published_path": "audit121.mjs",
+      "original_sha256": "6a45aee8f2704349dac19ed7a6441add93299839135de49d2259db9d04bc1636",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/audit121.json",
+      "published_path": "audit121.json",
+      "original_sha256": "d89d59e456088c434c933fdbf8998e4c425bdef48521ab353b02e18875694be9",
+      "transformation": "byte-for-byte"
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-browser-attempt1.log",
+      "original_sha256": "18877a1fbb49c66f358002b3bd0e767b16918919dac05b4b2baecf7bd0a81521",
+      "published": false,
+      "reason": "Raw launcher logs withheld; result and provenance derivatives published instead."
+    },
+    {
+      "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_84b7da26/rear-browser120.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": false,
+      "reason": "Raw launcher logs withheld; result and provenance derivatives published instead."
+    }
+  ],
+  "historical_originals_reverified": {
+    "historical_only": true,
+    "preserved": [
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-built-artifact.json",
+        "sha256": "b6da0b0e7a230a88895edb16906436be379f14636e066488c737759bf495f98a",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-green.log",
+        "sha256": "7e31469e07f3376fdfb4b2b96a72bf0b1c1cd030c2836dba8666a64bef747dc4",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-independent-review-approved.json",
+        "sha256": "99e80b7c534de422a344d6026339b4a140e517207a9cbed11e8e96addb732078",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-independent-review-blocked.json",
+        "sha256": "ac3ae6ccfd71026626cf1c6224f93b4b0fa453fa6e0162ba2dc7c76acf7f62c4",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-RED.log",
+        "sha256": "53a0831d33a8ae1cde23d0ec463c09d2c8f568e5f989905af7f0f6ac834ad3f3",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-diagnosis.json",
+        "sha256": "cb0849a46694b339cfa19a764259ade3e4984affdffa209e0ebc5d27d29ff75c",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-privacy-run28-verified.json",
+        "sha256": "13809e97090956c18f5bf94fdf00043079b6d9f1ce0a33f1545d6309e2a1325e",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-red-source.json",
+        "sha256": "d112e4dbc396eb3ffc58ea3857fd9dc919eb72421bbd68a7a53d08bd72739e54",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-red.log",
+        "sha256": "df2eedc61cb48759c8df59981e127cbf31910db7f10497b32ba3ef51cf3676f9",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-repair-run31-approved.json",
+        "sha256": "d81a00ab0f1cc43096e35f91abbf5c7eed16ec29d1c0ee441bef01cd6ef51966",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-run33-visual-review.json",
+        "sha256": "55913a6f05590ad8cb138b961c6e79d4c5e83120300689c00f63a617e201ff57",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-tested-source.json",
+        "sha256": "6273a9c4d57c363086f46fe3e541e7caf03b16415b81d1bed9a2f5d4372756cc",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/explosion-verification.json",
+        "sha256": "cca5d471f254d0929a41809e6b2b5675e1ec5fdeac74c308da41d6fa18d0bccb",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/failed-privacy-attempt-original.json",
+        "sha256": "35b1845718e01f1073eeb455f3b248efdd7761655ebf3c8d37a583c823d4aa43",
+        "mode": 384
+      },
+      {
+        "path": "/home/hermes/.hermes/artifacts/ryggattack/baseline-t_7969543b/restricted/timings.tsv",
+        "sha256": "b263f4e5fabb67e07173fcc59ea73ce1dc0c9bc12f8fcafcab548f397e5762ab",
+        "mode": 384
+      }
+    ],
+    "HUD": {
+      "path": "/home/hermes/.hermes/artifacts/ryggattack/rollout-2026-10-23/ryggattack-hud-11b9afc-verified.json",
+      "sha256": "4ddd0c29cdfbccc4857bfa9e9a1ed2876c98b6e1894f9bc9877c5fb1e3183453",
+      "mode": 384
+    },
+    "historical_runtime": "11b9afce48aec0d9ff7ea878003c4ca5365e6f6b",
+    "historical_chart_main_flux": "f5ae645545babe5e4127d27c8d22ca123839ff66",
+    "private_originals_published": false
+  }
+}

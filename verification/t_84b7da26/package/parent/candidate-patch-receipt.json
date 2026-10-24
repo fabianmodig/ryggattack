@@ -1,0 +1,6 @@
+{
+  "original_path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/candidate.patch",
+  "sha256": "a5118f24a2ffe925151573da0d5cce3cb6eace6bce84f53d74a66a4e17fa63de",
+  "published": false,
+  "reason": "Patch includes removed synthetic negative-test key-header text. Strict scanner rejected it; original retained, raw patch excluded, exact tested final source bytes archived instead."
+}

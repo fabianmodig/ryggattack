@@ -1,0 +1,3 @@
+bash: [858069: 1 (255)] tcsetattr: Inappropriate ioctl for device
+elapsed_seconds=240.506
+exit_code=143

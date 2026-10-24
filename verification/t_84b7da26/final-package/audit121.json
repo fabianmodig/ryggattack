@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "source_head": "f50904f6b8cadcd11f6ba86f4a7f26c49b672621",
+  "source_worktree": "",
+  "overlapping_source_hashes": 101,
+  "served_artifact_members": 9,
+  "artifact_hashes": {
+    "dist/web/assets/players/cart-riders.png": {
+      "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "bytes": 1165424
+    },
+    "dist/web/assets/players/riders.png": {
+      "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "bytes": 1118713
+    },
+    "dist/web/index.html": {
+      "sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+      "bytes": 4677
+    },
+    "dist/web/online-hud-bridge.mjs": {
+      "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "bytes": 1029
+    },
+    "dist/web/online-hud.mjs": {
+      "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "bytes": 8755
+    },
+    "dist/web/refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "dist/web/rooms.mjs": {
+      "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+      "bytes": 3535
+    },
+    "dist/web/ryggattack.js": {
+      "sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+      "bytes": 118877
+    },
+    "dist/web/ryggattack_bg.wasm": {
+      "sha256": "fbe27a35a166a38a897118c580ee789063c3da4df28bf7bf1100e50430b2db52",
+      "bytes": 39799842
+    }
+  },
+  "original_launcher_status": "failed",
+  "original_launcher_failure": "AssertionError [ERR_ASSERTION]: no qualifying rear contact within bounded legal-input replay",
+  "total_ms": 532122,
+  "cleanup": {
+    "backend_exit": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "forced": false,
+      "requested": true,
+      "unexpected": false,
+      "valid": true
+    },
+    "http_closed": true,
+    "inputs_unchanged": true
+  },
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 2,
+    "all_artifacts_exact_value_scan": true,
+    "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+  },
+  "independent_analysis_status": "passed-browser-wire-rail-contact",
+  "event_count": 1,
+  "geometry_tests": 4,
+  "cached_native_passed": 19,
+  "node_passed": 143,
+  "scope": "Read-only provenance/geometry corroboration, no new browser/build; complete original launcher failure retained. Original compiler provenance/build durations are in frozen package.",
+  "preflight_sha256": "2ccdcb08580d7d650564b6538cc81f422672ca595fd230bedc4d3e0b3d7e2584"
+}

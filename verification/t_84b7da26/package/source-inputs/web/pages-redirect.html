@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>Ryggattack has moved</title>
+<link rel="canonical" href="https://ryggattack.modig.online/">
+<p>Ryggattack has moved to <a href="https://ryggattack.modig.online/">ryggattack.modig.online</a>.</p>
+<script>
+const destination=new URL('https://ryggattack.modig.online/');
+destination.search=location.search;
+const online=destination.searchParams.has('online')||destination.searchParams.has('room');
+destination.searchParams.delete('online');
+if(online)destination.searchParams.set('online','wss://ryggattack.modig.online/ws');
+location.replace(destination.href);
+</script>
+</html>

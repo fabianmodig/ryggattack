@@ -1,0 +1,322 @@
+{
+  "status": "retained-cpu-and-wasm-evidence-verified-browser-pending",
+  "command": "node verification/t_621f9087-run113/verify-retained.mjs",
+  "base_revision": "f5ae645545babe5e4127d27c8d22ca123839ff66",
+  "candidate_identity": "Dirty feature worktree, NOT a committed proposed head; use source manifest plus tracked patch digest.",
+  "source_manifest": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/source-inputs.sha256",
+  "source_manifest_sha256": "d5b6ff99e2d5fff7861a067d951d646d0e5133af98b8cd6cda751b2603aebcd4",
+  "source_entries_verified": 119,
+  "tracked_candidate_patch_sha256": "a5118f24a2ffe925151573da0d5cce3cb6eace6bce84f53d74a66a4e17fa63de",
+  "cpu": {
+    "passed": 203,
+    "failed": 0,
+    "suites": [
+      {
+        "passed": 176,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      }
+    ],
+    "requiredTests": [
+      "online::tests::replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle",
+      "online::tests::projectile_and_pickup_replica_geometry_stays_unchanged",
+      "server::parity_tests::offline_server_entry_physical_rear_contact_pushes_only_leader_point_four_without_reversals",
+      "players::tests::shared_fixed_tick_rear_end_pushes_only_front_without_reversing"
+    ],
+    "timings": {
+      "red": {
+        "elapsed_seconds": 0,
+        "exit_code": 127
+      },
+      "red-retry": {
+        "elapsed_seconds": 16.684,
+        "exit_code": 101
+      },
+      "cargo-test": {
+        "elapsed_seconds": 231.934,
+        "exit_code": 0
+      },
+      "clippy": {
+        "elapsed_seconds": 3.53,
+        "exit_code": 0
+      },
+      "node": {
+        "elapsed_seconds": 1.194,
+        "exit_code": 0
+      },
+      "native-build": {
+        "elapsed_seconds": 0.446,
+        "exit_code": 0
+      },
+      "headless": {
+        "elapsed_seconds": 1.444,
+        "exit_code": 0
+      },
+      "other-authoring": {
+        "elapsed_seconds": 0.346,
+        "exit_code": 0
+      },
+      "wasm-build": {
+        "elapsed_seconds": 240.506,
+        "exit_code": 143
+      }
+    },
+    "clippy_warning_count": 4,
+    "node_passed": 157
+  },
+  "evidence": [
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red.log",
+      "sha256": "15ebc8cf3fa9c24b3a83ea461998517e4a4edd41c1ed4576cf8463fb233b3293"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red.time",
+      "sha256": "624beaee08e1aaae2d9c6f49fc6b016f0a93ba53934d793529ecab1b04da45e5"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red-retry.log",
+      "sha256": "717856d1e1e5d72c5fbbe822b3e09d5287fcbb7a2ade0dbf6ea15b26e524b3ee"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/red-retry.time",
+      "sha256": "d3e9cbe2b72aa328207c22da76b23818913b2cfc4c620cae8a0c77ab51dd6e29"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/cargo-test.log",
+      "sha256": "db68b02767986a6ab7dad3f41379e41feae0ff7dc25d8eca4f57cb2d482fef5b"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/cargo-test.time",
+      "sha256": "ae845d23e8005456d42370a448fc57bcebc4b6d509864aa74ec9bf8366b798da"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/clippy.log",
+      "sha256": "cd3a9eb6a545b75a6425fa466fec21777e4d5bc4d91b0c30e2f024694cf19f6d"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/clippy.time",
+      "sha256": "f82ebb50d0bcc831cfd48b52afa4b3e327712b126b9ac8055c02fef8255add56"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/node.log",
+      "sha256": "1473d87b2c9d521944a9838db5797887c852aed159f2077d5884961060374e3e"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/node.time",
+      "sha256": "ae89cb21f966165b344261548694399301efdea76ec7965cf93b81c9c52f504f"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/native-build.log",
+      "sha256": "b755f1104ea3a776280bde677ead98733fed9faf471758837e9653a37c70ae2f"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/native-build.time",
+      "sha256": "75aac7f48fa8aca3ca36d749ab4e2fe3a9c29e9f79cfae48bda957c30414f525"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/headless.log",
+      "sha256": "2ddbca5c9c10f08a819ff6863116707efe5217ed65b8aea5ae3a6b9a9599b1c4"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/headless.time",
+      "sha256": "46903a98c8f844c0e5da47a364d89df4bab59548434c1508a35ffc83f5212731"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/other-authoring.log",
+      "sha256": "0a51d4d687280132f03dc2ccd5488c0dadca68264d2a87b58038c8f1b4d118c3"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/other-authoring.time",
+      "sha256": "a7b9e678025d4d8603cec37de556b224ce50b31085c88da86c42a6478be8fcab"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/wasm-build.log",
+      "sha256": "764d25b6ea614316cf479a016efaa021739f902b7ab485c39bdbe20cfe100da9"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/verification/t_621f9087-run106/wasm-build.time",
+      "sha256": "dab1ba620d2adc19421a5addf6c5448af34646e95b6ffa4e78f1d9fadf234059"
+    }
+  ],
+  "wasm": {
+    "packaging_result": "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/result.json",
+    "packaging_result_sha256": "86d47c6456b7f3d2d53ab226ed8849b23fb7a9024b10dc8ffc062d20ae0cc1df",
+    "stages": [
+      {
+        "name": "cache-validation",
+        "argv": [
+          "cargo",
+          "build",
+          "--frozen",
+          "--release",
+          "--bin",
+          "ryggattack",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--message-format=json"
+        ],
+        "elapsed_seconds": 0.675,
+        "exit_code": 0
+      },
+      {
+        "name": "wasm-bindgen",
+        "argv": [
+          "wasm-bindgen",
+          "--target",
+          "web",
+          "--no-typescript",
+          "--out-dir",
+          "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle",
+          "--remove-name-section",
+          "--remove-producers-section",
+          "/home/hermes/src/ryggattack-online-explosions/target/wasm32-unknown-unknown/release/ryggattack.wasm"
+        ],
+        "elapsed_seconds": 9.641,
+        "exit_code": 0
+      },
+      {
+        "name": "wasm-opt",
+        "argv": [
+          "wasm-opt",
+          "-Oz",
+          "--enable-bulk-memory",
+          "--enable-nontrapping-float-to-int",
+          "-o",
+          "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle/ryggattack_bg.wasm.opt",
+          "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle/ryggattack_bg.wasm"
+        ],
+        "elapsed_seconds": 223.154,
+        "exit_code": 0
+      }
+    ],
+    "bundle_root": "/home/hermes/.hermes/artifacts/ryggattack/wasm-packaging-20261024/bundle",
+    "outputs": [
+      {
+        "path": "assets/players/cart-riders.png",
+        "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+        "bytes": 1165424
+      },
+      {
+        "path": "assets/players/riders.png",
+        "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+        "bytes": 1118713
+      },
+      {
+        "path": "index.html",
+        "sha256": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+        "bytes": 4677
+      },
+      {
+        "path": "online-hud-bridge.mjs",
+        "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+        "bytes": 1029
+      },
+      {
+        "path": "online-hud.mjs",
+        "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+        "bytes": 8755
+      },
+      {
+        "path": "refresh-rate.mjs",
+        "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+        "bytes": 2147
+      },
+      {
+        "path": "rooms.mjs",
+        "sha256": "3ca7d687478e710aaed43786b63a722e5023d835436ac4aca578e2521fefe827",
+        "bytes": 3535
+      },
+      {
+        "path": "ryggattack.js",
+        "sha256": "13e7f4d5b8cee60ee75be214227c7b976a87db00d2570e2cca8d49efabd0243a",
+        "bytes": 118877
+      },
+      {
+        "path": "ryggattack_bg.wasm",
+        "sha256": "fbe27a35a166a38a897118c580ee789063c3da4df28bf7bf1100e50430b2db52",
+        "bytes": 39799842
+      }
+    ],
+    "current_webassembly_validation": true,
+    "current_js_syntax": true
+  },
+  "native_artifacts": [
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/target/debug/ryggattack-server",
+      "sha256": "90af59595497af21b5c0ba6e738a290183214760be298ecefb2ff212fc1a8dea"
+    },
+    {
+      "path": "/home/hermes/src/ryggattack-online-explosions/target/debug/ryggattack-headless",
+      "sha256": "7a3d72e0ac91d84292d8ecc1bd11a69badaf50fd4f75d50936c3b1835212c846"
+    }
+  ],
+  "fresh_builds_run": false,
+  "limitations": [
+    "Prior CPU invocation argv is not stored in run106 logs; do not infer exact flags from output. Reproduction commands are documented separately, not claimed executed in this run.",
+    "Initial RED failed to invoke cargo (127); retry reproduced real mesh failure (101). Original WASM wrapper ended 143 after compiler success; standalone packaging supersedes packaging failure, not historical records.",
+    "Native artifact hashes measured now; native build log lacks historical artifact digests.",
+    "Browser rendering, manual six-image review, HUD/offline/rear-contact browser checks remain downstream. Do not use stale dist/web without checking artifact identity.",
+    "Anonymous-bearer theft limitation and deferred native manual graphics unchanged.",
+    "No commit, publication, deployment, public-room acceptance, source edit or production restart performed.",
+    "Original logs retained privately/in place; this allowlisted summary is a sanitized derivative, not certification that all historical originals are safe to publish."
+  ]
+}

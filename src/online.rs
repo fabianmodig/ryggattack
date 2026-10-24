@@ -24,6 +24,7 @@ struct Status;
 struct VisualAssets {
     cube: Handle<Mesh>,
     sphere: Handle<Mesh>,
+    fireball: Handle<Mesh>,
     ring: Handle<Mesh>,
     materials: [Handle<StandardMaterial>; 5],
 }
@@ -480,6 +481,7 @@ fn render_snapshot(
     let assets = assets.get_or_insert_with(|| VisualAssets {
         cube: meshes.add(Cuboid::new(1., 1., 1.)),
         sphere: meshes.add(Sphere::new(0.16).mesh().ico(1).unwrap()),
+        fireball: meshes.add(crate::explosions::fireball_mesh()),
         ring: meshes.add(Torus::new(0.28, 0.5)),
         materials: [
             Color::WHITE,
@@ -553,7 +555,8 @@ fn render_snapshot(
             continue;
         }
         let mesh = match body.kind {
-            0 | 4 => assets.sphere.clone(),
+            0 => assets.sphere.clone(),
+            4 => assets.fireball.clone(),
             2 => assets.ring.clone(),
             _ => assets.cube.clone(),
         };
@@ -580,6 +583,208 @@ fn body_transform(body: &crate::network::Body) -> Transform {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn vertex_bounds(mesh: &Mesh, transform: &Transform) -> (Vec3, Vec3) {
+        use bevy::mesh::VertexAttributeValues;
+        let Some(VertexAttributeValues::Float32x3(vertices)) =
+            mesh.attribute(Mesh::ATTRIBUTE_POSITION)
+        else {
+            panic!("rendered mesh has no positions");
+        };
+        assert!(!vertices.is_empty());
+        vertices.iter().fold(
+            (Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)),
+            |(min, max), v| {
+                let point = transform.transform_point(Vec3::from_array(*v));
+                (min.min(point), max.max(point))
+            },
+        )
+    }
+
+    #[test]
+    fn replicated_fireball_mesh_matches_source_world_bounds_through_its_lifecycle() {
+        use crate::explosions::{self, Fireball};
+        for chain in 0..3 {
+            for posed in [false, true] {
+                let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+                explosions::replication_test_burst(sim.app.world_mut(), chain);
+                let mut app = App::new();
+                app.init_resource::<Assets<Mesh>>()
+                    .init_resource::<Assets<StandardMaterial>>()
+                    .insert_resource(View {
+                        built: true,
+                        ..default()
+                    })
+                    .add_systems(Update, render_snapshot);
+                // A nearby client prop must survive: rendering cannot wreck scenery.
+                let sentinel = app
+                    .world_mut()
+                    .spawn((
+                        crate::scenery::Scenery {
+                            hit_radius: 1.,
+                            height: 2.,
+                        },
+                        Transform::from_xyz(100., 2., -100.),
+                    ))
+                    .id();
+                let mut identities = std::collections::HashMap::new();
+                for progress in [0.0, 0.5, 0.95] {
+                    explosions::replication_test_progress(sim.app.world_mut(), progress);
+                    if posed {
+                        let world = sim.app.world_mut();
+                        for mut transform in world
+                            .query_filtered::<&mut Transform, With<Fireball>>()
+                            .iter_mut(world)
+                        {
+                            transform.translation += Vec3::new(0.3, -0.2, 0.7);
+                            transform.rotation = Quat::from_euler(EulerRot::XYZ, 0.3, 0.7, -0.4);
+                            transform.scale *= Vec3::new(0.6, 1.4, 2.1);
+                        }
+                    }
+                    // Use the real authoritative serializer, then the real replica spawner.
+                    let mut frame = sim.network_frame();
+                    frame.bodies.retain(|body| body.kind == 4);
+                    let balls: Vec<_> = frame
+                        .bodies
+                        .iter()
+                        .filter(|b| b.kind == 4)
+                        .cloned()
+                        .collect();
+                    assert!(
+                        !balls.is_empty(),
+                        "chain {chain} must produce actual fireballs"
+                    );
+                    app.world_mut().resource_mut::<View>().frame = Some(frame);
+                    app.update();
+                    let source = sim.app.world_mut();
+                    let source_balls: Vec<_> = source
+                        .query_filtered::<(&Mesh3d, &Transform), With<Fireball>>()
+                        .iter(source)
+                        .map(|(mesh, transform)| (mesh.0.clone(), *transform))
+                        .collect();
+                    let world = app.world_mut();
+                    let replicas: Vec<_> = world
+                        .query::<(Entity, &Replica, &Mesh3d, &Transform)>()
+                        .iter(world)
+                        .map(|(entity, id, mesh, transform)| {
+                            (entity, id.0, mesh.0.clone(), *transform)
+                        })
+                        .collect();
+                    assert_eq!(replicas.len(), balls.len());
+                    for body in &balls {
+                        let (entity, _, mesh, transform) =
+                            replicas.iter().find(|r| r.1 == body.id).unwrap();
+                        if let Some(previous) = identities.insert(body.id, *entity) {
+                            assert_eq!(previous, *entity, "stable ID must update in place");
+                        }
+                        let (source_mesh, source_transform) = source_balls
+                            .iter()
+                            .find(|(_, t)| t.translation.to_array() == body.position)
+                            .unwrap();
+                        let expected = vertex_bounds(
+                            source.resource::<Assets<Mesh>>().get(source_mesh).unwrap(),
+                            source_transform,
+                        );
+                        let actual = vertex_bounds(
+                            world.resource::<Assets<Mesh>>().get(mesh).unwrap(),
+                            transform,
+                        );
+                        assert!(
+                            actual.0.abs_diff_eq(expected.0, 0.0001)
+                                && actual.1.abs_diff_eq(expected.1, 0.0001),
+                            "chain={chain} posed={posed} progress={progress}: source bounds {expected:?}, replica bounds {actual:?}"
+                        );
+                    }
+                    for _ in 0..3 {
+                        app.update();
+                    }
+                    let world = app.world_mut();
+                    assert!(
+                        world.get_entity(sentinel).is_ok(),
+                        "client destroyed scenery"
+                    );
+                    assert_eq!(
+                        world.query::<&explosions::Detonation>().iter(world).count(),
+                        0
+                    );
+                    assert_eq!(world.query::<&Fireball>().iter(world).count(), 0);
+                    assert_eq!(world.query::<&explosions::Debris>().iter(world).count(), 0);
+                }
+                explosions::replication_test_progress(sim.app.world_mut(), 1.01);
+                let mut frame = sim.network_frame();
+                frame.bodies.retain(|body| body.kind == 4);
+                assert!(frame.bodies.iter().all(|b| b.kind != 4));
+                app.world_mut().resource_mut::<View>().frame = Some(frame);
+                app.update();
+                let world = app.world_mut();
+                assert_eq!(world.query::<&Replica>().iter(world).count(), 0);
+                assert!(world.get_entity(sentinel).is_ok());
+            }
+        }
+    }
+
+    #[test]
+    fn projectile_and_pickup_replica_geometry_stays_unchanged() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let mut frame = sim.network_frame();
+        frame.bodies = (0..3)
+            .map(|kind| crate::network::Body {
+                id: u64::from(kind) + 1,
+                kind,
+                position: [3., 2., -4.],
+                rotation: Quat::from_rotation_y(0.7).to_array(),
+                scale: [1.2, 0.8, 1.5],
+            })
+            .collect();
+        let mut app = App::new();
+        app.init_resource::<Assets<Mesh>>()
+            .init_resource::<Assets<StandardMaterial>>()
+            .insert_resource(View {
+                built: true,
+                frame: Some(frame.clone()),
+                ..default()
+            })
+            .add_systems(Update, render_snapshot);
+        app.update();
+        let world = app.world_mut();
+        let replicas: Vec<_> = world
+            .query::<(&Replica, &Mesh3d, &Transform)>()
+            .iter(world)
+            .map(|(id, mesh, transform)| (id.0, mesh.0.clone(), *transform))
+            .collect();
+        assert_eq!(replicas.len(), 3);
+        for body in &frame.bodies {
+            let (_, handle, transform) = replicas.iter().find(|r| r.0 == body.id).unwrap();
+            let expected: Mesh = match body.kind {
+                0 => Sphere::new(0.16).mesh().ico(1).unwrap(),
+                1 => Cuboid::new(1., 1., 1.).into(),
+                2 => Torus::new(0.28, 0.5).into(),
+                _ => unreachable!(),
+            };
+            let actual = world.resource::<Assets<Mesh>>().get(handle).unwrap();
+            assert_eq!(
+                actual.attribute(Mesh::ATTRIBUTE_POSITION),
+                expected.attribute(Mesh::ATTRIBUTE_POSITION)
+            );
+            assert_eq!(
+                actual.indices().map(|i| i.iter().collect::<Vec<_>>()),
+                expected.indices().map(|i| i.iter().collect::<Vec<_>>())
+            );
+            let expected_transform = Transform {
+                translation: Vec3::from_array(body.position),
+                rotation: Quat::from_array(body.rotation),
+                scale: if body.kind == 1 {
+                    Vec3::splat(0.65)
+                } else {
+                    Vec3::from_array(body.scale)
+                },
+            };
+            assert_eq!(
+                vertex_bounds(actual, transform),
+                vertex_bounds(&expected, &expected_transform)
+            );
+        }
+    }
+
     #[test]
     fn hud_publication_is_atomic_and_legacy_status_has_a_safe_fallback() {
         let client = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
