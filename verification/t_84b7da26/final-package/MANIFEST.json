@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "tested_source_commit": "f50904f6b8cadcd11f6ba86f4a7f26c49b672621",
+  "original_manifest_sha256": "e9d1c5c4fb96ed8c609091963d944e571c510d4e967bd45d5c50d5f6dae40eb8",
+  "original_reconciliation_sha256": "0503a0b817489ad3c88c17645df6826cd2ec3f215ca02b72503610b30fd1d57b",
+  "members": [
+    {
+      "path": "assemble-final120.mjs",
+      "sha256": "bb73d5214e07ab1ee15b2021e5d2bd067bbe2285dda77dad4492057953e555e9",
+      "bytes": 8683
+    },
+    {
+      "path": "attempt118/inputs.json.gz",
+      "sha256": "715b395cbc959a86ee61494e1b65c49926dc592f23a4ca2baad0d723209411a0",
+      "bytes": 2756,
+      "encoding": "gzip",
+      "decoded_sha256": "37689af338460340992e9273f15f16213e19e3605be40d829526bb7d82ac3f6f",
+      "decoded_bytes": 35418
+    },
+    {
+      "path": "attempt118/lobbies.json.gz",
+      "sha256": "4694ae67a37b527897c9e4b733a024203c5db9c553fb31f5f55caeebd0d2a401",
+      "bytes": 20907,
+      "encoding": "gzip",
+      "decoded_sha256": "28928fdc51451449ac861f050839ce0077550fc6259c88a4fd9cec4e56f92e3f",
+      "decoded_bytes": 1529739
+    },
+    {
+      "path": "attempt118/results.json.gz",
+      "sha256": "872f10cca6ec8f5fd056fa0ba78db347ddbd0036f42902f8f67a64e2c3ca2594",
+      "bytes": 8135,
+      "encoding": "gzip",
+      "decoded_sha256": "d86446f679e282b4fdfef95d9e82b5aba278f5ee1d1048cd9f18bbed2e2b152d",
+      "decoded_bytes": 30279
+    },
+    {
+      "path": "attempt118/sha256.json.gz",
+      "sha256": "766332a20fe7edc3932612c87b59689ba963facfa967c9ed0d0e53e324aed935",
+      "bytes": 4794,
+      "encoding": "gzip",
+      "decoded_sha256": "3e0ab8145e295e31bc59154895cb028ca38057decab789ec3535710464aecd5b",
+      "decoded_bytes": 13187
+    },
+    {
+      "path": "attempt118/states.json.gz",
+      "sha256": "8011bdb7de7beeb51b6e55c041b20b925713da35f8932edbb0cd9647e940455e",
+      "bytes": 1071175,
+      "encoding": "gzip",
+      "decoded_sha256": "1f41ebbf0d39505a79777f027ecd424a059ef95678f8512e5c33a86bc18e4f69",
+      "decoded_bytes": 113655042
+    },
+    {
+      "path": "attempt120/inputs.json.gz",
+      "sha256": "13cdac052563a79e28b9568e3b21e156d175347229e8ad3b54cdb31af5d3491f",
+      "bytes": 6933,
+      "encoding": "gzip",
+      "decoded_sha256": "4256fc0f7687f7077a7b86fbd08ef3e2dcede1c0ca80c2462317e1f3b08a7f79",
+      "decoded_bytes": 96336
+    },
+    {
+      "path": "attempt120/lobbies.json.gz",
+      "sha256": "661a0fdd200dec73569a8d480f754d3582e15a2444448b794088317b1a003c1d",
+      "bytes": 52702,
+      "encoding": "gzip",
+      "decoded_sha256": "e9e8a9930184da10f74d660ecc7522a5bd650905df3b57ed58cac825e8a2748f",
+      "decoded_bytes": 4082007
+    },
+    {
+      "path": "attempt120/results.json.gz",
+      "sha256": "0210f5131964b76209cbfa6a76d34e396c50aed9506682c8902e2526fba76a24",
+      "bytes": 6822,
+      "encoding": "gzip",
+      "decoded_sha256": "537b1f271cd172985c74108ae7c261487da73dca418fdf9082e1186b1fb1e31f",
+      "decoded_bytes": 16188
+    },
+    {
+      "path": "attempt120/states.json.gz",
+      "sha256": "7ca6fdd98316b3279253ef09674c5e3a79016a9d29caf4daca57470b01dce436",
+      "bytes": 3028943,
+      "encoding": "gzip",
+      "decoded_sha256": "ffcbbc06f25676e497289ebd3ad92af6bb44a8321cf8740e8ece801be41d9156",
+      "decoded_bytes": 316561586
+    },
+    {
+      "path": "audit121.json",
+      "sha256": "d89d59e456088c434c933fdbf8998e4c425bdef48521ab353b02e18875694be9",
+      "bytes": 2668
+    },
+    {
+      "path": "audit121.mjs",
+      "sha256": "6a45aee8f2704349dac19ed7a6441add93299839135de49d2259db9d04bc1636",
+      "bytes": 2284
+    },
+    {
+      "path": "cached-check120.json",
+      "sha256": "78b039bb1da1566976e931e6aa44452cc1b2e83f9eaf0ce8aea373bf7b2aa555",
+      "bytes": 4159
+    },
+    {
+      "path": "cached-check120.mjs",
+      "sha256": "f5d77519a3e1c4114cd57ff17b8d21f02c9b4a4f35996ea6831b6c08b2b96cf9",
+      "bytes": 2008
+    },
+    {
+      "path": "original-receipts.json",
+      "sha256": "1525336409de2576d18b34865efb41978f1af74dfa0ecef4ddef4905c8a70539",
+      "bytes": 15112
+    },
+    {
+      "path": "prior-index-audit-receipt.json",
+      "sha256": "080c75b695afe7117c32800cb1e134db6498125b96819cc1eadd6b686766366b",
+      "bytes": 35523
+    },
+    {
+      "path": "prior-tamper-test-results.json",
+      "sha256": "f6797f8f3d75aa23d445eb7bfe97fa3aa673b1bc562d42539484ac5e313a3e99",
+      "bytes": 455
+    },
+    {
+      "path": "provenance/executed118.mjs",
+      "sha256": "33da12d04e2a1e59eb1f4a9da4b3a1d1fe09fe9755c38e329d44cc2591f935ca",
+      "bytes": 27993
+    },
+    {
+      "path": "provenance/executed120.mjs",
+      "sha256": "6b1815fcc347392b3a97e3c76baada5b4e3871e92680645995f4e62b27d2b0bb",
+      "bytes": 28861
+    },
+    {
+      "path": "provenance/rear-browser118.mjs",
+      "sha256": "c29e391b19d24afcfdc15a1158b607740cf238e4c69b6944c9420bc1c5680442",
+      "bytes": 5912
+    },
+    {
+      "path": "provenance/rear-browser120.mjs",
+      "sha256": "2b4ffbc52831079382fc6a16af67df17e581ea7c86a7c03406029141181a4541",
+      "bytes": 3176
+    },
+    {
+      "path": "provenance/receipt120.json",
+      "sha256": "194b64954a33a115c00c03cc9ec31dfed4d46fa32a684e5721704db5d8270fd2",
+      "bytes": 372
+    },
+    {
+      "path": "README.txt",
+      "sha256": "d44c3a405fb27166d8445416551e5ee7f6c0546ab777d23d4571b99bee638eab",
+      "bytes": 8572
+    },
+    {
+      "path": "rear-rail-analysis118.json",
+      "sha256": "483d14c29a0c70d7ec6fec1704e59984a6b1957f52f3b375127c5f406c23e669",
+      "bytes": 697
+    },
+    {
+      "path": "rear-rail-analysis120.json",
+      "sha256": "6bfb16dc1f88b1b850a018952ce8fef3cc09d504cb051fd467c1cd8e28793ddf",
+      "bytes": 2919
+    },
+    {
+      "path": "rear-rail-analysis120.mjs",
+      "sha256": "729b3cda2fb68e0efee90990106892e00fddda80fc60421f03d715f0d8c11377",
+      "bytes": 5612
+    },
+    {
+      "path": "verify.mjs",
+      "sha256": "e41e00b8b88f85060cd49113b12f97f21b02c29fdc078204cd12f3fc9d36f187",
+      "bytes": 4092
+    }
+  ],
+  "self_exclusions": [
+    "MANIFEST.json",
+    "INDEX-AUDIT.json"
+  ],
+  "self_exclusion_reason": "No recursively self-referential hashes. Final metadata hashes bound by outside final-head receipt and Kanban handoff.",
+  "exclusions": [
+    "Private/raw prior failure stacks and raw launcher logs: original paths/hashes only",
+    "Original browser JSON retained mode0700: sanitized compressed derivatives only",
+    "All unreviewed ignored verification trees and TLS material: not opened, added, or certified",
+    "No artifact rebuild; existing external compiler/native bundle paths and hashes remain in original package"
+  ],
+  "historical_package_status": "Original package/README/MANIFEST/RECONCILIATION are immutable snapshots of run117, including then-pending commit/contact gates; this supplement reports later outcomes without rewriting those historical claims."
+}

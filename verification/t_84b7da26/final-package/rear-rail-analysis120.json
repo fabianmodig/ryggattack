@@ -1,0 +1,104 @@
+{
+  "status": "passed-browser-wire-rail-contact",
+  "scope": "Independent read-only rail-distance analysis of equal adjacent actual browser snapshots. Shared directed segment or continuous seam, positive forward travel for both, leader ordinary+0.4 rail unit and rear ordinary only. Curves measured by arc length, not chord. Geometry uses full grid superset only to locate observed poses; does not fabricate topology or input, nor claim exact pixels/causal isolation. CPU paired-entry fixture remains causal oracle.",
+  "states_sha256": "ffcbbc06f25676e497289ebd3ad92af6bb44a8321cf8740e8ece801be41d9156",
+  "shared_adjacent_pairs": 7869,
+  "event_count": 1,
+  "events": [
+    {
+      "match": 1,
+      "from_tick": 23208,
+      "to_tick": 23212,
+      "initial_directed_gap": 1.1332842736901385,
+      "front_seat": 1,
+      "rear_seat": 0,
+      "measurements": [
+        {
+          "seat": 0,
+          "rail_distance": 0.32812441993703734,
+          "ordinary": 0.328125,
+          "extra": -5.800629626628862e-7,
+          "before": {
+            "id": 0,
+            "active": true,
+            "alive": true,
+            "position": [
+              -5.794593,
+              0.62,
+              7
+            ],
+            "forward": [
+              -0.99999994,
+              0,
+              0
+            ],
+            "shot_cooldown": 0,
+            "speed_seconds": 1.15625,
+            "all_hits_seconds": 0
+          },
+          "after": {
+            "id": 0,
+            "active": true,
+            "alive": true,
+            "position": [
+              -6.122715,
+              0.62,
+              6.999713
+            ],
+            "forward": [
+              -0.9996815,
+              0,
+              -0.025238961
+            ],
+            "shot_cooldown": 0,
+            "speed_seconds": 1.09375,
+            "all_hits_seconds": 0
+          }
+        },
+        {
+          "seat": 1,
+          "rail_distance": 0.6625004204252678,
+          "ordinary": 0.2625,
+          "extra": 0.4000004204252678,
+          "before": {
+            "id": 1,
+            "active": true,
+            "alive": true,
+            "position": [
+              -6.815967,
+              0.62,
+              6.6453357
+            ],
+            "forward": [
+              -0.6059284,
+              0,
+              -0.79551935
+            ],
+            "shot_cooldown": 0,
+            "speed_seconds": 0,
+            "all_hits_seconds": 0
+          },
+          "after": {
+            "id": 1,
+            "active": true,
+            "alive": true,
+            "position": [
+              -6.9999995,
+              0.62,
+              6.023339
+            ],
+            "forward": [
+              0,
+              0,
+              -1
+            ],
+            "shot_cooldown": 0,
+            "speed_seconds": 0,
+            "all_hits_seconds": 0
+          }
+        }
+      ]
+    }
+  ],
+  "geometry_self_tests": 4
+}
