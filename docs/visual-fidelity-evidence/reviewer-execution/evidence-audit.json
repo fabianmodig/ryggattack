@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "common_frames": {
+    "browser-2026-10-25T13-24-52-303Z": {
+      "(3, 'Forest')": 676,
+      "(6, 'Volcano')": 1014,
+      "(9, 'Forest')": 498,
+      "(12, 'Volcano')": 529
+    },
+    "browser-2026-10-25T14-15-26-612Z": {
+      "(3, 'Volcano')": 581
+    }
+  },
+  "offline": {
+    "Forest": {
+      "paused_rgb_equal": true,
+      "resumed_changed": true
+    },
+    "Volcano": {
+      "paused_rgb_equal": true,
+      "resumed_changed": true
+    }
+  },
+  "checks": [
+    {
+      "package_members": 650,
+      "signature_scanned_including_nested": 882
+    },
+    "Independently found real prop42, primary137 and delayed chain143 in public frames; all later disappear."
+  ],
+  "wire_samples": {
+    "42": {
+      "samples": 179,
+      "first_tick": 13092,
+      "last_tick": 13804,
+      "body_fields": [
+        "id",
+        "position",
+        "rotation",
+        "scale",
+        "kind",
+        "owner",
+        "prop"
+      ]
+    },
+    "137": {
+      "samples": 10,
+      "first_tick": 13808,
+      "last_tick": 13844,
+      "body_fields": [
+        "id",
+        "position",
+        "rotation",
+        "scale",
+        "kind",
+        "owner",
+        "prop"
+      ]
+    },
+    "143": {
+      "samples": 6,
+      "first_tick": 13820,
+      "last_tick": 13840,
+      "body_fields": [
+        "id",
+        "position",
+        "rotation",
+        "scale",
+        "kind",
+        "owner",
+        "prop"
+      ]
+    }
+  }
+}

@@ -82,44 +82,65 @@ pub(crate) fn setup(
         affects_lightmapped_meshes: true,
     });
 
-    // The arena floor is worn grass; the wild ground beyond sits a touch lower
-    // so the two never fight over the same surface.
-    let unit_cube = meshes.add(Cuboid::new(1.0, 1.0, 1.0));
-    let arena_floor = materials.add(StandardMaterial {
-        base_color: Color::srgb(0.27, 0.46, 0.19),
-        perceptual_roughness: 0.95,
-        ..default()
-    });
-    commands.spawn((
-        Mesh3d(unit_cube.clone()),
-        MeshMaterial3d(arena_floor),
-        crate::arena::Ground(true),
-        Transform::from_xyz(0.0, -0.1, 0.0).with_scale(Vec3::new(
-            ARENA_HALF_SIZE * 2.0,
-            0.2,
-            ARENA_HALF_SIZE * 2.0,
-        )),
-        // The ground is the lowest thing there is, so the shadow it would
-        // cast falls on nothing; leaving it out of the shadow pass changes no
-        // pixel and spares that pass its two biggest meshes.
-        NotShadowCaster,
-    ));
-    let forest_floor = materials.add(StandardMaterial {
-        base_color: Color::srgb(0.17, 0.35, 0.14),
-        perceptual_roughness: 1.0,
-        ..default()
-    });
-    commands.spawn((
-        Mesh3d(unit_cube.clone()),
-        MeshMaterial3d(forest_floor),
-        crate::arena::Ground(false),
-        Transform::from_xyz(0.0, -0.12, -8.0).with_scale(Vec3::new(GROUND_SIZE, 0.2, GROUND_SIZE)),
-        NotShadowCaster,
-    ));
-
+    for (index, (mesh, material, transform)) in floor_and_walls(&mut meshes, &mut materials)
+        .into_iter()
+        .enumerate()
+    {
+        let mut entity = commands.spawn((Mesh3d(mesh), MeshMaterial3d(material), transform));
+        if index < 2 {
+            entity.insert((crate::arena::Ground(index == 0), NotShadowCaster));
+        }
+    }
     spawn_tracks(&mut commands, &mut meshes, &mut materials, &rail_map);
 
-    let wall_material = materials.add(StandardMaterial {
+    setup_gameplay(
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        &rail_map,
+        match_settings.arena,
+    );
+    spawn_hud(&mut commands);
+}
+
+/// Shared presentation geometry; the first two pieces are the inner/outer ground.
+pub(crate) fn floor_and_walls(
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
+) -> Vec<(Handle<Mesh>, Handle<StandardMaterial>, Transform)> {
+    let cube = meshes.add(Cuboid::new(1.0, 1.0, 1.0));
+    let mut parts = Vec::new();
+    for (color, roughness, transform) in [
+        (
+            Color::srgb(0.27, 0.46, 0.19),
+            0.95,
+            Transform::from_xyz(0.0, -0.1, 0.0).with_scale(Vec3::new(
+                ARENA_HALF_SIZE * 2.0,
+                0.2,
+                ARENA_HALF_SIZE * 2.0,
+            )),
+        ),
+        (
+            Color::srgb(0.17, 0.35, 0.14),
+            1.0,
+            Transform::from_xyz(0.0, -0.12, -8.0).with_scale(Vec3::new(
+                GROUND_SIZE,
+                0.2,
+                GROUND_SIZE,
+            )),
+        ),
+    ] {
+        parts.push((
+            cube.clone(),
+            materials.add(StandardMaterial {
+                base_color: color,
+                perceptual_roughness: roughness,
+                ..default()
+            }),
+            transform,
+        ));
+    }
+    let wall = materials.add(StandardMaterial {
         base_color: Color::srgb(0.44, 0.29, 0.15),
         perceptual_roughness: 0.85,
         ..default()
@@ -142,21 +163,13 @@ pub(crate) fn setup(
             Vec3::new(0.35, 0.7, ARENA_HALF_SIZE * 2.0 + 0.5),
         ),
     ] {
-        commands.spawn((
-            Mesh3d(unit_cube.clone()),
-            MeshMaterial3d(wall_material.clone()),
+        parts.push((
+            cube.clone(),
+            wall.clone(),
             Transform::from_translation(position).with_scale(scale),
         ));
     }
-
-    setup_gameplay(
-        &mut commands,
-        &mut meshes,
-        &mut materials,
-        &rail_map,
-        match_settings.arena,
-    );
-    spawn_hud(&mut commands);
+    parts
 }
 
 /// CPU-side gameplay world, also used without render/window plugins. Visual

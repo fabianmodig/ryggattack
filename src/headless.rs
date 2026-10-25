@@ -197,7 +197,7 @@ impl Simulation {
         let world = self.app.world_mut();
         let mut live = std::collections::HashSet::new();
         let mut bodies = Vec::new();
-        for (entity, transform, projectile, pickup, scenery, fireball) in world
+        for (entity, transform, projectile, pickup, scenery, fireball, prop) in world
             .query::<(
                 Entity,
                 &Transform,
@@ -205,6 +205,7 @@ impl Simulation {
                 Option<&Pickup>,
                 Option<&Scenery>,
                 Option<&crate::explosions::Fireball>,
+                Option<&crate::scenery::Prop>,
             )>()
             .iter(world)
         {
@@ -242,6 +243,12 @@ impl Simulation {
                 rotation: transform.rotation.to_array(),
                 scale,
                 kind,
+                owner: projectile.map(|p| p.owner),
+                prop: prop.map(|p| crate::network::PropVisual {
+                    kind: p.kind,
+                    variant: p.variant,
+                    scale: p.scale,
+                }),
             });
         }
         self.network_ids.retain(|entity, _| live.contains(entity));
@@ -435,5 +442,139 @@ mod tests {
                 .iter(world)
                 .all(|prop| prop.height <= 0.82501)
         );
+    }
+
+    #[test]
+    fn descriptors_use_live_effective_props_preserve_envelopes_ids_and_removals() {
+        use crate::scenery::{Forest, Prop, PropKind};
+        use bevy::ecs::system::RunSystemOnce;
+        for arena in [Arena::Forest, Arena::Volcano] {
+            let mut sim = Simulation::new(SimulationConfig { arena, ..default() }).unwrap();
+            let world = sim.app.world_mut();
+            let entities: Vec<_> = world
+                .query_filtered::<Entity, With<Scenery>>()
+                .iter(world)
+                .collect();
+            for entity in entities {
+                world.despawn(entity);
+            }
+            let mut props = Vec::new();
+            for kind in [
+                PropKind::Pine,
+                PropKind::Birch,
+                PropKind::Bush,
+                PropKind::Rock,
+                PropKind::Stump,
+                PropKind::Fern,
+            ] {
+                for variant in 0..2 {
+                    for scale in [0.75, 1.15, 1.5, 2.2] {
+                        props.push(Prop {
+                            kind,
+                            variant,
+                            scale,
+                            position: Vec2::new(1., 2.),
+                            yaw: scale,
+                        });
+                    }
+                }
+            }
+            world.resource_mut::<Forest>().props = props.clone();
+            world
+                .run_system_once(|mut commands: Commands, forest: Res<Forest>| {
+                    crate::scenery::spawn_forest(&mut commands, &forest);
+                })
+                .unwrap();
+            let first = sim.network_frame();
+            assert_eq!(first.bodies.len(), props.len());
+            let world = sim.app.world_mut();
+            let live: Vec<_> = world
+                .query::<(Entity, &Prop, &Scenery, &Transform)>()
+                .iter(world)
+                .map(|(entity, prop, collider, transform)| {
+                    (
+                        entity,
+                        *prop,
+                        collider.hit_radius,
+                        collider.height,
+                        *transform,
+                    )
+                })
+                .collect();
+            for ((entity, prop, radius, height, transform), source) in live.iter().zip(&props) {
+                let expected_kind = if arena == Arena::Volcano {
+                    PropKind::Rock
+                } else {
+                    source.kind
+                };
+                let expected_scale = if arena == Arena::Volcano {
+                    source.scale.min(1.5)
+                } else {
+                    source.scale
+                };
+                assert_eq!(prop.kind, expected_kind);
+                assert_eq!(prop.scale, expected_scale);
+                assert_eq!(prop.variant, source.variant);
+                let base_radius = match expected_kind {
+                    PropKind::Pine => 0.32,
+                    PropKind::Birch => 0.28,
+                    PropKind::Bush | PropKind::Rock => 0.4,
+                    PropKind::Stump | PropKind::Fern => 0.2,
+                };
+                assert_eq!(*radius, base_radius * expected_scale);
+                assert_eq!(*height, expected_kind.height() * expected_scale);
+                let body = first
+                    .bodies
+                    .iter()
+                    .find(|b| b.id == sim.network_ids[entity])
+                    .unwrap();
+                assert_eq!(
+                    body.position,
+                    [prop.position.x, height * 0.5, prop.position.y]
+                );
+                assert_eq!(body.rotation, transform.rotation.to_array());
+                assert_eq!(body.scale, [radius * 2., *height, radius * 2.]);
+                assert_eq!(body.owner, None);
+                assert_eq!(
+                    body.prop,
+                    Some(crate::network::PropVisual {
+                        kind: expected_kind,
+                        variant: source.variant,
+                        scale: expected_scale,
+                    })
+                );
+            }
+            assert_eq!(
+                serde_json::to_value(&first).unwrap(),
+                serde_json::to_value(sim.network_frame()).unwrap()
+            );
+            let removed = live[0].0;
+            let removed_id = sim.network_ids[&removed];
+            sim.app.world_mut().despawn(removed);
+            let remaining = sim.network_frame();
+            assert_eq!(remaining.bodies.len(), first.bodies.len() - 1);
+            assert!(!remaining.bodies.iter().any(|b| b.id == removed_id));
+            assert!(!sim.network_ids.contains_key(&removed));
+            for body in &remaining.bodies {
+                let old = first.bodies.iter().find(|b| b.id == body.id).unwrap();
+                assert_eq!(
+                    serde_json::to_value(body).unwrap(),
+                    serde_json::to_value(old).unwrap()
+                );
+            }
+            let largest = first.bodies.iter().map(|b| b.id).max().unwrap();
+            sim.app
+                .world_mut()
+                .resource_mut::<Forest>()
+                .props
+                .truncate(1);
+            sim.app
+                .world_mut()
+                .run_system_once(|mut commands: Commands, forest: Res<Forest>| {
+                    crate::scenery::spawn_forest(&mut commands, &forest);
+                })
+                .unwrap();
+            assert!(sim.network_frame().bodies.iter().any(|b| b.id > largest));
+        }
     }
 }

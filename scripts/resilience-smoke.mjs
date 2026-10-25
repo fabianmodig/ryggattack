@@ -57,7 +57,7 @@ async function rendered(c,label){
 }
 async function rawJoin(code=null){
  const ws=new WebSocket(`ws://127.0.0.1:${port}`);nodeSockets.push(ws);let identity,lobby;
- ws.addEventListener('open',()=>ws.send(JSON.stringify({Hello:{version:3,name:'Capacity',room:code}})));
+ ws.addEventListener('open',()=>ws.send(JSON.stringify({Hello:{version:4,name:'Capacity',room:code}})));
  ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Welcome)identity=publicIdentity(m.Welcome);if(m.Lobby)lobby=m.Lobby;});
  await until(()=>identity&&lobby,'capacity fixture admits');return {ws,identity,lobby};
 }

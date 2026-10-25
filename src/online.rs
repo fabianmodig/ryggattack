@@ -2,6 +2,7 @@
 //! local pause, scoring, RNG, collision, or round-reset system.
 use crate::{input::ControlIntent, net_client::NetworkClient, network::Frame};
 use bevy::prelude::*;
+mod environment;
 #[derive(Resource, Default)]
 struct View {
     edges: Option<Vec<(usize, usize)>>,
@@ -9,21 +10,39 @@ struct View {
     previous: Option<Frame>,
     alpha: f32,
     built: bool,
+    epoch: u64,
+    reset_replicas: bool,
+    reset_scene: bool,
+    arena: crate::match_settings::Arena,
+    environment: Option<crate::match_settings::Arena>,
+    identity: (Option<u64>, Option<u64>, Option<usize>),
 }
 #[derive(Component)]
 struct Replica(u64);
 #[derive(Component)]
 struct Ground;
+type RoomVisualEntity = (
+    Entity,
+    Option<&'static Replica>,
+    Option<&'static environment::Environment>,
+);
 type RoomVisualRoots = (
-    Or<(With<Mesh3d>, With<crate::players::Player>)>,
+    Or<(
+        With<Mesh3d>,
+        With<crate::players::Player>,
+        With<Replica>,
+        With<environment::Environment>,
+    )>,
     Without<ChildOf>,
     Without<Ground>,
 );
 #[derive(Component)]
 struct Status;
 struct VisualAssets {
+    arena: crate::match_settings::Arena,
     cube: Handle<Mesh>,
-    sphere: Handle<Mesh>,
+    missiles: crate::combat::MissileAssets,
+    forest: crate::scenery::ForestAssets,
     fireball: Handle<Mesh>,
     ring: Handle<Mesh>,
     materials: [Handle<StandardMaterial>; 5],
@@ -124,7 +143,7 @@ fn online_controls(
     mut entry: ResMut<Entry>,
     keys: Res<ButtonInput<KeyCode>>,
     mut view: ResMut<View>,
-    scene_roots: Query<Entity, RoomVisualRoots>,
+    scene_roots: Query<RoomVisualEntity, RoomVisualRoots>,
 ) {
     let mut action = None;
     #[cfg(target_arch = "wasm32")]
@@ -189,9 +208,20 @@ fn online_controls(
                     Ok(next) => {
                         client.leave();
                         *client = next;
-                        *view = View::default();
-                        for e in &scene_roots {
-                            commands.entity(e).despawn();
+                        // The railway and cart models are reusable when the next
+                        // Welcome has the same topology. Hide carts via the empty
+                        // frame; never reallocate their materials on every rejoin.
+                        let built = view.built;
+                        *view = View {
+                            built,
+                            edges: view.edges.clone(),
+                            reset_replicas: true,
+                            ..default()
+                        };
+                        for (entity, replica, environment) in &scene_roots {
+                            if !built || replica.is_some() || environment.is_some() {
+                                commands.entity(entity).despawn();
+                            }
                         }
                     }
                     Err(e) => client.notice = e,
@@ -240,18 +270,20 @@ pub(crate) fn run(address: String, name: String) {
         .add_systems(Startup, setup)
         .add_systems(
             Update,
-            (online_controls, network_input, render_snapshot).chain(),
+            (
+                online_controls,
+                network_input,
+                render_snapshot,
+                environment::present,
+            )
+                .chain(),
         )
         .run();
 }
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
+fn setup(mut commands: Commands) {
     commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(0., 19., 16.).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(0., 16.5, 15.5).looking_at(Vec3::ZERO, Vec3::Y),
     ));
     commands.spawn((
         DirectionalLight {
@@ -264,12 +296,7 @@ fn setup(
         brightness: 400.,
         ..default()
     });
-    commands.spawn((
-        Mesh3d(meshes.add(Cuboid::new(19., 0.2, 19.))),
-        MeshMaterial3d(materials.add(Color::srgb(0.15, 0.23, 0.18))),
-        Transform::from_xyz(0., -0.2, 0.),
-        Ground,
-    ));
+
     commands.spawn((
         Text::new("Connecting…"),
         TextFont {
@@ -403,11 +430,7 @@ fn network_input(
     if client.pump(intent) {
         *fire = false;
     }
-    if view.edges.is_none() {
-        view.edges = client.edges.clone();
-    }
-    view.previous = client.previous.clone();
-    view.frame = client.frame.clone();
+    sync_visual_boundary(&client, &mut view);
     // One snapshot interval of visual interpolation, no extrapolation/prediction.
     view.alpha = (client.received.elapsed().as_secs_f32() / 0.0625).clamp(0., 1.);
     let detail=client.frame.as_ref().map(|f|format!("tick {}  wins {:?}  winner {:?}\nPlayers: {:?}\nPowerups: speed {:.1}s / all-hits {:.1}s; drop {:.1}s",f.tick,f.wins,f.winner,f.names,client.seat.map_or(0.,|s|f.carts[s].speed_seconds),client.seat.map_or(0.,|s|f.carts[s].all_hits_seconds),f.until_drop)).unwrap_or_default();
@@ -459,6 +482,36 @@ fn network_input(
         .ok();
     }
 }
+fn sync_visual_boundary(client: &NetworkClient, view: &mut View) {
+    if let Some(edges) = &client.edges
+        && view.edges.as_ref() != Some(edges)
+    {
+        view.reset_scene = view.built;
+        view.built = false;
+        view.reset_replicas = true;
+        view.edges = Some(edges.clone());
+    }
+    let identity = (client.room, client.participant, client.seat);
+    if view.epoch != client.visual_epoch || view.identity != identity {
+        view.reset_replicas = true;
+    }
+    view.epoch = client.visual_epoch;
+    view.identity = identity;
+    let lobby = client.lobby.as_ref().filter(|lobby| {
+        Some(lobby.id) == client.room
+            && lobby.humans.iter().any(|human| {
+                Some(human.id) == client.participant && Some(human.seat) == client.seat
+            })
+    });
+    if let Some(lobby) = lobby {
+        view.arena = lobby.settings.arena;
+    }
+    view.environment = lobby.map(|lobby| lobby.settings.arena);
+    let running = lobby.is_some_and(|l| l.phase == crate::rooms::Phase::Running);
+    view.frame = running.then(|| client.frame.clone()).flatten();
+    view.previous = running.then(|| client.previous.clone()).flatten();
+}
+
 #[allow(clippy::too_many_arguments)]
 fn render_snapshot(
     mut commands: Commands,
@@ -468,7 +521,13 @@ fn render_snapshot(
     mut carts: Query<(&mut crate::players::Player, &mut Transform, &mut Visibility)>,
     mut replicas: Query<(Entity, &Replica, &mut Transform), Without<crate::players::Player>>,
     mut assets: Local<Option<VisualAssets>>,
+    scene_roots: Query<Entity, (RoomVisualRoots, Without<Replica>)>,
 ) {
+    if std::mem::take(&mut view.reset_scene) {
+        for entity in &scene_roots {
+            commands.entity(entity).despawn();
+        }
+    }
     if !view.built {
         let Some(edges) = view.edges.clone() else {
             return;
@@ -479,8 +538,10 @@ fn render_snapshot(
         view.built = true;
     }
     let assets = assets.get_or_insert_with(|| VisualAssets {
+        arena: crate::match_settings::Arena::Forest,
         cube: meshes.add(Cuboid::new(1., 1., 1.)),
-        sphere: meshes.add(Sphere::new(0.16).mesh().ico(1).unwrap()),
+        missiles: crate::combat::MissileAssets::new(&mut meshes, &mut materials),
+        forest: crate::scenery::ForestAssets::new(&mut meshes, &mut materials),
         fireball: meshes.add(crate::explosions::fireball_mesh()),
         ring: meshes.add(Torus::new(0.28, 0.5)),
         materials: [
@@ -498,6 +559,11 @@ fn render_snapshot(
             })
         }),
     });
+    if assets.arena != view.arena {
+        assets.forest.set_arena(view.arena, &mut materials);
+        assets.arena = view.arena;
+    }
+    let reset = std::mem::take(&mut view.reset_replicas);
     let Some(frame) = &view.frame else {
         // A fresh simulation may restart match-local body IDs. Clear the old
         // presentation at the lobby boundary instead of aliasing next-match
@@ -543,6 +609,10 @@ fn render_snapshot(
     }
     let mut existing = std::collections::HashSet::new();
     for (entity, id, mut transform) in &mut replicas {
+        if reset {
+            commands.entity(entity).despawn();
+            continue;
+        }
         if let Some(body) = frame.bodies.iter().find(|b| b.id == id.0) {
             existing.insert(id.0);
             *transform = body_transform(body);
@@ -554,14 +624,48 @@ fn render_snapshot(
         if existing.contains(&body.id) {
             continue;
         }
+        let entity = commands
+            .spawn((
+                Replica(body.id),
+                body_transform(body),
+                Visibility::default(),
+            ))
+            .id();
+        if body.kind == 0 {
+            crate::combat::missile_visual(
+                &mut commands,
+                entity,
+                &assets.missiles,
+                body.owner.expect("validated owner"),
+            );
+            continue;
+        }
+        if body.kind == 3 {
+            let visual = body.prop.as_ref().expect("validated prop");
+            let prop = crate::scenery::Prop {
+                kind: visual.kind,
+                variant: visual.variant,
+                scale: visual.scale,
+                position: Vec2::new(body.position[0], body.position[2]),
+                yaw: 0., // Root already carries the authoritative rotation.
+            };
+            commands.entity(entity).with_children(|parent| {
+                for (mesh, material, transform) in crate::scenery::parts(&assets.forest, &prop) {
+                    parent.spawn((
+                        Mesh3d(mesh.clone()),
+                        MeshMaterial3d(material.clone()),
+                        transform,
+                    ));
+                }
+            });
+            continue;
+        }
         let mesh = match body.kind {
-            0 => assets.sphere.clone(),
             4 => assets.fireball.clone(),
             2 => assets.ring.clone(),
             _ => assets.cube.clone(),
         };
-        commands.spawn((
-            Replica(body.id),
+        commands.entity(entity).insert((
             Mesh3d(mesh),
             MeshMaterial3d(assets.materials[usize::from(body.kind.min(4))].clone()),
             body_transform(body),
@@ -569,6 +673,13 @@ fn render_snapshot(
     }
 }
 fn body_transform(body: &crate::network::Body) -> Transform {
+    if let Some(prop) = &body.prop {
+        return Transform {
+            translation: Vec3::new(body.position[0], 0., body.position[2]),
+            rotation: Quat::from_array(body.rotation),
+            scale: Vec3::splat(prop.scale),
+        };
+    }
     Transform {
         translation: Vec3::from_array(body.position),
         rotation: Quat::from_array(body.rotation),
@@ -579,6 +690,9 @@ fn body_transform(body: &crate::network::Body) -> Transform {
         },
     }
 }
+
+#[cfg(test)]
+mod visual_tests;
 
 #[cfg(test)]
 mod tests {
@@ -723,16 +837,18 @@ mod tests {
     }
 
     #[test]
-    fn projectile_and_pickup_replica_geometry_stays_unchanged() {
+    fn pickup_replica_geometry_stays_unchanged() {
         let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
         let mut frame = sim.network_frame();
-        frame.bodies = (0..3)
+        frame.bodies = (1..3)
             .map(|kind| crate::network::Body {
                 id: u64::from(kind) + 1,
                 kind,
                 position: [3., 2., -4.],
                 rotation: Quat::from_rotation_y(0.7).to_array(),
                 scale: [1.2, 0.8, 1.5],
+                owner: (kind == 0).then_some(0),
+                prop: None,
             })
             .collect();
         let mut app = App::new();
@@ -751,7 +867,7 @@ mod tests {
             .iter(world)
             .map(|(id, mesh, transform)| (id.0, mesh.0.clone(), *transform))
             .collect();
-        assert_eq!(replicas.len(), 3);
+        assert_eq!(replicas.len(), 2);
         for body in &frame.bodies {
             let (_, handle, transform) = replicas.iter().find(|r| r.0 == body.id).unwrap();
             let expected: Mesh = match body.kind {
@@ -953,10 +1069,9 @@ mod tests {
             .add_systems(Update, online_controls);
         app.update();
         let world = app.world_mut();
-        let ground = world
-            .query_filtered::<Entity, With<Mesh3d>>()
-            .single(world)
-            .unwrap();
+        // Environment floors are now created from a validated lobby. A marked
+        // persistent floor must still be excluded from room-root cleanup.
+        let ground = world.spawn((Ground, Mesh3d(Handle::default()))).id();
         let cart = world
             .spawn((
                 crate::players::Player {
@@ -975,6 +1090,13 @@ mod tests {
                 p.spawn((Mesh3d(Handle::default()), Transform::default()));
             })
             .id();
+        let prop = world
+            .spawn((Replica(71), Transform::default(), Visibility::default()))
+            .with_children(|p| {
+                p.spawn((Mesh3d(Handle::default()), Transform::default()));
+            })
+            .id();
+        let prop_child = world.get::<Children>(prop).unwrap()[0];
         world
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::Enter);
@@ -986,6 +1108,14 @@ mod tests {
         assert!(
             app.world().get_entity(cart).is_err(),
             "empty old cart roots accumulate across joins"
+        );
+        assert!(
+            app.world().get_entity(prop).is_err(),
+            "room switch leaked meshless prop root"
+        );
+        assert!(
+            app.world().get_entity(prop_child).is_err(),
+            "room switch leaked prop child"
         );
     }
     #[test]

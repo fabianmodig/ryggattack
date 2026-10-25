@@ -24,7 +24,7 @@ const BACK_HIT_DOT_THRESHOLD: f32 = 0.45;
 
 #[derive(Component)]
 pub(crate) struct Projectile {
-    owner: usize,
+    pub(crate) owner: usize,
     velocity: Vec3,
     remaining_life: f32,
     /// Time until the next puff of exhaust.
@@ -116,9 +116,7 @@ fn spawn_missile(
     position: Vec3,
     forward: Vec3,
 ) {
-    use std::f32::consts::FRAC_PI_2;
-
-    commands
+    let entity = commands
         .spawn((
             Projectile {
                 owner,
@@ -130,33 +128,44 @@ fn spawn_missile(
             Transform::from_translation(position).looking_to(forward, Vec3::Y),
             Visibility::default(),
         ))
-        .with_children(|parent| {
-            // The primitives point along +Y; the missile flies along its own -Z.
+        .id();
+    missile_visual(commands, entity, assets, owner);
+}
+
+/// Presentation only: deliberately installs no projectile/gameplay components.
+pub(crate) fn missile_visual(
+    commands: &mut Commands,
+    entity: Entity,
+    assets: &MissileAssets,
+    owner: usize,
+) {
+    use std::f32::consts::FRAC_PI_2;
+    commands.entity(entity).with_children(|parent| {
+        // The primitives point along +Y; the missile flies along its own -Z.
+        parent.spawn((
+            Mesh3d(assets.body.clone()),
+            MeshMaterial3d(assets.paint[owner].clone()),
+            Transform::from_rotation(Quat::from_rotation_x(FRAC_PI_2)),
+        ));
+        parent.spawn((
+            Mesh3d(assets.nose.clone()),
+            MeshMaterial3d(assets.hull.clone()),
+            Transform::from_xyz(0.0, 0.0, -0.35).with_rotation(Quat::from_rotation_x(-FRAC_PI_2)),
+        ));
+        for roll in [0.0, FRAC_PI_2] {
             parent.spawn((
-                Mesh3d(assets.body.clone()),
-                MeshMaterial3d(assets.paint[owner].clone()),
-                Transform::from_rotation(Quat::from_rotation_x(FRAC_PI_2)),
+                Mesh3d(assets.fin.clone()),
+                MeshMaterial3d(assets.fins.clone()),
+                Transform::from_xyz(0.0, 0.0, 0.17).with_rotation(Quat::from_rotation_z(roll)),
             ));
-            parent.spawn((
-                Mesh3d(assets.nose.clone()),
-                MeshMaterial3d(assets.hull.clone()),
-                Transform::from_xyz(0.0, 0.0, -0.35)
-                    .with_rotation(Quat::from_rotation_x(-FRAC_PI_2)),
-            ));
-            for roll in [0.0, FRAC_PI_2] {
-                parent.spawn((
-                    Mesh3d(assets.fin.clone()),
-                    MeshMaterial3d(assets.fins.clone()),
-                    Transform::from_xyz(0.0, 0.0, 0.17).with_rotation(Quat::from_rotation_z(roll)),
-                ));
-            }
-            parent.spawn((
-                Mesh3d(assets.exhaust.clone()),
-                MeshMaterial3d(assets.glow[owner].clone()),
-                Transform::from_xyz(0.0, 0.0, 0.28),
-                NotShadowCaster,
-            ));
-        });
+        }
+        parent.spawn((
+            Mesh3d(assets.exhaust.clone()),
+            MeshMaterial3d(assets.glow[owner].clone()),
+            Transform::from_xyz(0.0, 0.0, 0.28),
+            NotShadowCaster,
+        ));
+    });
 }
 
 /// Fly every missile on, trailing smoke, and blow up the ones that reach a

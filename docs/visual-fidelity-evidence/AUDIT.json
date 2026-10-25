@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "archive_sha256": "669c38249e8623c0857eeee1667fea1b02fb322df5dba242372125be55ebe901",
+  "archive_bytes": 47652674,
+  "archive_members": 650,
+  "readback_hashes_verified": true,
+  "runtime_native_generated_unchanged": true,
+  "native_tests_passed": 216,
+  "node_tests_passed": 168,
+  "signature_scanned_members_including_nested": 882,
+  "nested_source_archives_scanned": 2,
+  "private_scan_scope": "Independent decompressed private-key signature scan; each browser receipt separately records in-run exact known-secret byte and pre-capture DOM checks. Not OCR or a blanket proof of arbitrary secret absence.",
+  "active_build_or_game_processes": []
+}

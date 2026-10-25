@@ -1,0 +1,115 @@
+t_0b963b6c — final web acceptance, composite evidence
+
+Candidate
+  Existing dirty feat/visual-fidelity over dfbd361580ab6861097141ff982766dbae9da6d2.
+  The base HEAD is NOT a commit of the runtime changes. Build receipt sources map
+  and source.tar.gz bind the exact tested candidate. No runtime changes made
+  during final acceptance; only ignored local verification helpers/evidence added.
+  Full receipt: build-20261025T124108Z/result.json.
+  Native receipt: ../arena-presentation/checks-20261025T123854Z/result.json.
+  FINAL-RESULT.json joins those exact hashes with browser case receipts.
+
+Actual execution
+  216 native tests; clippy --all-targets; native binaries; 168 Node tests;
+  chart-version fixture, strict Helm lint, chart contract, headless gameplay,
+  production-runtime and socket-runtime gates passed on the recorded source.
+  Native suite 60.669 s, clippy 0.312 s, cached native build 0.283 s.
+  Full release WASM including optimization 1473.163 s (Rust log: 20m40s).
+  One Cargo job, one Binaryen core, disk guards and bounded external service.
+  No second build or unrelated renderer during browser acceptance. Revalidated
+  exact source, native and generated hashes after all acceptance, not rebuilt.
+
+Real online gameplay (not synthetic/CPU/UI-only)
+  browser-2026-10-25T13-24-52-303Z provides Forest -> Volcano -> Forest,
+  same-room lobby arena switches, other-room/new identity, two independent
+  simultaneously alive Chromium processes, actual keyboard fire/steering,
+  full authoritative equality at common ticks (~64 observed server Hz),
+  same-identity reconnects with both renderers alive and post-reconnect equality.
+  Online menu does not pause server (tick33316 -> tick33716).
+  Eight explicit Leave/empty-HUD/socket-close readbacks in that run.
+  Its overall FAILED status remains FAILED: requested Chromium teardown was
+  SIGKILL, not graceful code-zero. PID absence is separate from graceful exit.
+
+  browser-2026-10-25T14-15-26-612Z is the successful reload-only supplement,
+  despite its archived mode field saying full-lifecycle. Two rendered clients
+  first agree on 193 common frames (~64.02 Hz); B explicitly Leaves/exits;
+  direct GPU pre/post reload images of A follow with only one renderer.
+  Same room/participant/seat restored and Running HUD/state required; A Leaves.
+  Both owned PIDs absent, backend exit0, HTTP closed. B requested teardown was
+  SIGKILL; A exited0. Actual images show restored Volcano gameplay, not loading.
+  Post-reload room disclosure is open and overlays part of the scene. Bot2 in
+  the HUD is the ordinary unoccupied seat after B Leaves, not a retained ArenaB.
+
+Visual inspection of real captured images
+  Original images were loaded and visually inspected, not just pixel-classified.
+  browser-2026-10-25T13-14-47-662Z/sequence-ArenaA-Forest-1-043.jpg:
+    cyan/blue missile with white conical nose pointing left along its rail;
+    cyan cart and red cart are visibly distinct, full Forest backdrop/props.
+  Same run /sequence-ArenaB-Forest-1-013.jpg:
+    cyan missile with white nose pointing down along vertical rail.
+  browser-2026-10-25T13-24-52-303Z/sequence-ArenaA-Volcano-5-018.jpg:
+    red missile with white nose pointing right, ahead of red cart; cyan cart,
+    basalt ground/walls, lava, rock-only backdrop; no stale Forest foliage.
+  First run /sequence-ArenaA-Forest-1-034.jpg and -041.jpg:
+    visibly full-size orange primary blasts at arena boundaries plus smaller
+    nearby orange blobs, and legal red missiles. Surrounding Forest scenery
+    remains coherent. These images do NOT by themselves label individual chain
+    IDs or distinguish every particle from a chain core.
+  First run wire-analysis.json separately establishes real wall impact, prop42
+    removal, delayed chain143, primary137 maximum1.5999979 vs chain0.8792112,
+    with later disappearance. This is wire evidence, not an injected simulation.
+  CPU source/replica transformed mesh-vertex regression independently checks
+    full primary and smaller chain bounds over animation stages; projectile
+    hierarchy/owner/forward/glow and exact prop identities/removal are CPU/ECS
+    coverage, not a claim of native graphical interaction.
+  Contact sheets and blue/blast pixel candidate sheets are indexes made from
+    real captures, NOT synthetic gameplay. Some filenames labeled Forest show
+    later Volcano due to screencast lag; the theme visible in pixels wins.
+  Inspected lifecycle and theme sequences show no obvious stale duplicate carts
+    or mixed-theme scenery. CPU lifecycle tests additionally assert hierarchy
+    removal, stable cache counts, entity IDs and topology invalidation.
+  Compositor frames/nearby wire ticks are not exact GPU-to-wire synchronization.
+
+Isolated offline/low quality
+  Both online renderers were closed before offline testing. Forest and Volcano
+  pilot directories each record actual ?quality=0, no socket, real lobby input,
+  zero bots, actual steering/fire, Escape pause, later pause and resume.
+  Direct GPU running/paused/resumed images visually inspected for both themes:
+    Forest: green floor, trees/rocks, red cart; paused dialog then running HUD.
+    Volcano: brown basalt/lava/rock-only backdrop, red cart; paused dialog then
+    running HUD. No obvious Forest foliage persists in Volcano.
+  finalize.py independently checks exact decoded RGB equality between pause and
+  paused-later, and changed pixels on resume. This is visual pause evidence;
+  no injected gameplay state or synthetic pause counter is used.
+  Online presentation is fixed sparse rendering, not offline quality governor;
+  online room-form navigation drops the initial quality query. Do not claim
+  online pinned-quality governor coverage from the offline checks.
+
+Preserved failures
+  Original online-explosion/2026-10-25T13-06-24-693Z-3f9c5cb9d2b7: capture-time
+  budget/teardown failure. Subsequent browser runs 13-14, 13-24, 13-44 and14-08
+  all retain FAILED status. 13-14 natural return deadline was not met; no
+  fabricated winner/return used to repair it. 13-44 pause images were stale
+  screencast frames (lobby/running), so its equality failure is not relabeled.
+  14-08 direct capture under two SwiftShader renderers hit unchanged60s budget.
+  Direct captures in successful isolated pilots/reload replace those missing
+  cases, not the failed run status. No single full-lifecycle PASS is claimed.
+
+Privacy, preservation and cleanup
+  Each browser receipt records exact observed-secret scans on every artifact
+  plus visible body text before capture; not OCR. No raw storage/credentials,
+  auth environment or TLS keys are intentionally retained. Local expired room
+  admission codes and dead loopback endpoints are visible in some screenshots.
+  AUDIT.json independently verifies package member set/hashes, decompresses
+  nested source archives for private-key signature scans, parses actual native
+  and Node counts, and requires no active Chromium/game/build process.
+  In-run known-secret checks cannot be replayed from the sanitized records:
+  ephemeral raw credentials were deliberately not retained.
+  package-receipt.json names archive/hash; AUDIT.json is the separate readback.
+  All failed originals retained; no cache/source/evidence deletion. Runtime
+  remains uncommitted for the selected cohesive downstream publication flow.
+
+Limits
+  Native manual graphics deferred. Anonymous rotating-bearer theft limitation
+  remains accepted. No public-room tests, push/PR, merge, deployment, production
+  restart, or successor launch. Independent same-card reviewer handoff required.

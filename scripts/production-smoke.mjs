@@ -21,7 +21,7 @@ try {
  for(const route of ['/','/ws/','/ws?x=1','/metrics','/healthz'])assert.match(await upgrade(undefined,route),/404/);
  const ws=new WebSocket(urls.ws);sockets.push(ws);const messages=[];
  ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});
- ws.send(JSON.stringify({Hello:{version:3,name:'Production probe'}}));
+ ws.send(JSON.stringify({Hello:{version:4,name:'Production probe'}}));
  for(let i=0;i<100&&!messages.some(m=>m.Welcome);i++)await sleep(20);
  assert(messages.some(m=>m.Welcome),'production admits room');
  ws.send(JSON.stringify({Ready:true}));
@@ -35,18 +35,18 @@ try {
  const guesses=[];
  for(let i=0;i<65;i++){
   const attempt=new WebSocket(urls.ws);sockets.push(attempt);
-  guesses.push(await new Promise((resolve,reject)=>{attempt.addEventListener('open',()=>attempt.send(JSON.stringify({Hello:{version:3,name:'Guess',room:'00000000000000000000'}})));attempt.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error){resolve(m.Error);attempt.close();}});attempt.addEventListener('error',reject);setTimeout(()=>reject(Error('guess timeout')),3000).unref();}));
+  guesses.push(await new Promise((resolve,reject)=>{attempt.addEventListener('open',()=>attempt.send(JSON.stringify({Hello:{version:4,name:'Guess',room:'00000000000000000000'}})));attempt.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error){resolve(m.Error);attempt.close();}});attempt.addEventListener('error',reject);setTimeout(()=>reject(Error('guess timeout')),3000).unref();}));
  }
  assert(guesses.some(s=>s.includes('rate limit')),'anonymous room-code guessing is globally rate limited');
  // Real spoofed proxy headers must not create a new admission identity/budget.
  for(const ip of ['192.0.2.1','192.0.2.2']){
   const u=new URL(urls.ws),s=net.connect(+u.port,u.hostname);sockets.push(s);
-  await new Promise((resolve,reject)=>{let bytes='',sent=false;s.on('error',reject);s.on('data',b=>{bytes=(bytes+b.toString()).slice(-8192);if(!sent&&bytes.includes('\r\n\r\n')){assert.match(bytes,/101/);sent=true;const payload=Buffer.from(JSON.stringify({Hello:{version:3,name:'Proxy guess',room:'00000000000000000000'}})),mask=[1,2,3,4];assert(payload.length<126);s.write(Buffer.concat([Buffer.from([129,128|payload.length,...mask]),Buffer.from(payload.map((v,i)=>v^mask[i%4]))]));}if(bytes.includes('global admission rate limit')){s.destroy();resolve();}});s.write(`GET /ws HTTP/1.1\r\nHost: ${u.host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nX-Forwarded-For: ${ip}\r\nForwarded: for=${ip};proto=https\r\n\r\n`);setTimeout(()=>reject(Error('spoofed forwarded headers bypassed global admission limit')),3000).unref();});
+  await new Promise((resolve,reject)=>{let bytes='',sent=false;s.on('error',reject);s.on('data',b=>{bytes=(bytes+b.toString()).slice(-8192);if(!sent&&bytes.includes('\r\n\r\n')){assert.match(bytes,/101/);sent=true;const payload=Buffer.from(JSON.stringify({Hello:{version:4,name:'Proxy guess',room:'00000000000000000000'}})),mask=[1,2,3,4];assert(payload.length<126);s.write(Buffer.concat([Buffer.from([129,128|payload.length,...mask]),Buffer.from(payload.map((v,i)=>v^mask[i%4]))]));}if(bytes.includes('global admission rate limit')){s.destroy();resolve();}});s.write(`GET /ws HTTP/1.1\r\nHost: ${u.host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nX-Forwarded-For: ${ip}\r\nForwarded: for=${ip};proto=https\r\n\r\n`);setTimeout(()=>reject(Error('spoofed forwarded headers bypassed global admission limit')),3000).unref();});
  }
  const creations=[];
  for(let i=0;i<16;i++){
   const attempt=new WebSocket(urls.ws);sockets.push(attempt);
-  creations.push(await new Promise((resolve,reject)=>{attempt.addEventListener('open',()=>attempt.send(JSON.stringify({Hello:{version:3,name:'Create'}})));attempt.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error||m.Welcome){resolve(m.Error??'created');attempt.close();}});attempt.addEventListener('error',reject);setTimeout(()=>reject(Error('creation timeout')),3000).unref();}));
+  creations.push(await new Promise((resolve,reject)=>{attempt.addEventListener('open',()=>attempt.send(JSON.stringify({Hello:{version:4,name:'Create'}})));attempt.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Error||m.Welcome){resolve(m.Error??'created');attempt.close();}});attempt.addEventListener('error',reject);setTimeout(()=>reject(Error('creation timeout')),3000).unref();}));
  }
  assert(creations.at(-1).includes('rate limit'),'anonymous room creation is globally rate limited');
  assert.equal((await fetch(urls.management+'/readyz')).status,200,'abuse does not stall authoritative tick');

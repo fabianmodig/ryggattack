@@ -1,0 +1,9 @@
+
+running 4 tests
+test credentials_never_appear_in_debug_diagnostics ... ok
+test protocol_rejects_unknown_fields_nonfinite_axes_and_versions ... ok
+test reconnect_requires_private_bounded_credential_and_current_version ... ok
+test replication_includes_explicit_map_and_stable_visual_ids_and_powerup_positions ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+

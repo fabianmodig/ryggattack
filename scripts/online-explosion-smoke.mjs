@@ -30,7 +30,7 @@ const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const started = performance.now(), now = () => Math.round(performance.now() - started);
 const secrets = new Set(), clients = [], browsers = [];
-const report = {status: 'running', scope: 'LOCAL two actual rendered WASM humans, protocol 3; legal HTML controls + keyboard only',
+const report = {status: 'running', scope: 'LOCAL two actual rendered WASM humans, protocol 4; legal HTML controls + keyboard only',
   budgets: {gameplay_wall_ms: 180000, screenshot_only_ms: 60000, max_matches: 3, captures_per_client: 3},
   started_at: new Date().toISOString(), checks: [], errors: [], screenshots: [], cleanup: {},
   visual_review: {status: 'required', claim: 'Wire transforms are NOT measured GPU mesh bounds or image pixel dimensions.'}};
@@ -141,7 +141,7 @@ function observe(c, ws) {
       const message = JSON.parse(String(payload)); redact(message, secrets); // Discover, NEVER save raw Welcome.
       if (message.Welcome) {
         assert(!c.identity, 'one admission per client'); const w = message.Welcome;
-        assert.equal(w.version, 3); c.code = w.code;
+        assert.equal(w.version, 4); c.code = w.code;
         c.identity = pick(w, ['version', 'room', 'participant', 'seat']);
       }
       if (message.Lobby) {
@@ -169,7 +169,7 @@ function observe(c, ws) {
       const message = JSON.parse(String(payload)); redact(message, secrets);
       const kind = typeof message === 'string' ? message : Object.keys(message)[0];
       assert(['Hello', 'Configure', 'Ready', 'Input', 'Leave'].includes(kind), 'legal UI protocol commands only');
-      if (kind === 'Hello') { assert.equal(message.Hello.version, 3); assert.equal(message.Hello.name, c.name); }
+      if (kind === 'Hello') { assert.equal(message.Hello.version, 4); assert.equal(message.Hello.name, c.name); }
       if (kind === 'Configure') assert.deepEqual(message.Configure, {arena: 'Forest', wins_target: 7, bots: 0});
       if (kind === 'Ready') assert.equal(message.Ready, true);
       if (kind === 'Input') {
