@@ -68,78 +68,92 @@ pub(crate) fn apply_arena(
         };
     }
     if volcanic {
-        let lava = materials.add(StandardMaterial {
-            base_color: Color::srgb(1.0, 0.23, 0.015),
-            emissive: LinearRgba::new(2.8, 0.36, 0.01, 1.0),
-            unlit: true,
-            ..default()
-        });
-        let basalt = materials.add(StandardMaterial {
-            base_color: Color::srgb(0.12, 0.10, 0.14),
-            perceptual_roughness: 1.0,
-            ..default()
-        });
-        let pool = meshes.add(Cylinder::new(1.0, 0.02).mesh().resolution(24));
-        let river = meshes.add(Cuboid::new(1.0, 0.02, 1.0));
-        // The river is outside the walls. It cannot conceal a cart or rail.
-        for segment in 0..26 {
-            let z = 12.0 - segment as f32 * 1.6;
-            let x = -12.0 - (z * 0.22).sin() * 1.5;
-            commands.spawn((
-                ArenaDecoration,
-                Mesh3d(river.clone()),
-                MeshMaterial3d(lava.clone()),
-                Transform::from_xyz(x, 0.005, z).with_scale(Vec3::new(2.5, 1.0, 2.3)),
-            ));
-        }
-        // Small pools only occupy gaps between rails, flush with the ground.
-        for prop in forest
-            .props
-            .iter()
-            .filter(|p| {
-                p.position.abs().max_element() < 8.0 && map.distance_to_track(p.position) > 1.2
-            })
-            .take(18)
+        for (mesh, material, transform) in
+            volcano_parts(&mut meshes, &mut materials, &map, &forest.props)
         {
             commands.spawn((
                 ArenaDecoration,
-                Mesh3d(pool.clone()),
-                MeshMaterial3d(lava.clone()),
-                Transform::from_xyz(prop.position.x, 0.018, prop.position.y)
-                    .with_scale(Vec3::new(0.65, 1.0, 0.45)),
-            ));
-        }
-        let mountain = meshes.add(
-            ConicalFrustum {
-                radius_top: 0.9,
-                radius_bottom: 4.0,
-                height: 4.0,
-            }
-            .mesh()
-            .resolution(24),
-        );
-        // A compact right-flank crater stays in the 16:9 camera frame. Its
-        // entire base clears the wall; behind/right of play it cannot hide carts.
-        for (x, z, scale) in [(-15.0, -17.0, 1.0), (1.5, -21.0, 1.4), (13.0, -5.0, 0.8)] {
-            commands.spawn((
-                ArenaDecoration,
-                Mesh3d(mountain.clone()),
-                MeshMaterial3d(basalt.clone()),
-                Transform::from_xyz(x, 2.0 * scale, z).with_scale(Vec3::splat(scale)),
-            ));
-            commands.spawn((
-                ArenaDecoration,
-                Mesh3d(pool.clone()),
-                MeshMaterial3d(lava.clone()),
-                Transform::from_xyz(x, 4.0 * scale + 0.01, z).with_scale(Vec3::new(
-                    0.9 * scale,
-                    1.0,
-                    0.9 * scale,
-                )),
+                Mesh3d(mesh),
+                MeshMaterial3d(material),
+                transform,
             ));
         }
     }
     *applied = Some(settings.arena);
+}
+
+/// Visual construction only: no gameplay scenery or round regeneration.
+pub(crate) fn volcano_parts(
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
+    map: &RailMap,
+    props: &[crate::scenery::Prop],
+) -> Vec<(Handle<Mesh>, Handle<StandardMaterial>, Transform)> {
+    let mut parts = Vec::new();
+    let lava = materials.add(StandardMaterial {
+        base_color: Color::srgb(1.0, 0.23, 0.015),
+        emissive: LinearRgba::new(2.8, 0.36, 0.01, 1.0),
+        unlit: true,
+        ..default()
+    });
+    let basalt = materials.add(StandardMaterial {
+        base_color: Color::srgb(0.12, 0.10, 0.14),
+        perceptual_roughness: 1.0,
+        ..default()
+    });
+    let pool = meshes.add(Cylinder::new(1.0, 0.02).mesh().resolution(24));
+    let river = meshes.add(Cuboid::new(1.0, 0.02, 1.0));
+    // The river is outside the walls. It cannot conceal a cart or rail.
+    for segment in 0..26 {
+        let z = 12.0 - segment as f32 * 1.6;
+        let x = -12.0 - (z * 0.22).sin() * 1.5;
+        parts.push((
+            river.clone(),
+            lava.clone(),
+            Transform::from_xyz(x, 0.005, z).with_scale(Vec3::new(2.5, 1.0, 2.3)),
+        ));
+    }
+    // Small pools only occupy gaps between rails, flush with the ground.
+    for prop in props
+        .iter()
+        .filter(|p| p.position.abs().max_element() < 8.0 && map.distance_to_track(p.position) > 1.2)
+        .take(18)
+    {
+        parts.push((
+            pool.clone(),
+            lava.clone(),
+            Transform::from_xyz(prop.position.x, 0.018, prop.position.y)
+                .with_scale(Vec3::new(0.65, 1.0, 0.45)),
+        ));
+    }
+    let mountain = meshes.add(
+        ConicalFrustum {
+            radius_top: 0.9,
+            radius_bottom: 4.0,
+            height: 4.0,
+        }
+        .mesh()
+        .resolution(24),
+    );
+    // A compact right-flank crater stays in the 16:9 camera frame. Its
+    // entire base clears the wall; behind/right of play it cannot hide carts.
+    for (x, z, scale) in [(-15.0, -17.0, 1.0), (1.5, -21.0, 1.4), (13.0, -5.0, 0.8)] {
+        parts.push((
+            mountain.clone(),
+            basalt.clone(),
+            Transform::from_xyz(x, 2.0 * scale, z).with_scale(Vec3::splat(scale)),
+        ));
+        parts.push((
+            pool.clone(),
+            lava.clone(),
+            Transform::from_xyz(x, 4.0 * scale + 0.01, z).with_scale(Vec3::new(
+                0.9 * scale,
+                1.0,
+                0.9 * scale,
+            )),
+        ));
+    }
+    parts
 }
 
 #[cfg(test)]

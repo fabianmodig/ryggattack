@@ -151,7 +151,7 @@ try {
   // A second room uses a transport-only device, not a third software renderer.
   const isolated=new WebSocket(address);
   let isolatedLobby;
-  isolated.addEventListener('open',()=>isolated.send(JSON.stringify({Hello:{version:3,name:'Isolated'}})));
+  isolated.addEventListener('open',()=>isolated.send(JSON.stringify({Hello:{version:4,name:'Isolated'}})));
   isolated.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.Lobby)isolatedLobby=m.Lobby;});
   await until(()=>isolatedLobby,'isolated room');assert.notEqual(isolatedLobby.id,roomID);assert.equal(isolatedLobby.humans.length,1);
   evidence.room={id:roomID,code:roomCode,share,isolated_id:isolatedLobby.id};

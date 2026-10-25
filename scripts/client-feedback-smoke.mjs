@@ -86,7 +86,7 @@ function received(c,m) {
 async function rawJoin(code=null) {
   const ws=new WebSocket(`ws://127.0.0.1:${serverPort}/ws`);peers.add(ws);
   const c={ws,welcomes:0,errors:[],notices:[],closed:false};
-  ws.addEventListener('open',()=>ws.send(JSON.stringify({Hello:{version:3,name:'FeedbackCapacity',room:code}})));
+  ws.addEventListener('open',()=>ws.send(JSON.stringify({Hello:{version:4,name:'FeedbackCapacity',room:code}})));
   ws.addEventListener('message',e=>{try{received(c,JSON.parse(String(e.data)));}catch{c.invalid=true;}});
   ws.addEventListener('error',()=>{c.transportError=true;});ws.addEventListener('close',()=>c.closed=true);
   await until(()=>c.identity&&c.lobby,'real raw peer admission');assert(!c.invalid&&!c.transportError);

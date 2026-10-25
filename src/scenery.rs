@@ -22,15 +22,7 @@ pub(crate) struct Scenery {
     pub(crate) height: f32,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum PropKind {
-    Pine,
-    Birch,
-    Bush,
-    Rock,
-    Stump,
-    Fern,
-}
+pub(crate) use crate::network::PropKind;
 
 impl PropKind {
     /// How far the prop keeps from a rail centre line at scale one, so carts
@@ -81,7 +73,7 @@ impl PropKind {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub(crate) struct Prop {
     pub(crate) kind: PropKind,
     /// Where it stands on the ground.
@@ -89,7 +81,7 @@ pub(crate) struct Prop {
     pub(crate) yaw: f32,
     pub(crate) scale: f32,
     /// Picks between the shades and shapes a kind comes in.
-    variant: u8,
+    pub(crate) variant: u8,
 }
 
 /// The layout of the forest, fixed for the life of the map, and the meshes
@@ -101,7 +93,7 @@ pub(crate) struct Forest {
     pub(crate) arena: crate::match_settings::Arena,
 }
 
-struct ForestAssets {
+pub(crate) struct ForestAssets {
     cylinder: Handle<Mesh>,
     cone: Handle<Mesh>,
     frond: Handle<Mesh>,
@@ -163,13 +155,7 @@ impl Forest {
         materials: &mut Assets<StandardMaterial>,
     ) {
         self.arena = arena;
-        if let Some(mut material) = materials.get_mut(&self.assets.rock) {
-            material.base_color = if arena == crate::match_settings::Arena::Volcano {
-                Color::srgb(0.12, 0.11, 0.14)
-            } else {
-                Color::srgb(0.45, 0.46, 0.44)
-            };
-        }
+        self.assets.set_arena(arena, materials);
     }
 
     pub(crate) fn new(
@@ -177,51 +163,70 @@ impl Forest {
         materials: &mut Assets<StandardMaterial>,
         rail_map: &RailMap,
     ) -> Self {
+        Self {
+            props: layout(rail_map),
+            arena: crate::match_settings::Arena::Forest,
+            assets: ForestAssets::new(meshes, materials),
+        }
+    }
+}
+
+impl ForestAssets {
+    pub(crate) fn set_arena(
+        &self,
+        arena: crate::match_settings::Arena,
+        materials: &mut Assets<StandardMaterial>,
+    ) {
+        if let Some(mut material) = materials.get_mut(&self.rock) {
+            material.base_color = if arena == crate::match_settings::Arena::Volcano {
+                Color::srgb(0.12, 0.11, 0.14)
+            } else {
+                Color::srgb(0.45, 0.46, 0.44)
+            };
+        }
+    }
+    pub(crate) fn new(meshes: &mut Assets<Mesh>, materials: &mut Assets<StandardMaterial>) -> Self {
         let rough = |color: Color| StandardMaterial {
             base_color: color,
             perceptual_roughness: 0.95,
             ..default()
         };
         Self {
-            props: layout(rail_map),
-            arena: crate::match_settings::Arena::Forest,
-            assets: ForestAssets {
-                // Bevy's default of 32 sides is far finer than a trunk a few
-                // pixels wide or a pine tier seen from twenty units off can
-                // show: the outline moves by well under a pixel, and the
-                // forest is most of the scene's triangles.
-                cylinder: meshes.add(Cylinder::new(1.0, 1.0).mesh().resolution(16)),
-                cone: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(24)),
-                // Fern fronds are a couple of pixels thick.
-                frond: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(8)),
-                sphere: meshes.add(
-                    Sphere::new(1.0)
-                        .mesh()
-                        .ico(2)
-                        .expect("two subdivisions are well within the limit"),
-                ),
-                bark: materials.add(rough(Color::srgb(0.36, 0.24, 0.14))),
-                birch_bark: materials.add(rough(Color::srgb(0.86, 0.86, 0.80))),
-                needles: [
-                    materials.add(rough(Color::srgb(0.10, 0.32, 0.14))),
-                    materials.add(rough(Color::srgb(0.16, 0.42, 0.18))),
-                ],
-                leaves: [
-                    materials.add(rough(Color::srgb(0.32, 0.58, 0.22))),
-                    materials.add(rough(Color::srgb(0.48, 0.62, 0.20))),
-                ],
-                bush: materials.add(rough(Color::srgb(0.20, 0.45, 0.18))),
-                rock: materials.add(rough(Color::srgb(0.45, 0.46, 0.44))),
-                fern: materials.add(rough(Color::srgb(0.24, 0.52, 0.20))),
-                cut_wood: materials.add(rough(Color::srgb(0.76, 0.62, 0.40))),
-            },
+            // Bevy's default of 32 sides is far finer than a trunk a few
+            // pixels wide or a pine tier seen from twenty units off can
+            // show: the outline moves by well under a pixel, and the
+            // forest is most of the scene's triangles.
+            cylinder: meshes.add(Cylinder::new(1.0, 1.0).mesh().resolution(16)),
+            cone: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(24)),
+            // Fern fronds are a couple of pixels thick.
+            frond: meshes.add(Cone::new(1.0, 1.0).mesh().resolution(8)),
+            sphere: meshes.add(
+                Sphere::new(1.0)
+                    .mesh()
+                    .ico(2)
+                    .expect("two subdivisions are well within the limit"),
+            ),
+            bark: materials.add(rough(Color::srgb(0.36, 0.24, 0.14))),
+            birch_bark: materials.add(rough(Color::srgb(0.86, 0.86, 0.80))),
+            needles: [
+                materials.add(rough(Color::srgb(0.10, 0.32, 0.14))),
+                materials.add(rough(Color::srgb(0.16, 0.42, 0.18))),
+            ],
+            leaves: [
+                materials.add(rough(Color::srgb(0.32, 0.58, 0.22))),
+                materials.add(rough(Color::srgb(0.48, 0.62, 0.20))),
+            ],
+            bush: materials.add(rough(Color::srgb(0.20, 0.45, 0.18))),
+            rock: materials.add(rough(Color::srgb(0.45, 0.46, 0.44))),
+            fern: materials.add(rough(Color::srgb(0.24, 0.52, 0.20))),
+            cut_wood: materials.add(rough(Color::srgb(0.76, 0.62, 0.40))),
         }
     }
 }
 
 /// Where everything stands. Deterministic for a map, so a restart grows the
 /// same forest back.
-fn layout(rail_map: &RailMap) -> Vec<Prop> {
+pub(crate) fn layout(rail_map: &RailMap) -> Vec<Prop> {
     let mut rng = SimpleRng::new(rail_map.seed ^ 0x5eed_f0e5_7000_0001);
     let mut props = Vec::with_capacity(ARENA_PROPS + OUTER_PROPS);
 
@@ -349,17 +354,40 @@ pub(crate) fn spawn_backdrop(
     forest: &Forest,
     density: ForestDensity,
 ) {
+    for (mesh, material) in
+        backdrop_meshes(meshes, &forest.assets, &forest.props, forest.arena, density)
+    {
+        commands.spawn((
+            Mesh3d(mesh),
+            MeshMaterial3d(material),
+            Transform::IDENTITY,
+            Backdrop,
+        ));
+    }
+}
+
+/// Only unreachable background props, without destructible entities.
+pub(crate) fn backdrop_meshes(
+    meshes: &mut Assets<Mesh>,
+    assets: &ForestAssets,
+    props: &[Prop],
+    arena: crate::match_settings::Arena,
+    density: ForestDensity,
+) -> Vec<(Handle<Mesh>, Handle<StandardMaterial>)> {
     // Welded in patches rather than all at once, so that the patches out of
     // view, and out of the shadow's reach, are still culled.
     let mut patches: Vec<(IVec2, MaterialBatches)> = Vec::new();
-    let backdrop = forest
-        .props
+    let backdrop = props
         .iter()
         .filter(|prop| !prop.can_be_wrecked())
         .enumerate()
         .filter(|(index, _)| density == ForestDensity::Full || index % 2 == 0);
     for (_, prop) in backdrop {
-        let prop = forest.themed_prop(*prop);
+        let mut prop = *prop;
+        if arena == crate::match_settings::Arena::Volcano {
+            prop.kind = PropKind::Rock;
+            prop.scale = prop.scale.min(1.5);
+        }
         let cell = (prop.position / BACKDROP_PATCH).floor().as_ivec2();
         let batches = match patches.iter().position(|(known, _)| *known == cell) {
             Some(index) => &mut patches[index].1,
@@ -371,16 +399,17 @@ pub(crate) fn spawn_backdrop(
         let placement = Transform::from_xyz(prop.position.x, 0.0, prop.position.y)
             .with_rotation(Quat::from_rotation_y(prop.yaw))
             .with_scale(Vec3::splat(prop.scale));
-        for (mesh, material, transform) in parts(&forest.assets, &prop) {
+        for (mesh, material, transform) in parts(assets, &prop) {
             let Some(mesh) = meshes.get(mesh) else {
                 continue;
             };
             batches.add(material, mesh, placement * transform);
         }
     }
-    for (_, batches) in patches {
-        batches.spawn(commands, meshes, Backdrop);
-    }
+    patches
+        .into_iter()
+        .flat_map(|(_, batches)| batches.build(meshes))
+        .collect()
 }
 
 /// Side of the square patches the backdrop is welded in.
@@ -425,6 +454,7 @@ pub(crate) fn rebuild_forest(
 fn spawn_prop(commands: &mut Commands, assets: &ForestAssets, prop: &Prop) {
     commands
         .spawn((
+            *prop,
             Scenery {
                 hit_radius: prop.kind.hit_radius() * prop.scale,
                 height: prop.kind.height() * prop.scale,
@@ -448,7 +478,7 @@ fn spawn_prop(commands: &mut Commands, assets: &ForestAssets, prop: &Prop) {
 
 /// The pieces a prop is built from, in its own frame at scale one. Each is a
 /// separate entity so that an explosion can send them flying one by one.
-fn parts<'a>(
+pub(crate) fn parts<'a>(
     assets: &'a ForestAssets,
     prop: &Prop,
 ) -> Vec<(&'a Handle<Mesh>, &'a Handle<StandardMaterial>, Transform)> {

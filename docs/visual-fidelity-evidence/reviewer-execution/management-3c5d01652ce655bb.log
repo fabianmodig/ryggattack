@@ -1,0 +1,7 @@
+
+running 2 tests
+test metrics_are_aggregate_only_and_unknown_routes_are_not_probes ... ok
+test readiness_fails_before_first_tick_after_stall_and_during_shutdown ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

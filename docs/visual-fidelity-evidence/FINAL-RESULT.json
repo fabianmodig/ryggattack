@@ -1,0 +1,978 @@
+{
+  "status": "composite-evidence-ready-for-independent-review",
+  "scope": "Runtime unchanged; no single full-lifecycle harness is relabeled green. Positive cases from failed runs are complemented by passing direct-GPU offline/reload supplements.",
+  "head": "dfbd361580ab6861097141ff982766dbae9da6d2",
+  "native_passed": 216,
+  "native_stages": [
+    {
+      "name": "arena-tests",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "-j",
+        "1",
+        "--lib",
+        "online::environment::tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/arena-tests.log",
+      "disk_free_before": 7074086912,
+      "exit_code": 0,
+      "seconds": 0.638,
+      "process_peak_rss_kib": 97228
+    },
+    {
+      "name": "native-tests",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "-j",
+        "1",
+        "--",
+        "--test-threads=1"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/native-tests.log",
+      "disk_free_before": 7074086912,
+      "exit_code": 0,
+      "seconds": 60.669,
+      "process_peak_rss_kib": 128308
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "-j",
+        "1"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/clippy.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.312,
+      "process_peak_rss_kib": 97400
+    },
+    {
+      "name": "native-build",
+      "argv": [
+        "cargo",
+        "build",
+        "--locked",
+        "-j",
+        "1"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/native-build.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.283,
+      "process_peak_rss_kib": 97408
+    },
+    {
+      "name": "node-tests",
+      "argv": [
+        "node",
+        "--test",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/node-tests.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.963,
+      "process_peak_rss_kib": 42400
+    },
+    {
+      "name": "rooms-ui",
+      "argv": [
+        "node",
+        "scripts/rooms-ui.test.mjs"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/rooms-ui.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.035,
+      "process_peak_rss_kib": 27568
+    },
+    {
+      "name": "pages-redirect",
+      "argv": [
+        "node",
+        "scripts/pages-redirect.test.mjs"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/pages-redirect.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.033,
+      "process_peak_rss_kib": 28304
+    },
+    {
+      "name": "chart-version",
+      "argv": [
+        "python3",
+        "scripts/update-chart-version.test.py"
+      ],
+      "status": "passed",
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/arena-presentation/checks-20261025T123854Z/chart-version.log",
+      "disk_free_before": 7073693696,
+      "exit_code": 0,
+      "seconds": 0.122,
+      "process_peak_rss_kib": 16124
+    }
+  ],
+  "build_stages": [
+    {
+      "name": "all-node-unit-gates",
+      "command": [
+        "node",
+        "--test",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/container-smoke-network.test.mjs",
+        "scripts/live-deployment-helpers.test.mjs",
+        "scripts/native-tls.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/pages-redirect.test.mjs",
+        "scripts/portable-container-build.test.mjs",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/rooms-ui.test.mjs",
+        "scripts/server-banner.test.mjs",
+        "scripts/server-policy.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs"
+      ],
+      "free_before": 7073693696,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 2.272
+    },
+    {
+      "name": "chart-version",
+      "command": [
+        "python3",
+        "scripts/update-chart-version.test.py"
+      ],
+      "free_before": 7073693696,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.122
+    },
+    {
+      "name": "helm-lint",
+      "command": [
+        "helm",
+        "lint",
+        "charts/ryggattack",
+        "--strict"
+      ],
+      "free_before": 7073693696,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.164
+    },
+    {
+      "name": "chart-contract",
+      "command": [
+        "/home/hermes/.hermes/hermes-agent/venv/bin/python",
+        "scripts/chart-test.py"
+      ],
+      "free_before": 7073693696,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "headless-gameplay",
+      "command": [
+        "python3",
+        "scripts/headless-smoke.py"
+      ],
+      "free_before": 7070941184,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 2.796
+    },
+    {
+      "name": "production-runtime",
+      "command": [
+        "node",
+        "scripts/production-smoke.mjs"
+      ],
+      "free_before": 7070941184,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 5.086
+    },
+    {
+      "name": "socket-runtime",
+      "command": [
+        "node",
+        "scripts/network-sockets.mjs"
+      ],
+      "free_before": 7070941184,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 10.294
+    },
+    {
+      "name": "full-release-wasm",
+      "command": [
+        "bash",
+        "scripts/build-web.sh"
+      ],
+      "free_before": 7070941184,
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 1473.163
+    }
+  ],
+  "source_archive_sha256": "c2f84d4b14482c6594a7bb62aac4e46efc190462bd7e87e1544463a0b31110d6",
+  "wasm_sha256": "da79dd7b94ca815fe42ad092cc36b465faa865208b66bf50460adcd50ab67173",
+  "js_sha256": "c173965afc0506578853daaa587ed2de9b23ca613058d63d15fff26e2c0084cf",
+  "source_native_artifacts_unchanged": true,
+  "owned_browser_pids_absent": [
+    172184,
+    172280,
+    174004,
+    174099,
+    177154,
+    177253,
+    177958,
+    178619,
+    179842,
+    181069,
+    181178,
+    182634,
+    182786
+  ],
+  "offline_pause": [
+    {
+      "arena": "Forest",
+      "directory": "verification/final-acceptance/pilot-Forest-2026-10-25T13-52-49-831Z",
+      "pause_pixel_equal": true,
+      "resume_pixel_changed": true,
+      "images": {
+        "running.png": "84d42e53f7ac5f48771d01912c1efea1b783212243dca54f89be4abb411f129e",
+        "steering.png": "095a5a948819c0294111811fa0e620451d049320ce8da3a6b25bea0fae546bfe",
+        "firing.png": "578b83a628eb4add724daeb1a284f9479be7958c5675ea54c67edac11ce6d22f",
+        "paused.png": "283b357097374c664e90103483a0eb3f5c6e4c8bf4ebc4d1e01285da7a37df20",
+        "paused-later.png": "283b357097374c664e90103483a0eb3f5c6e4c8bf4ebc4d1e01285da7a37df20",
+        "resumed.png": "1170cb3c825f919da976acbb1639ff28917cd2baef56e1190ef594c98b01f3ec"
+      }
+    },
+    {
+      "arena": "Volcano",
+      "directory": "verification/final-acceptance/pilot-Volcano-2026-10-25T14-00-03-807Z",
+      "pause_pixel_equal": true,
+      "resume_pixel_changed": true,
+      "images": {
+        "running.png": "36ec42dbaed3cb8b725727f18d22b9571c8788c46b2e848d0475d125805f1b0f",
+        "steering.png": "835a3399856efbfa180c09c6ed3f1e6790ca6c63d481f10a8142e98e9d19bbc1",
+        "firing.png": "d2ee14b117acadabce6965b8db8bf85388f47b018cb7aae6d4a9e09c101a5f1e",
+        "paused.png": "2316b64abd05d599b54c90d571075f819c6ffd94fe1b222f75f537744dd75498",
+        "paused-later.png": "2316b64abd05d599b54c90d571075f819c6ffd94fe1b222f75f537744dd75498",
+        "resumed.png": "c1b9b594d005171a9c41c03e4972a7d854f92695b7ff93fce28f300bbcad3e18"
+      }
+    }
+  ],
+  "reports": [
+    {
+      "directory": "verification/final-acceptance/browser-2026-10-25T13-14-47-662Z",
+      "status": "failed",
+      "mode": null,
+      "result_sha256": "d8dc130ac9163b9a866806b08be5dbe4e58bbb436e348afcc30c01e7c70ed6ca",
+      "failure": "AssertionError [ERR_ASSERTION]: natural return to lobby\n    at until (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:26:71)\n    at async run (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:127:3)\n    at async file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:180:16",
+      "checks": [
+        {
+          "name": "two independent Chromium processes and distinct seats",
+          "at_ms": 48719
+        },
+        {
+          "name": "Forest actual gameplay state agreement",
+          "at_ms": 220753,
+          "common_frames": 249,
+          "first_tick": 13092,
+          "last_tick": 14084,
+          "observed_hz": 64,
+          "inputs": 2
+        },
+        {
+          "name": "same identity reconnect with both renderers alive",
+          "at_ms": 230004,
+          "common_frames": 13,
+          "first_tick": 14648,
+          "last_tick": 14696,
+          "observed_hz": 64.08544726301736
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 442579,
+          "identity": {
+            "room": 3,
+            "participant": 2,
+            "seat": 0
+          }
+        }
+      ],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 3,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": [
+        {
+          "name": "ArenaA",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          }
+        },
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "backend": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "http_closed": true
+        }
+      ]
+    },
+    {
+      "directory": "verification/final-acceptance/browser-2026-10-25T13-24-52-303Z",
+      "status": "failed",
+      "mode": null,
+      "result_sha256": "2640ccf5890163dc5f257b54eef5f87f0a3f11e2f2f7c130f86712885352fc85",
+      "failure": "AssertionError [ERR_ASSERTION]: owned browser clean exit\n    at close (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:121:331)\n    at async run (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:161:19)\n    at async file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:184:16",
+      "checks": [
+        {
+          "name": "two independent Chromium processes and distinct seats",
+          "at_ms": 46438
+        },
+        {
+          "name": "Forest actual gameplay state agreement",
+          "at_ms": 297970,
+          "common_frames": 257,
+          "first_tick": 18004,
+          "last_tick": 19028,
+          "observed_hz": 63.99200099987502,
+          "inputs": 2
+        },
+        {
+          "name": "same identity reconnect with both renderers alive",
+          "at_ms": 307367,
+          "common_frames": 13,
+          "first_tick": 19600,
+          "last_tick": 19648,
+          "observed_hz": 64.2570281124498
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 337580,
+          "identity": {
+            "room": 3,
+            "participant": 2,
+            "seat": 0
+          }
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 366820,
+          "identity": {
+            "room": 3,
+            "participant": 4,
+            "seat": 1
+          }
+        },
+        {
+          "name": "online menu does not pause server",
+          "at_ms": 527198,
+          "before_tick": 33316,
+          "after_tick": 33716
+        },
+        {
+          "name": "Volcano actual gameplay state agreement",
+          "at_ms": 527631,
+          "common_frames": 417,
+          "first_tick": 32052,
+          "last_tick": 33716,
+          "observed_hz": 64,
+          "inputs": 3
+        },
+        {
+          "name": "same identity reconnect with both renderers alive",
+          "at_ms": 539888,
+          "common_frames": 13,
+          "first_tick": 34480,
+          "last_tick": 34528,
+          "observed_hz": 64.1711229946524
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 581310,
+          "identity": {
+            "room": 6,
+            "participant": 5,
+            "seat": 0
+          }
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 605707,
+          "identity": {
+            "room": 6,
+            "participant": 7,
+            "seat": 1
+          }
+        },
+        {
+          "name": "Forest actual gameplay state agreement",
+          "at_ms": 764289,
+          "common_frames": 199,
+          "first_tick": 48080,
+          "last_tick": 48872,
+          "observed_hz": 64.00517213512202,
+          "inputs": 2
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 783227,
+          "identity": {
+            "room": 9,
+            "participant": 8,
+            "seat": 0
+          }
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 808078,
+          "identity": {
+            "room": 9,
+            "participant": 10,
+            "seat": 1
+          }
+        },
+        {
+          "name": "other room distinct identity and common snapshots",
+          "at_ms": 922692,
+          "common_frames": 195,
+          "first_tick": 58236,
+          "last_tick": 59012,
+          "observed_hz": 64.00527878587924
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 947152,
+          "identity": {
+            "room": 12,
+            "participant": 13,
+            "seat": 1
+          }
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 990748,
+          "identity": {
+            "room": 12,
+            "participant": 11,
+            "seat": 0
+          }
+        }
+      ],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 10,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": [
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          }
+        },
+        {
+          "name": "ArenaA",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          }
+        },
+        {
+          "backend": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "http_closed": true
+        }
+      ]
+    },
+    {
+      "directory": "verification/final-acceptance/browser-2026-10-25T13-44-02-988Z",
+      "status": "failed",
+      "mode": "recovery-offline-supplement",
+      "result_sha256": "fb7f224282d9e2db6d7009e6b790e993bfd3d83fc862b9d24ae9cf0bfb2237b9",
+      "failure": "AssertionError [ERR_ASSERTION]: offline paused image stable\n+ actual - expected\n\n+ '5bc147ec6ce38fb568a4d733b6b0dea9d1f159e07e727e0ad67d468ee245e3a3'\n- 'ff438864175f32b9baf1c0e5314b1882619e7240d54abc6a451732b6a0bd410f'\n\n    at offline (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:192:167)\n    at async run (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:139:3)\n    at async file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:201:16",
+      "checks": [
+        {
+          "name": "two independent Chromium processes and distinct seats",
+          "at_ms": 46779
+        },
+        {
+          "name": "supplement two rendered clients common snapshots",
+          "at_ms": 101518,
+          "common_frames": 252,
+          "first_tick": 5436,
+          "last_tick": 6440,
+          "observed_hz": 64.01020082881733
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 184785,
+          "identity": {
+            "room": 3,
+            "participant": 4,
+            "seat": 1
+          }
+        },
+        {
+          "name": "actual reload restores same saved seat after second renderer exits",
+          "at_ms": 249683
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 251893,
+          "identity": {
+            "room": 3,
+            "participant": 2,
+            "seat": 0
+          }
+        },
+        {
+          "name": "Forest offline pause pixel comparison",
+          "at_ms": 315963,
+          "equal": false,
+          "caveat": "full canvas menu image equality; visually review gameplay and pause images"
+        }
+      ],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 3,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": [
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          },
+          "owned_process_absent": true,
+          "graceful_exit": false,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "name": "ArenaA",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          },
+          "owned_process_absent": true,
+          "graceful_exit": true,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "name": "OfflineForest",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          },
+          "owned_process_absent": true,
+          "graceful_exit": true,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "backend": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "http_closed": true
+        }
+      ]
+    },
+    {
+      "directory": "verification/final-acceptance/browser-2026-10-25T14-08-26-508Z",
+      "status": "failed",
+      "mode": "full-lifecycle",
+      "result_sha256": "0181f051130ee734212b052ccb14a813e51e45d5e43ca05a36db6a26e04b3df6",
+      "failure": "Error: direct screenshot deadline\n    at file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:102:229\n    at async file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:102:71\n    at async shot (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:102:3)\n    at async run (file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:141:91)\n    at async file:///home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/arena-browser.mjs:208:16",
+      "checks": [
+        {
+          "name": "two independent Chromium processes and distinct seats",
+          "at_ms": 47141
+        },
+        {
+          "name": "supplement two rendered clients common snapshots",
+          "at_ms": 93177,
+          "common_frames": 195,
+          "first_tick": 5148,
+          "last_tick": 5924,
+          "observed_hz": 64.02640264026402
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 175360,
+          "identity": {
+            "room": 3,
+            "participant": 2,
+            "seat": 0
+          }
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 216938,
+          "identity": {
+            "room": 3,
+            "participant": 4,
+            "seat": 1
+          }
+        }
+      ],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 2,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": [
+        {
+          "name": "ArenaA",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          },
+          "owned_process_absent": true,
+          "graceful_exit": false,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          },
+          "owned_process_absent": true,
+          "graceful_exit": true,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "backend": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "http_closed": true
+        }
+      ]
+    },
+    {
+      "directory": "verification/final-acceptance/browser-2026-10-25T14-15-26-612Z",
+      "status": "captured-review-required",
+      "mode": "full-lifecycle",
+      "result_sha256": "d6ddc97dbc37b9ec9922af98e09f4edca792dbb354cdfa3e416550db4e6defab",
+      "failure": null,
+      "checks": [
+        {
+          "name": "two independent Chromium processes and distinct seats",
+          "at_ms": 49056
+        },
+        {
+          "name": "supplement two rendered clients common snapshots",
+          "at_ms": 91888,
+          "common_frames": 193,
+          "first_tick": 5072,
+          "last_tick": 5840,
+          "observed_hz": 64.0213404468156
+        },
+        {
+          "name": "ArenaB explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 122893,
+          "identity": {
+            "room": 3,
+            "participant": 4,
+            "seat": 1
+          }
+        },
+        {
+          "name": "actual reload restores same saved seat after second renderer exits",
+          "at_ms": 274039
+        },
+        {
+          "name": "ArenaA explicit Leave + empty HUD + socket close + peer roster",
+          "at_ms": 280938,
+          "identity": {
+            "room": 3,
+            "participant": 2,
+            "seat": 0
+          }
+        }
+      ],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 3,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": [
+        {
+          "name": "ArenaB",
+          "browser": {
+            "exit": {
+              "code": null,
+              "signal": "SIGKILL"
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": false
+          },
+          "owned_process_absent": true,
+          "graceful_exit": false,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "name": "ArenaA",
+          "browser": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          },
+          "owned_process_absent": true,
+          "graceful_exit": true,
+          "caveat": "A requested teardown SIGKILL is retained, not relabeled a clean exit; unexpected exits still fail."
+        },
+        {
+          "backend": {
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "forced": false,
+            "requested": true,
+            "unexpected": false,
+            "valid": true
+          }
+        },
+        {
+          "http_closed": true
+        }
+      ]
+    },
+    {
+      "directory": "verification/final-acceptance/pilot-Forest-2026-10-25T13-52-49-831Z",
+      "status": "captured-review-required",
+      "mode": null,
+      "result_sha256": "4e619b07a8ebbc47b938ac611b228fef6ba4469835f82a03cfe9f20de6b5ac08",
+      "failure": null,
+      "checks": [],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 0,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": {
+        "browser": {
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "forced": false,
+          "requested": true,
+          "unexpected": false,
+          "valid": true
+        },
+        "owned_process_absent": true
+      }
+    },
+    {
+      "directory": "verification/final-acceptance/pilot-Volcano-2026-10-25T14-00-03-807Z",
+      "status": "captured-review-required",
+      "mode": null,
+      "result_sha256": "91da5c690bb82460d417d9c6d84d4a34727dd5d6437f8a240b7bfa1124877c9b",
+      "failure": null,
+      "checks": [],
+      "private_scan": {
+        "passed": true,
+        "known_values_checked": 0,
+        "all_artifacts_exact_value_scan": true,
+        "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+      },
+      "cleanup": {
+        "browser": {
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "forced": false,
+          "requested": true,
+          "unexpected": false,
+          "valid": true
+        },
+        "owned_process_absent": true
+      }
+    }
+  ],
+  "limits": [
+    "Native manual graphics deferred.",
+    "Anonymous rotating bearer theft limitation remains accepted.",
+    "Online uses fixed sparse rendering, not offline quality governor.",
+    "Compositor sequence filenames/nearby wire ticks are not exact GPU-to-wire synchronization.",
+    "Requested teardown SIGKILL is recorded separately from graceful exit; prior failed statuses remain failed.",
+    "No public rooms, remote publication, merge, deployment or production restart."
+  ]
+}

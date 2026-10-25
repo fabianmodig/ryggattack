@@ -1,7 +1,7 @@
 //! Versioned development protocol. Connection ownership, never a client seat field,
 //! determines authority. Reconnect uses a separate private rotating bearer credential.
 use serde::{Deserialize, Serialize};
-pub const VERSION: u32 = 3;
+pub const VERSION: u32 = 4;
 pub const MAX_INPUT_BYTES: usize = 1024;
 pub fn valid_code(code: &str) -> bool {
     code.len() == 20
@@ -114,6 +114,25 @@ pub fn decode_client(text: &str) -> Result<ClientMessage, &'static str> {
     }
     Ok(msg)
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PropKind {
+    Pine,
+    Birch,
+    Bush,
+    Rock,
+    Stump,
+    Fern,
+}
+
+/// Effective source art identity, independent of the collider envelope.
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PropVisual {
+    pub kind: PropKind,
+    pub variant: u8,
+    pub scale: f32,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Body {
     pub id: u64,
@@ -122,6 +141,10 @@ pub struct Body {
     pub scale: [f32; 3],
     /// 0 projectile, 1 speed, 2 all-hits, 3 scenery, 4 explosion.
     pub kind: u8,
+    /// Cart seat, not a participant ID or a player name. Only projectiles.
+    pub owner: Option<usize>,
+    /// Only scenery; ground placement uses position.x/z and rotation.
+    pub prop: Option<PropVisual>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Frame {

@@ -94,6 +94,18 @@ fn valid_frame(frame: &Frame) -> bool {
             && body.id <= 9_007_199_254_740_991
             && ids.insert(body.id)
             && body.kind <= 4
+            && match body.kind {
+                0 => body.owner.is_some_and(|seat| seat < 4) && body.prop.is_none(),
+                3 => {
+                    body.owner.is_none()
+                        && body.prop.is_some_and(|prop| {
+                            prop.variant < 2
+                                && prop.scale.is_finite()
+                                && (0.75..=2.2).contains(&prop.scale)
+                        })
+                }
+                _ => body.owner.is_none() && body.prop.is_none(),
+            }
             && bounded(&body.position, -1024., 1024.)
             && unit(&body.rotation)
             && bounded(&body.scale, 0., 128.)
@@ -188,6 +200,8 @@ pub struct NetworkClient {
     pub edges: Option<Vec<(usize, usize)>>,
     pub frame: Option<Frame>,
     pub previous: Option<Frame>,
+    /// Presentation invalidation survives coalesced Lobby/Welcome + State.
+    pub(crate) visual_epoch: u64,
     pub received: Instant,
     pub status: String,
     pub rtt_ms: Option<f64>,
@@ -233,6 +247,7 @@ impl NetworkClient {
             edges: None,
             frame: None,
             previous: None,
+            visual_epoch: 0,
             received: now,
             status: "Connecting…".into(),
             rtt_ms: None,
@@ -494,6 +509,7 @@ impl NetworkClient {
         // Latest-state coalescing may hide Lobby/Countdown behind Running.
         // Preserve that boundary even when no non-running lobby reaches pump.
         if inbox.frame_barrier {
+            self.visual_epoch = self.visual_epoch.wrapping_add(1);
             self.frame = None;
             self.previous = None;
             self.acknowledged = true;
@@ -640,73 +656,189 @@ impl NetworkClient {
 mod resilience_tests {
     use super::*;
     #[test]
+    fn visual_descriptors_validate_after_wire_decode() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let mut frame = sim.network_frame();
+        frame.bodies.truncate(1);
+        let body = &mut frame.bodies[0];
+        body.kind = 0;
+        body.prop = None;
+        for seat in 0..4 {
+            frame.bodies[0].owner = Some(seat);
+            let decoded: Frame =
+                serde_json::from_str(&serde_json::to_string(&frame).unwrap()).unwrap();
+            assert!(valid_frame(&decoded));
+        }
+        for owner in [None, Some(4), Some(usize::MAX)] {
+            frame.bodies[0].owner = owner;
+            assert!(!valid_frame(&frame));
+        }
+        frame.bodies[0].owner = None;
+        frame.bodies[0].kind = 3;
+        assert!(!valid_frame(&frame));
+        for kind in [
+            PropKind::Pine,
+            PropKind::Birch,
+            PropKind::Bush,
+            PropKind::Rock,
+            PropKind::Stump,
+            PropKind::Fern,
+        ] {
+            for variant in 0..2 {
+                for scale in [0.75, 1.15, 1.5, 2.2] {
+                    frame.bodies[0].prop = Some(PropVisual {
+                        kind,
+                        variant,
+                        scale,
+                    });
+                    let decoded: Frame =
+                        serde_json::from_str(&serde_json::to_string(&frame).unwrap()).unwrap();
+                    assert!(valid_frame(&decoded));
+                }
+            }
+        }
+        let good = frame.clone();
+        for scale in [0., 0.749, 2.201, f32::NAN, f32::INFINITY] {
+            frame.bodies[0].prop.as_mut().unwrap().scale = scale;
+            assert!(!valid_frame(&frame));
+        }
+        frame = good.clone();
+        for variant in [2, 255] {
+            frame.bodies[0].prop.as_mut().unwrap().variant = variant;
+            assert!(!valid_frame(&frame));
+        }
+        frame = good.clone();
+        frame.bodies[0].owner = Some(0);
+        assert!(!valid_frame(&frame));
+        for kind in [0, 1, 2, 4] {
+            frame = good.clone();
+            frame.bodies[0].kind = kind;
+            frame.bodies[0].owner = (kind == 0).then_some(0);
+            assert!(!valid_frame(&frame), "prop on non-scenery kind {kind}");
+        }
+        for kind in [1, 2, 4] {
+            frame = good.clone();
+            frame.bodies[0].kind = kind;
+            frame.bodies[0].prop = None;
+            assert!(valid_frame(&frame));
+            frame.bodies[0].owner = Some(0);
+            assert!(!valid_frame(&frame));
+        }
+        let wire = serde_json::to_value(&good.bodies[0]).unwrap();
+        for (field, value) in [
+            ("kind", serde_json::json!("Unknown")),
+            ("variant", serde_json::json!(256)),
+            ("scale", serde_json::json!("large")),
+            ("extra", serde_json::json!(true)),
+        ] {
+            let mut bad = wire.clone();
+            bad["prop"][field] = value;
+            assert!(serde_json::from_value::<Body>(bad).is_err());
+        }
+        for owner in [
+            serde_json::json!(-1),
+            serde_json::json!(0.5),
+            serde_json::json!("Ada"),
+        ] {
+            let mut bad = wire.clone();
+            bad["owner"] = owner;
+            assert!(serde_json::from_value::<Body>(bad).is_err());
+        }
+        let mut oversized = good.clone();
+        oversized.bodies = (1..=1025)
+            .map(|id| {
+                let mut body = good.bodies[0].clone();
+                body.id = id;
+                body
+            })
+            .collect();
+        assert!(!valid_frame(&oversized));
+    }
+    #[test]
     #[cfg(not(target_arch = "wasm32"))]
     fn coalesced_match_boundary_discards_old_winner_before_pump() {
         use crate::rooms::Phase;
-        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-        let address = format!("ws://{}", listener.local_addr().unwrap());
-        let (release, hold) = std::sync::mpsc::channel();
-        let server = std::thread::spawn(move || {
-            let (stream, _) = listener.accept().unwrap();
-            let mut ws = tungstenite::accept(stream).unwrap();
-            let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
-            let mut frame = sim.network_frame();
-            frame.tick = 90;
-            frame.winner = Some(0);
-            frame.wins[0] = 1;
-            frame.round_finished = true;
-            let mut lobby = crate::rooms::Lobby::new(1, "a".repeat(20), 1, "Ada".into());
-            lobby.humans[0].ready = true;
-            let mut messages = vec![
-                ServerMessage::Welcome {
-                    version: VERSION,
-                    seat: 0,
-                    room: 1,
-                    participant: 1,
-                    edges: sim.network_edges(),
-                    code: "a".repeat(20),
-                    credential: "b".repeat(64),
-                },
-                ServerMessage::State(frame),
-            ];
-            for phase in [
-                Phase::Lobby,
-                Phase::Countdown { ticks_left: 32 },
-                Phase::Running,
-            ] {
-                lobby.phase = phase;
-                messages.push(ServerMessage::Lobby(lobby.clone()));
+        for fresh_state in [false, true] {
+            let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = format!("ws://{}", listener.local_addr().unwrap());
+            let (release, hold) = std::sync::mpsc::channel();
+            let server = std::thread::spawn(move || {
+                let (stream, _) = listener.accept().unwrap();
+                let mut ws = tungstenite::accept(stream).unwrap();
+                let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+                let mut frame = sim.network_frame();
+                frame.tick = 90;
+                frame.winner = Some(0);
+                frame.wins[0] = 1;
+                frame.round_finished = true;
+                let mut lobby = crate::rooms::Lobby::new(1, "a".repeat(20), 1, "Ada".into());
+                lobby.humans[0].ready = true;
+                let mut messages = vec![
+                    ServerMessage::Welcome {
+                        version: VERSION,
+                        seat: 0,
+                        room: 1,
+                        participant: 1,
+                        edges: sim.network_edges(),
+                        code: "a".repeat(20),
+                        credential: "b".repeat(64),
+                    },
+                    ServerMessage::State(frame),
+                ];
+                for phase in [
+                    Phase::Lobby,
+                    Phase::Countdown { ticks_left: 32 },
+                    Phase::Running,
+                ] {
+                    lobby.phase = phase;
+                    messages.push(ServerMessage::Lobby(lobby.clone()));
+                }
+                if fresh_state {
+                    let mut next = sim.network_frame();
+                    next.tick = 1;
+                    messages.push(ServerMessage::State(next));
+                }
+                messages.push(ServerMessage::Notice("barrier delivered".into()));
+                for message in messages {
+                    ws.send(tungstenite::Message::Text(
+                        serde_json::to_string(&message).unwrap().into(),
+                    ))
+                    .unwrap();
+                }
+                hold.recv_timeout(std::time::Duration::from_secs(10)).ok();
+            });
+            let mut client = NetworkClient::connect(&address, "Ada").unwrap();
+            client.pump(Default::default());
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+            while client.inbox.lock().unwrap().notice.as_deref() != Some("barrier delivered") {
+                assert!(
+                    std::time::Instant::now() < deadline,
+                    "callback did not receive boundary"
+                );
+                std::thread::sleep(std::time::Duration::from_millis(1));
             }
-            messages.push(ServerMessage::Notice("barrier delivered".into()));
-            for message in messages {
-                ws.send(tungstenite::Message::Text(
-                    serde_json::to_string(&message).unwrap().into(),
-                ))
-                .unwrap();
+            client.pump(Default::default());
+            release.send(()).unwrap();
+            server.join().unwrap();
+            assert_eq!(client.seat, Some(0));
+            assert_eq!(client.lobby.as_ref().unwrap().phase, Phase::Running);
+            if fresh_state {
+                let frame = client.frame.as_ref().expect("post-barrier frame");
+                assert_eq!(frame.tick, 1);
+                assert_eq!(frame.winner, None);
+            } else {
+                assert!(
+                    client.frame.is_none(),
+                    "coalescing resurrected the previous match winner"
+                );
             }
-            hold.recv_timeout(std::time::Duration::from_secs(10)).ok();
-        });
-        let mut client = NetworkClient::connect(&address, "Ada").unwrap();
-        client.pump(Default::default());
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-        while client.inbox.lock().unwrap().notice.as_deref() != Some("barrier delivered") {
+            assert!(client.previous.is_none());
             assert!(
-                std::time::Instant::now() < deadline,
-                "callback did not receive boundary"
+                client.visual_epoch > 0,
+                "renderer must observe a coalesced boundary"
             );
-            std::thread::sleep(std::time::Duration::from_millis(1));
+            client.leave();
         }
-        client.pump(Default::default());
-        release.send(()).unwrap();
-        server.join().unwrap();
-        assert_eq!(client.seat, Some(0));
-        assert_eq!(client.lobby.as_ref().unwrap().phase, Phase::Running);
-        assert!(
-            client.frame.is_none(),
-            "coalescing resurrected the previous match winner"
-        );
-        assert!(client.previous.is_none());
-        client.leave();
     }
     #[test]
     #[cfg(not(target_arch = "wasm32"))]

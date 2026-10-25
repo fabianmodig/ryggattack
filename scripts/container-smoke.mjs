@@ -63,7 +63,7 @@ try {
  assert.match(await (await fetch(resetManagement+'/metrics')).text(),/ryggattack_rooms 0\n/);
  const ws=new WebSocket(resetWS),messages=[];let closed=false;
  ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));ws.addEventListener('close',()=>closed=true);
- await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});ws.send(JSON.stringify({Hello:{version:3,name:'Shutdown probe'}}));
+ await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});ws.send(JSON.stringify({Hello:{version:4,name:'Shutdown probe'}}));
  await until(()=>messages.some(m=>m.Welcome),'shutdown client admitted');
  ws.send(JSON.stringify({Ready:true}));await until(()=>messages.some(m=>m.State),'shutdown client receives actual running simulation');
  const start=performance.now();await cli('stop','--time','10',names.server);assert(performance.now()-start<2000,'container bounded SIGTERM shutdown');

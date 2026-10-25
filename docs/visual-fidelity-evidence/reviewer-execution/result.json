@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "native_passed": 216,
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/headless-smoke.py",
+        "/home/hermes/src/ryggattack-visual-fidelity/target/debug/ryggattack-headless"
+      ],
+      "exit_code": 0,
+      "seconds": 1.266,
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/reviewer-execution/focused-0.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/production-smoke.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 5.127,
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/reviewer-execution/focused-1.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/network-sockets.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 10.338,
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/reviewer-execution/focused-2.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.016,
+      "log": "/home/hermes/src/ryggattack-visual-fidelity/verification/final-acceptance/reviewer-execution/focused-3.log"
+    }
+  ],
+  "replay_caveat": "Initial review aggregate timed out after 240 seconds invoking default cargo-run headless wrapper with inherited flags. No browser was active; timeout and empty log retained. Focused retry invokes hash-verified headless executable directly without Cargo.",
+  "node_passed": 168,
+  "source_native_artifact_hashes_unchanged": true,
+  "active_build_or_game_processes": [],
+  "archive_sha256": "669c38249e8623c0857eeee1667fea1b02fb322df5dba242372125be55ebe901"
+}

@@ -1,0 +1,21 @@
+{
+  "passed": 16,
+  "checks": [
+    "half-open upgrade does not stall admission",
+    "stale input discarded",
+    "seat spoof rejected",
+    "position spoof rejected",
+    "axis bounds rejected",
+    "oversize rejected",
+    "binary rejected",
+    "incompatible version rejected",
+    "input flood disconnected",
+    "healthy client after abuse receives advancing state",
+    "raw foreign Origin rejected before upgrade",
+    "raw exact allowed Origin admitted alongside native no-Origin client",
+    "raw fragmented aggregate payload over 1 KiB rejected",
+    "raw empty non-FIN trickle bounded; healthy ticks advance",
+    "raw empty non-FIN flood bounded; healthy ticks advance",
+    "raw attacker seat reusable after fragment abuse"
+  ]
+}

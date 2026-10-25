@@ -1,0 +1,8 @@
+
+running 3 tests
+test private_lobby_replaces_bots_without_using_names_as_identity ... ok
+test readiness_countdown_resets_and_match_locks_roster_until_same_lobby_returns ... ok
+test solo_zero_bots_stays_offline_practice ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

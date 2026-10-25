@@ -1,0 +1,9 @@
+
+running 4 tests
+test malformed_lobbies_and_identity_mismatches_never_reach_presentation ... ok
+test malicious_backend_states_are_rejected_and_cart_order_is_canonical ... ok
+test malicious_backend_topologies_fail_before_renderer ... ok
+test room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.51s
+
