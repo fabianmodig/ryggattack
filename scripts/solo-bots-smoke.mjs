@@ -1,6 +1,7 @@
 // Trusted-public, ONE disposable room, ONE real rendered human. No app/server changes.
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/solo-bots-smoke.mjs --live
 import assert from 'node:assert/strict';
+import {openRoomMenu,closeRoomMenu} from './menu-harness.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -32,7 +33,7 @@ function fault(source,message) {evidence.errors.push({source,message:String(mess
 function safeLobby(l) {
   return {id:l.id,code:l.code,host:l.host,settings:l.settings,phase:l.phase,humans:l.humans.map(h=>({id:h.id,name:h.name,seat:h.seat,ready:h.ready,connected:h.connected}))};
 }
-async function expand() {if(!await page.locator('#online-entry').evaluate(e=>e.open))await page.locator('#online-entry summary').click();}
+async function expand() {await openRoomMenu(page);}
 async function screenshot(name) {
   if(privacyFailed)throw new PrivacyViolation();
   const before=elapsed();
@@ -126,7 +127,7 @@ try {
   await page.locator('#ready-room').click();
   await until(()=>evidence.timings_ms.countdown!==undefined&&evidence.timings_ms.running!==undefined&&last,'Ready -> Countdown -> Running');
   const completionStart=performance.now();evidence.timings_ms.completion_budget_started=elapsed();
-  if(await page.locator('#online-entry').evaluate(e=>e.open))await page.locator('#online-entry summary').click();
+  await closeRoomMenu(page);
   await page.locator('canvas').focus();if(bots>1)await page.keyboard.down('a');await page.keyboard.down('Space');
   await until(()=>hasSoloPolicyInput(bots,evidence.inputs),'actual keyboard steering and fire policy reaches the real socket');
   // Ordinary keyboard input only; bot or human victory both satisfy acceptance.
@@ -140,7 +141,7 @@ try {
   assert.equal(winner.carts.filter(c=>c.active).length,bots+1);assert(winner.round_finished);
   assert(winner.wins[winner.winner]>=1);assert(evidence.state_summary.elimination_frames>0);assert(evidence.state_summary.round_finished_frames>0);
   evidence.returned_lobby=lobby;
-  await expand();await page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='Ready');
+  await expand();await page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='READY');
   await screenshot('returned-lobby');
   const handshakes=evidence.protocol.filter(e=>e.kind==='handshake');
   assert.equal(handshakes.length,1);assert(handshakes.every(e=>e.url===backend&&e.origin===origin));
@@ -152,7 +153,7 @@ try {
 } finally {
   if(page&&identity&&!page.isClosed()) {
     try {
-      await page.keyboard.up('a');await page.keyboard.up('Space');await expand();await page.locator('#leave-room').click();
+      await page.keyboard.up('a');await page.keyboard.up('Space');await expand();await page.locator('#leave-room:visible, #leave-match:visible').click();
       await until(()=>leaveSent,'own real Leave packet',10000,true);evidence.cleanup.leave_packet=true;
       await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'{}').status?.includes('Left room'),null,{timeout:10000});
       evidence.cleanup.left_room_ui=true;evidence.cleanup.at_ms=elapsed();

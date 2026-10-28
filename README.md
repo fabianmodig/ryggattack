@@ -54,9 +54,13 @@ cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ada
 cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ben --room <code>
 ```
 
-Build/serve the browser bundle as below, then expand **Private online rooms**
-to create/join. A shared `?online=...&room=...` link prefills the code and joins
-as a new participant; it does not grant ownership of a previous player's seat.
+Build/serve the browser bundle as below, then choose **PLAY LOCAL** or
+**PLAY ONLINE** from the regular menu. Online setup has explicit create/join
+buttons, with the same-origin backend selected by default and custom addresses
+under **Advanced**. A shared `?online=...&room=...` link opens setup with the code
+prefilled; it does not join until **JOIN ROOM** is selected, and it does not grant
+ownership of a previous player's seat. A valid scoped saved seat resumes on
+reload. See [integrated menu lifecycle and verification](docs/unified-menu.md).
 Native online controls: **R** ready/unready; host **B** bots, **T** win target,
 **V** arena; **L** deliberately leaves. After leaving, **F2** creates a room,
 or type a code (Backspace edits) and press **Enter** to join. The launch name
@@ -65,8 +69,9 @@ and a selectable share link. Both show the host and every human's readiness.
 
 The browser online HUD shows active-seat names (with bot fallbacks), round wins,
 IN/OUT and coexisting effect timers, plus named authoritative results. Connection
-feedback stays visible; tick/RTT diagnostics are collapsible. Room controls remain
-separate, and native status/offline behavior are unchanged. See
+feedback stays visible; tick/RTT diagnostics are collapsible. Setup and room
+lobby occupy the menu; during gameplay only the HUD and contextual input menu
+are shown, never the create/join form. Native CLI online entry remains supported. See
 [HUD lifecycle, fallback and verification](docs/online-hud.md).
 
 All humans must ready up for a two-second server countdown. Joining, unreadying

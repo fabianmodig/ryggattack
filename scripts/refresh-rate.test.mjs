@@ -71,12 +71,12 @@ test('page pointer routing respects room and HUD controls without stealing focus
  clock.env.document.getElementById=id=>({focus(){assert.equal(id,'ryggattack-canvas');focus++;},remove(){},classList:{add(){}}});
  const source=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*;$/gm,'');
  await vm.runInNewContext(`(async()=>{${source}})()`,{...clock.env,window,installRoomControls(){},installOnlineHud(){},calibrateRefreshRate:async()=>null,init:async()=>{}});
- assert.equal(focus,1);
+ assert.equal(focus,0,'visible integrated menu keeps its initial focus');
  for(const selector of ['#online-entry','.rygg-online-hud']) {
   handlers.get('pointerdown')({target:{closest:selectors=>selectors.split(',').map(s=>s.trim()).includes(selector)?{}:null}});
-  assert.equal(focus,1,'interactive room/HUD content must retain its own focus');
+  assert.equal(focus,0,'interactive room/HUD content must retain its own focus');
  }
- handlers.get('pointerdown')({target:{closest:()=>null}});assert.equal(focus,2,'game clicks still refocus canvas');
+ handlers.get('pointerdown')({target:{closest:()=>null}});assert.equal(focus,1,'game clicks still refocus canvas');
 });
 
 test("perf servers serve the calibration module with a JavaScript MIME type", () => {

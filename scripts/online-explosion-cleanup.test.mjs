@@ -99,7 +99,7 @@ test('real Leave helper uses button, waits for cleared HUD, socket and peer rost
     locator: selector => ({click: async () => { actions.push(selector); a.leaveSent = true; a.socketClosed = true; }}),
     waitForFunction: async predicate => { assert.match(String(predicate), /hud.seat === null/); actions.push('cleared-HUD'); }};
   await leaveAdmittedClient(a, leaveDeps([a, b])); b.cleanup = successfulCleanup();
-  assert.deepEqual(actions, ['Space', '#leave-room', 'cleared-HUD']);
+  assert.deepEqual(actions, ['Space', '#leave-room:visible, #leave-match:visible', 'cleared-HUD']);
   assert.deepEqual(a.cleanup.peer_roster_readback, b.lobby);
   assert.equal(finalizeCleanupReport(freshReport(), {clients: [a, b], interrupted: false}), 0);
 });

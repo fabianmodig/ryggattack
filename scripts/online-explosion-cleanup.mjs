@@ -51,7 +51,7 @@ export async function leaveAdmittedClient(c, {clients, expand, until, presentati
   if (!c.identity) return;
   assert(c.page && !c.page.isClosed(), 'admitted client page unavailable before normal Leave');
   if (c.cleanup.left_room_readback) return;
-  await c.page.keyboard.up('Space'); await expand(c); await c.page.locator('#leave-room').click();
+  await c.page.keyboard.up('Space'); await expand(c); await c.page.locator('#leave-room:visible, #leave-match:visible').click();
   await until(() => c.leaveSent, `${c.name}: normal Leave packet`, 10000, false, true);
   await c.page.waitForFunction(() => {
     const room = JSON.parse(globalThis.ryggattackRoom ?? '{}'), hud = JSON.parse(globalThis.ryggattackHud ?? '{}');

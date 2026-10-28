@@ -69,14 +69,19 @@ pub(crate) fn entry() -> Option<(String, String)> {
     }
     #[cfg(target_arch = "wasm32")]
     {
-        let window = web_sys::window()?;
-        let params =
-            web_sys::UrlSearchParams::new_with_str(&window.location().search().ok()?).ok()?;
+        let launch = browser_launch()?;
         Some((
-            params.get("online")?,
-            params.get("name").unwrap_or_else(|| "Player".into()),
+            launch.get("address")?.as_str()?.into(),
+            launch.get("name")?.as_str()?.into(),
         ))
     }
+}
+#[cfg(target_arch = "wasm32")]
+fn browser_launch() -> Option<serde_json::Value> {
+    let text = js_sys::Reflect::get(&js_sys::global(), &"ryggattackLaunch".into())
+        .ok()?
+        .as_string()?;
+    serde_json::from_str(&text).ok()
 }
 #[derive(Resource)]
 struct Entry {
@@ -95,11 +100,7 @@ fn initial_room() -> Option<String> {
     }
     #[cfg(target_arch = "wasm32")]
     {
-        web_sys::window()
-            .and_then(|w| w.location().search().ok())
-            .and_then(|s| web_sys::UrlSearchParams::new_with_str(&s).ok())
-            .and_then(|p| p.get("room"))
-            .filter(|s| !s.is_empty())
+        browser_launch().and_then(|launch| launch.get("code")?.as_str().map(str::to_owned))
     }
 }
 fn lobby_key(
@@ -177,7 +178,7 @@ fn online_controls(
                 }
             }
         }
-        if client.seat.is_none() {
+        if client.seat.is_none() && !cfg!(target_arch = "wasm32") {
             for (key, ch) in [
                 (KeyCode::Digit0, '0'),
                 (KeyCode::Digit1, '1'),
@@ -263,6 +264,8 @@ pub(crate) fn run(address: String, name: String) {
         })
         .init_resource::<View>()
         .add_plugins(crate::settings::SettingsPlugin)
+        .init_resource::<crate::ui::MenuInput>()
+        .init_resource::<crate::ui::StickLatch>()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Ryggattack — Private online room".into(),
@@ -274,6 +277,10 @@ pub(crate) fn run(address: String, name: String) {
             ..default()
         }))
         .add_systems(Startup, setup)
+        .add_systems(
+            PreUpdate,
+            crate::ui::gather_menu_input.after(bevy::input::InputSystems),
+        )
         .add_systems(
             Update,
             (
@@ -412,6 +419,31 @@ fn network_input(
         return;
     }
     let canvas_focused = canvas_focused();
+    #[cfg(target_arch = "wasm32")]
+    {
+        for (key, value) in [("ryggattackResume", false), ("ryggattackOpenMenu", true)] {
+            if js_sys::Reflect::get(&js_sys::global(), &key.into())
+                .ok()
+                .and_then(|v| v.as_bool())
+                == Some(true)
+            {
+                *menu = value;
+                js_sys::Reflect::set(
+                    &js_sys::global(),
+                    &key.into(),
+                    &wasm_bindgen::JsValue::FALSE,
+                )
+                .ok();
+            }
+        }
+        if client
+            .lobby
+            .as_ref()
+            .is_none_or(|l| l.phase != crate::rooms::Phase::Running)
+        {
+            *menu = false;
+        }
+    }
     if canvas_focused && keys.just_pressed(KeyCode::Escape) {
         *menu = !*menu;
     }

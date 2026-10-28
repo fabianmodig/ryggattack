@@ -23,7 +23,7 @@ original code, not replacement with a new effect.
 
 The online app now installs the existing video-settings plugin and tags its
 world camera. Effect counts and flash-light slots follow the same low/medium/high
-budgets as offline. The real GET room form also preserves valid `quality=0..6`
+budgets as offline. The explicit online menu launch also preserves valid `quality=0..6`
 pins; otherwise entering a room discarded the initial query and switched to auto
 quality. Invalid/absent overrides remain disabled.
 

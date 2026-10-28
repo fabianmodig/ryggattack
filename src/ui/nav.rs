@@ -100,6 +100,15 @@ pub(crate) fn gather_menu_input(
         start: false,
     };
 
+    #[cfg(target_arch = "wasm32")]
+    if !web_sys::window()
+        .and_then(|w| w.document())
+        .and_then(|d| d.active_element())
+        .is_some_and(|e| e.id() == "ryggattack-canvas")
+    {
+        *input = MenuInput::default();
+    }
+
     let connected: Vec<Entity> = pads.iter().map(|(entity, _)| entity).collect();
     latch.forget_absent(&connected);
 
@@ -112,6 +121,25 @@ pub(crate) fn gather_menu_input(
         input.accept |= pad.just_pressed(GamepadButton::South);
         input.cancel |= pad.just_pressed(GamepadButton::East);
         input.start |= pad.just_pressed(GamepadButton::Start);
+    }
+    #[cfg(target_arch = "wasm32")]
+    {
+        use wasm_bindgen::JsCast;
+        let global = js_sys::global();
+        if js_sys::Reflect::get(&global, &"ryggattackBrowserMenu".into())
+            .ok()
+            .and_then(|v| v.as_bool())
+            == Some(true)
+        {
+            let value = serde_json::json!({"controller":true,"up":input.up,"down":input.down,"left":input.left,"right":input.right,"accept":input.accept,"cancel":input.cancel,"start":input.start});
+            if let Ok(callback) = js_sys::Reflect::get(&global, &"ryggattackNavigate".into())
+                && let Some(callback) = callback.dyn_ref::<js_sys::Function>()
+                && let Ok(value) = js_sys::JSON::parse(&value.to_string())
+            {
+                callback.call1(&global, &value).ok();
+            }
+            *input = MenuInput::default();
+        }
     }
 }
 

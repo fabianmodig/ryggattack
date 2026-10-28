@@ -2,6 +2,7 @@
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/client-feedback-smoke.mjs --local
 // No browser/build/deployment occurs for --help, missing authorization, or malformed arguments.
 import assert from 'node:assert/strict';
+import {openRoomMenu} from './menu-harness.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -97,8 +98,8 @@ async function closePeers() {
   peers.clear();
 }
 async function expand() {
-  if(!await page.locator('#online-entry').evaluate(e=>e.open))await page.locator('#online-entry summary').click();
-  assert(await page.locator('#online-entry').evaluate(e=>e.open),'actual summary expands details');
+  await openRoomMenu(page);
+  assert(await page.locator('#online-entry').isVisible(),'integrated menu is visible');
 }
 async function claims() {return page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('ryggattack.claim.')).length);}
 async function screenshot(label) {
@@ -123,7 +124,7 @@ async function visibleFeedback(label,pattern,{packet=null,recovery=true}={}) {
   const text=(await page.locator('#room-notice').innerText()).trim();assert.match(text,pattern);
   if(packet!==null)assert.equal(text,packet,'terminal server Error must not be masked by a stale Notice');
   const actions=[];
-  if(recovery)for(const [selector,caption] of [['#create-room','Create private room'],['#join-room','Join room']]) {
+  if(recovery)for(const [selector,caption] of [['#create-room','CREATE PRIVATE ROOM'],['#join-room','JOIN ROOM']]) {
     const button=page.locator(selector);assert(await button.isVisible());assert(await button.isEnabled());assert.equal((await button.innerText()).trim(),caption);actions.push(caption);
   }
   // Also require backend/name/code controls remain usable; the buttons are real recovery actions.
@@ -231,8 +232,7 @@ try {
   await visibleFeedback('pre-restart-notice',/solo practice is offline/i,{recovery:false});
   const validInvite=await rawJoin(oldCode);assert.equal(validInvite.identity.room,a.identity.room);
   evidence.formerly_valid_invite={code:oldCode,admitted_before_restart:true,room:a.identity.room};
-  if(await page.locator('#online-entry').evaluate(e=>e.open))await page.locator('#online-entry summary').click();
-  assert.equal(await page.locator('#room-notice').isVisible(),false,'closed details must conceal notice before real expansion');
+  assert(await page.locator('#room-notice').isVisible(),'integrated room menu exposes notices directly');
   const stoppedAt=elapsed();await cli('stop','--time','10',names.server);
   const stopped=await inspect(names.server);assert.equal(stopped.State.ExitCode,0);assert.equal(stopped.State.Running,false);
   await until(()=>a.errors.some(e=>/backend restarting.*rooms reset.*join a lobby again/i.test(e.text))&&a.closes.length,'actual graceful Error and WebSocket close');

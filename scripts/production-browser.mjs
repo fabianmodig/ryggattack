@@ -1,6 +1,7 @@
 // Canonical HTTPS/WSS origin, resolved ONLY to loopback by Chromium. Self-signed
 // fixture TLS is ignored locally; this is not public certificate/deployment proof.
 import assert from 'node:assert/strict';
+import {openRoomMenu} from './menu-harness.mjs';
 import https from 'node:https';import net from 'node:net';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
 import {spawn,execFileSync} from 'node:child_process';import {createRequire} from 'node:module';
 const {chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url)('playwright');
@@ -25,7 +26,7 @@ front.on('upgrade',(req,down,head)=>{
  for(const s of [up,down]){s.on('error',()=>{up.destroy();down.destroy();});s.on('close',()=>pipes.delete(p));}
  up.write(`${req.method} ${req.url} HTTP/${req.httpVersion}\r\n${Object.entries(req.headers).map(([k,v])=>`${k}: ${v}`).join('\r\n')}\r\n\r\n`);if(head.length)up.write(head);down.pipe(up);up.pipe(down);
 });
-async function expand(c){if(!await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();}
+async function expand(c){await openRoomMenu(c.page);}
 async function pageFor(name,code){
  // Separate real clients must not share a SwiftShader GPU process: another
  // context's cold GPU initialization can starve open/Hello after HTTP 101.

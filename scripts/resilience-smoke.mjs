@@ -1,6 +1,7 @@
 // Two real rendered WASM clients; TCP outages, never synthetic game state.
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/resilience-smoke.mjs [out]
 import assert from 'node:assert/strict';
+import {openRoomMenu,admitInvitation} from './menu-harness.mjs';
 import {roomStatusHas} from './resilience-helpers.mjs';
 import http from 'node:http';
 import net from 'node:net';
@@ -43,11 +44,12 @@ async function pageFor(name,g,code){
   ws.on('framesent',({payload})=>{const m=JSON.parse(payload);if(m.Input)c.inputs.push(m.Input);if(m.Hello)c.handshakes.push({kind:'Hello',room:m.Hello.room});if(m.Reconnect)c.handshakes.push({kind:'Reconnect',room:m.Reconnect.room,participant:m.Reconnect.participant});});
  });
  await page.goto(`http://127.0.0.1:${staticServer.address().port}/?quality=0&online=${encodeURIComponent(g.address)}&name=${name}${code?'&room='+code:''}`);
+ await admitInvitation(page);
  await until(()=>c.identity&&c.lobby,`${name} admitted`);
  await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'{}').lobby,null,{timeout:90000});
  return c;
 }
-async function expand(c){if(!await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();}
+async function expand(c){await openRoomMenu(c.page);}
 async function rendered(c,label){
  await c.page.waitForFunction(()=>{const [seat,tick]=(globalThis.ryggattackOnline??'99|0').split('|').map(Number);return seat<4&&tick>0&&JSON.parse(globalThis.ryggattackRoom??'{}').status?.startsWith('Online');},null,{timeout:90000});
  const presented=await c.page.evaluate(()=>globalThis.ryggattackOnline);
@@ -139,6 +141,7 @@ try{
  for(const [address,invite,error] of [[b.g.address,code,'match running'],[a.g.address,'0'.repeat(20),'room not found']]){
   const handshakesBefore=a.handshakes.length;
   await a.page.goto(`${scopedBase}&online=${encodeURIComponent(address)}&room=${invite}`);
+  await admitInvitation(a.page);
   await a.page.waitForFunction(roomStatusHas,error,{timeout:90000});
   const actual=a.handshakes.slice(handshakesBefore);
   assert(actual.length>0&&actual.every(m=>m.kind==='Hello'),'unrelated endpoint/room must not receive a private reconnect claim');
@@ -148,6 +151,7 @@ try{
  }
  const scopeWelcomes=a.welcomes.length;
  await a.page.goto(`${scopedBase}&online=${encodeURIComponent(a.g.address)}&room=${code}`);
+ await admitInvitation(a.page);
  await until(()=>a.welcomes.length>scopeWelcomes,'original scoped claim survives unrelated endpoint/room errors');
  assert.equal(a.identity.participant,original.a.participant);
  await rendered(a,'scope-restored-original-seat');
@@ -167,27 +171,31 @@ try{
  // Only one renderer remains for terminal admission errors.
  const base=`http://127.0.0.1:${staticServer.address().port}/?quality=0&online=${encodeURIComponent(a.g.address)}`;
  await a.page.goto(base+'&room='+'0'.repeat(20));
+ await admitInvitation(a.page);
  await a.page.waitForFunction(roomStatusHas,'room not found',{timeout:90000});
  await a.page.screenshot({path:path.join(out,'missing-invite.png'),timeout:180000});
  // Adversarial old-version wire handshake, not a synthetic server response.
  await a.page.addInitScript(()=>{if(new URLSearchParams(location.search).has('wire-version')){const Original=globalThis.WebSocket;globalThis.WebSocket=class extends Original{send(data){let m;try{m=JSON.parse(data);}catch{}if(m?.Hello){m.Hello.version=2;data=JSON.stringify(m);}return super.send(data);}};}});
  await a.page.goto(base+'&wire-version=2');
+ await admitInvitation(a.page);
  await a.page.waitForFunction(roomStatusHas,'incompatible',{timeout:90000});
  await a.page.screenshot({path:path.join(out,'incompatible-client.png'),timeout:180000});
  evidence.checks.push('real incompatible-version WebSocket handshake is shown as a terminal error in rendered UI');
  const cap=await rawJoin();for(let i=0;i<3;i++)await rawJoin(cap.lobby.code);
  await a.page.goto(base+'&room='+cap.lobby.code);
+ await admitInvitation(a.page);
  await a.page.waitForFunction(roomStatusHas,'room full',{timeout:90000});
  await a.page.screenshot({path:path.join(out,'room-full.png'),timeout:180000});
  const freshWelcomeCount=a.welcomes.length;
  await a.page.goto(base);
+ await admitInvitation(a.page);
  await until(()=>a.welcomes.length>freshWelcomeCount&&a.identity.code!==cap.lobby.code,'fresh room create');
  await a.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.humans.some(h=>h.name==='Player'),null,{timeout:90000});
  await expand(a);await a.page.locator('#leave-room').click();
  await a.page.waitForFunction(roomStatusHas,'Left room',{timeout:90000});
  assert.equal(await a.page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('ryggattack.claim.')).length),0);
  const count=a.welcomes.length;await sleep(2000);assert.equal(a.welcomes.length,count,'deliberate leave disables retry');
- a.g.cut();await a.page.goto(base);
+ a.g.cut();await a.page.goto(base);await admitInvitation(a.page);
  await a.page.waitForFunction(roomStatusHas,'unavailable',{timeout:90000});
  await a.page.screenshot({path:path.join(out,'backend-unavailable.png'),timeout:180000});
  evidence.checks.push('actual missing invite, four-seat full rejection, unavailable backend visible; deliberate Leave clears session claim and disables retries');

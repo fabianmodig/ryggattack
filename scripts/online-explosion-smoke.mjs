@@ -1,5 +1,6 @@
 // Actual LOCAL artifact only. Never builds, deploys, injects state, or visits public rooms.
 import assert from 'node:assert/strict';
+import {openRoomMenu,closeRoomMenu} from './menu-harness.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
@@ -188,7 +189,7 @@ function observe(c, ws) {
   });
 }
 async function expand(c, open = true) {
-  if (await c.page.locator('#online-entry').evaluate(e => e.open) !== open) await c.page.locator('#online-entry summary').click();
+  if (open) await openRoomMenu(c.page); else await closeRoomMenu(c.page);
 }
 async function openClient(chromium, name, code) {
   const c = {name, sockets: 0, match: 0, lobbies: [], frames: [], inputs: [], commands: [], cleanup: {}}; clients.push(c);

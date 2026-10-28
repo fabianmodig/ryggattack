@@ -2,6 +2,7 @@
 // Build native bins and dist/web first. Requires Playwright Chromium.
 // PLAYWRIGHT_NODE_MODULES=/path/to/playwright/package.json node scripts/network-smoke.mjs [output-dir]
 import assert from 'node:assert/strict';
+import {openRoomMenu,closeRoomMenu} from './menu-harness.mjs';
 import {neutralWindow} from './network-harness-helpers.mjs';
 import http from 'node:http';
 import net from 'node:net';
@@ -117,7 +118,7 @@ try {
     });
     await page.bringToFront();
     await page.goto(`http://127.0.0.1:${staticServer.address().port}/?quality=0`);
-    await page.locator('#online-entry summary').click();
+    await openRoomMenu(page);
     await page.getByRole('textbox',{name:'Backend address',exact:true}).fill(address);
     await page.getByRole('textbox',{name:'Player name',exact:true}).fill(name);
     if(code)await page.getByRole('textbox',{name:'Room code',exact:true}).fill(code);
@@ -139,7 +140,7 @@ try {
   const roomCode=a.lobby.code, roomID=a.lobby.id;
   assert.equal(roomID,3,'documented first-room map/RNG fixture');
   evidence.fixture={simulation_seed:3,lifecycle_win_target:1,native_lifetime_seconds:600,completion_input:'A Left+Fire; B Fire; native alternating horizontal+Fire; real server bot AI'};
-  if(!await a.page.locator('#online-entry').evaluate(e=>e.open))await a.page.locator('#online-entry summary').click();
+  await openRoomMenu(a.page);
   await a.page.locator('#room-controls').waitFor({state:'visible',timeout:90000});
   assert(await a.page.locator('#room-controls').isVisible(),'creator room controls expanded');
   const share=await a.page.locator('#share-room').inputValue();
@@ -170,7 +171,7 @@ try {
   let probeStopped=false;
   const nativeDone=new Promise(r=>probe.on('exit',(code,signal)=>{evidence.native_exit={code,signal,at_ms:performance.now()};if(!probeStopped)evidence.errors.push('native probe exited before the lifecycle gate completed');r(code);}));
   await until(()=>a.lobby.humans.length===3&&native.lobby,'native joins same room');
-  if(!await b.page.locator('#online-entry').evaluate(e=>e.open))await b.page.locator('#online-entry summary').click();
+  await openRoomMenu(b.page);
   await b.page.locator('#room-controls').waitFor({state:'visible',timeout:90000});
   assert(await b.page.locator('#room-controls').isVisible(),'joined room controls expanded');
   assert(await b.page.locator('#apply-room').isDisabled(),'non-host settings disabled');
@@ -184,7 +185,7 @@ try {
   // stability animation frames so cold rendering cannot outlast the countdown.
   await a.page.locator('#ready-room').click({force:true});
   await until(()=>a.lobby.phase==='Lobby'&&!a.lobby.humans.find(h=>h.id===a.identity.participant).ready,'unready cancels countdown');
-  await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='Ready',null,{timeout:60000});
+  await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='READY',null,{timeout:60000});
   await a.page.screenshot({path:path.join(out,'lobby-cancelled.png'),timeout:180000});
   await a.page.locator('#target-room').selectOption('1');await a.page.locator('#apply-room').click();
   await until(()=>a.lobby.settings.wins_target===1,'select genuine first-to-one lifecycle fixture');
@@ -193,13 +194,13 @@ try {
     if(a.last?.winner!==null&&a.last?.winner!==undefined)await until(()=>a.lobby.phase==='Lobby','finished match returns before next input check');
     for(const c of [a,b]) {
       if(c.lobby?.phase!=='Running'&&!c.lobby?.humans.find(h=>h.id===c.identity.participant)?.ready) {
-        if(!await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();
+        await openRoomMenu(c.page);
         await c.page.waitForFunction(()=>{const s=JSON.parse(globalThis.ryggattackRoom??'{}');return s.lobby?.phase!=='Running'&&s.lobby?.humans.some(h=>h.id===s.participant&&!h.ready);},null,{timeout:60000});
         await c.page.locator('#ready-room').click();
       }
     }
     await until(()=>a.lobby?.phase==='Running'&&b.lobby?.phase==='Running'&&a.last?.winner===null&&b.last?.winner===null,'shared unfinished match running');
-    for(const c of [a,b])if(await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();
+    for(const c of [a,b])await closeRoomMenu(c.page);
   };
   await ensureRunning();
   assert.equal(isolatedLobby.humans.length,1);assert.equal(isolatedLobby.settings.arena,'Forest');isolated.close();
@@ -227,17 +228,17 @@ try {
   let formPassed=false;
   for(let attempt=0;attempt<3&&!formPassed;attempt++){
     await ensureRunning();
-    await a.page.locator('#online-entry summary').click();
-    const name=a.page.getByRole('textbox',{name:'Player name',exact:true});await name.fill('Typing');
+    await openRoomMenu(a.page);
+    const name=a.page.locator('#resume-match');await name.focus();
     const previous=await a.page.evaluate(()=>globalThis.ryggattackOnline);
     await a.page.waitForFunction(previous=>globalThis.ryggattackOnline!==previous||JSON.parse(globalThis.ryggattackRoom??'{}').lobby?.phase!=='Running',previous,{timeout:60000});
     start=a.inputs.length;
     await a.page.keyboard.down('Space');
     try{
       await until(()=>neutralWindow(a.inputs.slice(start),a.lobby.phase)!=='wait','observed focused-form input window');
-    }finally{await a.page.keyboard.up('Space');}
+    }finally{assert.equal(await a.page.evaluate(()=>document.activeElement.id),'resume-match');await a.page.keyboard.up('Space');}
     const samples=a.inputs.slice(start),decision=neutralWindow(samples,a.lobby.phase);
-    assert.equal(await a.page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Player name');
+    assert(!(await a.page.locator('#room-form').isVisible()),'creation form absent during online gameplay');
     evidence.form_windows.push({attempt,phase:a.lobby.phase,decision,packets:samples.length,all_neutral:samples.every(i=>!i.fire&&i.horizontal===0&&i.vertical===0)});
     formPassed=decision==='passed';
   }
@@ -257,7 +258,7 @@ try {
   for(const c of [a,b]){await c.page.bringToFront();await c.page.locator('canvas').focus();await c.page.keyboard.down('Space');}
   await sleep(22000);
   for(const c of [a,b])await c.page.keyboard.up('Space');
-  for(const c of [a,b]) {if(await c.page.locator('#online-entry').evaluate(e=>e.open))await c.page.locator('#online-entry summary').click();await c.page.screenshot({path:path.join(out,`${c.name}.png`),timeout:180000}); assert(await c.page.evaluate(()=>globalThis.ryggattackOnline),'Bevy online app running');}
+  for(const c of [a,b]) {await closeRoomMenu(c.page);await c.page.screenshot({path:path.join(out,`${c.name}.png`),timeout:180000}); assert(await c.page.evaluate(()=>globalThis.ryggattackOnline),'Bevy online app running');}
   // Finish naturally, then verify the authoritative SAME lobby, not a new match.
   await ensureRunning();
   for(const c of [a,b]){await c.page.locator('canvas').focus();await c.page.keyboard.down('Space');}
@@ -279,8 +280,8 @@ try {
   const returnedClear=a.lobbies.slice(a.lobbies.findIndex(l=>l.phase==='Running')+1).find(l=>l.phase==='Lobby'&&l.humans.length===3&&l.humans.every(h=>!h.ready));
   assert(returnedClear,'server clears ALL readiness before the native probe readies again');
   evidence.returned_lobby_cleared=returnedClear;
-  if(!await a.page.locator('#online-entry').evaluate(e=>e.open))await a.page.locator('#online-entry summary').click();
-  await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='Ready',null,{timeout:60000});
+  await openRoomMenu(a.page);
+  await a.page.waitForFunction(()=>document.getElementById('room-info').textContent.includes('· Lobby')&&document.getElementById('ready-room').textContent==='READY',null,{timeout:60000});
   await a.page.screenshot({path:path.join(out,'returned-lobby.png'),timeout:180000});
   probeStopped=true;probe.kill('SIGINT');await nativeDone;
   const sortedRTT=native.rtts.sort((a,b)=>a-b);evidence.native_summary={seat:native.seat,median_ack_rtt_ms:sortedRTT[Math.floor(sortedRTT.length/2)]};
@@ -293,7 +294,7 @@ try {
   for(const t of common){assert.equal(a.hashes.get(t),b.hashes.get(t));assert.equal(a.hashes.get(t),native.hashes.get(t));}
   evidence.shared_identical_ticks=common.length;
   evidence.shared_tick_range=[common[0],common.at(-1)];
-  if(!await a.page.locator('#online-entry').evaluate(e=>e.open))await a.page.locator('#online-entry summary').click();
+  await openRoomMenu(a.page);
   await a.page.locator('#leave-room').click();
   await until(()=>b.lobby.humans.filter(h=>h.connected).length===1&&b.lobby.host===b.identity.participant,'deliberate leave elects earliest remaining human');
   await a.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom).status.includes('Left room'),null,{timeout:60000});

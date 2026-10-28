@@ -14,7 +14,8 @@ old results, players and effect timers.
 Connection status and notices stay visible without opening diagnostics.
 **Diagnostics** is a stable, initially collapsed disclosure containing only tick,
 simulation tick and acknowledgement RTT. Private online-room controls remain a
-separate disclosure above the HUD in the stacking order. HUD text is rendered
+full integrated menu above the HUD in the stacking order. The HUD is concealed
+while that menu is visible, rather than competing with its controls. HUD text is rendered
 with `textContent`, not HTML; diagnostic/player models do not include reconnect
 credentials or invitation metadata.
 

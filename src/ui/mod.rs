@@ -365,6 +365,12 @@ pub(crate) fn despawn_match_over_ui(
 }
 
 pub(crate) fn spawn_main_menu(mut commands: Commands) {
+    #[cfg(target_arch = "wasm32")]
+    {
+        let _ = &mut commands;
+        return;
+    }
+    #[cfg(not(target_arch = "wasm32"))]
     main_menu(&mut commands);
 }
 
@@ -403,7 +409,7 @@ fn main_menu(commands: &mut Commands) {
                 },
                 TextColor(Color::srgb(0.72, 0.78, 0.90)),
             ));
-            parent.spawn(menu_button("START", MenuAction::Start, 0));
+            parent.spawn(menu_button("PLAY LOCAL", MenuAction::Start, 0));
             if CAN_EXIT {
                 parent.spawn(menu_button("EXIT", MenuAction::Exit, 1));
             }

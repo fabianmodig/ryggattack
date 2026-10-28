@@ -72,6 +72,7 @@ pub fn run_client() {
         .add_plugins(settings::SettingsPlugin)
         .init_state::<AppState>()
         .add_systems(Startup, scene::setup)
+        .add_systems(PreUpdate, browser_local_menu)
         // After the scene has built the forest; runs again whenever the
         // automatic quality changes the forest's density.
         .add_systems(
@@ -136,4 +137,51 @@ pub fn run_client() {
                 .run_if(ui::gameplay_is_running),
         )
         .run();
+}
+
+// Browser selection changes only the local application's existing state.
+// Online launch selects a separate presentation-only adapter at startup.
+fn browser_local_menu(
+    state: Res<State<AppState>>,
+    mut next: ResMut<NextState<AppState>>,
+    windows: Query<&Window>,
+    mut scale: ResMut<UiScale>,
+) {
+    #[cfg(target_arch = "wasm32")]
+    {
+        let global = js_sys::global();
+        scale.0 = if *state.get() == AppState::Lobby {
+            windows.iter().next().map_or(1.0, |w| {
+                (w.width() / 960.0).min(w.height() / 650.0).min(1.0)
+            })
+        } else {
+            1.0
+        };
+        js_sys::Reflect::set(
+            &global,
+            &"ryggattackLocalScreen".into(),
+            &wasm_bindgen::JsValue::from_str(&format!("{:?}", state.get())),
+        )
+        .ok();
+        if js_sys::Reflect::get(&global, &"ryggattackLocalAction".into())
+            .ok()
+            .and_then(|v| v.as_string())
+            .as_deref()
+            == Some("local")
+        {
+            js_sys::Reflect::set(
+                &global,
+                &"ryggattackLocalAction".into(),
+                &wasm_bindgen::JsValue::NULL,
+            )
+            .ok();
+            if *state.get() == AppState::MainMenu {
+                next.set(AppState::Lobby);
+            }
+        }
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let _ = (state, &mut next, windows, &mut scale);
+    }
 }

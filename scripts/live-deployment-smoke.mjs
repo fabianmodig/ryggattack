@@ -4,6 +4,7 @@
 // Requires existing target/debug/ryggattack-net-probe and Playwright Chromium.
 // PLAYWRIGHT_NODE_MODULES may point to a package.json resolving playwright.
 import assert from 'node:assert/strict';
+import {openRoomMenu,closeRoomMenu} from './menu-harness.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -66,8 +67,8 @@ function frame(c,f) {
   c.hashes.set(f.tick,sha(JSON.stringify(canonical(f))));
 }
 const safeIdentity = w => Object.fromEntries(['version','seat','room','participant','code'].map(key=>[key,w[key]]));
-async function expand(c) { if(!await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }
-async function collapse(c) { if(await c.page.locator('#online-entry').evaluate(el=>el.open))await c.page.locator('#online-entry summary').click(); }
+async function expand(c) { await openRoomMenu(c.page); }
+async function collapse(c) { await closeRoomMenu(c.page); }
 async function screenshot(c,name) { await c.page.screenshot({path:path.join(out,name+'.png'),timeout:60000}); }
 async function pageFor(name,code) {
   const c=client(name);

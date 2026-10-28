@@ -4,6 +4,7 @@
 // natural Lobby return, then a separately scoped original target-one core match.
 // Neither case can borrow another case's states, winner, DOM proof or deadline.
 import assert from 'node:assert/strict';
+import {openRoomMenu,closeRoomMenu} from './menu-harness.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
@@ -181,7 +182,7 @@ async function drainSamples() {
   }
 }
 async function expand() {
-  if (!await page.locator('#online-entry').evaluate(e => e.open)) await page.locator('#online-entry summary').click();
+  await openRoomMenu(page);
 }
 async function screenshot(target, name, scope) {
   if (privacyFailed) throw new PrivacyViolation();
@@ -452,7 +453,7 @@ async function runNatural() {
     // Close the real controls during Countdown; do not spend target-one Running on
     // UI prechecks. Focus the actual canvas and press Space immediately on start.
     await page.locator('#ready-room').click();
-    await page.locator('#online-entry summary').click(); await page.locator('canvas').focus();
+    await closeRoomMenu(page); await page.locator('canvas').focus();
     await until(() => activeCase.lobbies.some(l => l.phase?.Countdown) && lobby.phase === 'Running' && activeCase.latest, `${plan.id}: Ready -> Countdown -> Running`);
     if (plan.inputChecks) await runInputPreflight();
     await page.keyboard.down('Space');
@@ -476,12 +477,12 @@ async function runInputPreflight() {
   assert(await diagnostics.evaluate(e => e.open), 'diagnostics opens by ordinary click and survives updates');
   assert.equal(commands.length, controlCount, 'diagnostics emits no room commands');
   await expand();
-  await neutralWindow('focused form preserves editing and neutralizes Space', async () => {
-    await page.locator('#player-name').fill('Hud typing'); await page.keyboard.down('Space');
+  await neutralWindow('focused match menu neutralizes Space', async () => {
+    await page.locator('#resume-match').focus(); await page.keyboard.down('Space');
   });
+  assert.equal(await page.locator('#resume-match').evaluate(e => document.activeElement === e), true, 'match control retains focus while held');
   await page.keyboard.up('Space');
-  assert.equal(await page.locator('#player-name').evaluate(e => document.activeElement === e), true, 'form retains focus');
-  await page.locator('#online-entry summary').click(); await page.locator('canvas').focus();
+  await closeRoomMenu(page); await page.locator('canvas').focus();
   await neutralWindow('Escape menu suppresses held Space without pausing server', async () => {
     await page.keyboard.press('Escape', {delay: 100}); await page.keyboard.down('Space');
   });
@@ -544,7 +545,7 @@ async function completeMatch() {
 async function leaveAndCloseGame() {
   if (!page || page.isClosed()) return;
   if (identity) {
-    await page.keyboard.up('Space'); await expand(); await page.locator('#leave-room').click();
+    await page.keyboard.up('Space'); await expand(); await page.locator('#leave-room:visible, #leave-match:visible').click();
     await until(() => leaveSent, 'actual Leave packet', 10000, true);
     await page.waitForFunction(() => {
       const room = JSON.parse(globalThis.ryggattackRoom ?? '{}'), p = JSON.parse(globalThis.ryggattackHud ?? '{}');
@@ -573,8 +574,8 @@ async function runPresentationFixture() {
     const label = document.createElement('p'); label.textContent = 'ISOLATED SYNTHETIC PRESENTATION FIXTURE — NOT GAMEPLAY';
     label.style.cssText = 'position:absolute;bottom:0;left:0;color:white;max-width:45%;font-size:11px'; document.body.append(label);
     globalThis.__fixtureHud = mountOnlineHud(document.getElementById('game'));
-    document.getElementById('online-entry').open = false;
-    document.getElementById('room-controls').hidden = false;
+    document.getElementById('online-entry').hidden = true;
+    document.getElementById('main-controls').hidden = true;
     document.querySelector('#online-entry form').addEventListener('submit', e => e.preventDefault());
     for (const id of ['ready-room', 'apply-room', 'leave-room']) document.getElementById(id).addEventListener('click', () => { document.getElementById(id).dataset.clicked = 'true'; });
   }, origin);
@@ -608,10 +609,11 @@ async function runPresentationFixture() {
     await fixture.evaluate(p => globalThis.__fixtureHud.update({...p, frame: {...p.frame, tick: 21}}), fixturePayload);
     assert(await fixture.locator('details.oh-diagnostics').evaluate(e => e.open), 'diagnostics open state survives updates');
     await fixture.locator('details.oh-diagnostics summary').click();
-    await fixture.locator('#online-entry summary').click();
+    await fixture.evaluate(()=>{document.getElementById('online-entry').hidden=false;document.getElementById('online-setup').hidden=false;document.getElementById('room-controls').hidden=true;});
     await fixture.locator('#player-name').fill('Fixture focus');
     await fixture.keyboard.type(' ');
     assert(await fixture.locator('#player-name').evaluate(e => document.activeElement === e && e.value === 'Fixture focus '), 'real form editing retains focus through HUD layering');
+    await fixture.evaluate(()=>{document.getElementById('online-setup').hidden=true;document.getElementById('room-controls').hidden=false;});
     for (const id of ['apply-room', 'ready-room', 'leave-room']) {
       // Reset the fixture-only sentinel so each viewport proves a fresh click.
       await fixture.locator('#' + id).evaluate(e => { delete e.dataset.clicked; });
@@ -619,7 +621,7 @@ async function runPresentationFixture() {
       assert.equal(await fixture.locator('#' + id).getAttribute('data-clicked'), 'true', 'actual room controls remain clickable through HUD layering');
       assert(await fixture.locator('#' + id).evaluate(e => document.activeElement === e), 'ordinary control click receives focus');
     }
-    await fixture.locator('#online-entry summary').click();
+    await fixture.evaluate(()=>{document.getElementById('online-entry').hidden=true;});
     report.fixture.checks.push({width, names_escaped: true, timers_coexist: true, out: true, long_failure_fully_visible: true, diagnostics_stable: true, computed_z: {hud: observed.hud_z, room: observed.room_z}, real_index_room_controls_clickable: true, form_focus: true});
     await screenshot(fixture, `fixture-${width}`, report.fixture.label);
   }
