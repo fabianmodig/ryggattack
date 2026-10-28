@@ -26,7 +26,7 @@ function fixture(search='',store=new Map()) {
  function make(id,tag='button') {return {id,tag,hidden:false,disabled:false,value:'',textContent:'',children:[],ownerDocument:doc,
   focus(){doc.activeElement=this;},blur(){doc.activeElement=null;},select(){},click(){this.onclick?.();},
   getClientRects(){return this.hidden?[]:[{}];},matches(s){return s.split(',').includes(this.tag);},closest(s){return this.parent?.id===s.slice(1)?this.parent:null;},
-  querySelector(){return this.children.find(e=>!e.disabled)??null;},querySelectorAll(){return this.children.filter(e=>!e.hidden);},
+  querySelector(){return this.children.find(e=>!e.disabled)??null;},querySelectorAll(selector){return this.children.filter(e=>!e.hidden&&selector.split(',').includes(e.tag));},
   replaceChildren(...children){this.children=children;},addEventListener(type,fn){this[type]=fn;}};}
  for(const m of html.matchAll(/<(\w+)\b[^>]*\bid="([^"]+)"/g))elements.set(m[2],make(m[2],m[1]));
  for(const [id,children] of Object.entries({'main-controls':['play-local','play-online'],'online-setup':['player-name','create-room','room-code','join-room','setup-back'],'room-controls':['copy-room','ready-room','leave-room'],'match-menu':['resume-match','leave-match'],'online-entry':['play-local','play-online']}))elements.get(id).children=children.map(id=>elements.get(id));
@@ -80,4 +80,20 @@ const cancel=fixture('?online=wss%3A%2F%2Fgame.example%2Fws',new Map([['ryggatta
 assert.equal(cancel.$('setup-back').disabled,false);cancel.$('setup-back').click();assert.equal(cancel.env.ryggattackCommand,'"Leave"');
 cancel.publish({lobby:null,status:'Left room; create or join another',notice:''});assert.equal(cancel.menu.screen,'setup');assert.equal(cancel.$('create-room').disabled,false);
 for(const status of ['room full','room not found','reconnect expired; join lobby again']){const failure=fixture('?room='+code);failure.publish({lobby:null,status,notice:''});assert.equal(failure.menu.screen,'setup');assert.equal(failure.$('room-notice').textContent,status);assert.equal(failure.$('join-room').disabled,false);}
+// Handshake is still in flight after Hello; cancel must send Leave, not reload.
+const waiting=fixture('?online=wss%3A%2F%2Fgame.example%2Fws',new Map([['ryggattack.launch',JSON.stringify(launch)]]));
+waiting.publish({lobby:null,status:'Waiting for seat…',notice:''});
+assert(waiting.$('create-room').disabled,'Waiting for seat keeps duplicate admission disabled');
+waiting.$('create-room').click();assert.equal(waiting.calls.length,0);
+waiting.$('setup-back').click();assert.equal(waiting.env.ryggattackCommand,'"Leave"');assert.equal(waiting.calls.length,0);
+// Model visibility correctly: a hidden main-menu button cannot receive focus.
+const editing=fixture();editing.$('play-online').click();const field=editing.$('player-name'),hidden=editing.$('play-local'),action=editing.$('create-room');
+hidden.getClientRects=()=>[];const visibleRoot=editing.$('online-entry');visibleRoot.children=[hidden,field,action];field.focus();
+navigateControls(visibleRoot,{cancel:true},()=>assert.fail('field cancel navigated'));
+assert.equal(editing.env.document.activeElement,action,'field cancel focuses a visible action');
+field.focus();navigateControls(visibleRoot,{controller:true},()=>assert.fail('idle navigated'));
+assert.equal(editing.env.document.activeElement,field,'idle bridge frames preserve editing focus');
+const selector=editing.$('target-room');selector.options=[{value:'1'},{value:'3'},{value:'5',disabled:true}];selector.value='1';selector.dispatchEvent=()=>{};selector.focus();
+navigateControls(visibleRoot,{controller:true,right:true},()=>assert.fail('setting navigated'));assert.equal(selector.value,'3');assert.equal(editing.env.document.activeElement,selector);
+navigateControls(visibleRoot,{controller:true,left:true},()=>assert.fail('setting navigated'));assert.equal(selector.value,'1');
 console.log('unified menu: validation, explicit admission, duplicate guard, invitations, scoped resume, lifecycle, authority, focus and shared navigation passed');

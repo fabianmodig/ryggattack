@@ -342,6 +342,10 @@ fn presentation_ready(frames: &mut u8) -> bool {
 fn gameplay_active(menu: bool, window_focused: bool, canvas_focused: bool) -> bool {
     !menu && window_focused && canvas_focused
 }
+#[cfg(any(target_arch = "wasm32", test))]
+fn controller_menu_open(menu: bool, canvas_focused: bool, start_pressed: bool) -> bool {
+    menu || (canvas_focused && start_pressed)
+}
 // Explicit presentation whitelist: never serialize NetworkClient, Lobby, or Frame
 // wholesale here. In particular, claims, invitation codes and scenery stay out.
 #[cfg(any(target_arch = "wasm32", test))]
@@ -421,6 +425,15 @@ fn network_input(
     let canvas_focused = canvas_focused();
     #[cfg(target_arch = "wasm32")]
     {
+        // The shared browser bridge handles Start/accept once the menu is open.
+        // Open from gameplay before consuming its Resume request, so the same
+        // Start edge cannot immediately reopen a menu it just resumed.
+        *menu = controller_menu_open(
+            *menu,
+            canvas_focused,
+            pads.iter()
+                .any(|pad| pad.just_pressed(GamepadButton::Start)),
+        );
         for (key, value) in [("ryggattackResume", false), ("ryggattackOpenMenu", true)] {
             if js_sys::Reflect::get(&js_sys::global(), &key.into())
                 .ok()
@@ -868,6 +881,17 @@ mod visual_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn controller_start_opens_input_menu_without_stealing_field_focus() {
+        assert!(!controller_menu_open(false, false, true));
+        assert!(!controller_menu_open(false, true, false));
+        let menu = controller_menu_open(false, true, true);
+        assert!(menu);
+        assert!(!gameplay_active(menu, true, true));
+        assert!(controller_menu_open(menu, false, false));
+        // Releasing Start cannot close a menu; Resume is an explicit DOM action.
+        assert!(controller_menu_open(menu, true, false));
+    }
     fn vertex_bounds(mesh: &Mesh, transform: &Transform) -> (Vec3, Vec3) {
         use bevy::mesh::VertexAttributeValues;
         let Some(VertexAttributeValues::Float32x3(vertices)) =

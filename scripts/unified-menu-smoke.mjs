@@ -21,8 +21,15 @@ const front=http.createServer((req,res)=>{
 const until=async(p,label,ms=120000)=>{const end=performance.now()+ms;while(!p()){assert(performance.now()<end,label);await sleep(40);}};
 async function shot(c,name){const start=performance.now();try{await c.page.screenshot({path:path.join(out,name+'.png'),timeout:60000,fullPage:true});evidence.screenshots.push(name+'.png');}finally{fs.appendFileSync(path.join(out,'capture-timings.jsonl'),JSON.stringify({name,seconds:(performance.now()-start)/1000})+'\n');}}
 async function visible(c,selector){await c.page.locator(selector).waitFor({state:'visible',timeout:120000});}
-async function ready(c){await visible(c,'#ready-room');await c.page.locator('#ready-room').click({force:true});}
+async function ready(c){await visible(c,'#ready-room');await c.page.waitForFunction(()=>!document.getElementById('ready-room').disabled,null,{timeout:30000});await c.page.locator('#ready-room').click({force:true});}
 async function hold(c,key,ms=900){await c.page.keyboard.down(key);await sleep(ms);await c.page.keyboard.up(key);await sleep(700);}
+async function pad(c,index){await c.page.evaluate(index=>{globalThis.__testPadEnabled=true;globalThis.__testPadButtons[index]=true;},index);await sleep(1800);await c.page.evaluate(index=>{globalThis.__testPadButtons[index]=false;},index);await sleep(1400);}
+async function running(a,b){
+ if(a.lobby?.phase==='Running'&&b.lobby?.phase==='Running'&&a.last?.winner===null&&b.last?.winner===null)return;
+ await until(()=>a.lobby?.phase==='Lobby'&&b.lobby?.phase==='Lobby','same lobby available for next real match');
+ for(const c of [a,b])if(!c.lobby.humans.find(h=>h.id===c.identity.participant).ready)await ready(c);
+ await until(()=>a.lobby.phase==='Running'&&b.lobby.phase==='Running'&&a.last?.winner===null&&b.last?.winner===null,'fresh authoritative running match');
+}
 let origin,address;const rawPeers=[];
 async function startBackend(bind='127.0.0.1:0') {
  server=spawn(path.resolve('target/debug/ryggattack-server'),[bind],{env:{...process.env,RYGGATTACK_ALLOWED_ORIGINS:origin},stdio:['ignore','pipe','pipe']});server.stderr.on('data',b=>backendLog+=b);
@@ -39,6 +46,9 @@ async function rawJoin(code=null){
 async function browserClient(name,url=origin+'/?quality=0',viewport={width:960,height:720}){
  const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});browsers.push(browser);
  const page=await browser.newPage({viewport}),c={name,page,browser,welcomes:[],lobbies:[],inputs:[],sockets:0,states:0,commands:[]};clients.push(c);
+ // Synthetic browser device only: inputs still traverse gilrs and Bevy's real
+ // gamepad/menu collector. This is not physical-controller coverage.
+ await page.addInitScript(()=>{globalThis.__testPadEnabled=false;globalThis.__testPadButtons=Array(17).fill(false);Object.defineProperty(navigator,'getGamepads',{value:()=>globalThis.__testPadEnabled?[{id:'Menu acceptance standard pad',index:0,connected:true,mapping:'standard',timestamp:performance.now(),axes:[0,0,0,0],buttons:globalThis.__testPadButtons.map(pressed=>({pressed,touched:pressed,value:pressed?1:0}))}]:[]});});
  page.on('pageerror',e=>evidence.errors.push(name+': '+e.message));
  page.on('console',msg=>{if(msg.type()==='error')(expectedError?evidence.expected_errors:evidence.errors).push(name+': '+msg.text());});
  page.on('websocket',ws=>{c.sockets++;if(new URL(ws.url()).href!==new URL(address).href){evidence.errors.push('unexpected WebSocket endpoint');return;}ws.on('framesent',({payload})=>{const m=JSON.parse(payload);if(m.Input)c.inputs.push(m.Input);else c.commands.push(typeof m==='string'?m:Object.keys(m)[0]);});ws.on('framereceived',({payload})=>{const m=JSON.parse(payload);if(m.Welcome){secrets.add(m.Welcome.credential);const {credential,...safe}=m.Welcome;c.identity=safe;c.welcomes.push(safe);}if(m.Lobby){c.lobby=m.Lobby;c.lobbies.push(m.Lobby);}if(m.State){c.last=m.State;c.states++;}if(m.Error)c.error=m.Error;});});
@@ -52,10 +62,10 @@ try{
  address=await startBackend();
  const a=await browserClient('MenuHost');await visible(a,'#play-local');await shot(a,'main-menu');assert.equal(a.sockets,0);
  await a.page.locator('#play-local').click();await a.page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Lobby',null,{timeout:180000});await shot(a,'local-setup');await a.page.setViewportSize({width:390,height:844});await sleep(1500);await shot(a,'narrow-local-setup');await a.page.setViewportSize({width:960,height:720});
- await hold(a,'Escape');await visible(a,'#play-online');await a.page.locator('#play-online').focus();await a.page.keyboard.press('Enter');await visible(a,'#online-setup');await shot(a,'online-entry');
+ await hold(a,'Escape');await visible(a,'#play-online');await a.page.evaluate(()=>{globalThis.__testPadEnabled=true;});await sleep(1600);await pad(a,13);assert.equal(await a.page.evaluate(()=>document.activeElement.id),'play-online');await pad(a,0);await visible(a,'#online-setup');await pad(a,1);assert.equal(await a.page.evaluate(()=>document.activeElement.id),'create-room');await pad(a,1);await visible(a,'#play-online');await a.page.locator('#play-online').focus();await a.page.keyboard.press('Enter');await visible(a,'#online-setup');await shot(a,'online-entry');
  await a.page.locator('#room-code').fill('invalid');await a.page.locator('#join-room').click();assert.match(await a.page.locator('#room-notice').innerText(),/20-character/);assert.equal(a.sockets,0);
- await a.page.locator('#player-name').focus();await a.page.keyboard.press('Escape');assert(await a.page.locator('#online-setup').isVisible(),'field Escape does not navigate');await shot(a,'validation-feedback');
- await enter(a);assert.equal(a.sockets,1);await shot(a,'host-lobby');
+ await a.page.locator('#player-name').focus();await a.page.keyboard.press('Escape');assert(await a.page.locator('#online-setup').isVisible(),'field Escape does not navigate');await sleep(1200);assert.equal(await a.page.evaluate(()=>document.activeElement.id),'create-room','idle Bevy bridge does not refocus field');await shot(a,'validation-feedback');
+ await enter(a);assert.equal(a.sockets,1);await a.page.evaluate(()=>{globalThis.__testPadEnabled=true;});await shot(a,'host-lobby');
  const invite=await a.page.locator('#share-room').inputValue();const b=await browserClient('MenuGuest',invite,{width:390,height:844});
  await visible(b,'#online-setup');assert.equal(await b.page.locator('#room-code').inputValue(),a.lobby.code);await sleep(700);assert.equal(b.sockets,0,'fresh invite is not automatic admission');
  await shot(b,'narrow-invitation');assert(await b.page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
@@ -63,18 +73,18 @@ try{
  assert(await b.page.locator('#apply-room').isDisabled());await shot(b,'narrow-guest-lobby');
  assert(await b.page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
  await b.page.locator('#leave-room').scrollIntoViewIfNeeded();await shot(b,'narrow-guest-lobby-actions');
- await a.page.locator('#bots-room').fill('2');await a.page.locator('#target-room').selectOption('1');await a.page.locator('#apply-room').click();await until(()=>a.lobby.settings.bots===2&&a.lobby.settings.wins_target===1,'host settings');
+ await a.page.locator('#bots-room').fill('2');await a.page.locator('#target-room').focus();await pad(a,14);assert.equal(await a.page.locator('#target-room').inputValue(),'1','controller adjusts host settings');await a.page.locator('#apply-room').click();await until(()=>a.lobby.settings.bots===2&&a.lobby.settings.wins_target===1,'host settings');
  await ready(a);await ready(b);await until(()=>typeof a.lobby.phase==='object','authoritative countdown');
  await b.page.waitForFunction(()=>document.getElementById('ready-room').textContent.includes('CANCEL'),null,{timeout:30000});await ready(b);await until(()=>a.lobby.phase==='Lobby','countdown cancellation');
  await shot(a,'countdown-canceled');await ready(b);await until(()=>a.last&&b.last,'two actual rendered matches started');
  await a.page.locator('canvas').focus();await b.page.locator('canvas').focus();await a.page.keyboard.down('a');await a.page.keyboard.down('Space');await b.page.keyboard.down('Space');
  await until(()=>a.inputs.some(i=>i.horizontal===-1&&i.fire)&&b.inputs.some(i=>i.fire),'real outgoing keyboard intent');await shot(a,'online-playing');
  await a.page.keyboard.up('a');await a.page.keyboard.up('Space');await b.page.keyboard.up('Space');
- if(a.lobby.phase==='Running'){
-   await a.page.locator('#open-match-menu').click();await visible(a,'#match-menu');assert(!(await a.page.locator('#room-form').isVisible()));
-   const before=a.inputs.length;await hold(a,'Space');await until(()=>a.inputs.length>before,'input during match menu');assert(a.inputs.slice(before).every(i=>i.horizontal===0&&i.vertical===0&&!i.fire),'menu suppresses gameplay');await shot(a,'online-context-menu');await a.page.locator('#resume-match').click();
- }
+ await running(a,b);await a.page.locator('canvas').focus();await pad(a,9);await visible(a,'#match-menu');assert(!(await a.page.locator('#room-form').isVisible()));
+ const before=a.inputs.length;await a.page.keyboard.down('Space');await until(()=>a.inputs.length>before,'input during match menu');assert(a.inputs.slice(before).every(i=>i.horizontal===0&&i.vertical===0&&!i.fire),'menu suppresses gameplay');await a.page.keyboard.up('Space');
+ await a.page.locator('#open-match-menu').click();await visible(a,'#match-menu');await shot(a,'online-context-menu');await a.page.locator('#resume-match').click();
  // Natural server match completion; no injected winner or fake readiness.
+ await running(a,b);
  await a.page.locator('canvas').focus();await b.page.locator('canvas').focus();await a.page.keyboard.down('a');await a.page.keyboard.down('Space');await b.page.keyboard.down('Space');
  await until(()=>a.lobby.phase==='Lobby'&&b.lobby.phase==='Lobby','natural return to same lobby',240000);
  await a.page.keyboard.up('a');await a.page.keyboard.up('Space');await b.page.keyboard.up('Space');await visible(a,'#room-controls');await shot(a,'returned-lobby');

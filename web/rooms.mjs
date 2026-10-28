@@ -26,9 +26,19 @@ export function savedLaunch(storage, address, name, code) {
 }
 // Shared by real Bevy keyboard/gamepad forwarding and deterministic DOM tests.
 export function navigateControls(root, input, back, document=root.ownerDocument) {
+  if(!input.up&&!input.down&&!input.left&&!input.right&&!input.accept&&!input.start&&!input.cancel)return;
   const active=document.activeElement;
+  if(input.controller&&!active?.disabled&&(input.left||input.right)) {
+    const step=input.right?1:-1;
+    if(active?.matches('select')) {
+      const options=[...active.options].filter(o=>!o.disabled),index=options.findIndex(o=>o.value===active.value);
+      if(options.length){active.value=options[(index+step+options.length)%options.length].value;active.dispatchEvent(new Event('change',{bubbles:true}));}
+      return;
+    }
+    if(active?.type==='number') {if(step>0)active.stepUp();else active.stepDown();active.dispatchEvent(new Event('input',{bubbles:true}));return;}
+  }
   if(active?.matches('input,select,textarea')) {
-    if(input.cancel){active.blur();root.querySelector('button:not([disabled])')?.focus();}
+    if(input.cancel){active.blur();[...root.querySelectorAll('button')].find(e=>!e.disabled&&e.getClientRects().length)?.focus();}
     if(input.cancel||!input.controller)return; // text keys never activate room actions
   }
   if(input.cancel){back();return;}
@@ -148,7 +158,7 @@ export function installRoomControls(env=globalThis) {
         if(!running)show('lobby');else if(screen!=='match')show('playing');
         notice(room.notice||room.status);
       } else {
-        if(pending?.kind==='connect'&&!/Connecting|Reconnecting|Retrying/.test(room.status)){pending=null;setBusy(false);}
+        if(pending?.kind==='connect'&&!/Connecting|Reconnecting|Retrying|Waiting for seat/.test(room.status)){pending=null;setBusy(false);}
         notice(room.notice||room.status);show('setup',false);
       }
     }

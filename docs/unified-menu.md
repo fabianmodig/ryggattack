@@ -14,7 +14,7 @@ During Running, create/join and lobby settings are hidden. The existing authorit
 
 ## Input and layout
 
-Bevy's existing keyboard/gamepad MenuInput collector forwards intent into visible browser controls, then clears it before the canvas menu can also consume it. DOM-focused typing does not become canvas keyboard shortcuts. Browser arrows/Tab/Enter use actual focusable controls; field Escape does not act as Back in the same event. Controller directions can step out of fields, and controller Back ends editing before navigating. Menus restore focus on screen changes and canvas focus on gameplay/local entry.
+Bevy's existing keyboard/gamepad MenuInput collector forwards intent into visible browser controls, then clears it before the canvas menu can also consume it. DOM-focused typing does not become canvas keyboard shortcuts. Browser arrows/Tab/Enter use actual focusable controls; field Escape does not act as Back in the same event. Controller directions can step out of fields, Left/Right adjusts focused host select/number settings (Apply remains explicit), and controller Back ends editing before navigating. Idle bridge frames preserve focus. Controller Start opens the online in-match input menu; it never pauses the server. Menus restore focus on screen changes and canvas focus on gameplay/local entry.
 
 The menu is vertically scrollable, with bounded-width fields/cards and a one-column roster on narrow viewports. The existing local cart screen scales its UI to fit narrow browser windows; this is presentation scaling, not a touch gameplay implementation. No duplicate corner room disclosure is retained.
 

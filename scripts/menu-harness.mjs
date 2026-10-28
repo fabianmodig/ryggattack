@@ -15,5 +15,5 @@ export async function admitInvitation(page) {
   if(await page.evaluate(()=>!!globalThis.ryggattackLaunch))return; // saved seat
   await openRoomMenu(page);
   const join=!!await page.locator('#room-code').inputValue();
-  await page.locator(join?'#join-room':'#create-room').click();
+  await page.locator(join?'#join-room':'#create-room').click({noWaitAfter:true});
 }
