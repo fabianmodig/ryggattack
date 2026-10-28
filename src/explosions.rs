@@ -62,7 +62,7 @@ pub(crate) fn detonate(commands: &mut Commands, position: Vec3) {
 /// Every explosion draws from one set of meshes and materials. Fire and smoke
 /// fade by stepping through pre-made materials, so no asset is ever edited
 /// while the game runs.
-#[derive(Resource)]
+#[derive(Resource, Clone)]
 pub(crate) struct EffectAssets {
     sphere: Handle<Mesh>,
     cube: Handle<Mesh>,
@@ -82,6 +82,12 @@ pub(crate) fn fireball_mesh() -> Mesh {
 }
 
 impl EffectAssets {
+    pub(crate) fn sphere(&self) -> Handle<Mesh> {
+        self.sphere.clone()
+    }
+    pub(crate) fn fire_material(&self, progress: f32) -> Handle<StandardMaterial> {
+        self.fireball[stage(progress, self.fireball.len())].clone()
+    }
     pub(crate) fn new(meshes: &mut Assets<Mesh>, materials: &mut Assets<StandardMaterial>) -> Self {
         let glow = |color: Color| StandardMaterial {
             base_color: color,
@@ -136,6 +142,18 @@ pub(crate) struct Fireball {
     age: f32,
     duration: f32,
     radius: f32,
+    burst: Option<usize>,
+    ordinal: u8,
+}
+
+impl Fireball {
+    pub(crate) fn visual(&self) -> crate::network::ExplosionVisual {
+        crate::network::ExplosionVisual {
+            progress: (self.age / self.duration).clamp(0.0, 1.0),
+            burst: self.burst,
+            ordinal: self.ordinal,
+        }
+    }
 }
 
 #[derive(Component)]
@@ -282,27 +300,44 @@ fn wreck(
         let Ok((mesh, material, global)) = parts.get(child) else {
             continue;
         };
-        let transform = global.compute_transform();
-        let outward = (transform.translation - blast)
-            .with_y(0.0)
-            .normalize_or(random_direction(rng).with_y(0.0).normalize_or(Vec3::X));
-        let velocity = outward * rng.range(3.5, 7.0)
-            + Vec3::Y * rng.range(3.0, 7.5)
-            + random_direction(rng) * 1.2;
-        commands.spawn((
-            Mesh3d(mesh.0.clone()),
-            MeshMaterial3d(material.0.clone()),
-            transform,
-            Debris {
-                velocity,
-                spin: random_direction(rng) * rng.range(3.0, 9.0),
-                life: rng.range(1.2, 1.9),
-                scale: transform.scale,
-                rest: transform.scale.max_element() * 0.25,
-            },
-            Transient,
-        ));
+        fling_piece(
+            commands,
+            mesh.0.clone(),
+            material.0.clone(),
+            global.compute_transform(),
+            blast,
+            rng,
+        );
     }
+}
+
+/// Shared cosmetic wreckage motion. Never participates in collision or damage.
+pub(crate) fn fling_piece(
+    commands: &mut Commands,
+    mesh: Handle<Mesh>,
+    material: Handle<StandardMaterial>,
+    transform: Transform,
+    blast: Vec3,
+    rng: &mut SimpleRng,
+) {
+    let outward = (transform.translation - blast)
+        .with_y(0.0)
+        .normalize_or(random_direction(rng).with_y(0.0).normalize_or(Vec3::X));
+    let velocity =
+        outward * rng.range(3.5, 7.0) + Vec3::Y * rng.range(3.0, 7.5) + random_direction(rng) * 1.2;
+    commands.spawn((
+        Mesh3d(mesh),
+        MeshMaterial3d(material),
+        transform,
+        Debris {
+            velocity,
+            spin: random_direction(rng) * rng.range(3.0, 9.0),
+            life: rng.range(1.2, 1.9),
+            scale: transform.scale,
+            rest: transform.scale.max_element() * 0.25,
+        },
+        Transient,
+    ));
 }
 
 /// Fire, light, sparks, smoke, and for a missile's own blast a scorched patch
@@ -319,7 +354,6 @@ fn burst(
     flash_budget: &mut usize,
 ) {
     let size = if chain == 0 { 1.0 } else { 0.55 };
-    let scorch = chain == 0;
     let centre = position.with_y(position.y.max(0.45 * size));
     // Largest first, so a lower setting keeps the main ball of fire.
     let fireballs = [
@@ -327,12 +361,15 @@ fn burst(
         (random_direction(rng) * 0.5 * size, 1.0, 0.04),
         (random_direction(rng) * 0.6 * size, 0.8, 0.09),
     ];
-    for (offset, radius, delay) in fireballs.into_iter().take(budget.fireballs) {
+    for (index, (offset, radius, delay)) in fireballs.into_iter().take(budget.fireballs).enumerate()
+    {
         commands.spawn((
             Fireball {
                 age: -delay,
                 duration: rng.range(0.55, 0.7) * size.sqrt(),
                 radius: radius * size,
+                burst: (index == 0).then_some(chain),
+                ordinal: index as u8,
             },
             Mesh3d(assets.sphere.clone()),
             MeshMaterial3d(assets.fireball[0].clone()),
@@ -342,6 +379,23 @@ fn burst(
         ));
     }
 
+    burst_cosmetics(commands, assets, rng, position, chain, budget, flash_budget);
+}
+
+/// Shared auxiliary art, without detonations, collision, or scenery destruction.
+/// Online uses an independent cosmetic RNG, never the gameplay RNG.
+pub(crate) fn burst_cosmetics(
+    commands: &mut Commands,
+    assets: &EffectAssets,
+    rng: &mut SimpleRng,
+    position: Vec3,
+    chain: usize,
+    budget: &EffectBudget,
+    flash_budget: &mut usize,
+) {
+    let size: f32 = if chain == 0 { 1.0 } else { 0.55 };
+    let scorch = chain == 0;
+    let centre = position.with_y(position.y.max(0.45 * size));
     if *flash_budget > 0 {
         *flash_budget -= 1;
         commands.spawn((

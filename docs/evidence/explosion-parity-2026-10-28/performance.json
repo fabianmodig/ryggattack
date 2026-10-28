@@ -1,0 +1,128 @@
+{
+  "after-q0": {
+    "raf": [
+      {
+        "client": "BlastA",
+        "metric": "gameplay requestAnimationFrame intervals, not GPU timings",
+        "samples": 120,
+        "mean_ms": 933.1574999999999,
+        "p50_ms": 949.8999999999942,
+        "p95_ms": 1566.6000000000058
+      },
+      {
+        "client": "BlastB",
+        "metric": "gameplay requestAnimationFrame intervals, not GPU timings",
+        "samples": 120,
+        "mean_ms": 932.88,
+        "p50_ms": 933.4000000000087,
+        "p95_ms": 1599.8999999999942
+      }
+    ],
+    "wire": [
+      {
+        "client": "BlastA",
+        "first_tick": 4,
+        "last_tick": 7852,
+        "receive_ms": 122620,
+        "observed_hz": 64.00260968846844
+      },
+      {
+        "client": "BlastB",
+        "first_tick": 4,
+        "last_tick": 8096,
+        "receive_ms": 126430,
+        "observed_hz": 64.00379656727043
+      }
+    ],
+    "shared": [
+      {
+        "match": 1,
+        "complete": true,
+        "shared_frames": 1811,
+        "wall": {
+          "primary_id": 152,
+          "position": [
+            9,
+            0.77,
+            -7
+          ],
+          "max_scale": 1.599791,
+          "removed_tick": 956
+        },
+        "chain": {
+          "primary_id": 136,
+          "primary_max_scale": 1.599933,
+          "primary_removed_tick": 924,
+          "prop_id": 19,
+          "prop_removed_tick": 884,
+          "chain_id": 146,
+          "chain_first_tick": 896,
+          "chain_max_scale": 0.87988627,
+          "chain_removed_tick": 924
+        }
+      }
+    ],
+    "capture_ms": 158826
+  },
+  "after-q6": {
+    "raf": [
+      {
+        "client": "BlastA",
+        "metric": "gameplay requestAnimationFrame intervals, not GPU timings",
+        "samples": 0,
+        "mean_ms": null
+      },
+      {
+        "client": "BlastB",
+        "metric": "gameplay requestAnimationFrame intervals, not GPU timings",
+        "samples": 0,
+        "mean_ms": null
+      }
+    ],
+    "wire": [
+      {
+        "client": "BlastA",
+        "first_tick": 3,
+        "last_tick": 6323,
+        "receive_ms": 98741,
+        "observed_hz": 64.00583344304798
+      },
+      {
+        "client": "BlastB",
+        "first_tick": 3,
+        "last_tick": 7667,
+        "receive_ms": 119743,
+        "observed_hz": 64.00374134604945
+      }
+    ],
+    "shared": [
+      {
+        "match": 1,
+        "complete": true,
+        "shared_frames": 321,
+        "wall": {
+          "primary_id": 137,
+          "position": [
+            -9,
+            0.77,
+            7
+          ],
+          "max_scale": 1.5991192,
+          "removed_tick": 2688
+        },
+        "chain": {
+          "primary_id": 137,
+          "primary_max_scale": 1.5991192,
+          "primary_removed_tick": 2688,
+          "prop_id": 45,
+          "prop_removed_tick": 2652,
+          "chain_id": 140,
+          "chain_first_tick": 2660,
+          "chain_max_scale": 0.8786079,
+          "chain_removed_tick": 2688
+        }
+      }
+    ],
+    "capture_ms": 201622
+  }
+}

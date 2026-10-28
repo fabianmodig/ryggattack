@@ -133,6 +133,16 @@ pub struct PropVisual {
     pub scale: f32,
 }
 
+/// Presentation metadata only. Optional for compatibility with older protocol-4 servers.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExplosionVisual {
+    pub progress: f32,
+    pub ordinal: u8,
+    /// Only the central ball triggers auxiliary cosmetics; satellites never do.
+    pub burst: Option<usize>,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Body {
     pub id: u64,
@@ -145,6 +155,8 @@ pub struct Body {
     pub owner: Option<usize>,
     /// Only scenery; ground placement uses position.x/z and rotation.
     pub prop: Option<PropVisual>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explosion: Option<ExplosionVisual>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Frame {

@@ -1,0 +1,20 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 21s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 8 tests
+test explosions::tests::a_bounce_reverses_and_damps_the_fall_but_not_a_rise ... ok
+test explosions::tests::random_directions_are_unit_length ... ok
+test explosions::tests::stages_cover_the_whole_animation_without_running_past_the_last ... ok
+test explosions::tests::the_chain_always_ends ... ok
+test net_client::explosion_tests::explosion_metadata_is_bounded_presentation_only_and_optional_for_v4 ... ok
+test online::explosion_tests::older_server_without_presentation_metadata_still_renders_and_removes_balls ... ok
+test online::explosion_tests::every_source_material_stage_matches_replica_without_asset_growth ... ok
+test online::explosion_tests::auxiliary_effects_obey_quality_and_do_not_retrigger_or_survive_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 183 filtered out; finished in 0.06s
+
+
+real	1m21.648s
+user	1m17.904s
+sys	0m20.792s

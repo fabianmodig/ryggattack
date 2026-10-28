@@ -1,0 +1,286 @@
+TAP version 13
+# Subtest: smoke shutdown and finalization invoke the tested shared helpers
+ok 1 - smoke shutdown and finalization invoke the tested shared helpers
+  ---
+  duration_ms: 2.483402
+  type: 'test'
+  ...
+# Subtest: browser: requested clean code-zero exit is accepted
+ok 2 - browser: requested clean code-zero exit is accepted
+  ---
+  duration_ms: 1.4761
+  type: 'test'
+  ...
+# Subtest: browser: already-dead code-zero child is rejected before harness close
+ok 3 - browser: already-dead code-zero child is rejected before harness close
+  ---
+  duration_ms: 0.255407
+  type: 'test'
+  ...
+# Subtest: browser: requested code-one exit is rejected
+ok 4 - browser: requested code-one exit is rejected
+  ---
+  duration_ms: 0.298498
+  type: 'test'
+  ...
+# Subtest: browser: externally SIGKILLed exit during requested close is rejected
+ok 5 - browser: externally SIGKILLed exit during requested close is rejected
+  ---
+  duration_ms: 0.380812
+  type: 'test'
+  ...
+# Subtest: browser: unexpected clean exit queued before request is rejected
+ok 6 - browser: unexpected clean exit queued before request is rejected
+  ---
+  duration_ms: 0.308658
+  type: 'test'
+  ...
+# Subtest: browser: forced close timeout is rejected and only owned child is killed
+ok 7 - browser: forced close timeout is rejected and only owned child is killed
+  ---
+  duration_ms: 1.307795
+  type: 'test'
+  ...
+# Subtest: backend: requested clean code-zero exit is accepted
+ok 8 - backend: requested clean code-zero exit is accepted
+  ---
+  duration_ms: 0.187202
+  type: 'test'
+  ...
+# Subtest: backend: already-dead code-zero child is rejected before harness close
+ok 9 - backend: already-dead code-zero child is rejected before harness close
+  ---
+  duration_ms: 0.416599
+  type: 'test'
+  ...
+# Subtest: backend: requested code-one exit is rejected
+ok 10 - backend: requested code-one exit is rejected
+  ---
+  duration_ms: 0.568541
+  type: 'test'
+  ...
+# Subtest: backend: externally SIGKILLed exit during requested close is rejected
+ok 11 - backend: externally SIGKILLed exit during requested close is rejected
+  ---
+  duration_ms: 0.289038
+  type: 'test'
+  ...
+# Subtest: backend: unexpected clean exit queued before request is rejected
+ok 12 - backend: unexpected clean exit queued before request is rejected
+  ---
+  duration_ms: 0.149066
+  type: 'test'
+  ...
+# Subtest: backend: forced close timeout is rejected and only owned child is killed
+ok 13 - backend: forced close timeout is rejected and only owned child is killed
+  ---
+  duration_ms: 0.141788
+  type: 'test'
+  ...
+# Subtest: admitted page already closed cannot silently skip normal Leave
+ok 14 - admitted page already closed cannot silently skip normal Leave
+  ---
+  duration_ms: 1.292857
+  type: 'test'
+  ...
+# Subtest: admitted client with missing page cannot silently skip normal Leave
+ok 15 - admitted client with missing page cannot silently skip normal Leave
+  ---
+  duration_ms: 0.264475
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing leave_packet
+ok 16 - finalization rejects closed admitted page missing leave_packet
+  ---
+  duration_ms: 0.311341
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing left_room_readback
+ok 17 - finalization rejects closed admitted page missing left_room_readback
+  ---
+  duration_ms: 0.092913
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing socket_closed
+ok 18 - finalization rejects closed admitted page missing socket_closed
+  ---
+  duration_ms: 0.08568
+  type: 'test'
+  ...
+# Subtest: finalization rejects missing first-peer authoritative roster readback
+ok 19 - finalization rejects missing first-peer authoritative roster readback
+  ---
+  duration_ms: 0.16237
+  type: 'test'
+  ...
+# Subtest: finalization rejects first-peer readback still containing departing participant
+ok 20 - finalization rejects first-peer readback still containing departing participant
+  ---
+  duration_ms: 0.167606
+  type: 'test'
+  ...
+# Subtest: real Leave helper uses button, waits for cleared HUD, socket and peer roster
+ok 21 - real Leave helper uses button, waits for cleared HUD, socket and peer roster
+  ---
+  duration_ms: 0.613419
+  type: 'test'
+  ...
+# Subtest: uncleared HUD rejects Leave and finalization even after page closes
+ok 22 - uncleared HUD rejects Leave and finalization even after page closes
+  ---
+  duration_ms: 0.344294
+  type: 'test'
+  ...
+# Subtest: nonadmitted startup failures do not invent Leave requirements
+ok 23 - nonadmitted startup failures do not invent Leave requirements
+  ---
+  duration_ms: 0.134889
+  type: 'test'
+  ...
+# Subtest: SIGINT during cleanup forces failed status and nonzero after successful process close
+ok 24 - SIGINT during cleanup forces failed status and nonzero after successful process close
+  ---
+  duration_ms: 0.395129
+  type: 'test'
+  ...
+# Subtest: SIGTERM during cleanup forces failed status and nonzero after successful process close
+ok 25 - SIGTERM during cleanup forces failed status and nonzero after successful process close
+  ---
+  duration_ms: 0.188578
+  type: 'test'
+  ...
+# Subtest: child startup error is not accepted as a truthy exit record
+ok 26 - child startup error is not accepted as a truthy exit record
+  ---
+  duration_ms: 0.180348
+  type: 'test'
+  ...
+# Subtest: already dead abnormal child (1, null) is rejected
+ok 27 - already dead abnormal child (1, null) is rejected
+  ---
+  duration_ms: 0.130432
+  type: 'test'
+  ...
+# Subtest: already dead abnormal child (null, SIGKILL) is rejected
+ok 28 - already dead abnormal child (null, SIGKILL) is rejected
+  ---
+  duration_ms: 0.09017
+  type: 'test'
+  ...
+# Subtest: existing failure and errors remain fatal with no interruption
+ok 29 - existing failure and errors remain fatal with no interruption
+  ---
+  duration_ms: 0.118931
+  type: 'test'
+  ...
+# Subtest: browser: observed 5924ms owned close remains clean (disconnect stalls=false)
+ok 30 - browser: observed 5924ms owned close remains clean (disconnect stalls=false)
+  ---
+  duration_ms: 2.280598
+  type: 'test'
+  ...
+# Subtest: browser: observed 5924ms owned close remains clean (disconnect stalls=true)
+ok 31 - browser: observed 5924ms owned close remains clean (disconnect stalls=true)
+  ---
+  duration_ms: 0.716442
+  type: 'test'
+  ...
+# Subtest: browser: hung owner is still forcibly stopped and rejected at bounded 20s deadline
+ok 32 - browser: hung owner is still forcibly stopped and rejected at bounded 20s deadline
+  ---
+  duration_ms: 0.839276
+  type: 'test'
+  ...
+# Subtest: browser policy still rejects abnormal requested exit (1, null)
+ok 33 - browser policy still rejects abnormal requested exit (1, null)
+  ---
+  duration_ms: 0.219107
+  type: 'test'
+  ...
+# Subtest: browser policy still rejects abnormal requested exit (null, SIGKILL)
+ok 34 - browser policy still rejects abnormal requested exit (null, SIGKILL)
+  ---
+  duration_ms: 0.176498
+  type: 'test'
+  ...
+# Subtest: graceful backend SIGTERM request must still produce code zero without signal
+ok 35 - graceful backend SIGTERM request must still produce code zero without signal
+  ---
+  duration_ms: 0.316227
+  type: 'test'
+  ...
+# Subtest: wire evidence requires primary, wall, destroyed prop and smaller distinct delayed chain IDs
+ok 36 - wire evidence requires primary, wall, destroyed prop and smaller distinct delayed chain IDs
+  ---
+  duration_ms: 2.980416
+  type: 'test'
+  ...
+# Subtest: missing shots, gaps, round clears, unrelated prop positions and tiny-only blasts never pass
+ok 37 - missing shots, gaps, round clears, unrelated prop positions and tiny-only blasts never pass
+  ---
+  duration_ms: 0.736313
+  type: 'test'
+  ...
+# Subtest: exact legal 4,8,32,36,40 gap cannot complete a causal chain
+ok 38 - exact legal 4,8,32,36,40 gap cannot complete a causal chain
+  ---
+  duration_ms: 0.239808
+  type: 'test'
+  ...
+# Subtest: round-finished boundary cannot connect an unfinished causal chain
+ok 39 - round-finished boundary cannot connect an unfinished causal chain
+  ---
+  duration_ms: 0.263954
+  type: 'test'
+  ...
+# Subtest: completed historical proof survives a later sampling gap or round finish
+ok 40 - completed historical proof survives a later sampling gap or round finish
+  ---
+  duration_ms: 0.378996
+  type: 'test'
+  ...
+# Subtest: disjoint observer ticks cannot supply shared evidence
+ok 41 - disjoint observer ticks cannot supply shared evidence
+  ---
+  duration_ms: 0.292713
+  type: 'test'
+  ...
+# Subtest: nonpositive scales, duplicate IDs and regressing ticks reject corrupt evidence
+ok 42 - nonpositive scales, duplicate IDs and regressing ticks reject corrupt evidence
+  ---
+  duration_ms: 1.181213
+  type: 'test'
+  ...
+# Subtest: shared observer gate rejects a disagreement even at an explosion-free tick
+ok 43 - shared observer gate rejects a disagreement even at an explosion-free tick
+  ---
+  duration_ms: 2.925054
+  type: 'test'
+  ...
+# Subtest: explosion full source snapshot survives unchanged privacy publication gates
+ok 44 - explosion full source snapshot survives unchanged privacy publication gates
+  ---
+  duration_ms: 78.797963
+  type: 'test'
+  ...
+# Subtest: generated private-key headers still purge all evidence in every publication path
+ok 45 - generated private-key headers still purge all evidence in every publication path
+  ---
+  duration_ms: 10.077517
+  type: 'test'
+  ...
+# Subtest: generated private-key headers still block screenshot pixels before capture
+ok 46 - generated private-key headers still block screenshot pixels before capture
+  ---
+  duration_ms: 0.725826
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 167.908182

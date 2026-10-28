@@ -30,9 +30,15 @@ const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const started = performance.now(), now = () => Math.round(performance.now() - started);
 const secrets = new Set(), clients = [], browsers = [];
+const quality = Number(process.env.RYGGATTACK_EXPLOSION_QUALITY ?? '0');
+assert(Number.isInteger(quality) && quality >= 0 && quality <= 6, 'quality must be 0..6');
+const sequence = process.env.RYGGATTACK_EXPLOSION_SEQUENCE === '1';
+const sequenceOnly = process.env.RYGGATTACK_EXPLOSION_SEQUENCE_ONLY === '1';
+assert(!sequenceOnly || (sequence && quality === 6), 'sequence-only comparison requires quality6 and sequence recording');
 const report = {status: 'running', scope: 'LOCAL two actual rendered WASM humans, protocol 4; legal HTML controls + keyboard only',
   budgets: {gameplay_wall_ms: 180000, screenshot_only_ms: 60000, max_matches: 3, captures_per_client: 3},
   started_at: new Date().toISOString(), checks: [], errors: [], screenshots: [], cleanup: {},
+  mode: sequenceOnly ? 'full-quality compositor comparison; not the six-screenshot gate' : 'six-screenshot gate',
   visual_review: {status: 'required', claim: 'Wire transforms are NOT measured GPU mesh bounds or image pixel dimensions.'}};
 let server, backend, backendLifecycle, origin, address, privacyFailed = false, gameplayStarted;
 const interruption = watchCleanupInterruption(process);
@@ -79,7 +85,7 @@ const pick = (object, keys) => Object.fromEntries(keys.map(key => [key, object[k
 function publicFrame(frame) {
   return {...pick(frame, ['tick', 'simulation_tick', 'ack', 'names', 'wins', 'winner', 'round_finished', 'transition', 'until_drop']),
     carts: frame.carts.map(c => pick(c, ['id', 'active', 'alive', 'position', 'forward', 'shot_cooldown', 'speed_seconds', 'all_hits_seconds'])),
-    bodies: frame.bodies.map(b => pick(b, ['id', 'kind', 'position', 'rotation', 'scale']))};
+    bodies: frame.bodies.map(b => pick(b, ['id', 'kind', 'position', 'rotation', 'scale', 'explosion']))};
 }
 function publicLobby(lobby) {
   return {...pick(lobby, ['id', 'host', 'phase']), settings: pick(lobby.settings, ['arena', 'wins_target', 'bots']),
@@ -207,11 +213,16 @@ async function openClient(chromium, name, code) {
     const observed = Object.entries(event.request.headers).find(([key]) => key.toLowerCase() === 'origin')?.[1];
     c.origin_verified = observed === origin; if (!c.origin_verified) fault(name, 'socket Origin mismatch');
   });
-  await page.goto(`${origin}/?quality=0`, {waitUntil: 'domcontentloaded'});
+  await page.goto(`${origin}/?quality=${quality}`, {waitUntil: 'domcontentloaded'});
   await expand(c); await page.locator('#backend').fill(address); await page.locator('#player-name').fill(name);
   if (code) await page.locator('#room-code').fill(code);
   await page.locator(code ? '#join-room' : '#create-room').click();
   await until(() => c.identity && c.lobby, `${name}: admission`);
+  assert.equal(new URL(page.url()).searchParams.get('quality'), String(quality), 'pinned quality survives real room GET form');
+  // Wire Welcome precedes first scene submission. Let each isolated renderer
+  // finish its lobby shader work before starting the next software renderer.
+  await page.waitForFunction(() => JSON.parse(globalThis.ryggattackHud ?? '{}').lobby?.phase === 'Lobby', null, {timeout: 90000});
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   return c;
 }
 function sharedProof() {
@@ -275,7 +286,17 @@ async function run() {
   await a.page.locator('#target-room').selectOption('7'); await a.page.locator('#bots-room').fill('0'); await a.page.locator('#apply-room').click();
   await until(() => clients.every(c => c.lobby.settings.bots === 0 && c.lobby.settings.wins_target === 7 && c.lobby.settings.arena === 'Forest'), 'authoritative target-seven zero-bot settings');
   await ensureRunning();
-  for (const c of clients) for (let index = 1; index <= report.budgets.captures_per_client; index++) await capture(c, index);
+  for (const c of clients) await c.page.evaluate(() => {
+    globalThis.parityRaf = [];
+    let previous;
+    const sample = time => {
+      if (previous !== undefined) globalThis.parityRaf.push(time - previous);
+      previous = time;
+      if (globalThis.parityRaf.length < 10000) requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+  if (!sequenceOnly) for (const c of clients) for (let index = 1; index <= report.budgets.captures_per_client; index++) await capture(c, index);
   await until(() => sharedProof().some(proof => proof.complete), 'shared primary/wall/chain IDs + positive scale + removals', 90000, true);
   report.matches = sharedProof();
   for (const c of clients) {
@@ -285,12 +306,41 @@ async function run() {
     assert(firing.length >= 3, 'real held-fire input');
     assert(firing.some(i => c.latest.ack[c.identity.seat] >= i.sequence), 'server acknowledged actual held-fire input sequence');
     const images = report.screenshots.filter(image => image.file.startsWith(c.name + '-'));
-    assert.equal(new Set(images.map(image => image.sha256)).size, 3, 'three distinct actual image bytes per observer');
+    if (!sequenceOnly) assert.equal(new Set(images.map(image => image.sha256)).size, 3, 'three distinct actual image bytes per observer');
     assert(c.frames.at(-1).frame.tick > c.frames[0].frame.tick, 'authoritative states advance');
     assert(c.frames.at(-1).frame.simulation_tick > 0, 'simulation advances independently of renderer');
   }
-  assert.equal(report.screenshots.length, 6, 'three actual sequential images per observer');
+  assert.equal(report.screenshots.length, sequenceOnly ? 0 : 6, 'selected screenshot mode');
   assert.equal(report.errors.length, 0, 'unexpected protocol/browser errors');
+  report.quality = quality;
+  report.performance = [];
+  for (const c of clients) {
+    const samples = await c.page.evaluate(() => globalThis.parityRaf);
+    const sorted = [...samples].sort((a, b) => a - b);
+    report.performance.push({client: c.name, metric: 'gameplay requestAnimationFrame intervals, not GPU timings',
+      samples: samples.length, mean_ms: samples.reduce((a, b) => a + b, 0) / samples.length,
+      p50_ms: sorted[Math.floor(sorted.length * .5)], p95_ms: sorted[Math.floor(sorted.length * .95)]});
+  }
+  if (sequence) {
+    await ensureRunning();
+    const c = clients[0], cdp = await c.page.context().newCDPSession(c.page);
+    const frames = [];
+    await capturePrivateScreenshot(c.page, secrets, async () => {});
+    cdp.on('Page.screencastFrame', event => {
+      const file = `sequence-${String(frames.length).padStart(4, '0')}.jpg`;
+      if (frames.length < 300) {
+        fs.writeFileSync(path.join(out, file), Buffer.from(event.data, 'base64'));
+        frames.push({file, timestamp: event.metadata.timestamp, at_ms: now(), tick: c.latest.tick});
+      }
+      cdp.send('Page.screencastFrameAck', {sessionId: event.sessionId}).catch(() => {});
+    });
+    await cdp.send('Page.startScreencast', {format: 'jpeg', quality: 90, everyNthFrame: 1});
+    await sleep(sequenceOnly ? 60000 : 15000);
+    await cdp.send('Page.stopScreencast');
+    await capturePrivateScreenshot(c.page, secrets, async () => {});
+    report.sequence = {client: c.name, frames, caveat: 'Actual compositor frames; receipt tick is not a render synchronization oracle.'};
+    assert(frames.length >= 3, 'at least three genuine compositor frames');
+  }
 }
 async function leave(c) {
   return leaveAdmittedClient(c, {clients, expand, until, presentation});

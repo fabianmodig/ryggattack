@@ -1,0 +1,746 @@
+{
+  "status": "failed",
+  "scope": "LOCAL two actual rendered WASM humans, protocol 4; legal HTML controls + keyboard only",
+  "budgets": {
+    "gameplay_wall_ms": 180000,
+    "screenshot_only_ms": 60000,
+    "max_matches": 3,
+    "captures_per_client": 3
+  },
+  "started_at": "2026-10-28T11:40:41.528Z",
+  "checks": [
+    {
+      "raw_path": "/%2e%2e/Cargo.toml",
+      "status": 403
+    },
+    {
+      "raw_path": "/%ZZ",
+      "status": 400
+    },
+    {
+      "raw_path": "/%00",
+      "status": 400
+    }
+  ],
+  "errors": [
+    {
+      "source": "cleanup",
+      "message": "owned Chromium did not complete a clean requested shutdown",
+      "at_ms": 357498
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "BlastA-1.png",
+      "sha256": "4cc8f470f1b9e1647e059782b0be4bcb0c11acaf08d66373e305905b12d302b6",
+      "before": {
+        "at_ms": 95550,
+        "match": 1,
+        "tick": 5772,
+        "body_ids": [
+          329,
+          330,
+          331
+        ],
+        "presentation": {
+          "phase": "Running",
+          "seat": 0,
+          "tick": 5724,
+          "names": [
+            "BlastA (you)",
+            "BlastB"
+          ],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        }
+      },
+      "after": {
+        "at_ms": 148678,
+        "match": 1,
+        "tick": 9172,
+        "presentation": {
+          "phase": "Running",
+          "seat": 0,
+          "tick": 9164,
+          "names": [
+            "BlastA (you)",
+            "BlastB"
+          ],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        }
+      },
+      "caveat": "Capture interval, not exact render-to-wire synchronization. Review actual pixels for visible blasts, cart/rail reference and sequence changes."
+    },
+    {
+      "file": "BlastA-2.png",
+      "sha256": "d807dff80bf3e3c3923bd4dc37619bd9b1ef74566e1f3329ab60e31ed5482e98",
+      "before": {
+        "at_ms": 161540,
+        "match": 1,
+        "tick": 9996,
+        "body_ids": [
+          748,
+          749,
+          750
+        ],
+        "presentation": {
+          "phase": "Running",
+          "seat": 0,
+          "tick": 9944,
+          "names": [
+            "BlastA (you)",
+            "BlastB"
+          ],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        }
+      },
+      "after": {
+        "at_ms": 220860,
+        "match": 1,
+        "tick": 13792,
+        "presentation": {
+          "phase": "Running",
+          "seat": 0,
+          "tick": 13784,
+          "names": [
+            "BlastA (you)",
+            "BlastB"
+          ],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        }
+      },
+      "caveat": "Capture interval, not exact render-to-wire synchronization. Review actual pixels for visible blasts, cart/rail reference and sequence changes."
+    }
+  ],
+  "cleanup": {
+    "backend_exit": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "forced": false,
+      "requested": true,
+      "unexpected": false,
+      "valid": true
+    },
+    "http_closed": true,
+    "inputs_unchanged": true
+  },
+  "visual_review": {
+    "status": "required",
+    "claim": "Wire transforms are NOT measured GPU mesh bounds or image pixel dimensions."
+  },
+  "source_revision": "20d059457f32711c9789d8dd362c8c788e1f64ec",
+  "source_worktree": "M docs/online-explosion.md\n M scripts/online-explosion-smoke.mjs\n M scripts/rooms-ui.test.mjs\n M src/explosions.rs\n M src/headless.rs\n M src/net_client.rs\n M src/network.rs\n M src/online.rs\n M web/index.html\n M web/rooms.mjs\n?? src/net_client/\n?? src/online/explosion_tests.rs",
+  "hashes": {
+    "Cargo.lock": {
+      "sha256": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+      "bytes": 150156
+    },
+    "Cargo.toml": {
+      "sha256": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+      "bytes": 1194
+    },
+    "dist/web/assets/players/cart-riders.png": {
+      "sha256": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "bytes": 1165424
+    },
+    "dist/web/assets/players/riders.png": {
+      "sha256": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+      "bytes": 1118713
+    },
+    "dist/web/index.html": {
+      "sha256": "a6cf95746cfad1a6be16eda184c4cfdede2998273ac6246bb210b12c07e9f2ab",
+      "bytes": 4753
+    },
+    "dist/web/online-hud-bridge.mjs": {
+      "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "bytes": 1029
+    },
+    "dist/web/online-hud.mjs": {
+      "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "bytes": 8755
+    },
+    "dist/web/refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "dist/web/rooms.mjs": {
+      "sha256": "66840a2a108b38fd396db185451ccee065c26f9442c50477fa9356c66e7373dc",
+      "bytes": 3837
+    },
+    "dist/web/ryggattack.js": {
+      "sha256": "2b6217b8fa0b3dc06284d3344d71d120488e5d434b3f4601cfa8d6b38f06ad33",
+      "bytes": 118877
+    },
+    "dist/web/ryggattack_bg.wasm": {
+      "sha256": "b43aa9296ede84a994d36d7dc0ace3a70e0ebd249b33c0fd0cc4887a7ef5e681",
+      "bytes": 39716699
+    },
+    "docs/online-explosion.md": {
+      "sha256": "78fc6c3ec3e1c5d1cb973d670f1762b1e7c833490c6193e47889e624bf0ddca7",
+      "bytes": 14321
+    },
+    "scripts/build-web.sh": {
+      "sha256": "45e5683d9a4651966c9c1c8389aaad4c09e2dc58267fa426442900c9c2fb43a5",
+      "bytes": 3368
+    },
+    "scripts/client-feedback-helpers.mjs": {
+      "sha256": "582ec1d40726b3a6066edc4d9054b6ffa42be3989f5fcbc8ac61d612c92207fa",
+      "bytes": 3911
+    },
+    "scripts/client-feedback-helpers.test.mjs": {
+      "sha256": "df0618d0283238c94b81365599477bf69361b6ad6a892a1070e833968056ff81",
+      "bytes": 7796
+    },
+    "scripts/client-feedback-smoke.mjs": {
+      "sha256": "73d631feca04d95c00b9e9cb58ed1acf7486613b3e34d2322e3ca6f6fd8c24a5",
+      "bytes": 26429
+    },
+    "scripts/container-smoke-network.mjs": {
+      "sha256": "d35c0683d62c22405ae796f124a185de5ac67a7077ddb8d923d7f0f7a7b6fa62",
+      "bytes": 837
+    },
+    "scripts/container-smoke-network.test.mjs": {
+      "sha256": "19136397570c7f2f5fe25bcd4712bef60e8dfc76d426af90c6f34c904b6ce782",
+      "bytes": 1018
+    },
+    "scripts/container-smoke.mjs": {
+      "sha256": "d55a6d354d0b6b66b26c8f4870f02b9ebd5b9a360f46c45e63039dcbcf36c498",
+      "bytes": 8043
+    },
+    "scripts/live-deployment-helpers.mjs": {
+      "sha256": "f345893305b729aefb15a4186d22d575a7d1edf4fbc78e16530617781939953d",
+      "bytes": 1545
+    },
+    "scripts/live-deployment-helpers.test.mjs": {
+      "sha256": "66d8de3fc03c39ab3ec9bed5887ff9945514fd15d2743585b4e049edea819d64",
+      "bytes": 1543
+    },
+    "scripts/live-deployment-smoke.mjs": {
+      "sha256": "9f855e97d439335906cd0d0b5653d61efeef47ae45047c7ba221a28e9d364c39",
+      "bytes": 23464
+    },
+    "scripts/native-tls.test.mjs": {
+      "sha256": "ff62a26041c5bbf4bd625c622339344e3068553841cefa6cf4b91530a8f0ddb7",
+      "bytes": 2451
+    },
+    "scripts/network-harness-helpers.mjs": {
+      "sha256": "dcad4365c233fa1df860fcdaf7927e91c24b3476c47ed5a6b2568f1400cce2e2",
+      "bytes": 395
+    },
+    "scripts/network-harness.test.mjs": {
+      "sha256": "9060a68ba94162802b57b9a509a2cdb96220fbe233e3f346bb6b79dc4905ac1a",
+      "bytes": 911
+    },
+    "scripts/network-smoke.mjs": {
+      "sha256": "1c6f05c2b23a6e8fae802dd039b720bf2fd9be0a4c7c913d558cb6f55bb74f17",
+      "bytes": 30232
+    },
+    "scripts/network-sockets.mjs": {
+      "sha256": "1c655c6e2d173a4b14e0b6b952aba3cc6695e2ce3c3c9a805728c2355795486a",
+      "bytes": 7492
+    },
+    "scripts/online-explosion-cleanup.mjs": {
+      "sha256": "23e82c5f646495140a379a4b121a513a45e7f20ca947c4b7b7e268e01ba61f63",
+      "bytes": 5060
+    },
+    "scripts/online-explosion-cleanup.test.mjs": {
+      "sha256": "cecbb3a49a8f038e69e073ab7c57d3e0a0b4c88669a59d89e269c5020e761547",
+      "bytes": 12918
+    },
+    "scripts/online-explosion-evidence.mjs": {
+      "sha256": "e2963b66b58aba4bf36c1dcf0670302c6b3593f91e4383eece29b351bcb2d602",
+      "bytes": 4657
+    },
+    "scripts/online-explosion-evidence.test.mjs": {
+      "sha256": "5561e5f81183a27ab64e796cdae271eb0af9986c6384ef9f8c3071eb06d09864",
+      "bytes": 4739
+    },
+    "scripts/online-explosion-privacy.test.mjs": {
+      "sha256": "5508f0b37f2aa4703e2f4e85a62e18fd6679c5680b039b5c940a6d16b522e318",
+      "bytes": 4820
+    },
+    "scripts/online-explosion-smoke.mjs": {
+      "sha256": "1788f795fa86e576a28f4ab307eec3887424e7105c59b40f553d4e95b74daa00",
+      "bytes": 28805
+    },
+    "scripts/online-hud-artifacts.mjs": {
+      "sha256": "0a53c1a69cfd5b97ee070d35839e2a20ca2d65fd90f5a76a3d63515004bfb529",
+      "bytes": 2722
+    },
+    "scripts/online-hud-artifacts.test.mjs": {
+      "sha256": "4105d0bd301838eb26e6ea77facfbe72894836f7adf3a0d68bdf1b36d53aad4b",
+      "bytes": 4067
+    },
+    "scripts/online-hud-assets.test.mjs": {
+      "sha256": "f87d298b1967dfe363b677a78056410243230dbb50dfe21e6e887eca33dfc5c6",
+      "bytes": 1000
+    },
+    "scripts/online-hud-bridge.test.mjs": {
+      "sha256": "f0d563a9548b681317a1e84e36f180b02505f81f5d9a250a866367ac6d4b0436",
+      "bytes": 2876
+    },
+    "scripts/online-hud-cases.mjs": {
+      "sha256": "4648a0fe34da71add1332d0e85b8231eb8f14e0913e6282091dea2f87f0cd050",
+      "bytes": 7332
+    },
+    "scripts/online-hud-cases.test.mjs": {
+      "sha256": "ec072a2898aa5160a0270fb7bf6e6c984649d3da5f3df24298865f1869d8465f",
+      "bytes": 3863
+    },
+    "scripts/online-hud-smoke.mjs": {
+      "sha256": "2d84061b09ab6260ec4acec63f0900beca0457d0a2fcd94eae788414f3d36b96",
+      "bytes": 49550
+    },
+    "scripts/online-hud-startup.mjs": {
+      "sha256": "7c519f9ee0f39a1a3156ba05ca1aacc9bb8fb529bc435b1afc30a2c7c9f50a14",
+      "bytes": 1757
+    },
+    "scripts/online-hud-startup.test.mjs": {
+      "sha256": "d0ecfddc1f9aafe8ffe8ddd624e74ca593276971bb5e2443d01cdefd6182bdd0",
+      "bytes": 7744
+    },
+    "scripts/online-hud-temporal.test.mjs": {
+      "sha256": "d3ffb6b89dcf2b541a8a747c22953144c16a7a4008e7ec27058f1b307797b2ed",
+      "bytes": 13583
+    },
+    "scripts/online-hud.test.mjs": {
+      "sha256": "7788cc1ca43f6acb3d93a00069308fa31644307fc13614c34c6efe441c039424",
+      "bytes": 9606
+    },
+    "scripts/pages-redirect.test.mjs": {
+      "sha256": "4a443379c687b11f35ac83c67df9fddd920b0bfd66d12f97909c3e2fe811a1e4",
+      "bytes": 776
+    },
+    "scripts/perf/anatomy.mjs": {
+      "sha256": "4d5cab1ad96aff58a57095b97a4d592e2bb4e653e42465120abbe301ab63f877",
+      "bytes": 4242
+    },
+    "scripts/perf/foundation.mjs": {
+      "sha256": "64e9a42e6a6be2f9c774a4d8970f44074fe5e8bc25165a6a58cda74e656f602d",
+      "bytes": 5096
+    },
+    "scripts/perf/ingame.mjs": {
+      "sha256": "1fcda27496ce484016ad25de88a0429eff3ebbf8641d924fae46dbfe3235040f",
+      "bytes": 9125
+    },
+    "scripts/perf/powerups.mjs": {
+      "sha256": "c322a9938a2932eeff875c2e62d1804f2fef8608be938f2b9774b5b4b9c61cf3",
+      "bytes": 4314
+    },
+    "scripts/perf/shots.mjs": {
+      "sha256": "a540c7a7c9549946fbddb3facd6c4acae3ec404e976ba60a997c8901b2b2bc88",
+      "bytes": 3590
+    },
+    "scripts/portable-container-build.test.mjs": {
+      "sha256": "13e86a6f0dc990f60c5ce4501775fe4ea056007719017cd02032913bc39bd74a",
+      "bytes": 1083
+    },
+    "scripts/production-browser.mjs": {
+      "sha256": "1dd057622271630b6f997dc63d4ae16c360be3119715921bb4526fad3809919d",
+      "bytes": 11140
+    },
+    "scripts/production-smoke.mjs": {
+      "sha256": "7df1e09a18a3422f0a5f552f6566fe39f264e14904a32896a0e5904e0870ffbe",
+      "bytes": 6986
+    },
+    "scripts/refresh-rate.test.mjs": {
+      "sha256": "4d16b29d1b21d3312ba075eee8e636e88cf9b405c6fb110e77d5129af4f4de75",
+      "bytes": 7910
+    },
+    "scripts/resilience-harness.test.mjs": {
+      "sha256": "c5630c17428a1f76b64261d5728c5f62e1d2af25bda062006788766d2554d705",
+      "bytes": 751
+    },
+    "scripts/resilience-helpers.mjs": {
+      "sha256": "2286520b87c64858b80e1db5cdb645f0f1da2f1d50da4a2d398bd5e366d2d575",
+      "bytes": 405
+    },
+    "scripts/resilience-smoke.mjs": {
+      "sha256": "6ea73e752bee749d90eb7d22e288d611020a7f5117544132d1e1a9522629f00a",
+      "bytes": 19519
+    },
+    "scripts/rooms-load.mjs": {
+      "sha256": "247a591d965feda854cd5f250d95d52291064a3beb10824744a94b5ffcdcb30e",
+      "bytes": 3373
+    },
+    "scripts/rooms-ui.test.mjs": {
+      "sha256": "30aa2bec7e3580e6e05941b27d5e1bb972d1d92e7695d3d8b587c3c6f592d97e",
+      "bytes": 3512
+    },
+    "scripts/server-banner.test.mjs": {
+      "sha256": "2af88fc5c7d14892d7d8f68809b28f4445e166d8ecaee36d73fd5dd3eea47f37",
+      "bytes": 722
+    },
+    "scripts/server-policy.test.mjs": {
+      "sha256": "7aedd3cfb1623dad84a9f6f03f06e1b60ea039d0891a32ad02ce9d8ce84dac19",
+      "bytes": 1127
+    },
+    "scripts/solo-bots-helpers.mjs": {
+      "sha256": "1cba0303fb2034a269341311b43e84c0441c771a0d96e4bd22fbedb1c5cb4438",
+      "bytes": 3574
+    },
+    "scripts/solo-bots-helpers.test.mjs": {
+      "sha256": "0d0ce571a04de5f5efabc10fc8d803646b6faffd0783650eb52944bd2570b66e",
+      "bytes": 7469
+    },
+    "scripts/solo-bots-smoke.mjs": {
+      "sha256": "30189edfa7aa79c58367bab31b2a4affb735d7af601454631364dd200d04f7ef",
+      "bytes": 12970
+    },
+    "scripts/wasm-bindgen-version.sh": {
+      "sha256": "8da4b47916db30fa71af3bd25a2aae2a7e6176290a004d7b15891cbfc5c50c2d",
+      "bytes": 547
+    },
+    "src/arena.rs": {
+      "sha256": "b3140e390aba2c3662ed0ff1b30ab8cf1b0cb6dababfee88fe970743279a2ce0",
+      "bytes": 11568
+    },
+    "src/batch.rs": {
+      "sha256": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "bytes": 7669
+    },
+    "src/bin/ryggattack-headless.rs": {
+      "sha256": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "bytes": 2164
+    },
+    "src/bin/ryggattack-net-probe.rs": {
+      "sha256": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "bytes": 2657
+    },
+    "src/bin/ryggattack-server.rs": {
+      "sha256": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+      "bytes": 1868
+    },
+    "src/combat.rs": {
+      "sha256": "100c8af20cec828a97876a76334c9188bd3c080e4512262de42471de3b862864",
+      "bytes": 21454
+    },
+    "src/explosions.rs": {
+      "sha256": "5639b1f6df1280d8aeddebb77a1b557cd154aa0e11250bd4a11c12cd5d2a2538",
+      "bytes": 22096
+    },
+    "src/game.rs": {
+      "sha256": "26017559a256b87d48d91020e6d3413e41d09e2ae2cbf03df41aa9c7715c1204",
+      "bytes": 12942
+    },
+    "src/headless.rs": {
+      "sha256": "5f22d846b4f8ab1a6f9673d6a9a72fe5651eef5535ead3ad45c9d9fad13416cf",
+      "bytes": 21258
+    },
+    "src/input.rs": {
+      "sha256": "4ac3b4c63b0284af8410db83f843547b164ce516d58093f73ff7c44b80b3e8cf",
+      "bytes": 1730
+    },
+    "src/lib.rs": {
+      "sha256": "d0260c99b07b3aff3054359ac974573c9bba0aca4afc7f217227aa5a38873ae5",
+      "bytes": 4865
+    },
+    "src/main.rs": {
+      "sha256": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "bytes": 44
+    },
+    "src/management.rs": {
+      "sha256": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+      "bytes": 4007
+    },
+    "src/match_settings.rs": {
+      "sha256": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "bytes": 1486
+    },
+    "src/net_client.rs": {
+      "sha256": "5487f8bb25305129f9a8abce7265e67599f182f3eb09b89ba87206e45a197ba8",
+      "bytes": 36189
+    },
+    "src/net_client/explosion_tests.rs": {
+      "sha256": "39a818def8e64a3adf65cb48891e714538ecf54d60307b253c7a90c45074f15b",
+      "bytes": 1374
+    },
+    "src/network.rs": {
+      "sha256": "2931f92c3100fe675c097f0a54f4b05ada3bf209c5e9c846769bdc23e6db2068",
+      "bytes": 6529
+    },
+    "src/online.rs": {
+      "sha256": "1e6c7db9b28fca763d1c04b1ef56b9fd31df2bc8a3b1f656e15bfd8ef5a48295",
+      "bytes": 55175
+    },
+    "src/online/environment.rs": {
+      "sha256": "11ac77d589ec269b8b8bb8e8f7e2a8fdedf6c0bba7118941f0591a52976a6150",
+      "bytes": 4648
+    },
+    "src/online/environment/tests.rs": {
+      "sha256": "bba53b05abd50cbb96fee162a9221f4c4858e093827214b8f26605039bcdfdd6",
+      "bytes": 14585
+    },
+    "src/online/explosion_tests.rs": {
+      "sha256": "8a317cf57f2093d90691d24e1705ff1f890164271d4e35176225e6d5e613590c",
+      "bytes": 7010
+    },
+    "src/online/visual_tests.rs": {
+      "sha256": "f2748fca62c6772b2810d7c7cfe5808d4d8e84a40c5c1e591b9c064af1e9c92e",
+      "bytes": 16777
+    },
+    "src/players/mod.rs": {
+      "sha256": "cee6d869ae374ab9d9ef127f8794a048550b998ffef1ee650fef852834b75bc1",
+      "bytes": 38902
+    },
+    "src/players/roster.rs": {
+      "sha256": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "bytes": 5073
+    },
+    "src/players/visuals.rs": {
+      "sha256": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "bytes": 9219
+    },
+    "src/powerups.rs": {
+      "sha256": "3e84a4465cf1cd174d2398526733d95337dbdabc66a35095b7ed474efc419dd9",
+      "bytes": 12546
+    },
+    "src/rooms.rs": {
+      "sha256": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+      "bytes": 7472
+    },
+    "src/scene.rs": {
+      "sha256": "b42453009c69c40eadcade8fd0b800176bc80bafd3cabc5dd0853445b26ff8b2",
+      "bytes": 6414
+    },
+    "src/scenery.rs": {
+      "sha256": "72ac79d41e6f2ea62163f2784ceb357568b068d1fde71ed397cd464c35ce7df5",
+      "bytes": 23314
+    },
+    "src/server.rs": {
+      "sha256": "e76bd973f66e941eb327971ff489b93c61dae5d1e721917ffb873b66428a4fd4",
+      "bytes": 59031
+    },
+    "src/server/authority_tests.rs": {
+      "sha256": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+      "bytes": 6640
+    },
+    "src/server/parity_tests.rs": {
+      "sha256": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+      "bytes": 37616
+    },
+    "src/settings.rs": {
+      "sha256": "91666aeacd1e3cf95cfbe540815f1137876c6264db30980a288bb12c7e28dd83",
+      "bytes": 38787
+    },
+    "src/simulation.rs": {
+      "sha256": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "bytes": 8797
+    },
+    "src/tracks/map.rs": {
+      "sha256": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "bytes": 9218
+    },
+    "src/tracks/mod.rs": {
+      "sha256": "55caf7fd7817931071ab287b07f96c1977800050cfb665e46438cab35896be29",
+      "bytes": 316
+    },
+    "src/tracks/path.rs": {
+      "sha256": "43b0dd9af599feda6c36885de3121f31b70c978bd4e1dce530b70f703c903a55",
+      "bytes": 13199
+    },
+    "src/tracks/render.rs": {
+      "sha256": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "bytes": 10271
+    },
+    "src/ui/lobby.rs": {
+      "sha256": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "bytes": 13758
+    },
+    "src/ui/mod.rs": {
+      "sha256": "db69766b4432206ace5e3546b3d98546c9cc809c07035ab591762826160fd364",
+      "bytes": 22938
+    },
+    "src/ui/nav.rs": {
+      "sha256": "cac83b2df17322a9345da7e58ff8dcd95a382f143e9e97264cf876a56e9aecd0",
+      "bytes": 7277
+    },
+    "target/debug/ryggattack-server": {
+      "sha256": "94aa3212fe42195301bd44db68b59c91af9452a596ae51a9f8e16edb90c57c99",
+      "bytes": 1827780024
+    },
+    "web/Dockerfile": {
+      "sha256": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "bytes": 1508
+    },
+    "web/index.html": {
+      "sha256": "a6cf95746cfad1a6be16eda184c4cfdede2998273ac6246bb210b12c07e9f2ab",
+      "bytes": 4753
+    },
+    "web/nginx-main.conf": {
+      "sha256": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+      "bytes": 660
+    },
+    "web/nginx.conf": {
+      "sha256": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+      "bytes": 1735
+    },
+    "web/online-hud-bridge.mjs": {
+      "sha256": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "bytes": 1029
+    },
+    "web/online-hud.mjs": {
+      "sha256": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+      "bytes": 8755
+    },
+    "web/pages-redirect.html": {
+      "sha256": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+      "bytes": 689
+    },
+    "web/refresh-rate.mjs": {
+      "sha256": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "bytes": 2147
+    },
+    "web/rooms.mjs": {
+      "sha256": "66840a2a108b38fd396db185451ccee065c26f9442c50477fa9356c66e7373dc",
+      "bytes": 3837
+    }
+  },
+  "server_events": [
+    {
+      "at_ms": 372927,
+      "text": "{\"event\":\"shutdown\",\"rooms_reset\":true}\n"
+    }
+  ],
+  "failure": "page.screenshot: Timeout 60000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n\n    at /home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/scripts/online-explosion-smoke.mjs:267:70\n    at capturePrivateScreenshot (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/scripts/solo-bots-helpers.mjs:15:9)\n    at async capture (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/scripts/online-explosion-smoke.mjs:267:9)\n    at async run (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/scripts/online-explosion-smoke.mjs:296:102)\n    at async file:///home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/scripts/online-explosion-smoke.mjs:386:23",
+  "finished_at": "2026-10-28T11:46:59.461Z",
+  "total_ms": 377934,
+  "clients": [
+    {
+      "name": "BlastA",
+      "identity": {
+        "version": 4,
+        "room": 3,
+        "participant": 2,
+        "seat": 0
+      },
+      "browser_version": "153.0.8010.12",
+      "pid": 834027,
+      "sockets": 1,
+      "origin_verified": true,
+      "cleanup": {
+        "leave_packet": true,
+        "left_room_readback": true,
+        "socket_closed": true,
+        "peer_roster_readback": {
+          "id": 3,
+          "host": 4,
+          "phase": "Running",
+          "settings": {
+            "arena": "Forest",
+            "wins_target": 7,
+            "bots": 0
+          },
+          "humans": [
+            {
+              "id": 4,
+              "name": "BlastB",
+              "seat": 1,
+              "ready": true,
+              "connected": true
+            }
+          ]
+        },
+        "readback": {
+          "phase": null,
+          "seat": null,
+          "tick": null,
+          "names": [],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        },
+        "page_closed": true,
+        "browser_exit": {
+          "exit": {
+            "code": null,
+            "signal": "SIGKILL"
+          },
+          "forced": true,
+          "requested": true,
+          "unexpected": false,
+          "valid": false
+        },
+        "browser_process_exited": false
+      }
+    },
+    {
+      "name": "BlastB",
+      "identity": {
+        "version": 4,
+        "room": 3,
+        "participant": 4,
+        "seat": 1
+      },
+      "browser_version": "153.0.8010.12",
+      "pid": 834177,
+      "sockets": 1,
+      "origin_verified": true,
+      "cleanup": {
+        "leave_packet": true,
+        "left_room_readback": true,
+        "socket_closed": true,
+        "readback": {
+          "phase": null,
+          "seat": null,
+          "tick": null,
+          "names": [],
+          "canvas": [
+            {
+              "width": 640,
+              "height": 480,
+              "visible": true
+            }
+          ]
+        },
+        "page_closed": true,
+        "browser_exit": {
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "forced": false,
+          "requested": true,
+          "unexpected": false,
+          "valid": true
+        },
+        "browser_process_exited": true
+      }
+    }
+  ],
+  "private_material_negative_scan": {
+    "passed": true,
+    "known_values_checked": 2,
+    "all_artifacts_exact_value_scan": true,
+    "screenshot_text_check": "visible DOM before capture; binary scans are not OCR"
+  }
+}

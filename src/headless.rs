@@ -243,6 +243,7 @@ impl Simulation {
                 rotation: transform.rotation.to_array(),
                 scale,
                 kind,
+                explosion: fireball.map(|ball| ball.visual()),
                 owner: projectile.map(|p| p.owner),
                 prop: prop.map(|p| crate::network::PropVisual {
                     kind: p.kind,

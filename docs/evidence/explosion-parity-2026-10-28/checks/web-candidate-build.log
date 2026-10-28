@@ -1,0 +1,10 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo)
+    Finished `release` profile [optimized] target(s) in 6m 41s
+wasm-opt: 54 MB -> 39 MB
+
+Built dist/web. Serve it with:
+  python3 -m http.server 8080 --directory dist/web
+
+real	10m34.054s
+user	10m32.363s
+sys	0m18.051s

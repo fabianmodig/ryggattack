@@ -13,6 +13,11 @@ export function participantStatus(h, phase) {
 }
 export function installRoomControls() {
   const $=id=>document.getElementById(id), params=new URLSearchParams(location.search);
+  // GET form submission replaces the query string. Keep a valid pinned video
+  // setting when entering online play; otherwise the automatic governor wins.
+  const quality=params.get('quality');
+  $('quality-override').disabled=!/^[0-6]$/.test(quality??'');
+  $('quality-override').value=quality??'';
   const site=new URL(location.href);
   const local=['localhost','127.0.0.1','[::1]'].includes(site.hostname) && site.protocol==='http:';
   $('backend').value=params.get('online')??(local?'ws://127.0.0.1:8787':`wss://${site.host}/ws`);

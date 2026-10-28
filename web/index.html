@@ -55,6 +55,7 @@
     <details id="online-entry" style="position:absolute;right:12px;bottom:12px;padding:10px;background:#17212e;z-index:5;max-height:85vh;overflow:auto;max-width:90vw;font-size:13px">
       <summary>Private online rooms</summary>
       <form method="get" style="display:grid;gap:8px;padding-top:8px">
+        <input id="quality-override" type="hidden" name="quality" disabled>
         <label>Backend <input id="backend" name="online" required aria-label="Backend address"></label>
         <label>Name <input id="player-name" name="name" value="Player" maxlength="24" required aria-label="Player name"></label>
         <label>Room code <input id="room-code" name="room" maxlength="20" pattern="[a-f0-9]{20}" aria-label="Room code"></label>

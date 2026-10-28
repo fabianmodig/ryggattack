@@ -20,6 +20,10 @@ struct View {
 #[derive(Component)]
 struct Replica(u64);
 #[derive(Component)]
+struct ReplicaProp {
+    hit_radius: f32,
+}
+#[derive(Component)]
 struct Ground;
 type RoomVisualEntity = (
     Entity,
@@ -31,6 +35,7 @@ type RoomVisualRoots = (
         With<Mesh3d>,
         With<crate::players::Player>,
         With<Replica>,
+        With<crate::explosions::Flash>,
         With<environment::Environment>,
     )>,
     Without<ChildOf>,
@@ -43,7 +48,7 @@ struct VisualAssets {
     cube: Handle<Mesh>,
     missiles: crate::combat::MissileAssets,
     forest: crate::scenery::ForestAssets,
-    fireball: Handle<Mesh>,
+    effects: crate::explosions::EffectAssets,
     ring: Handle<Mesh>,
     materials: [Handle<StandardMaterial>; 5],
 }
@@ -257,6 +262,7 @@ pub(crate) fn run(address: String, name: String) {
             code: String::new(),
         })
         .init_resource::<View>()
+        .add_plugins(crate::settings::SettingsPlugin)
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Ryggattack — Private online room".into(),
@@ -275,6 +281,14 @@ pub(crate) fn run(address: String, name: String) {
                 network_input,
                 render_snapshot,
                 environment::present,
+                (
+                    crate::explosions::animate_smoke,
+                    crate::explosions::animate_flashes,
+                    crate::explosions::move_debris,
+                    crate::explosions::fade_scorches,
+                )
+                    .chain()
+                    .run_if(resource_exists::<crate::explosions::EffectAssets>),
             )
                 .chain(),
         )
@@ -283,6 +297,7 @@ pub(crate) fn run(address: String, name: String) {
 fn setup(mut commands: Commands) {
     commands.spawn((
         Camera3d::default(),
+        crate::settings::WorldCamera,
         Transform::from_xyz(0., 16.5, 15.5).looking_at(Vec3::ZERO, Vec3::Y),
     ));
     commands.spawn((
@@ -519,11 +534,34 @@ fn render_snapshot(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut carts: Query<(&mut crate::players::Player, &mut Transform, &mut Visibility)>,
-    mut replicas: Query<(Entity, &Replica, &mut Transform), Without<crate::players::Player>>,
+    mut replicas: Query<
+        (
+            Entity,
+            &Replica,
+            &mut Transform,
+            Option<&mut MeshMaterial3d<StandardMaterial>>,
+        ),
+        Without<crate::players::Player>,
+    >,
+    settings: Option<Res<crate::settings::VideoSettings>>,
+    flashes: Query<(), With<crate::explosions::Flash>>,
+    cosmetics: Query<
+        Entity,
+        Or<(
+            With<crate::explosions::Smoke>,
+            With<crate::explosions::Flash>,
+            With<crate::explosions::Debris>,
+            With<crate::explosions::Scorch>,
+        )>,
+    >,
+    effect_assets: Option<Res<crate::explosions::EffectAssets>>,
+    prop_children: Query<(&ReplicaProp, &Children)>,
+    parts: Query<(&Mesh3d, &MeshMaterial3d<StandardMaterial>, &GlobalTransform), Without<Replica>>,
     mut assets: Local<Option<VisualAssets>>,
     scene_roots: Query<Entity, (RoomVisualRoots, Without<Replica>)>,
 ) {
-    if std::mem::take(&mut view.reset_scene) {
+    let reset_scene = std::mem::take(&mut view.reset_scene);
+    if reset_scene {
         for entity in &scene_roots {
             commands.entity(entity).despawn();
         }
@@ -542,7 +580,7 @@ fn render_snapshot(
         cube: meshes.add(Cuboid::new(1., 1., 1.)),
         missiles: crate::combat::MissileAssets::new(&mut meshes, &mut materials),
         forest: crate::scenery::ForestAssets::new(&mut meshes, &mut materials),
-        fireball: meshes.add(crate::explosions::fireball_mesh()),
+        effects: crate::explosions::EffectAssets::new(&mut meshes, &mut materials),
         ring: meshes.add(Torus::new(0.28, 0.5)),
         materials: [
             Color::WHITE,
@@ -559,16 +597,24 @@ fn render_snapshot(
             })
         }),
     });
+    if effect_assets.is_none() {
+        commands.insert_resource(assets.effects.clone());
+    }
     if assets.arena != view.arena {
         assets.forest.set_arena(view.arena, &mut materials);
         assets.arena = view.arena;
     }
     let reset = std::mem::take(&mut view.reset_replicas);
+    if !reset_scene && (reset || view.frame.is_none()) {
+        for entity in &cosmetics {
+            commands.entity(entity).despawn();
+        }
+    }
     let Some(frame) = &view.frame else {
         // A fresh simulation may restart match-local body IDs. Clear the old
         // presentation at the lobby boundary instead of aliasing next-match
         // projectiles/pickups to meshes left by the previous match.
-        for (entity, _, _) in &mut replicas {
+        for (entity, _, _, _) in &mut replicas {
             commands.entity(entity).despawn();
         }
         for (_, _, mut visibility) in &mut carts {
@@ -607,21 +653,78 @@ fn render_snapshot(
             Visibility::Hidden
         };
     }
+    let budget = settings
+        .as_deref()
+        .copied()
+        .unwrap_or_default()
+        .effects
+        .budget();
+    let visible = |body: &crate::network::Body| {
+        body.explosion
+            .is_none_or(|effect| usize::from(effect.ordinal) < budget.fireballs)
+    };
     let mut existing = std::collections::HashSet::new();
-    for (entity, id, mut transform) in &mut replicas {
+    for (entity, id, mut transform, material) in &mut replicas {
         if reset {
             commands.entity(entity).despawn();
             continue;
         }
-        if let Some(body) = frame.bodies.iter().find(|b| b.id == id.0) {
+        if let Some(body) = frame.bodies.iter().find(|b| b.id == id.0 && visible(b)) {
             existing.insert(id.0);
             *transform = body_transform(body);
+            if body.kind == 4
+                && let Some(mut material) = material
+            {
+                let next = assets
+                    .effects
+                    .fire_material(body.explosion.map_or(0.0, |e| e.progress));
+                if material.0 != next {
+                    material.0 = next;
+                }
+            }
         } else {
+            // A disappeared visual prop can shed its existing model parts only
+            // when an authoritative blast reaches it. Never destroy scenery or
+            // infer a gameplay detonation locally, and never wreck on a reset.
+            if !reset_scene && let Ok((prop, children)) = prop_children.get(entity) {
+                if let Some(blast) = frame.bodies.iter().find(|body| {
+                    body.explosion
+                        .and_then(|effect| effect.burst)
+                        .is_some_and(|chain| {
+                            let radius = crate::explosions::CHAIN_BLAST_RADII[chain];
+                            radius > 0.0
+                                && transform
+                                    .translation
+                                    .xz()
+                                    .distance(Vec3::from_array(body.position).xz())
+                                    <= radius + prop.hit_radius
+                        })
+                }) {
+                    let mut rng = crate::tracks::SimpleRng::new(id.0);
+                    for child in children.iter() {
+                        if let Ok((mesh, material, global)) = parts.get(child) {
+                            crate::explosions::fling_piece(
+                                &mut commands,
+                                mesh.0.clone(),
+                                material.0.clone(),
+                                global.compute_transform(),
+                                Vec3::from_array(blast.position),
+                                &mut rng,
+                            );
+                        }
+                    }
+                }
+            }
             commands.entity(entity).despawn();
         }
     }
+    let mut flash_budget = if reset || reset_scene {
+        budget.max_flashes
+    } else {
+        budget.max_flashes.saturating_sub(flashes.iter().count())
+    };
     for body in &frame.bodies {
-        if existing.contains(&body.id) {
+        if !visible(body) || existing.contains(&body.id) {
             continue;
         }
         let entity = commands
@@ -641,6 +744,9 @@ fn render_snapshot(
             continue;
         }
         if body.kind == 3 {
+            commands.entity(entity).insert(ReplicaProp {
+                hit_radius: body.scale[0] * 0.5,
+            });
             let visual = body.prop.as_ref().expect("validated prop");
             let prop = crate::scenery::Prop {
                 kind: visual.kind,
@@ -661,13 +767,44 @@ fn render_snapshot(
             continue;
         }
         let mesh = match body.kind {
-            4 => assets.fireball.clone(),
+            4 => assets.effects.sphere(),
             2 => assets.ring.clone(),
             _ => assets.cube.clone(),
         };
+        if body.kind == 4 {
+            commands.entity(entity).insert(bevy::light::NotShadowCaster);
+            if let Some(effect) = body.explosion
+                && let Some(chain) = effect.burst
+            {
+                // Trigger once per newly observed central ball. Late joins do not
+                // replay old flashes. Source fireball transforms remain authoritative.
+                let mut no_flash = 0;
+                let flash_budget = if effect.progress < 0.4 {
+                    &mut flash_budget
+                } else {
+                    &mut no_flash
+                };
+                crate::explosions::burst_cosmetics(
+                    &mut commands,
+                    &assets.effects,
+                    &mut crate::tracks::SimpleRng::new(body.id),
+                    Vec3::from_array(body.position),
+                    chain,
+                    &budget,
+                    flash_budget,
+                );
+            }
+        }
+        let material = if body.kind == 4 {
+            assets
+                .effects
+                .fire_material(body.explosion.map_or(0.0, |e| e.progress))
+        } else {
+            assets.materials[usize::from(body.kind.min(4))].clone()
+        };
         commands.entity(entity).insert((
             Mesh3d(mesh),
-            MeshMaterial3d(assets.materials[usize::from(body.kind.min(4))].clone()),
+            MeshMaterial3d(material),
             body_transform(body),
         ));
     }
@@ -691,6 +828,8 @@ fn body_transform(body: &crate::network::Body) -> Transform {
     }
 }
 
+#[cfg(test)]
+mod explosion_tests;
 #[cfg(test)]
 mod visual_tests;
 
@@ -821,7 +960,7 @@ mod tests {
                         0
                     );
                     assert_eq!(world.query::<&Fireball>().iter(world).count(), 0);
-                    assert_eq!(world.query::<&explosions::Debris>().iter(world).count(), 0);
+                    assert!(world.query::<&explosions::Debris>().iter(world).count() <= 14);
                 }
                 explosions::replication_test_progress(sim.app.world_mut(), 1.01);
                 let mut frame = sim.network_frame();
@@ -849,6 +988,7 @@ mod tests {
                 scale: [1.2, 0.8, 1.5],
                 owner: (kind == 0).then_some(0),
                 prop: None,
+                explosion: None,
             })
             .collect();
         let mut app = App::new();

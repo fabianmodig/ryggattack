@@ -10,7 +10,19 @@ child/UI boundaries. Do not claim a rendered or mesh-bounds pass from those chec
 The intended gate is two independently launched Chromium processes, each with
 one real rendered WASM human, against one disposable native server bound to
 `127.0.0.1:0`. It serves the parent's real `dist/web` bytes at an ephemeral
-loopback HTTP origin. Quality is `0`, viewport `640x480`, software SwiftShader.
+loopback HTTP origin. Quality defaults to `0`, viewport `640x480`, software SwiftShader.
+Set `RYGGATTACK_EXPLOSION_QUALITY=6` for the full offline-reference effect budget.
+The real room GET form must preserve that pin; the harness asserts the resulting
+quality parameter, rather than assuming that the initial page query survived.
+`RYGGATTACK_EXPLOSION_SEQUENCE=1` additionally records up to 300 actual compositor
+JPEG frames over 15 seconds of gameplay, after the private entry UI is collapsed.
+Gameplay rAF interval summaries are event-loop observations, not GPU benchmarks.
+For full-quality software-renderer comparison, set both sequence flags and
+`RYGGATTACK_EXPLOSION_SEQUENCE_ONLY=1`: this separately labeled supplement keeps
+the shared primary/wall/chain and input assertions but records 60 seconds of
+compositor frames instead of the six screenshot calls. It is not a pass of the
+default six-screenshot gate. Production deadlines and the default gate's budgets
+are unchanged; retain failed screenshot attempts rather than overwriting them.
 The room uses Forest, two distinct humans (`BlastA`, `BlastB`), **zero bots**,
 and first-to-seven. The harness does not require a match winner: legal shots,
 impacts, destruction and visuals are the acceptance target.
@@ -47,10 +59,10 @@ shared canonical-mesh tests elsewhere, run those too using its exact test names.
 After the parent freezes those artifacts:
 
 ```sh
-cd /home/hermes/src/ryggattack-online-explosions
+cd /path/to/feature-worktree
 RYGGATTACK_EXPLOSION_ARTIFACT_READY=1 \
 PLAYWRIGHT_NODE_MODULES=/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json \
-RYGGATTACK_NATIVE_BIN_DIR=/home/hermes/src/ryggattack-online-explosions/target/debug \
+RYGGATTACK_NATIVE_BIN_DIR=/path/to/feature-worktree/target/debug \
 node scripts/online-explosion-smoke.mjs --local
 ```
 
@@ -74,7 +86,7 @@ node --test scripts/online-explosion*.test.mjs
 
 ## What is asserted
 
-- One admission/socket per client, protocol **3**, actual browser Origin, distinct
+- One admission/socket per client, protocol **4**, actual browser Origin, distinct
   process IDs, participant IDs, and seats in the same owned room. Both clients
   observe authoritative human-name/seat mappings and two active carts.
 - Ordinary HTML Create/Join/Configure/Ready controls, authoritative countdown and
@@ -100,7 +112,8 @@ node --test scripts/online-explosion*.test.mjs
   A round clear, sampling gap, no shots,
   unrelated prop, empty observation, or tiny-only wire bodies cannot pass.
 - These are conservative **spatial/temporal wire correlations**, not causal tags:
-  protocol 3 does not label explosion generations or collision reasons. Retained
+  The legacy classifier does not consume the new presentation metadata or label
+  collision reasons. Retained
   snapshots allow review of the correlation. Actual Rust simulation/mesh tests
   supply the stronger causal/geometric oracle. If this fixture does not produce
   the required chain/wall sequence naturally, the run fails; do not weaken the

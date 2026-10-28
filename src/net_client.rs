@@ -94,6 +94,15 @@ fn valid_frame(frame: &Frame) -> bool {
             && body.id <= 9_007_199_254_740_991
             && ids.insert(body.id)
             && body.kind <= 4
+            && body.explosion.is_none_or(|effect| {
+                body.kind == 4
+                    && effect.progress.is_finite()
+                    && (0.0..=1.0).contains(&effect.progress)
+                    && effect.ordinal < 3
+                    && effect
+                        .burst
+                        .is_none_or(|chain| chain < 3 && effect.ordinal == 0)
+            })
             && match body.kind {
                 0 => body.owner.is_some_and(|seat| seat < 4) && body.prop.is_none(),
                 3 => {
@@ -111,6 +120,9 @@ fn valid_frame(frame: &Frame) -> bool {
             && bounded(&body.scale, 0., 128.)
     })
 }
+#[cfg(test)]
+mod explosion_tests;
+
 fn valid_lobby(lobby: &crate::rooms::Lobby) -> bool {
     use crate::rooms::Phase;
     let valid_name = |s: &str| {

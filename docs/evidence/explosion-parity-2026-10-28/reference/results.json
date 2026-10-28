@@ -1,0 +1,57 @@
+{
+  "status": "captured-needs-review",
+  "scope": "Real offline browser, keyboard only",
+  "quality": "6",
+  "source": "20d059457f32711c9789d8dd362c8c788e1f64ec",
+  "dirty": "",
+  "wasm_sha256": "da79dd7b94ca815fe42ad092cc36b465faa865208b66bf50460adcd50ab67173",
+  "screenshots": [
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-lobby.png",
+      "capture_ms": 45556.920405,
+      "sha256": "45ff9493ccf3c2b2c81bb68ec1cc68bfe955e1169938d845dd3c7b310bb53271"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-settings.png",
+      "capture_ms": 51013.594421999995,
+      "sha256": "724d8cf44226540026d865683a6a1314e358a8c850582d63bf474a06631296de"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-playing.png",
+      "capture_ms": 47119.10507899997,
+      "sha256": "f193b941ca915caddeacacf5717508c8906b3cbb07108e6a355f597f41ff8688"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-0.png",
+      "capture_ms": 49269.03499800002,
+      "sha256": "3a21c6d74051f196150b629d68acc40396320b64f5691b47ca6f979aa8ca416d"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-1.png",
+      "capture_ms": 54255.21325800003,
+      "sha256": "33609e72f850421f43da3e3ed30b603f15a74d943b7a3d25d7fea4b717ef8fef"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-2.png",
+      "capture_ms": 54507.605668000004,
+      "sha256": "d651e2e97659ae87b91b29c3fda4b6f6279fe8c047e86ecdeb78a3d984830a3b"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-3.png",
+      "capture_ms": 57122.773237999994,
+      "sha256": "42abdb05925a6d7c2499fd2875fd2e60d257b40d25f22776497ec1585522e2b2"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-4.png",
+      "capture_ms": 56822.57657800004,
+      "sha256": "1c8d74ad7f24ac1ce3b02586d4e0d38fecfcfbbc6363dabc942216db2a7a839e"
+    },
+    {
+      "file": "verification/parity/offline-reference-video/shot-reference-full-blast-5.png",
+      "capture_ms": 56583.969909999985,
+      "sha256": "744f1aa1ec0d12a0b32df5a141de4ea4b555c5989a453ccffec2ba431d81f178"
+    }
+  ],
+  "errors": [],
+  "video": "/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo/verification/parity/offline-reference-video/page@1ce248402f977204460ad314f87946b1.webm"
+}

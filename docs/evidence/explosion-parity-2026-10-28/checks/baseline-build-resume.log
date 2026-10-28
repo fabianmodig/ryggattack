@@ -1,0 +1,20 @@
+   Compiling bevy_render v0.19.1
+   Compiling bevy_core_pipeline v0.19.1
+   Compiling bevy_sprite_render v0.19.1
+   Compiling bevy_pbr v0.19.1
+   Compiling bevy_gizmos_render v0.19.1
+   Compiling bevy_ui_render v0.19.1
+   Compiling bevy_post_process v0.19.1
+   Compiling bevy_anti_alias v0.19.1
+   Compiling bevy_internal v0.19.1
+   Compiling bevy v0.19.1
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_d06ab228/repo)
+    Finished `release` profile [optimized] target(s) in 11m 24s
+wasm-opt: 54 MB -> 39 MB
+
+Built dist/web. Serve it with:
+  python3 -m http.server 8080 --directory dist/web
+
+real	15m16.519s
+user	15m5.137s
+sys	0m28.502s

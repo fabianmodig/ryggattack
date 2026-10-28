@@ -31,6 +31,13 @@ globalThis.location={search:'',href:'http://localhost:8000/'};installRoomControl
 assert.equal(document.getElementById('backend').value,'ws://127.0.0.1:8787');
 globalThis.location={search:'?online=ws%3A%2F%2F127.0.0.1%3A9999',href:'http://localhost:8000/'};installRoomControls();
 assert.equal(document.getElementById('backend').value,'ws://127.0.0.1:9999');
+assert.match(html, /id="quality-override"[^>]*type="hidden"[^>]*name="quality"[^>]*disabled/);
+for (const value of ['0', '2', '6', '7', '-1', 'auto', '', '06']) {
+ globalThis.location={search:'?quality='+value,href:'http://localhost:8000/'};
+ installRoomControls();
+ assert.equal(document.getElementById('quality-override').disabled,!['0','2','6'].includes(value));
+ assert.equal(document.getElementById('quality-override').value,value);
+}
 globalThis.setInterval=interval;
 document.getElementById('arena-room').value='Forest';
 document.getElementById('target-room').value='1';

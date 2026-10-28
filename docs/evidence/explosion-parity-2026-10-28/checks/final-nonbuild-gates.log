@@ -1,0 +1,1050 @@
+TAP version 13
+# Subtest: Docker context overrides cannot bypass a local unix DOCKER_HOST
+ok 1 - Docker context overrides cannot bypass a local unix DOCKER_HOST
+  ---
+  duration_ms: 3.191168
+  type: 'test'
+  ...
+# Subtest: inherited remote engine selectors fail closed even for Podman
+ok 2 - inherited remote engine selectors fail closed even for Podman
+  ---
+  duration_ms: 0.854803
+  type: 'test'
+  ...
+# Subtest: every engine command pins its validated local transport
+ok 3 - every engine command pins its validated local transport
+  ---
+  duration_ms: 1.065492
+  type: 'test'
+  ...
+# Subtest: Docker inherited context rejection is process-level and precedes output or dependency effects
+ok 4 - Docker inherited context rejection is process-level and precedes output or dependency effects
+  ---
+  duration_ms: 303.204562
+  type: 'test'
+  ...
+# Subtest: actual process effective/bounding/ambient capability sets must all be zero
+ok 5 - actual process effective/bounding/ambient capability sets must all be zero
+  ---
+  duration_ms: 1.679827
+  type: 'test'
+  ...
+# Subtest: local authorization is mandatory; unknown and unsafe arguments fail closed
+ok 6 - local authorization is mandatory; unknown and unsafe arguments fail closed
+  ---
+  duration_ms: 0.602882
+  type: 'test'
+  ...
+# Subtest: only explicit IPv4 loopback published ports are accepted
+ok 7 - only explicit IPv4 loopback published ports are accepted
+  ---
+  duration_ms: 0.405467
+  type: 'test'
+  ...
+# Subtest: DOM text, not the diagnostic global, is authoritative; hidden notices fail
+ok 8 - DOM text, not the diagnostic global, is authoritative; hidden notices fail
+  ---
+  duration_ms: 0.356101
+  type: 'test'
+  ...
+# Subtest: CLI authorization and help are inert even without any browser dependency
+ok 9 - CLI authorization and help are inert even without any browser dependency
+  ---
+  duration_ms: 318.091833
+  type: 'test'
+  ...
+# Subtest: credential negative scan rejects exact known secrets and private key evidence
+ok 10 - credential negative scan rejects exact known secrets and private key evidence
+  ---
+  duration_ms: 0.702726
+  type: 'test'
+  ...
+# Subtest: local smoke publishes only random loopback ports
+ok 11 - local smoke publishes only random loopback ports
+  ---
+  duration_ms: 1.331956
+  type: 'test'
+  ...
+# Subtest: remote-daemon CI smoke shares the calling job network without host exposure
+ok 12 - remote-daemon CI smoke shares the calling job network without host exposure
+  ---
+  duration_ms: 0.189825
+  type: 'test'
+  ...
+# Subtest: network helper rejects malformed namespaces, ports and non-loopback publication
+ok 13 - network helper rejects malformed namespaces, ports and non-loopback publication
+  ---
+  duration_ms: 1.798231
+  type: 'test'
+  ...
+# Subtest: a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+ok 14 - a genuine round boundary retries rather than claiming an empty input window passed or failed neutral intent
+  ---
+  duration_ms: 0.782446
+  type: 'test'
+  ...
+# Subtest: non-neutral form input always fails, including across a natural match boundary
+ok 15 - non-neutral form input always fails, including across a natural match boundary
+  ---
+  duration_ms: 0.44162
+  type: 'test'
+  ...
+# Subtest: smoke shutdown and finalization invoke the tested shared helpers
+ok 16 - smoke shutdown and finalization invoke the tested shared helpers
+  ---
+  duration_ms: 1.982082
+  type: 'test'
+  ...
+# Subtest: browser: requested clean code-zero exit is accepted
+ok 17 - browser: requested clean code-zero exit is accepted
+  ---
+  duration_ms: 1.10577
+  type: 'test'
+  ...
+# Subtest: browser: already-dead code-zero child is rejected before harness close
+ok 18 - browser: already-dead code-zero child is rejected before harness close
+  ---
+  duration_ms: 0.174637
+  type: 'test'
+  ...
+# Subtest: browser: requested code-one exit is rejected
+ok 19 - browser: requested code-one exit is rejected
+  ---
+  duration_ms: 0.197818
+  type: 'test'
+  ...
+# Subtest: browser: externally SIGKILLed exit during requested close is rejected
+ok 20 - browser: externally SIGKILLed exit during requested close is rejected
+  ---
+  duration_ms: 0.25118
+  type: 'test'
+  ...
+# Subtest: browser: unexpected clean exit queued before request is rejected
+ok 21 - browser: unexpected clean exit queued before request is rejected
+  ---
+  duration_ms: 0.221062
+  type: 'test'
+  ...
+# Subtest: browser: forced close timeout is rejected and only owned child is killed
+ok 22 - browser: forced close timeout is rejected and only owned child is killed
+  ---
+  duration_ms: 0.312529
+  type: 'test'
+  ...
+# Subtest: backend: requested clean code-zero exit is accepted
+ok 23 - backend: requested clean code-zero exit is accepted
+  ---
+  duration_ms: 0.913268
+  type: 'test'
+  ...
+# Subtest: backend: already-dead code-zero child is rejected before harness close
+ok 24 - backend: already-dead code-zero child is rejected before harness close
+  ---
+  duration_ms: 0.291483
+  type: 'test'
+  ...
+# Subtest: backend: requested code-one exit is rejected
+ok 25 - backend: requested code-one exit is rejected
+  ---
+  duration_ms: 0.423287
+  type: 'test'
+  ...
+# Subtest: backend: externally SIGKILLed exit during requested close is rejected
+ok 26 - backend: externally SIGKILLed exit during requested close is rejected
+  ---
+  duration_ms: 0.196636
+  type: 'test'
+  ...
+# Subtest: backend: unexpected clean exit queued before request is rejected
+ok 27 - backend: unexpected clean exit queued before request is rejected
+  ---
+  duration_ms: 0.108401
+  type: 'test'
+  ...
+# Subtest: backend: forced close timeout is rejected and only owned child is killed
+ok 28 - backend: forced close timeout is rejected and only owned child is killed
+  ---
+  duration_ms: 0.098481
+  type: 'test'
+  ...
+# Subtest: admitted page already closed cannot silently skip normal Leave
+ok 29 - admitted page already closed cannot silently skip normal Leave
+  ---
+  duration_ms: 0.943639
+  type: 'test'
+  ...
+# Subtest: admitted client with missing page cannot silently skip normal Leave
+ok 30 - admitted client with missing page cannot silently skip normal Leave
+  ---
+  duration_ms: 0.196782
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing leave_packet
+ok 31 - finalization rejects closed admitted page missing leave_packet
+  ---
+  duration_ms: 0.257366
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing left_room_readback
+ok 32 - finalization rejects closed admitted page missing left_room_readback
+  ---
+  duration_ms: 0.065621
+  type: 'test'
+  ...
+# Subtest: finalization rejects closed admitted page missing socket_closed
+ok 33 - finalization rejects closed admitted page missing socket_closed
+  ---
+  duration_ms: 0.061623
+  type: 'test'
+  ...
+# Subtest: finalization rejects missing first-peer authoritative roster readback
+ok 34 - finalization rejects missing first-peer authoritative roster readback
+  ---
+  duration_ms: 0.112585
+  type: 'test'
+  ...
+# Subtest: finalization rejects first-peer readback still containing departing participant
+ok 35 - finalization rejects first-peer readback still containing departing participant
+  ---
+  duration_ms: 0.125958
+  type: 'test'
+  ...
+# Subtest: real Leave helper uses button, waits for cleared HUD, socket and peer roster
+ok 36 - real Leave helper uses button, waits for cleared HUD, socket and peer roster
+  ---
+  duration_ms: 0.467343
+  type: 'test'
+  ...
+# Subtest: uncleared HUD rejects Leave and finalization even after page closes
+ok 37 - uncleared HUD rejects Leave and finalization even after page closes
+  ---
+  duration_ms: 0.261304
+  type: 'test'
+  ...
+# Subtest: nonadmitted startup failures do not invent Leave requirements
+ok 38 - nonadmitted startup failures do not invent Leave requirements
+  ---
+  duration_ms: 0.1023
+  type: 'test'
+  ...
+# Subtest: SIGINT during cleanup forces failed status and nonzero after successful process close
+ok 39 - SIGINT during cleanup forces failed status and nonzero after successful process close
+  ---
+  duration_ms: 0.301566
+  type: 'test'
+  ...
+# Subtest: SIGTERM during cleanup forces failed status and nonzero after successful process close
+ok 40 - SIGTERM during cleanup forces failed status and nonzero after successful process close
+  ---
+  duration_ms: 0.12921
+  type: 'test'
+  ...
+# Subtest: child startup error is not accepted as a truthy exit record
+ok 41 - child startup error is not accepted as a truthy exit record
+  ---
+  duration_ms: 0.15611
+  type: 'test'
+  ...
+# Subtest: already dead abnormal child (1, null) is rejected
+ok 42 - already dead abnormal child (1, null) is rejected
+  ---
+  duration_ms: 0.095304
+  type: 'test'
+  ...
+# Subtest: already dead abnormal child (null, SIGKILL) is rejected
+ok 43 - already dead abnormal child (null, SIGKILL) is rejected
+  ---
+  duration_ms: 0.057645
+  type: 'test'
+  ...
+# Subtest: existing failure and errors remain fatal with no interruption
+ok 44 - existing failure and errors remain fatal with no interruption
+  ---
+  duration_ms: 0.090275
+  type: 'test'
+  ...
+# Subtest: browser: observed 5924ms owned close remains clean (disconnect stalls=false)
+ok 45 - browser: observed 5924ms owned close remains clean (disconnect stalls=false)
+  ---
+  duration_ms: 1.827946
+  type: 'test'
+  ...
+# Subtest: browser: observed 5924ms owned close remains clean (disconnect stalls=true)
+ok 46 - browser: observed 5924ms owned close remains clean (disconnect stalls=true)
+  ---
+  duration_ms: 0.45908
+  type: 'test'
+  ...
+# Subtest: browser: hung owner is still forcibly stopped and rejected at bounded 20s deadline
+ok 47 - browser: hung owner is still forcibly stopped and rejected at bounded 20s deadline
+  ---
+  duration_ms: 0.544764
+  type: 'test'
+  ...
+# Subtest: browser policy still rejects abnormal requested exit (1, null)
+ok 48 - browser policy still rejects abnormal requested exit (1, null)
+  ---
+  duration_ms: 0.161132
+  type: 'test'
+  ...
+# Subtest: browser policy still rejects abnormal requested exit (null, SIGKILL)
+ok 49 - browser policy still rejects abnormal requested exit (null, SIGKILL)
+  ---
+  duration_ms: 0.108543
+  type: 'test'
+  ...
+# Subtest: graceful backend SIGTERM request must still produce code zero without signal
+ok 50 - graceful backend SIGTERM request must still produce code zero without signal
+  ---
+  duration_ms: 0.216069
+  type: 'test'
+  ...
+# Subtest: wire evidence requires primary, wall, destroyed prop and smaller distinct delayed chain IDs
+ok 51 - wire evidence requires primary, wall, destroyed prop and smaller distinct delayed chain IDs
+  ---
+  duration_ms: 3.447743
+  type: 'test'
+  ...
+# Subtest: missing shots, gaps, round clears, unrelated prop positions and tiny-only blasts never pass
+ok 52 - missing shots, gaps, round clears, unrelated prop positions and tiny-only blasts never pass
+  ---
+  duration_ms: 0.916452
+  type: 'test'
+  ...
+# Subtest: exact legal 4,8,32,36,40 gap cannot complete a causal chain
+ok 53 - exact legal 4,8,32,36,40 gap cannot complete a causal chain
+  ---
+  duration_ms: 0.260253
+  type: 'test'
+  ...
+# Subtest: round-finished boundary cannot connect an unfinished causal chain
+ok 54 - round-finished boundary cannot connect an unfinished causal chain
+  ---
+  duration_ms: 0.264833
+  type: 'test'
+  ...
+# Subtest: completed historical proof survives a later sampling gap or round finish
+ok 55 - completed historical proof survives a later sampling gap or round finish
+  ---
+  duration_ms: 0.509855
+  type: 'test'
+  ...
+# Subtest: disjoint observer ticks cannot supply shared evidence
+ok 56 - disjoint observer ticks cannot supply shared evidence
+  ---
+  duration_ms: 0.371042
+  type: 'test'
+  ...
+# Subtest: nonpositive scales, duplicate IDs and regressing ticks reject corrupt evidence
+ok 57 - nonpositive scales, duplicate IDs and regressing ticks reject corrupt evidence
+  ---
+  duration_ms: 1.252771
+  type: 'test'
+  ...
+# Subtest: shared observer gate rejects a disagreement even at an explosion-free tick
+ok 58 - shared observer gate rejects a disagreement even at an explosion-free tick
+  ---
+  duration_ms: 3.219666
+  type: 'test'
+  ...
+# Subtest: explosion full source snapshot survives unchanged privacy publication gates
+ok 59 - explosion full source snapshot survives unchanged privacy publication gates
+  ---
+  duration_ms: 66.045995
+  type: 'test'
+  ...
+# Subtest: generated private-key headers still purge all evidence in every publication path
+ok 60 - generated private-key headers still purge all evidence in every publication path
+  ---
+  duration_ms: 8.502484
+  type: 'test'
+  ...
+# Subtest: generated private-key headers still block screenshot pixels before capture
+ok 61 - generated private-key headers still block screenshot pixels before capture
+  ---
+  duration_ms: 0.745611
+  type: 'test'
+  ...
+# Subtest: fixtures create a missing configured scratch parent
+ok 62 - fixtures create a missing configured scratch parent
+  ---
+  duration_ms: 5.701448
+  type: 'test'
+  ...
+# Subtest: unreferenced retired HTML is not a game artifact requirement
+ok 63 - unreferenced retired HTML is not a game artifact requirement
+  ---
+  duration_ms: 74.829842
+  type: 'test'
+  ...
+# Subtest: mismatched reachable copied module bytes fail
+ok 64 - mismatched reachable copied module bytes fail
+  ---
+  duration_ms: 34.441026
+  type: 'test'
+  ...
+# Subtest: module script src, nested re-exports, cycles and side-effect imports are traversed
+ok 65 - module script src, nested re-exports, cycles and side-effect imports are traversed
+  ---
+  duration_ms: 81.19664
+  type: 'test'
+  ...
+# Subtest: missing reachable nested dist module fails
+ok 66 - missing reachable nested dist module fails
+  ---
+  duration_ms: 94.802007
+  type: 'test'
+  ...
+# Subtest: mismatched nested mjs bytes fail
+ok 67 - mismatched nested mjs bytes fail
+  ---
+  duration_ms: 73.401723
+  type: 'test'
+  ...
+# Subtest: dynamic imports cannot silently escape the static graph
+ok 68 - dynamic imports cannot silently escape the static graph
+  ---
+  duration_ms: 75.728402
+  type: 'test'
+  ...
+# Subtest: missing reachable source module fails rather than silently skipping it
+ok 69 - missing reachable source module fails rather than silently skipping it
+  ---
+  duration_ms: 42.116436
+  type: 'test'
+  ...
+# Subtest: web build packages every local entry-module dependency including nested HUD imports
+ok 70 - web build packages every local entry-module dependency including nested HUD imports
+  ---
+  duration_ms: 1.550226
+  type: 'test'
+  ...
+# Subtest: bootstrap mounts and atomically forwards parsed HUD data without room commands
+ok 71 - bootstrap mounts and atomically forwards parsed HUD data without room commands
+  ---
+  duration_ms: 1.598204
+  type: 'test'
+  ...
+# Subtest: missing offline or malformed bridge data clears HUD and enables canvas fallback
+ok 72 - missing offline or malformed bridge data clears HUD and enables canvas fallback
+  ---
+  duration_ms: 0.406719
+  type: 'test'
+  ...
+# Subtest: fresh coherent payload replaces old outcome and leave clears the roster
+ok 73 - fresh coherent payload replaces old outcome and leave clears the roster
+  ---
+  duration_ms: 0.922562
+  type: 'test'
+  ...
+# Subtest: ordinary same-room preflight precedes the target-one core, each capped at 180s
+ok 74 - ordinary same-room preflight precedes the target-one core, each capped at 180s
+  ---
+  duration_ms: 1.359868
+  type: 'test'
+  ...
+# Subtest: new core cannot inherit preflight winner, state ticks, outcomes, inputs or lobby history
+ok 75 - new core cannot inherit preflight winner, state ticks, outcomes, inputs or lobby history
+  ---
+  duration_ms: 0.319809
+  type: 'test'
+  ...
+# Subtest: queued preflight observations remain assigned to preflight after core starts
+ok 76 - queued preflight observations remain assigned to preflight after core starts
+  ---
+  duration_ms: 0.827656
+  type: 'test'
+  ...
+# Subtest: fresh reset rejects inherited winner, wins, timer buffs and finished rounds
+ok 77 - fresh reset rejects inherited winner, wins, timer buffs and finished rounds
+  ---
+  duration_ms: 0.466653
+  type: 'test'
+  ...
+# Subtest: delayed binding delivery uses page observation time, not the currently active case
+ok 78 - delayed binding delivery uses page observation time, not the currently active case
+  ---
+  duration_ms: 0.322439
+  type: 'test'
+  ...
+# Subtest: input windows, screenshot and publication-lag limits remain intact
+ok 79 - input windows, screenshot and publication-lag limits remain intact
+  ---
+  duration_ms: 0.149064
+  type: 'test'
+  ...
+# Subtest: actual wire-order sequence-one neutral is startup evidence, never case input proof
+ok 80 - actual wire-order sequence-one neutral is startup evidence, never case input proof
+  ---
+  duration_ms: 2.554681
+  type: 'test'
+  ...
+# Subtest: startup rejects fire
+ok 81 - startup rejects fire
+  ---
+  duration_ms: 0.295013
+  type: 'test'
+  ...
+# Subtest: startup rejects horizontal
+ok 82 - startup rejects horizontal
+  ---
+  duration_ms: 0.226111
+  type: 'test'
+  ...
+# Subtest: startup rejects vertical
+ok 83 - startup rejects vertical
+  ---
+  duration_ms: 0.185335
+  type: 'test'
+  ...
+# Subtest: startup rejects missing fire
+ok 84 - startup rejects missing fire
+  ---
+  duration_ms: 0.164962
+  type: 'test'
+  ...
+# Subtest: startup rejects missing horizontal
+ok 85 - startup rejects missing horizontal
+  ---
+  duration_ms: 0.146368
+  type: 'test'
+  ...
+# Subtest: startup rejects wrong sequence
+ok 86 - startup rejects wrong sequence
+  ---
+  duration_ms: 0.138911
+  type: 'test'
+  ...
+# Subtest: startup rejects zero sequence
+ok 87 - startup rejects zero sequence
+  ---
+  duration_ms: 0.144567
+  type: 'test'
+  ...
+# Subtest: startup rejects string sequence
+ok 88 - startup rejects string sequence
+  ---
+  duration_ms: 0.402551
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Case
+ok 89 - startup window closes permanently at first Case
+  ---
+  duration_ms: 0.556414
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Configure
+ok 90 - startup window closes permanently at first Configure
+  ---
+  duration_ms: 0.208562
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Lobby
+ok 91 - startup window closes permanently at first Lobby
+  ---
+  duration_ms: 0.120162
+  type: 'test'
+  ...
+# Subtest: startup window closes permanently at first Running
+ok 92 - startup window closes permanently at first Running
+  ---
+  duration_ms: 0.098491
+  type: 'test'
+  ...
+# Subtest: startup requires observed Hello then complete Welcome identity
+ok 93 - startup requires observed Hello then complete Welcome identity
+  ---
+  duration_ms: 0.279339
+  type: 'test'
+  ...
+# Subtest: second startup and retry after rejected Input cannot become startup proof
+ok 94 - second startup and retry after rejected Input cannot become startup proof
+  ---
+  duration_ms: 0.176731
+  type: 'test'
+  ...
+# Subtest: duplicate Hello or Welcome is not a startup handshake
+ok 95 - duplicate Hello or Welcome is not a startup handshake
+  ---
+  duration_ms: 0.169397
+  type: 'test'
+  ...
+# Subtest: actual main socket callback retains startup packet separately without errors or case counters
+ok 96 - actual main socket callback retains startup packet separately without errors or case counters
+  ---
+  duration_ms: 5.111705
+  type: 'test'
+  ...
+# Subtest: main callback rejects and retains illegal unscoped Input throughout handshake boundaries
+ok 97 - main callback rejects and retains illegal unscoped Input throughout handshake boundaries
+  ---
+  duration_ms: 9.590783
+  type: 'test'
+  ...
+# Subtest: main case input remains strict and unknown commands still fault
+ok 98 - main case input remains strict and unknown commands still fault
+  ---
+  duration_ms: 1.259975
+  type: 'test'
+  ...
+# Subtest: live completion drains actual clear samples before the temporal oracle and reports separate proof/tail
+ok 99 - live completion drains actual clear samples before the temporal oracle and reports separate proof/tail
+  ---
+  duration_ms: 1.000457
+  type: 'test'
+  ...
+# Subtest: live validation shares the case-local bounded transition rule, including capture-time drains
+ok 100 - live validation shares the case-local bounded transition rule, including capture-time drains
+  ---
+  duration_ms: 0.298305
+  type: 'test'
+  ...
+# Subtest: failed validation still publishes all captured and pending observations without trimming tails
+ok 101 - failed validation still publishes all captured and pending observations without trimming tails
+  ---
+  duration_ms: 0.96484
+  type: 'test'
+  ...
+# Subtest: all-after, one-before, and short-before persistence cannot borrow the tail
+ok 102 - all-after, one-before, and short-before persistence cannot borrow the tail
+  ---
+  duration_ms: 3.609479
+  type: 'test'
+  ...
+# Subtest: clear must be actual serialized HUD plus empty DOM, first observed within 1000ms of wire Lobby
+ok 103 - clear must be actual serialized HUD plus empty DOM, first observed within 1000ms of wire Lobby
+  ---
+  duration_ms: 3.987863
+  type: 'test'
+  ...
+# Subtest: case-local proof rejects foreign outcomes, clear samples, and return boundaries
+ok 104 - case-local proof rejects foreign outcomes, clear samples, and return boundaries
+  ---
+  duration_ms: 1.351079
+  type: 'test'
+  ...
+# Subtest: named proof must still match the authoritative winner and client Running
+ok 105 - named proof must still match the authoritative winner and client Running
+  ---
+  duration_ms: 1.343995
+  type: 'test'
+  ...
+# Subtest: raw Lobby may retain old DOM until the observed 100ms poll bound, then actually clears
+ok 106 - raw Lobby may retain old DOM until the observed 100ms poll bound, then actually clears
+  ---
+  duration_ms: 3.073141
+  type: 'test'
+  ...
+# Subtest: historical async clock sequence is reproducible without relabelling old incomplete evidence
+ok 107 - historical async clock sequence is reproducible without relabelling old incomplete evidence
+  ---
+  duration_ms: 1.153971
+  type: 'test'
+  ...
+# Subtest: over-100ms stale DOM and late actual clear fail even when wire-to-clear is under 1000ms
+ok 108 - over-100ms stale DOM and late actual clear fail even when wire-to-clear is under 1000ms
+  ---
+  duration_ms: 0.911301
+  type: 'test'
+  ...
+# Subtest: missing actual clear fails even with empty outcome or observations ending at the bound
+ok 109 - missing actual clear fails even with empty outcome or observations ending at the bound
+  ---
+  duration_ms: 0.960354
+  type: 'test'
+  ...
+# Subtest: post-clear outcome reappearance fails in any phase and even inside the original grace
+ok 110 - post-clear outcome reappearance fails in any phase and even inside the original grace
+  ---
+  duration_ms: 1.041995
+  type: 'test'
+  ...
+# Subtest: initial configuration Lobby does not arm return or poison a later natural winner
+ok 111 - initial configuration Lobby does not arm return or poison a later natural winner
+  ---
+  duration_ms: 0.293438
+  type: 'test'
+  ...
+# Subtest: new core case has fresh transition state and cannot borrow or inherit preflight clear
+ok 112 - new core case has fresh transition state and cannot borrow or inherit preflight clear
+  ---
+  duration_ms: 0.444619
+  type: 'test'
+  ...
+# Subtest: page clock, not delayed Node receipt, controls the independently bounded DOM transition
+ok 113 - page clock, not delayed Node receipt, controls the independently bounded DOM transition
+  ---
+  duration_ms: 0.821419
+  type: 'test'
+  ...
+# Subtest: initial Lobby cannot carry an outcome before this case has observed Running
+ok 114 - initial Lobby cannot carry an outcome before this case has observed Running
+  ---
+  duration_ms: 0.17583
+  type: 'test'
+  ...
+# Subtest: published room scope remains enforced after the clear observation
+ok 115 - published room scope remains enforced after the clear observation
+  ---
+  duration_ms: 1.172423
+  type: 'test'
+  ...
+# Subtest: initial Lobby with delayed receipt cannot be selected as the returned-match clear
+ok 116 - initial Lobby with delayed receipt cannot be selected as the returned-match clear
+  ---
+  duration_ms: 0.162888
+  type: 'test'
+  ...
+# Subtest: 42 before-return observations prove 2475ms; two Running in-transit tail samples are separate
+ok 117 - 42 before-return observations prove 2475ms; two Running in-transit tail samples are separate
+  ---
+  duration_ms: 0.242508
+  type: 'test'
+  ...
+# Subtest: DOM mount/update is compact, text-only, collapsible, focus-neutral and removes old rows/outcomes
+ok 118 - DOM mount/update is compact, text-only, collapsible, focus-neutral and removes old rows/outcomes
+  ---
+  duration_ms: 3.201178
+  type: 'test'
+  ...
+# Subtest: DOM staleness: room change clears old outcome until a fresh frame
+ok 119 - DOM staleness: room change clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.849784
+  type: 'test'
+  ...
+# Subtest: DOM staleness: Lobby clears old outcome until a fresh frame
+ok 120 - DOM staleness: Lobby clears old outcome until a fresh frame
+  ---
+  duration_ms: 1.018207
+  type: 'test'
+  ...
+# Subtest: DOM staleness: Countdown clears old outcome until a fresh frame
+ok 121 - DOM staleness: Countdown clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.322047
+  type: 'test'
+  ...
+# Subtest: DOM staleness: reset clears old outcome until a fresh frame
+ok 122 - DOM staleness: reset clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.269301
+  type: 'test'
+  ...
+# Subtest: DOM staleness: leave clears old outcome until a fresh frame
+ok 123 - DOM staleness: leave clears old outcome until a fresh frame
+  ---
+  duration_ms: 0.333798
+  type: 'test'
+  ...
+# Subtest: active seats have names, bot fallback, score, OUT and simultaneous positive authoritative buffs
+ok 124 - active seats have names, bot fallback, score, OUT and simultaneous positive authoritative buffs
+  ---
+  duration_ms: 0.305704
+  type: 'test'
+  ...
+# Subtest: outcome: no score-based winner
+ok 125 - outcome: no score-based winner
+  ---
+  duration_ms: 0.119446
+  type: 'test'
+  ...
+# Subtest: outcome: named match winner
+ok 126 - outcome: named match winner
+  ---
+  duration_ms: 0.319298
+  type: 'test'
+  ...
+# Subtest: outcome: bot match winner
+ok 127 - outcome: bot match winner
+  ---
+  duration_ms: 0.316666
+  type: 'test'
+  ...
+# Subtest: outcome: sole survivor round
+ok 128 - outcome: sole survivor round
+  ---
+  duration_ms: 0.140182
+  type: 'test'
+  ...
+# Subtest: outcome: no survivors draw
+ok 129 - outcome: no survivors draw
+  ---
+  duration_ms: 0.085473
+  type: 'test'
+  ...
+# Subtest: outcome: multiple survivors unknown
+ok 130 - outcome: multiple survivors unknown
+  ---
+  duration_ms: 0.074082
+  type: 'test'
+  ...
+# Subtest: outcome: alive before finish
+ok 131 - outcome: alive before finish
+  ---
+  duration_ms: 0.072292
+  type: 'test'
+  ...
+# Subtest: outcome: inactive winner ignored
+ok 132 - outcome: inactive winner ignored
+  ---
+  duration_ms: 0.061469
+  type: 'test'
+  ...
+# Subtest: outcome: invalid winner ignored
+ok 133 - outcome: invalid winner ignored
+  ---
+  duration_ms: 0.060252
+  type: 'test'
+  ...
+# Subtest: clear stale game: Lobby
+ok 134 - clear stale game: Lobby
+  ---
+  duration_ms: 0.089657
+  type: 'test'
+  ...
+# Subtest: clear stale game: Countdown
+ok 135 - clear stale game: Countdown
+  ---
+  duration_ms: 0.05703
+  type: 'test'
+  ...
+# Subtest: clear stale game: leave
+ok 136 - clear stale game: leave
+  ---
+  duration_ms: 0.052735
+  type: 'test'
+  ...
+# Subtest: clear stale game: no assigned seat
+ok 137 - clear stale game: no assigned seat
+  ---
+  duration_ms: 0.052478
+  type: 'test'
+  ...
+# Subtest: clear stale game: reset
+ok 138 - clear stale game: reset
+  ---
+  duration_ms: 0.051063
+  type: 'test'
+  ...
+# Subtest: expired/invalid buffs are omitted, positive timers are never locally decremented, dead seat stays OUT
+ok 139 - expired/invalid buffs are omitted, positive timers are never locally decremented, dead seat stays OUT
+  ---
+  duration_ms: 0.384259
+  type: 'test'
+  ...
+# Subtest: diagnostics whitelist excludes all credential/reconnect metadata; failures remain visible outside diagnostics
+ok 140 - diagnostics whitelist excludes all credential/reconnect metadata; failures remain visible outside diagnostics
+  ---
+  duration_ms: 0.162643
+  type: 'test'
+  ...
+# Subtest: page pointer routing respects room and HUD controls without stealing focus
+ok 141 - page pointer routing respects room and HUD controls without stealing focus
+  ---
+  duration_ms: 3.135459
+  type: 'test'
+  ...
+# Subtest: perf servers serve the calibration module with a JavaScript MIME type
+ok 142 - perf servers serve the calibration module with a JavaScript MIME type
+  ---
+  duration_ms: 0.522734
+  type: 'test'
+  ...
+# Subtest: page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+ok 143 - page calibrates unloaded rAF before starting wasm at 30/40/144 Hz
+  ---
+  duration_ms: 2.641386
+  type: 'test'
+  ...
+# Subtest: page still starts wasm if calibration unexpectedly rejects
+ok 144 - page still starts wasm if calibration unexpectedly rejects
+  ---
+  duration_ms: 1.32631
+  type: 'test'
+  ...
+# Subtest: hidden pages discard calibration without scheduling rAF
+ok 145 - hidden pages discard calibration without scheduling rAF
+  ---
+  duration_ms: 0.158154
+  type: 'test'
+  ...
+# Subtest: missing or failing rAF resolves null instead of blocking startup
+ok 146 - missing or failing rAF resolves null instead of blocking startup
+  ---
+  duration_ms: 0.255461
+  type: 'test'
+  ...
+# Subtest: stalled or incomplete calibration has a bounded timeout and cleanup
+ok 147 - stalled or incomplete calibration has a bounded timeout and cleanup
+  ---
+  duration_ms: 0.237624
+  type: 'test'
+  ...
+# Subtest: visibility changes invalidate partially measured cadence
+ok 148 - visibility changes invalidate partially measured cadence
+  ---
+  duration_ms: 0.165078
+  type: 'test'
+  ...
+# Subtest: implausible or invalid timestamps never become tiny or invalid targets
+ok 149 - implausible or invalid timestamps never become tiny or invalid targets
+  ---
+  duration_ms: 1.152042
+  type: 'test'
+  ...
+# Subtest: one scheduling hitch does not lower an otherwise stable 40 Hz target
+ok 150 - one scheduling hitch does not lower an otherwise stable 40 Hz target
+  ---
+  duration_ms: 0.423208
+  type: 'test'
+  ...
+# Subtest: unstable throttled cadence is not accepted as a low-refresh display
+ok 151 - unstable throttled cadence is not accepted as a low-refresh display
+  ---
+  duration_ms: 0.17367
+  type: 'test'
+  ...
+# Subtest: status waits tolerate only unpublished initialization and require the actual expected status
+ok 152 - status waits tolerate only unpublished initialization and require the actual expected status
+  ---
+  duration_ms: 0.787799
+  type: 'test'
+  ...
+# Subtest: visible DOM credentials block screenshots before capture
+ok 153 - visible DOM credentials block screenshots before capture
+  ---
+  duration_ms: 2.371099
+  type: 'test'
+  ...
+# Subtest: publishing scans every artifact and purges earlier screenshots on privacy failure
+ok 154 - publishing scans every artifact and purges earlier screenshots on privacy failure
+  ---
+  duration_ms: 17.960444
+  type: 'test'
+  ...
+# Subtest: privacy fixture initializes missing HOME and TMPDIR scratch parents
+ok 155 - privacy fixture initializes missing HOME and TMPDIR scratch parents
+  ---
+  duration_ms: 236.130569
+  type: 'test'
+  ...
+# Subtest: observed input samples must satisfy the selected bot steering and fire policy
+ok 156 - observed input samples must satisfy the selected bot steering and fire policy
+  ---
+  duration_ms: 0.368649
+  type: 'test'
+  ...
+# Subtest: solo help and invalid CLI are inert with a missing Playwright module
+ok 157 - solo help and invalid CLI are inert with a missing Playwright module
+  ---
+  duration_ms: 341.148341
+  type: 'test'
+  ...
+# Subtest: unchanged default creates the original three-bot configuration
+ok 158 - unchanged default creates the original three-bot configuration
+  ---
+  duration_ms: 0.192641
+  type: 'test'
+  ...
+# Subtest: explicit bot configuration covers all supported non-practice rosters
+ok 159 - explicit bot configuration covers all supported non-practice rosters
+  ---
+  duration_ms: 0.259068
+  type: 'test'
+  ...
+# Subtest: authorization and bot count fail closed before any live side effects
+ok 160 - authorization and bot count fail closed before any live side effects
+  ---
+  duration_ms: 0.580416
+  type: 'test'
+  ...
+1..160
+# tests 160
+# suites 0
+# pass 160
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 929.262697
+rooms UI helpers and visible validation passed
+Pages canonical redirect preserves room/settings, replaces obsolete backends, retains offline entry
+Chart update validates paired immutable tag and preserves non-version fields
+Native shared adapter supports WSS and fails closed on an untrusted local TLS certificate
+private-room server banner passed
+Production origin/mode configuration fails closed for missing, wildcard, null, malformed and mismatched policies
+{
+  "checks": [
+    "explicit production bind",
+    "exact HTTPS Origin and native policy",
+    "only /ws upgrades",
+    "private health/readiness and aggregate metrics",
+    "anonymous creation/code guessing globally rate limited without stalling tick",
+    "spoofed Forwarded/X-Forwarded-For cannot evade global limits",
+    "SIGTERM notifies connected clients and exits cleanly within 2s"
+  ],
+  "logs": "{\"event\":\"shutdown\",\"rooms_reset\":true}\n"
+}
+{
+  "passed": 16,
+  "checks": [
+    "half-open upgrade does not stall admission",
+    "stale input discarded",
+    "seat spoof rejected",
+    "position spoof rejected",
+    "axis bounds rejected",
+    "oversize rejected",
+    "binary rejected",
+    "incompatible version rejected",
+    "input flood disconnected",
+    "healthy client after abuse receives advancing state",
+    "raw foreign Origin rejected before upgrade",
+    "raw exact allowed Origin admitted alongside native no-Origin client",
+    "raw fragmented aggregate payload over 1 KiB rejected",
+    "raw empty non-FIN trickle bounded; healthy ticks advance",
+    "raw empty non-FIN flood bounded; healthy ticks advance",
+    "raw attacker seat reusable after fragment abuse"
+  ]
+}
+{"tick":0,"seconds":0,"carts":[{"id":0,"active":true,"alive":true,"position":[-6.1, 0.62, -7.0],"cooldown":0},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":138,"until_drop":30}
+{"tick":64,"seconds":1,"carts":[{"id":0,"active":true,"alive":true,"position":[-1.9000001, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":2,"pickups":0,"scenery":138,"until_drop":29}
+{"tick":128,"seconds":2,"carts":[{"id":0,"active":true,"alive":true,"position":[2.3, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":135,"until_drop":28}
+{"tick":192,"seconds":3,"carts":[{"id":0,"active":true,"alive":true,"position":[6.4869604, 0.62, -6.9125648],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":135,"until_drop":27}
+{"tick":256,"seconds":4,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, -2.9137166],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":135,"until_drop":26}
+{"tick":320,"seconds":5,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 1.286283],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":132,"until_drop":25}
+{"tick":384,"seconds":6,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 5.486283],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":132,"until_drop":24}
+{"tick":448,"seconds":7,"carts":[{"id":0,"active":true,"alive":true,"position":[3.9274333, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":132,"until_drop":23}
+{"tick":512,"seconds":8,"carts":[{"id":0,"active":true,"alive":true,"position":[-0.27256653, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":127,"until_drop":22}
+{"tick":576,"seconds":9,"carts":[{"id":0,"active":true,"alive":true,"position":[-4.472566, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":127,"until_drop":21}
+{"tick":640,"seconds":10,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, 4.94115],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":127,"until_drop":20}
+{"tick":704,"seconds":11,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, 0.74115],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":19}
+{"tick":768,"seconds":12,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, -3.45885],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":18}
+{"tick":832,"seconds":13,"carts":[{"id":0,"active":true,"alive":true,"position":[-5.9548664, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":17}
+{"tick":896,"seconds":14,"carts":[{"id":0,"active":true,"alive":true,"position":[-1.7548667, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":2,"pickups":0,"scenery":125,"until_drop":16}
+{"tick":960,"seconds":15,"carts":[{"id":0,"active":true,"alive":true,"position":[2.445133, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":15}
+{"tick":1024,"seconds":16,"carts":[{"id":0,"active":true,"alive":true,"position":[6.6124063, 0.62, -6.8398914],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":14}
+{"tick":1088,"seconds":17,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, -2.7685833],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":13}
+{"tick":1152,"seconds":18,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 1.4314163],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":12}
+{"tick":1216,"seconds":19,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 5.6314163],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":11}
+{"tick":1280,"seconds":20,"carts":[{"id":0,"active":true,"alive":true,"position":[3.7823, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":10}
+{"tick":1344,"seconds":21,"carts":[{"id":0,"active":true,"alive":true,"position":[-0.41769978, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":9}
+{"tick":1408,"seconds":22,"carts":[{"id":0,"active":true,"alive":true,"position":[-4.617699, 0.62, 7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":8}
+{"tick":1472,"seconds":23,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, 4.7960167],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":7}
+{"tick":1536,"seconds":24,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, 0.59601665],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":6}
+{"tick":1600,"seconds":25,"carts":[{"id":0,"active":true,"alive":true,"position":[-7.0, 0.62, -3.603983],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":5}
+{"tick":1664,"seconds":26,"carts":[{"id":0,"active":true,"alive":true,"position":[-5.8097334, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":4}
+{"tick":1728,"seconds":27,"carts":[{"id":0,"active":true,"alive":true,"position":[-1.6097333, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":2,"pickups":0,"scenery":125,"until_drop":3}
+{"tick":1792,"seconds":28,"carts":[{"id":0,"active":true,"alive":true,"position":[2.5902665, 0.62, -7.0],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":0,"scenery":125,"until_drop":2}
+{"tick":1856,"seconds":29,"carts":[{"id":0,"active":true,"alive":true,"position":[6.7245564, 0.62, -6.748019],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":0,"scenery":125,"until_drop":1}
+{"tick":1920,"seconds":30,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, -2.62345],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":1,"scenery":125,"until_drop":5.1801195}
+{"tick":1984,"seconds":31,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 1.5765498],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":1,"pickups":1,"scenery":125,"until_drop":4.1801195}
+{"tick":2048,"seconds":32,"carts":[{"id":0,"active":true,"alive":true,"position":[7.0, 0.62, 5.77655],"cooldown":0.015625},{"id":1,"active":false,"alive":false,"position":[6.1, 0.62, 7.0],"cooldown":0},{"id":2,"active":false,"alive":false,"position":[-7.0, 0.62, 6.1],"cooldown":0},{"id":3,"active":false,"alive":false,"position":[7.0, 0.62, -6.1],"cooldown":0}],"wins":[0, 0, 0, 0],"projectiles":0,"pickups":1,"scenery":125,"until_drop":3.1801195}
+{"two_cart_match_final_tick": 8192, "wins": [0, 3, 0, 0], "automatic_round_restoration": true}
+PASS: no-display movement, held fire, fixed clocks, pickups/scenery, solo rules, complete two-cart match, invalid arguments
+Portable Bookworm Docker build contract passed; image runtime checks remain required
+==> Linting charts/ryggattack
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+Helm public/private, hardening, probes, paired immutable publication and Pages migration contracts passed
