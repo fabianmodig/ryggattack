@@ -1,0 +1,35 @@
+// Capture-only FIFO packet pacing. Never constructs or modifies gameplay packets.
+import {createRequire} from 'node:module';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+const {ws:WebSocket,wsServer:WebSocketServer}=createRequire('/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json')('playwright-core/lib/utilsBundle');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+export async function startCaptureRelay(upstreamAddress,origin,fault){
+ const server=new WebSocketServer({host:'127.0.0.1',port:0});
+ await new Promise(r=>server.once('listening',r));
+ let slow=false,start; const pending=[],pairs=[],trace=[];
+ server.on('connection',downstream=>{
+  const upstream=new WebSocket(upstreamAddress,{origin});pairs.push({upstream,downstream});const early=[];
+  downstream.on('message',(bytes,binary)=>{if(upstream.readyState===WebSocket.OPEN)upstream.send(bytes,{binary});else early.push([bytes,binary]);});
+  upstream.on('open',()=>{for(const [bytes,binary] of early)upstream.send(bytes,{binary});});
+  upstream.on('message',(bytes,binary)=>{
+   if(!slow){if(downstream.readyState===WebSocket.OPEN)downstream.send(bytes,{binary});return;}
+   start??=performance.now();const at=performance.now(),item={delivered:false};
+   assert(pending.filter(p=>!p.delivered).length<10000,'bounded relay queue');
+   const body=JSON.parse(String(bytes));const t=body.State?{tick:body.State.tick,sha256:sha(bytes),received_ms:at-start}:null;if(t)trace.push(t);
+   item.timer=setTimeout(()=>{if(downstream.readyState===WebSocket.OPEN){downstream.send(bytes,{binary});if(t){t.delivered_ms=performance.now()-start;t.delivered_sha256=sha(bytes);}}item.delivered=true;},Math.max(0,start+(at-start)*10-performance.now()));pending.push(item);
+  });
+  downstream.on('close',()=>upstream.close());upstream.on('close',()=>downstream.close());
+  upstream.on('error',e=>fault('relay upstream',e));downstream.on('error',e=>fault('relay downstream',e));
+ });
+ return {address:`ws://127.0.0.1:${server.address().port}`,trace,
+  arm(){slow=true;},
+  discardTail(){slow=false;const count=pending.filter(p=>!p.delivered).length;for(const p of pending)clearTimeout(p.timer);return count;},
+  async close(){for(const p of pairs){p.upstream.terminate();p.downstream.terminate();}await new Promise(r=>server.close(r));}
+ };
+}
+export function installCaptureClock(){
+ const original=performance.now.bind(performance);let wall=original(),virtual=wall,rate=1;
+ Object.defineProperty(performance,'now',{value:()=>virtual+(original()-wall)*rate});
+ globalThis.setCaptureClockRate=value=>{virtual=performance.now();wall=original();rate=value;};
+}

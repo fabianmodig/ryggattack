@@ -1,0 +1,11 @@
+import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import crypto from 'node:crypto';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';
+const original=path.resolve('repo/docs/evidence/explosion-parity-paired-q0'),tmp=fs.mkdtempSync(path.resolve('.paired-verifier-trial-'));
+const dir=path.join(tmp,'paired');fs.cpSync(original,dir,{recursive:true});fs.symlinkSync(path.resolve('repo/docs/evidence/explosion-parity-2026-10-28'),path.join(tmp,'explosion-parity-2026-10-28'));
+const run=()=>spawnSync(process.execPath,[path.join(dir,'verify.mjs')],{encoding:'utf8'});
+try{
+ assert.equal(run().status,0,'intact copied package');
+ const file=path.join(dir,'online-initial.png'),bytes=fs.readFileSync(file);fs.appendFileSync(file,'tamper');assert.notEqual(run().status,0,'changed file rejected');fs.writeFileSync(file,bytes);
+ const reportFile=path.join(dir,'online-slow/report.json'),r=JSON.parse(fs.readFileSync(reportFile));r.relay_trace.find(t=>t.delivered_ms!==undefined).delivered_sha256='0'.repeat(64);fs.writeFileSync(reportFile,JSON.stringify(r));
+ const manifestFile=path.join(dir,'manifest.json'),m=JSON.parse(fs.readFileSync(manifestFile));m.find(i=>i.file==='online-slow/report.json').sha256=crypto.createHash('sha256').update(fs.readFileSync(reportFile)).digest('hex');fs.writeFileSync(manifestFile,JSON.stringify(m));assert.notEqual(run().status,0,'resigned source/delivery byte mismatch rejected');
+ console.log('3/3 paired verifier trials passed: copied package, tampered image, resigned packet-byte mismatch');
+}finally{fs.rmSync(tmp,{recursive:true,force:true});}

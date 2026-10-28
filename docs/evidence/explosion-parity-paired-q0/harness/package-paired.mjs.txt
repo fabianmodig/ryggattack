@@ -1,0 +1,55 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import zlib from 'node:zlib';
+import {execFileSync} from 'node:child_process';
+const root=process.cwd(), repo=path.join(root,'repo'), base=path.join(repo,'docs/evidence/explosion-parity-paired-q0');
+fs.mkdirSync(base,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const copy=(from,to)=>{fs.mkdirSync(path.dirname(to),{recursive:true});fs.copyFileSync(from,to);};
+const off=path.join(repo,'verification/parity/paired-offline-slow-q0'), offNormal=path.join(repo,'verification/parity/paired-offline-wide-q0');
+const online=id=>path.join(repo,'verification/online-explosion',id);
+const on=online('2026-10-28T12-36-45-415Z-c29564f77569'),normal=online('2026-10-28T12-30-39-158Z-9ba18bf4b74d'),two=online('2026-10-28T12-24-20-861Z-68ccb3bd8c5c');
+const offReport=JSON.parse(fs.readFileSync(path.join(off,'report.json'))), offNormalReport=JSON.parse(fs.readFileSync(path.join(offNormal,'report.json')));
+const offVideo=path.join(off,offReport.video),onVideo=path.join(on,'private-raw-video/StageHuman.webm');
+const provenance={created_at:new Date().toISOString(),scope:'Real rendered matched quality0 and960x480; slow visual fixtures supplement normal-speed gameplay, not timing/network acceptance',viewport:[960,480],quality:0,clips:[],frames:[],private_raw_videos_not_published:true};
+function ff(args){execFileSync('ffmpeg',['-y','-hide_banner','-loglevel','error',...args],{stdio:'pipe'});}
+for(const [name,dir] of [['offline-slow',off],['offline-normal',offNormal],['online-slow',on],['online-normal',normal],['two-human-normal',two]]){
+ copy(path.join(dir,name.startsWith('offline')?'report.json':'results.json'),path.join(base,name,'report.json'));
+ if(fs.existsSync(path.join(dir,'states.json')))for(const f of ['states','inputs','lobbies']){
+  const bytes=fs.readFileSync(path.join(dir,f+'.json'));fs.writeFileSync(path.join(base,name,f+'.json.gz'),zlib.gzipSync(bytes));
+ }
+}
+function clip(name,source,start,duration){
+ const file=`${name}.webm`;ff(['-ss',String(start),'-i',source,'-t',String(duration),'-an','-c:v','libvpx-vp9','-threads','1','-crf','34','-b:v','0',path.join(base,file)]);
+ provenance.clips.push({file,source_sha256:sha(fs.readFileSync(source)),source_start_seconds:start,duration_seconds:duration,operation:'ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames'});
+}
+clip('offline-slow-sequence',offVideo,65,10);
+clip('online-slow-sequence',onVideo,18,10);
+clip('offline-normal-sequence',path.join(offNormal,offNormalReport.video),122,16);
+clip('online-normal-sequence',path.join(normal,'private-raw-video/StageHuman.webm'),27,6);
+clip('two-human-normal-sequence',path.join(two,'private-raw-video/BlastA.webm'),58,6);
+const stages=[['initial',69.0,23.52],['main',70.0,24.48],['dark-fade',72.0,25.92],['removed-smoke',73.0,27.36]];
+for(const [stage,a,b] of stages)for(const [kind,source,t] of [['offline',offVideo,a],['online',onVideo,b]]){
+ const file=`${kind}-${stage}.png`;ff(['-i',source,'-vf',`select=gte(t\\,${t})`,'-frames:v','1',path.join(base,file)]);provenance.frames.push({file,source_sha256:sha(fs.readFileSync(source)),source_seconds:t,stage});
+}
+for(const [kind,source,t] of [['offline',offVideo,67.2],['online',onVideo,19.68]]){
+ const file=`${kind}-cream-supplement.png`;ff(['-i',source,'-vf',`select=gte(t\\,${t})`,'-frames:v','1',path.join(base,file)]);provenance.frames.push({file,source_sha256:sha(fs.readFileSync(source)),source_seconds:t,stage:'cream supplement; earlier primary in online repeated volley, NOT relabeled as last primary'});
+}
+// Annotated montage preserves full framing. Detail crops use identical unscaled source rectangle.
+for(const f of provenance.frames){const temp=path.join(base,'.montage-'+f.file);const label=f.file.replace('.png','')+' source '+f.source_seconds.toFixed(1)+'s';ff(['-i',path.join(base,f.file),'-vf',`scale=480:240,pad=480:264:0:24:color=0x101820,drawtext=text='${label}':x=8:y=4:fontsize=14:fontcolor=white`,'-frames:v','1',temp]);}
+const montageInputs=provenance.frames.map(f=>path.join(base,'.montage-'+f.file));
+// use concat demuxer for still frames then tile in deterministic stage order
+fs.writeFileSync(path.join(base,'.montage-list'),montageInputs.map(f=>`file '${f}'`).join('\n'));
+ff(['-f','concat','-safe','0','-i',path.join(base,'.montage-list'),'-vf','tile=2x5','-frames:v','1',path.join(base,'paired-full-frames.png')]);
+for(const f of provenance.frames){ff(['-i',path.join(base,f.file),'-vf',`crop=200:170:590:40,pad=240:200:0:30:color=0x101820,drawtext=text='${f.file.replace('.png','')}':x=4:y=5:fontsize=11:fontcolor=white`,'-frames:v','1',path.join(base,'.detail-'+f.file)]);}
+fs.writeFileSync(path.join(base,'.detail-list'),provenance.frames.map(f=>`file '${path.join(base,'.detail-'+f.file)}'`).join('\n'));
+ff(['-f','concat','-safe','0','-i',path.join(base,'.detail-list'),'-vf','tile=2x5','-frames:v','1',path.join(base,'paired-detail.png')]);
+for(const entry of fs.readdirSync(base))if(entry.startsWith('.'))fs.rmSync(path.join(base,entry));
+const harness=path.join(base,'harness');fs.mkdirSync(harness,{recursive:true});
+for(const [source,dest] of [['capture-offline-wide.mjs','offline-normal.mjs.txt'],['capture-offline-slow.mjs','offline-slow.mjs.txt'],['capture-relay.test.mjs','capture-relay.test.mjs.txt']])copy(path.join(root,source),path.join(harness,dest));
+for(const [dir,file] of [[on,'online-explosion-slow-capture.mjs'],[on,'capture-relay.mjs'],[normal,'online-explosion-stage-capture.mjs'],[two,'online-explosion-paired-capture.mjs']])copy(path.join(dir,'source-inputs/scripts',file),path.join(harness,file+'.txt'));
+copy(path.join(repo,'verification/parity/capture-relay-tests.log'),path.join(base,'capture-relay-tests.log'));
+for(const [name,dir] of [['remote-video-api-failure',online('2026-10-28T12-18-41-234Z-b0549e784478')],['one-bot-guard-failure',online('2026-10-28T12-29-27-622Z-0e8ff95a09f9')]])copy(path.join(dir,'results.json'),path.join(base,'history',name+'.json'));
+fs.writeFileSync(path.join(base,'provenance.json'),JSON.stringify(provenance,null,2)+'\n');
+console.log(JSON.stringify({directory:base,frames:provenance.frames.length,clips:provenance.clips.length}));

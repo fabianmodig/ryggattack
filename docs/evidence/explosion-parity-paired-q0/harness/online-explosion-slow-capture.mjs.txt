@@ -1,0 +1,455 @@
+// Actual LOCAL artifact only. Never builds, deploys, injects state, or visits public rooms.
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import {spawn, execFileSync} from 'node:child_process';
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {startCaptureRelay,installCaptureClock} from './capture-relay.mjs';
+import {canonical, redact} from './live-deployment-helpers.mjs';
+import {checkCopiedEntryArtifacts} from './online-hud-artifacts.mjs';
+import {capturePrivateScreenshot, PrivacyViolation, publishSoloEvidence} from './solo-bots-helpers.mjs';
+import {assertSharedExplosionEvidence} from './online-explosion-evidence.mjs';
+import {watchOwnedProcess, stopOwnedProcess, stopOwnedBrowser, leaveAdmittedClient, finalizeCleanupReport, watchCleanupInterruption} from './online-explosion-cleanup.mjs';
+
+const usage = `Usage: RYGGATTACK_EXPLOSION_ARTIFACT_READY=1 node scripts/online-explosion-smoke.mjs --local
+Parent must finish/freeze native + full WASM dist/web builds first. No build here.
+Two independent Chromium processes, one actual WASM human each; owned loopback server.
+PLAYWRIGHT_NODE_MODULES: installed Playwright package.json; RYGGATTACK_NATIVE_BIN_DIR: native bins.
+Writes a unique verification/online-explosion/<attempt>/; mechanical success still needs image review.
+See docs/online-explosion.md for artifact conditions, bounds oracle and review checklist.`;
+if (process.argv.slice(2).length === 1 && ['--help', '-h'].includes(process.argv[2])) { console.log(usage); process.exit(0); }
+if (process.argv.slice(2).join(' ') !== '--local') { console.error(usage); process.exit(2); }
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const web = path.join(repo, 'dist/web');
+const bin = path.resolve(process.env.RYGGATTACK_NATIVE_BIN_DIR ?? path.join(repo, 'target/debug'));
+const out = path.join(repo, 'verification/online-explosion', new Date().toISOString().replace(/[:.]/g, '-') + '-' + crypto.randomBytes(6).toString('hex'));
+fs.mkdirSync(out, {recursive: true});
+const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const started = performance.now(), now = () => Math.round(performance.now() - started);
+const secrets = new Set(), clients = [], browsers = [];
+const quality = Number(process.env.RYGGATTACK_EXPLOSION_QUALITY ?? '0');
+assert(Number.isInteger(quality) && quality >= 0 && quality <= 6, 'quality must be 0..6');
+const sequence = process.env.RYGGATTACK_EXPLOSION_SEQUENCE === '1';
+const sequenceOnly = process.env.RYGGATTACK_EXPLOSION_SEQUENCE_ONLY === '1';
+assert(sequenceOnly && sequence && quality === 0, 'paired low-quality video supplement only; not a six-screenshot gate');
+const report = {status: 'running', scope: 'LOCAL two actual rendered WASM humans, protocol 4; legal HTML controls + keyboard only',
+  budgets: {gameplay_wall_ms: 180000, screenshot_only_ms: 60000, max_matches: 3, captures_per_client: 3},
+  started_at: new Date().toISOString(), checks: [], errors: [], screenshots: [], cleanup: {},
+  mode: 'paired quality0 video supplement; not the six-screenshot gate',
+  visual_review: {status: 'required', claim: 'Wire transforms are NOT measured GPU mesh bounds or image pixel dimensions.'}};
+let server, backend, backendLifecycle, origin, address, privacyFailed = false, gameplayStarted;
+let relay;
+const interruption = watchCleanupInterruption(process);
+const safeText = value => String(value).replace(/\b(?:wss?|https?):\/\/[^\s"'<>]+/g, '[endpoint omitted]');
+const fault = (source, error) => report.errors.push({source, message: safeText(error?.message ?? error), at_ms: now()});
+function gameBudget() {
+  assert(!interruption.interrupted, 'interrupted');
+  assert(gameplayStarted === undefined || now() - gameplayStarted < report.budgets.gameplay_wall_ms, '180s visual gameplay budget exhausted (captures do not extend it)');
+}
+async function until(predicate, label, ms = 90000, gameplay = false, cleanup = false) {
+  const end = now() + ms;
+  while (!predicate()) {
+    assert(cleanup || !interruption.interrupted, 'interrupted');
+    assert(cleanup || report.errors.length === 0, 'observed browser/protocol error; see errors');
+    if (gameplay) gameBudget();
+    assert(now() < end, label); await sleep(25);
+  }
+  if (gameplay) gameBudget();
+}
+function filesBelow(dir) {
+  return fs.readdirSync(dir, {withFileTypes: true}).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => {
+    assert(!entry.isSymbolicLink(), 'artifact/source symlinks forbidden');
+    const file = path.join(dir, entry.name);
+    return entry.isDirectory() ? filesBelow(file) : entry.isFile() ? [file] : [];
+  });
+}
+function hashInputs() {
+  const rust = filesBelow(path.join(repo, 'src')).filter(f => f.endsWith('.rs'));
+  const source = [...rust, ...filesBelow(path.join(repo, 'web')), ...filesBelow(path.join(repo, 'scripts')).filter(f => /\.(?:mjs|js|sh)$/.test(f)),
+    path.join(repo, 'Cargo.toml'), path.join(repo, 'Cargo.lock'), path.join(repo, 'docs/online-explosion.md')];
+  const artifacts = filesBelow(web), native = path.join(bin, 'ryggattack-server');
+  for (const file of ['index.html', 'rooms.mjs', 'ryggattack.js', 'ryggattack_bg.wasm']) assert(artifacts.includes(path.join(web, file)), `missing parent-built ${file}`);
+  checkCopiedEntryArtifacts(path.join(repo, 'web'), web);
+  assert(fs.readFileSync(path.join(web, 'ryggattack_bg.wasm')).subarray(0, 4).equals(Buffer.from([0, 97, 115, 109])), 'actual WASM magic');
+  // Necessary stale-build guard, not a cryptographic proof of compiler provenance.
+  const newest = Math.max(...[...rust, path.join(repo, 'Cargo.toml'), path.join(repo, 'Cargo.lock')].map(f => fs.statSync(f).mtimeMs));
+  for (const file of [native, path.join(web, 'ryggattack_bg.wasm')]) assert(fs.statSync(file).mtimeMs >= newest, 'native/WASM older than Rust source; rebuild after freeze');
+  assert(fs.lstatSync(native).isFile() && !fs.lstatSync(native).isSymbolicLink(), 'regular native artifact required');
+  return Object.fromEntries([...new Set([...source, ...artifacts, native])].sort().map(file => {
+    const bytes = fs.readFileSync(file); return [path.relative(repo, file), {sha256: sha(bytes), bytes: bytes.length}];
+  }));
+}
+const pick = (object, keys) => Object.fromEntries(keys.map(key => [key, object[key]]));
+function publicFrame(frame) {
+  return {...pick(frame, ['tick', 'simulation_tick', 'ack', 'names', 'wins', 'winner', 'round_finished', 'transition', 'until_drop']),
+    carts: frame.carts.map(c => pick(c, ['id', 'active', 'alive', 'position', 'forward', 'shot_cooldown', 'speed_seconds', 'all_hits_seconds'])),
+    bodies: frame.bodies.map(b => pick(b, ['id', 'kind', 'position', 'rotation', 'scale', 'explosion']))};
+}
+function publicLobby(lobby) {
+  return {...pick(lobby, ['id', 'host', 'phase']), settings: pick(lobby.settings, ['arena', 'wins_target', 'bots']),
+    humans: lobby.humans.map(h => pick(h, ['id', 'name', 'seat', 'ready', 'connected']))};
+}
+async function startLocal() {
+  server = http.createServer((req, res) => {
+    let file;
+    try {
+      let pathname = decodeURIComponent(req.url.split('?')[0]);
+      if (pathname.includes('\0')) throw Error('NUL');
+      if (pathname.endsWith('/')) pathname += 'index.html';
+      file = path.resolve(web, '.' + pathname);
+    } catch { res.writeHead(400).end(); return; }
+    if (!file.startsWith(web + path.sep)) { res.writeHead(403).end(); return; }
+    fs.realpath(file, (error, real) => {
+      if (error) { res.writeHead(404).end(); return; }
+      if (!real.startsWith(fs.realpathSync(web) + path.sep)) { res.writeHead(403).end(); return; }
+      fs.readFile(real, (error, bytes) => {
+        if (error) { res.writeHead(404).end(); return; }
+        res.writeHead(200, {'content-type': ({'.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript', '.wasm': 'application/wasm'})[path.extname(real)] ?? 'application/octet-stream',
+          'content-security-policy': `connect-src 'self' ${address ?? "'none'"}; object-src 'none'; base-uri 'self'`}).end(bytes);
+      });
+    });
+  });
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
+  origin = `http://127.0.0.1:${server.address().port}`;
+  for (const [rawPath, expected] of [['/%2e%2e/Cargo.toml', 403], ['/%ZZ', 400], ['/%00', 400]]) {
+    const status = await new Promise((resolve, reject) => {
+      const req = http.get({host: '127.0.0.1', port: server.address().port, path: rawPath}, res => { res.resume(); resolve(res.statusCode); });
+      req.setTimeout(5000, () => req.destroy(Error('sandbox check timeout'))); req.on('error', reject);
+    });
+    assert.equal(status, expected); report.checks.push({raw_path: rawPath, status});
+  }
+  for (const file of filesBelow(web)) {
+    const response = await fetch(`${origin}/${path.relative(web, file).split(path.sep).join('/')}`, {redirect: 'error', signal: AbortSignal.timeout(30000)});
+    assert.equal(response.status, 200);
+    assert.equal(sha(Buffer.from(await response.arrayBuffer())), report.hashes[path.relative(repo, file)].sha256, 'served artifact hash');
+    if (/\.(?:mjs|js)$/.test(file)) assert.match(response.headers.get('content-type'), /^(text|application)\/javascript\b/);
+    if (file.endsWith('.wasm')) assert.match(response.headers.get('content-type'), /^application\/wasm\b/);
+  }
+  backend = spawn(path.join(bin, 'ryggattack-server'), ['127.0.0.1:0'], {stdio: ['ignore', 'pipe', 'pipe'], env: {...process.env, RYGGATTACK_ALLOWED_ORIGINS: origin}});
+  backendLifecycle = watchOwnedProcess(backend);
+  report.server_events = [];
+  backend.stderr.on('data', bytes => report.server_events.push({at_ms: now(), text: safeText(String(bytes))}));
+  address = await new Promise((resolve, reject) => {
+    let text = ''; const timer = setTimeout(() => reject(Error('backend startup timeout')), 10000);
+    const done = (error, value) => { clearTimeout(timer); error ? reject(error) : resolve(value); };
+    backend.once('error', error => done(error)); backend.once('exit', () => done(Error('backend exited')));
+    backend.stdout.on('data', bytes => { text += String(bytes); const match = /ws:\/\/127\.0\.0\.1:(\d+)/.exec(text); if (match) done(null, `ws://127.0.0.1:${match[1]}`); });
+  });
+  relay = await startCaptureRelay(address, origin, fault);
+  address = relay.address;
+}
+function observe(c, ws) {
+  if (new URL(ws.url()).href !== new URL(address).href) fault('scope', 'unexpected socket endpoint');
+  c.sockets++; ws.on('socketerror', error => fault(c.name, error));
+  ws.on('close', () => { c.socketClosed = true; });
+  ws.on('framereceived', ({payload}) => {
+    try {
+      const message = JSON.parse(String(payload)); redact(message, secrets); // Discover, NEVER save raw Welcome.
+      if (message.Welcome) {
+        assert(!c.identity, 'one admission per client'); const w = message.Welcome;
+        assert.equal(w.version, 4); c.code = w.code;
+        c.identity = pick(w, ['version', 'room', 'participant', 'seat']);
+      }
+      if (message.Lobby) {
+        const lobby = publicLobby(message.Lobby);
+        if (lobby.phase === 'Running' && c.lobby?.phase !== 'Running') {
+          c.match++; assert(c.match <= report.budgets.max_matches, 'max three natural match starts');
+          gameplayStarted ??= now();
+        }
+        c.lobby = lobby; c.lobbies.push({at_ms: now(), match: c.match, ...lobby});
+      }
+      if (message.State) {
+        assert(c.lobby?.phase === 'Running', 'State only during Running');
+        const frame = publicFrame(message.State), prev = c.frames.at(-1);
+        assert(!prev || frame.tick > prev.frame.tick, 'advancing wire State');
+        if (prev?.match === c.match) assert(frame.simulation_tick > prev.frame.simulation_tick, 'advancing simulation State within this match');
+        assert.equal(frame.carts.filter(cart => cart.active).length, 2, 'two active humans, zero bots');
+        for (const human of c.lobby.humans) assert.equal(frame.names[human.seat], human.name, 'wire cart name/seat mapping');
+        c.frames.push({at_ms: now(), match: c.match, frame}); c.latest = frame;
+      }
+      if (message.Error || message.Notice) fault(c.name, 'unexpected server rejection');
+    } catch (error) { fault(`${c.name}:received`, error); }
+  });
+  ws.on('framesent', ({payload}) => {
+    try {
+      const message = JSON.parse(String(payload)); redact(message, secrets);
+      const kind = typeof message === 'string' ? message : Object.keys(message)[0];
+      assert(['Hello', 'Configure', 'Ready', 'Input', 'Leave'].includes(kind), 'legal UI protocol commands only');
+      if (kind === 'Hello') { assert.equal(message.Hello.version, 4); assert.equal(message.Hello.name, c.name); }
+      if (kind === 'Configure') assert.deepEqual(message.Configure, {arena: 'Forest', wins_target: 7, bots: 1});
+      if (kind === 'Ready') assert.equal(message.Ready, true);
+      if (kind === 'Input') {
+        const input = pick(message.Input, ['sequence', 'horizontal', 'vertical', 'fire']);
+        assert(input.horizontal === 0 && input.vertical === 0, 'neutral steering throughout');
+        c.inputs.push({at_ms: now(), match: c.match, phase: c.lobby?.phase ?? null, ...input});
+      } else c.commands.push({kind, at_ms: now(), match: c.match});
+      if (kind === 'Leave') c.leaveSent = true;
+    } catch (error) { fault(`${c.name}:sent`, error); }
+  });
+}
+async function expand(c, open = true) {
+  if (await c.page.locator('#online-entry').evaluate(e => e.open) !== open) await c.page.locator('#online-entry summary').click();
+}
+async function openClient(chromium, name, code) {
+  const c = {name, sockets: 0, match: 0, lobbies: [], frames: [], inputs: [], commands: [], cleanup: {}}; clients.push(c);
+  const owned = await chromium.launchServer({host: '127.0.0.1', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding']});
+  browsers.push({owned, client: c, lifecycle: watchOwnedProcess(owned.process())});
+  const browser = await chromium.connect(owned.wsEndpoint(), {timeout: 30000}); browsers.at(-1).browser = browser;
+  c.browser_version = browser.version(); c.pid = owned.process().pid;
+  const context = await browser.newContext({viewport: {width: 960, height: 480}, recordVideo: {dir: path.join(out, 'private-raw-video'), size: {width:960,height:480}}});
+  c.context = context;
+  await context.route('**/*', route => {
+    const url = new URL(route.request().url());
+    if (url.origin === origin || ['data:', 'blob:'].includes(url.protocol)) return route.continue();
+    fault('scope', 'blocked nonlocal request'); return route.abort();
+  });
+  const page = await context.newPage(); c.page = page;
+  await page.addInitScript(installCaptureClock);
+  page.setDefaultTimeout(30000); page.setDefaultNavigationTimeout(45000);
+  page.on('websocket', ws => observe(c, ws));
+  page.on('pageerror', error => fault(`${name}:page`, error)); page.on('crash', () => fault(name, 'renderer crashed'));
+  page.on('console', message => { if (message.type() === 'error') fault(`${name}:console`, message.text()); });
+  page.on('requestfailed', () => fault(`${name}:request`, 'resource request failed'));
+  const cdp = await context.newCDPSession(page); await cdp.send('Network.enable');
+  cdp.on('Network.webSocketWillSendHandshakeRequest', event => {
+    const observed = Object.entries(event.request.headers).find(([key]) => key.toLowerCase() === 'origin')?.[1];
+    c.origin_verified = observed === origin; if (!c.origin_verified) fault(name, 'socket Origin mismatch');
+  });
+  await page.goto(`${origin}/?quality=${quality}`, {waitUntil: 'domcontentloaded'});
+  await expand(c); await page.locator('#backend').fill(address); await page.locator('#player-name').fill(name);
+  if (code) await page.locator('#room-code').fill(code);
+  await page.locator(code ? '#join-room' : '#create-room').click();
+  await until(() => c.identity && c.lobby, `${name}: admission`);
+  assert.equal(new URL(page.url()).searchParams.get('quality'), String(quality), 'pinned quality survives real room GET form');
+  // Wire Welcome precedes first scene submission. Let each isolated renderer
+  // finish its lobby shader work before starting the next software renderer.
+  await page.waitForFunction(() => JSON.parse(globalThis.ryggattackHud ?? '{}').lobby?.phase === 'Lobby', null, {timeout: 90000});
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  return c;
+}
+function sharedProof() {
+  const [a, b] = clients;
+  const matches = [];
+  for (let match = 1; match <= Math.max(a.match, b.match); match++) {
+    const proof = assertSharedExplosionEvidence(a.frames.filter(f => f.match === match).map(f => f.frame), b.frames.filter(f => f.match === match).map(f => f.frame));
+    matches.push({match, ...proof});
+  }
+  return matches;
+}
+async function ensureRunning() {
+  gameBudget();
+  if (!clients.every(c => c.lobby?.phase === 'Running' && c.latest?.winner === null)) {
+    await until(() => clients.every(c => c.lobby?.phase === 'Lobby'), 'natural match return before Ready', 90000, true);
+    for (const c of clients) {
+      await c.page.keyboard.up('Space'); await expand(c);
+      await c.page.locator('#ready-room').click();
+    }
+    await until(() => clients.every(c => c.lobby?.phase === 'Running' && c.latest?.winner === null && c.frames.at(-1)?.match === c.match), 'both actual Running states', 90000, true);
+  }
+  for (const c of clients) { await expand(c, false); await c.page.locator('canvas').focus(); await c.page.keyboard.down('Space'); }
+  const starts = clients.map(c => ({inputs: c.inputs.length, tick: c.latest.tick}));
+  await until(() => clients.every((c, i) => c.latest.tick > starts[i].tick && c.inputs.slice(starts[i].inputs).filter(input => input.phase === 'Running' && input.fire).length >= 3), 'both held Space sampled over whole advancing frames', 20000, true);
+}
+async function presentation(c) {
+  // Explicit public whitelist; never dump room storage, raw globals or URL fields.
+  return c.page.evaluate(() => {
+    const hud = JSON.parse(globalThis.ryggattackHud ?? 'null');
+    return {phase: hud?.lobby?.phase ?? null, seat: hud?.seat ?? null, tick: hud?.frame?.tick ?? null,
+      names: [...document.querySelectorAll('.rygg-online-hud .oh-name')].map(e => e.textContent),
+      canvas: [...document.querySelectorAll('canvas')].map(e => ({width: e.width, height: e.height, visible: e.getClientRects().length > 0}))};
+  });
+}
+async function capture(c, index) {
+  await ensureRunning(); // Reestablish real Running before EACH sequential capture.
+  const begin = c.frames.length;
+  await until(() => c.frames.length > begin && c.latest.bodies.some(b => b.kind === 4 && b.scale[0] >= .5), 'fresh visible-size explosion wire opportunity', 30000, true);
+  const before = {at_ms: now(), match: c.match, tick: c.latest.tick, body_ids: c.latest.bodies.filter(b => b.kind === 4).map(b => b.id), presentation: await presentation(c)};
+  assert.equal(before.presentation.phase, 'Running', 'capture begins in actual published Running');
+  assert.equal(before.presentation.seat, c.identity.seat);
+  for (const other of clients) assert(before.presentation.names.includes(other.name + (other === c ? ' (you)' : '')), 'distinct real names rendered on each client');
+  assert(before.presentation.canvas.some(canvas => canvas.visible && canvas.width > 0 && canvas.height > 0), 'actual rendered canvas dimensions');
+  const file = `${c.name}-${index}.png`;
+  try { await capturePrivateScreenshot(c.page, secrets, () => c.page.screenshot({path: path.join(out, file), timeout: 60000})); }
+  catch (error) { if (error instanceof PrivacyViolation) privacyFailed = true; throw error; }
+  const after = {at_ms: now(), match: c.match, tick: c.latest.tick, presentation: await presentation(c)};
+  report.screenshots.push({file, sha256: sha(fs.readFileSync(path.join(out, file))), before, after,
+    caveat: 'Capture interval, not exact render-to-wire synchronization. Review actual pixels for visible blasts, cart/rail reference and sequence changes.'});
+  gameBudget();
+}
+async function runTwoBrowserHistorical() {
+  const {chromium} = createRequire(process.env.PLAYWRIGHT_NODE_MODULES ?? '/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json')('playwright');
+  const a = await openClient(chromium, 'BlastA'); const b = await openClient(chromium, 'BlastB', a.code);
+  assert.notEqual(a.pid, b.pid, 'two independent Chromium processes');
+  assert.notEqual(a.identity.participant, b.identity.participant); assert.notEqual(a.identity.seat, b.identity.seat);
+  assert.equal(a.identity.room, b.identity.room);
+  await until(() => clients.every(c => c.lobby.humans.length === 2), 'same two-human room');
+  for (const c of clients) for (const peer of clients) assert(c.lobby.humans.some(h => h.id === peer.identity.participant && h.seat === peer.identity.seat && h.name === peer.name && h.connected), 'authoritative distinct seat/name admission');
+  await expand(a); await a.page.locator('#arena-room').selectOption('Forest');
+  await a.page.locator('#target-room').selectOption('7'); await a.page.locator('#bots-room').fill('0'); await a.page.locator('#apply-room').click();
+  await until(() => clients.every(c => c.lobby.settings.bots === 0 && c.lobby.settings.wins_target === 7 && c.lobby.settings.arena === 'Forest'), 'authoritative target-seven zero-bot settings');
+  await ensureRunning();
+  for (const c of clients) await c.page.evaluate(() => {
+    globalThis.parityRaf = [];
+    let previous;
+    const sample = time => {
+      if (previous !== undefined) globalThis.parityRaf.push(time - previous);
+      previous = time;
+      if (globalThis.parityRaf.length < 10000) requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+  if (!sequenceOnly) for (const c of clients) for (let index = 1; index <= report.budgets.captures_per_client; index++) await capture(c, index);
+  await until(() => sharedProof().some(proof => proof.complete), 'shared primary/wall/chain IDs + positive scale + removals', 90000, true);
+  report.matches = sharedProof();
+  for (const c of clients) {
+    assert.equal(c.sockets, 1, 'one socket/admission per participant'); assert(c.origin_verified, 'real browser Origin observed');
+    assert(c.lobbies.some(l => l.phase?.Countdown), 'ordinary Ready/countdown observed');
+    const firing = c.inputs.filter(i => i.phase === 'Running' && i.fire);
+    assert(firing.length >= 3, 'real held-fire input');
+    assert(firing.some(i => c.latest.ack[c.identity.seat] >= i.sequence), 'server acknowledged actual held-fire input sequence');
+    const images = report.screenshots.filter(image => image.file.startsWith(c.name + '-'));
+    if (!sequenceOnly) assert.equal(new Set(images.map(image => image.sha256)).size, 3, 'three distinct actual image bytes per observer');
+    assert(c.frames.at(-1).frame.tick > c.frames[0].frame.tick, 'authoritative states advance');
+    assert(c.frames.at(-1).frame.simulation_tick > 0, 'simulation advances independently of renderer');
+  }
+  assert.equal(report.screenshots.length, sequenceOnly ? 0 : 6, 'selected screenshot mode');
+  assert.equal(report.errors.length, 0, 'unexpected protocol/browser errors');
+  report.quality = quality;
+  report.performance = [];
+  for (const c of clients) {
+    const samples = await c.page.evaluate(() => globalThis.parityRaf);
+    const sorted = [...samples].sort((a, b) => a - b);
+    report.performance.push({client: c.name, metric: 'gameplay requestAnimationFrame intervals, not GPU timings',
+      samples: samples.length, mean_ms: samples.reduce((a, b) => a + b, 0) / samples.length,
+      p50_ms: sorted[Math.floor(sorted.length * .5)], p95_ms: sorted[Math.floor(sorted.length * .95)]});
+  }
+  if (sequence) {
+    await ensureRunning();
+    const c = clients[0], cdp = await c.page.context().newCDPSession(c.page);
+    const frames = [];
+    await capturePrivateScreenshot(c.page, secrets, async () => {});
+    cdp.on('Page.screencastFrame', event => {
+      const file = `sequence-${String(frames.length).padStart(4, '0')}.jpg`;
+      if (frames.length < 300) {
+        fs.writeFileSync(path.join(out, file), Buffer.from(event.data, 'base64'));
+        frames.push({file, timestamp: event.metadata.timestamp, at_ms: now(), tick: c.latest.tick});
+      }
+      cdp.send('Page.screencastFrameAck', {sessionId: event.sessionId}).catch(() => {});
+    });
+    report.video_interval = {start_at_ms: now(), duration_ms: 60000};
+    // Playwright's normal video records actual compositor frames without
+    // repeated synchronous screenshots. Raw lobby video remains private.
+    await sleep(60000);
+    await capturePrivateScreenshot(c.page, secrets, async () => {});
+    report.sequence = {client: c.name, frames, caveat: 'Actual compositor frames; receipt tick is not a render synchronization oracle.'};
+    report.sequence.caveat = 'Use separately finalized actual context videos; no CDP sequence requested.';
+  }
+}
+async function run() {
+  report.scope = 'LOCAL one actual rendered WASM human plus one ordinary authoritative bot; visual stage supplement, not two-human gate';
+  report.mode = 'capture-only 0.1x client clock and FIFO source-packet delivery; unchanged real64Hz server and outbound inputs';
+  const {chromium} = createRequire('/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json')('playwright');
+  const c = await openClient(chromium, 'StageHuman');
+  await expand(c); await c.page.locator('#arena-room').selectOption('Forest');
+  await c.page.locator('#target-room').selectOption('7'); await c.page.locator('#bots-room').fill('1'); await c.page.locator('#apply-room').click();
+  await until(() => c.lobby.settings.bots === 1 && c.lobby.settings.wins_target === 7, 'real one-bot settings');
+  await ensureRunning();
+  relay.arm();
+  await c.page.evaluate(()=>globalThis.setCaptureClockRate(0.1));
+  await capturePrivateScreenshot(c.page, secrets, async () => {});
+  report.video_interval = {start_at_ms: now(), duration_ms: 90000};
+  const initial = c.frames.length;
+  await sleep(90000);
+  await capturePrivateScreenshot(c.page, secrets, async () => {});
+  const rendered = await presentation(c);
+  assert(rendered.canvas.some(c => c.width === 960 && c.height === 480 && c.visible));
+  const observed = c.frames.slice(initial);
+  assert(observed.some(f => f.frame.bodies.some(b => b.kind === 4 && b.explosion?.burst === 0)), 'actual source primary fireballs');
+  // Report source chains if present; never manufacture them for a screenshot.
+  report.presentation = rendered;
+  report.source_primary_frames = observed.filter(f => f.frame.bodies.some(b => b.kind === 4 && b.explosion?.burst === 0)).length;
+  report.source_chain_frames = observed.filter(f => f.frame.bodies.some(b => b.kind === 4 && b.explosion?.burst > 0)).length;
+  assert.equal(c.sockets, 1); assert(c.origin_verified); assert.equal(report.errors.length, 0);
+  report.relay_trace = relay.trace;
+  const delivered = relay.trace.filter(t=>t.delivered_ms!==undefined);
+  assert(delivered.length>30 && delivered.every(t=>t.sha256===t.delivered_sha256),'unchanged source packet bytes');
+  assert(delivered.every((t,i)=>i===0||t.tick>delivered[i-1].tick),'source packet order');
+}
+async function leave(c) {
+  return leaveAdmittedClient(c, {clients, expand, until, presentation});
+}
+async function shutdown() {
+  if(relay)report.abandoned_queued_capture_tail=relay.discardTail();
+  for (const c of clients) {
+    try { await leave(c); } catch (error) { fault(`${c.name}:leave`, error); }
+    if (c.page && !c.page.isClosed()) try {
+      c.cleanup.page_closed = await Promise.race([c.context.close().then(() => c.page.isClosed()), sleep(15000).then(() => false)]);
+      if (c.cleanup.page_closed) {
+        const file = path.join(out, 'private-raw-video', `${c.name}.webm`);
+        await c.page.video().saveAs(file);
+        c.video = {file: path.relative(out, file), sha256: sha(fs.readFileSync(file))};
+      }
+      if (!c.cleanup.page_closed) fault(`${c.name}:page-close`, 'page close timed out');
+    } catch (error) { fault(`${c.name}:page-close`, error); }
+  }
+  for (const entry of browsers) {
+    const result = await stopOwnedBrowser(entry);
+    entry.client.cleanup.browser_exit = result;
+    entry.client.cleanup.browser_process_exited = result.valid;
+    if (!result.valid) fault('cleanup', 'owned Chromium did not complete a clean requested shutdown');
+  }
+  if (relay) { await relay.close(); report.cleanup.relay_closed=true; }
+  if (backend) {
+    const result = await stopOwnedProcess(backendLifecycle, async () => {
+      backend.kill('SIGTERM'); await backendLifecycle.exit;
+    });
+    report.cleanup.backend_exit = result;
+    if (!result.valid) fault('cleanup', 'owned backend did not complete a clean requested shutdown');
+  }
+  if (server?.listening) {
+    let didClose = false;
+    const closed = new Promise(resolve => server.close(() => { didClose = true; resolve(true); })); server.closeIdleConnections?.();
+    if (!await Promise.race([closed, sleep(3000).then(() => false)])) { server.closeAllConnections?.(); await Promise.race([closed, sleep(1000)]); }
+    report.cleanup.http_closed = didClose && !server.listening; if (!report.cleanup.http_closed) fault('cleanup', 'HTTP server did not fully close');
+  }
+}
+try {
+  assert.equal(process.env.RYGGATTACK_EXPLOSION_ARTIFACT_READY, '1', 'parent build/freeze acknowledgement required; see --help');
+  assert.notEqual(process.env.NODE_TLS_REJECT_UNAUTHORIZED, '0', 'TLS bypass forbidden');
+  report.source_revision = execFileSync('git', ['rev-parse', 'HEAD'], {cwd: repo, encoding: 'utf8'}).trim();
+  report.source_worktree = execFileSync('git', ['status', '--porcelain'], {cwd: repo, encoding: 'utf8'}).trim();
+  report.hashes = hashInputs();
+  // Preserve exact reviewed source/helper bytes, including a dirty worker patch.
+  for (const [relative, expected] of Object.entries(report.hashes)) {
+    if (!/^(?:src\/|web\/|scripts\/|Cargo\.(?:toml|lock)$|docs\/online-explosion\.md$)/.test(relative)) continue;
+    const bytes = fs.readFileSync(path.join(repo, relative));
+    assert.equal(sha(bytes), expected.sha256, 'source snapshot matches frozen hash');
+    const target = path.join(out, 'source-inputs', relative);
+    fs.mkdirSync(path.dirname(target), {recursive: true}); fs.writeFileSync(target, bytes);
+  }
+  await startLocal(); await run();
+  report.status = 'captured-review-required';
+} catch (error) { report.status = 'failed'; report.failure = safeText(error.stack ?? error); }
+finally {
+  try { await shutdown(); } catch (error) { fault('shutdown', error); }
+  if (report.hashes) try { assert.deepEqual(canonical(hashInputs()), canonical(report.hashes), 'source/artifacts changed during run'); report.cleanup.inputs_unchanged = true; } catch (error) { fault('freeze', error); }
+  const cleanupExitCode = finalizeCleanupReport(report, {clients, interrupted: interruption.interrupted});
+  process.exitCode ||= cleanupExitCode;
+  report.finished_at = new Date().toISOString(); report.total_ms = now();
+  // Whitelists only: no raw Welcome, browser endpoint, storage or DOM dump.
+  report.clients = clients.map(c => ({name: c.name, identity: c.identity, browser_version: c.browser_version, pid: c.pid, sockets: c.sockets, origin_verified: c.origin_verified, cleanup: c.cleanup, video:c.video}));
+  try {
+    for (const [file, value] of [['inputs.json', clients.map(c => ({name: c.name, inputs: c.inputs, commands: c.commands}))],
+      ['states.json', clients.map(c => ({name: c.name, frames: c.frames}))], ['lobbies.json', clients.map(c => ({name: c.name, lobbies: c.lobbies}))]]) {
+      fs.writeFileSync(path.join(out, file), JSON.stringify(redact(value, secrets)) + '\n');
+    }
+    if (!publishSoloEvidence(out, redact(report, secrets), secrets, {privacyFailed})) process.exitCode = 1;
+  } catch { process.exitCode = 1; }
+  if (report.status !== 'captured-review-required') process.exitCode = 1;
+  console.log(JSON.stringify({status: process.exitCode ? 'failed' : report.status, evidence_directory: out}));
+  interruption.dispose();
+}

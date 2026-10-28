@@ -1,0 +1,88 @@
+{
+  "status": "captured-needs-image-review",
+  "scope": "unchanged offline baseline WASM; ordinary keyboard, no gameplay injection",
+  "baseline_revision": "20d059457f32711c9789d8dd362c8c788e1f64ec",
+  "quality": 0,
+  "viewport": [
+    960,
+    480
+  ],
+  "hashes": {
+    "index.html": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+    "ryggattack.js": "c173965afc0506578853daaa587ed2de9b23ca613058d63d15fff26e2c0084cf",
+    "ryggattack_bg.wasm": "da79dd7b94ca815fe42ad092cc36b465faa865208b66bf50460adcd50ab67173"
+  },
+  "seed_date_now": 1790000000000,
+  "actions": [
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 9230.703321
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 11034.780894
+    },
+    {
+      "key": "w",
+      "event": "down",
+      "at_ms": 13035.660419
+    },
+    {
+      "key": "w",
+      "event": "up",
+      "at_ms": 14838.70983
+    },
+    {
+      "key": "ArrowRight",
+      "event": "down",
+      "at_ms": 16838.691843
+    },
+    {
+      "key": "ArrowRight",
+      "event": "up",
+      "at_ms": 18647.911583
+    },
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 20648.092914
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 22451.243127
+    },
+    {
+      "key": "ArrowLeft",
+      "event": "down",
+      "at_ms": 24451.560381
+    },
+    {
+      "key": "ArrowLeft",
+      "event": "up",
+      "at_ms": 26254.913803
+    },
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 28257.783441
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 30060.13049
+    }
+  ],
+  "errors": [],
+  "started_at": "2026-10-28T12:21:30.500Z",
+  "harness_sha256": "e7bc11795d859579826b50e4955ddba81c767f834e0fb8892287575d9be4381a",
+  "gameplay_start_ms": 28256.686898,
+  "gameplay_end_ms": 152061.350974,
+  "video": "page@bdc2e749c4e59d3c0c716e2c056b4a1c.webm",
+  "video_sha256": "d6fd078e6572f84e2ff91e5bd2325e03a7d86770cb32c5a79209123b5b74a48d",
+  "artifacts_unchanged": true,
+  "elapsed_ms": 163339.801335,
+  "finished_at": "2026-10-28T12:24:13.847Z"
+}

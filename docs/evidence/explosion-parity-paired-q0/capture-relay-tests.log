@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: capture clock preserves continuity and advances at exactly0.1x
+ok 1 - capture clock preserves continuity and advances at exactly0.1x
+  ---
+  duration_ms: 3.716126
+  type: 'test'
+  ...
+# Subtest: actual relay preserves source bytes, FIFO order and client intent; delays only incoming delivery
+ok 2 - actual relay preserves source bytes, FIFO order and client intent; delays only incoming delivery
+  ---
+  duration_ms: 1060.691429
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1263.144004

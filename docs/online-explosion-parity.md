@@ -27,7 +27,37 @@ budgets as offline. The real GET room form also preserves valid `quality=0..6`
 pins; otherwise entering a room discarded the initial query and switched to auto
 quality. Invalid/absent overrides remain disabled.
 
-## What was actually compared
+## Review correction: matched pinned-quality progression
+
+The initial montage below was insufficient for visual acceptance. A new
+[paired quality0,960×480 comparison](evidence/explosion-parity-paired-q0/README.md)
+now retains fully in-frame upper-right wall primaries through initial yellow,
+main orange, dark transparent fade and removal, with identical full framing and
+unscaled detail crops. Both original artifacts were reused without a rebuild or
+runtime edits. Five actual video excerpts include normal-speed offline,
+normal-speed human+bot online and two concurrent real online humans.
+
+To expose stages on SwiftShader, the detailed paired fixture explicitly slows
+the browser's monotonic clock to0.1×. Online additionally paces unchanged real
+backend packets through a0.1× FIFO capture relay; the actual server, outbound
+inputs and gameplay remain unchanged. This is presentation-only evidence, NOT
+normal-latency or native-speed timing acceptance.144 delivered State packets
+retained identical source/delivery hashes and increasing ticks. The unplayed
+queued tail was discarded at explicit teardown, then ordinary Leave/readback and
+clean browser/relay/backend shutdown completed. The new real-socket relay and
+monotonic-clock tests passed2/2. No hardware-GPU benchmark is claimed.
+
+The images now show comparable low-quality round/faceted geometry, cart-relative
+scale, warm palette, transparency and disappearance rather than clipped arcs or
+smoke alone. Gray haze, smaller nearby chain bursts, sparks and prop fragments
+are visible in the extended sequences. Scenery/RNG, overlapping volleys and the
+offline HUD/fog differ; this is the same representative effect progression, not
+a pixel-identical seeded replay. A separate cream-color supplement explicitly
+uses an earlier online primary, not a fabricated first frame for the final
+primary. Both new harness failures and all older failures remain retained.
+See the supplement for exact timestamps, provenance, privacy scope and verifier.
+
+## Original comparison (retained history)
 
 [Retained evidence and read-only verifier](evidence/explosion-parity-2026-10-28/README.md).
 

@@ -1,0 +1,109 @@
+{
+  "created_at": "2026-10-28T12:48:43.067Z",
+  "scope": "Real rendered matched quality0 and960x480; slow visual fixtures supplement normal-speed gameplay, not timing/network acceptance",
+  "viewport": [
+    960,
+    480
+  ],
+  "quality": 0,
+  "clips": [
+    {
+      "file": "offline-slow-sequence.webm",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_start_seconds": 65,
+      "duration_seconds": 10,
+      "operation": "ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames"
+    },
+    {
+      "file": "online-slow-sequence.webm",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_start_seconds": 18,
+      "duration_seconds": 10,
+      "operation": "ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames"
+    },
+    {
+      "file": "offline-normal-sequence.webm",
+      "source_sha256": "d6fd078e6572f84e2ff91e5bd2325e03a7d86770cb32c5a79209123b5b74a48d",
+      "source_start_seconds": 122,
+      "duration_seconds": 16,
+      "operation": "ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames"
+    },
+    {
+      "file": "online-normal-sequence.webm",
+      "source_sha256": "fee9fd43446febd668ddc23e618167c23eb63ea45bfd86cfdcfa03392cc9b9d7",
+      "source_start_seconds": 27,
+      "duration_seconds": 6,
+      "operation": "ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames"
+    },
+    {
+      "file": "two-human-normal-sequence.webm",
+      "source_sha256": "c5fc21d96dc59a7252f3bafab10e40319b1e4ee729bd331dc106a466362295b0",
+      "source_start_seconds": 58,
+      "duration_seconds": 6,
+      "operation": "ffmpeg trim/re-encode only; original timestamps and source SHA retained; no invented/interpolated frames"
+    }
+  ],
+  "frames": [
+    {
+      "file": "offline-initial.png",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_seconds": 69,
+      "stage": "initial"
+    },
+    {
+      "file": "online-initial.png",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_seconds": 23.52,
+      "stage": "initial"
+    },
+    {
+      "file": "offline-main.png",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_seconds": 70,
+      "stage": "main"
+    },
+    {
+      "file": "online-main.png",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_seconds": 24.48,
+      "stage": "main"
+    },
+    {
+      "file": "offline-dark-fade.png",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_seconds": 72,
+      "stage": "dark-fade"
+    },
+    {
+      "file": "online-dark-fade.png",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_seconds": 25.92,
+      "stage": "dark-fade"
+    },
+    {
+      "file": "offline-removed-smoke.png",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_seconds": 73,
+      "stage": "removed-smoke"
+    },
+    {
+      "file": "online-removed-smoke.png",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_seconds": 27.36,
+      "stage": "removed-smoke"
+    },
+    {
+      "file": "offline-cream-supplement.png",
+      "source_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+      "source_seconds": 67.2,
+      "stage": "cream supplement; earlier primary in online repeated volley, NOT relabeled as last primary"
+    },
+    {
+      "file": "online-cream-supplement.png",
+      "source_sha256": "563269572470b29cd246bdbc7c6404dcc28c10a73c9d4208bf64e80a5542e769",
+      "source_seconds": 19.68,
+      "stage": "cream supplement; earlier primary in online repeated volley, NOT relabeled as last primary"
+    }
+  ],
+  "private_raw_videos_not_published": true
+}

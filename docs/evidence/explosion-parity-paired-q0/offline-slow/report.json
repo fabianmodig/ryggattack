@@ -1,0 +1,90 @@
+{
+  "status": "captured-needs-image-review",
+  "scope": "unchanged offline baseline WASM; ordinary keyboard, no gameplay injection",
+  "baseline_revision": "20d059457f32711c9789d8dd362c8c788e1f64ec",
+  "quality": 0,
+  "viewport": [
+    960,
+    480
+  ],
+  "hashes": {
+    "index.html": "f98063de624ebb590f56ecbb923de2d2a28fe5cc55ee3c833ad38986e1d12c9a",
+    "ryggattack.js": "c173965afc0506578853daaa587ed2de9b23ca613058d63d15fff26e2c0084cf",
+    "ryggattack_bg.wasm": "da79dd7b94ca815fe42ad092cc36b465faa865208b66bf50460adcd50ab67173"
+  },
+  "seed_date_now": 1790000000000,
+  "actions": [
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 9221.957889000001
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 11025.621200000001
+    },
+    {
+      "key": "w",
+      "event": "down",
+      "at_ms": 13025.787492000001
+    },
+    {
+      "key": "w",
+      "event": "up",
+      "at_ms": 14830.003383000001
+    },
+    {
+      "key": "ArrowRight",
+      "event": "down",
+      "at_ms": 16830.195507999997
+    },
+    {
+      "key": "ArrowRight",
+      "event": "up",
+      "at_ms": 18632.369711
+    },
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 20632.352378
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 22435.103516
+    },
+    {
+      "key": "ArrowLeft",
+      "event": "down",
+      "at_ms": 24436.409182
+    },
+    {
+      "key": "ArrowLeft",
+      "event": "up",
+      "at_ms": 26239.919773999998
+    },
+    {
+      "key": "Enter",
+      "event": "down",
+      "at_ms": 28244.980679
+    },
+    {
+      "key": "Enter",
+      "event": "up",
+      "at_ms": 30047.694390999997
+    }
+  ],
+  "errors": [],
+  "started_at": "2026-10-28T12:26:36.827Z",
+  "harness_sha256": "5b17f86b590d16ffb8dead7e51f6049db4c70d237ef4a7335582086ae510e5b5",
+  "gameplay_start_ms": 28242.127864,
+  "capture_clock_rate": 0.1,
+  "capture_clock_note": "Capture-only monotonic Performance.now clock dilation after menu setup; source game/WASM/settings unchanged. Wall-time durations are NOT native-speed timing evidence.",
+  "gameplay_end_ms": 152049.583544,
+  "video": "page@782b3c1ca11c1ea145451e8c71d35e01.webm",
+  "video_sha256": "22f80771d2440c42e1026e13234218fe9c277502198707839925bb11365cdc79",
+  "artifacts_unchanged": true,
+  "elapsed_ms": 163068.519358,
+  "finished_at": "2026-10-28T12:29:19.901Z"
+}

@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+import {startCaptureRelay,installCaptureClock} from './repo/scripts/capture-relay.mjs';
+const {ws:WS,wsServer:WSS}=createRequire('/home/hermes/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/package.json')('playwright-core/lib/utilsBundle');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+test('capture clock preserves continuity and advances at exactly0.1x',()=>{
+ let now=100;const sandbox={performance:{now:()=>now}};vm.createContext(sandbox);vm.runInContext(`(${installCaptureClock.toString()})();`,sandbox);
+ now=200;assert.equal(sandbox.performance.now(),200);sandbox.setCaptureClockRate(0.1);now=1200;assert.equal(sandbox.performance.now(),300);sandbox.setCaptureClockRate(1);now=1300;assert.equal(sandbox.performance.now(),400);
+});
+test('actual relay preserves source bytes, FIFO order and client intent; delays only incoming delivery',async()=>{
+ const source=new WSS({host:'127.0.0.1',port:0});await new Promise(r=>source.once('listening',r));
+ const errors=[],received=[],delivered=[];let peer;
+ source.on('connection',ws=>{peer=ws;ws.on('message',b=>received.push(String(b)));});
+ const relay=await startCaptureRelay(`ws://127.0.0.1:${source.address().port}`,'http://127.0.0.1',(s,e)=>errors.push(String(e)));
+ const client=new WS(relay.address);client.on('message',b=>delivered.push({text:String(b),at:performance.now()}));await new Promise(r=>client.once('open',r));while(!peer)await sleep(5);
+ client.send('{"Input":{"sequence":41,"fire":true}}');while(!received.length)await sleep(5);assert.equal(received[0],'{"Input":{"sequence":41,"fire":true}}');
+ relay.arm();peer.send('{"State":{"tick":10,"bodies":[]}}');await sleep(80);peer.send('{"State":{"tick":11,"bodies":[]}}');await sleep(150);
+ assert.equal(delivered.length,1);await sleep(800);assert.equal(delivered.length,2);assert.deepEqual(delivered.map(d=>d.text),['{"State":{"tick":10,"bodies":[]}}','{"State":{"tick":11,"bodies":[]}}']);
+ assert(delivered[1].at-delivered[0].at>=600);assert(relay.trace.every(t=>t.sha256===t.delivered_sha256));assert.deepEqual(errors,[]);
+ assert.equal(relay.discardTail(),0);client.close();await relay.close();for(const c of source.clients)c.terminate();await new Promise(r=>source.close(r));
+});
