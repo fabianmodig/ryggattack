@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 3.88s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test prediction_horizon_is_bounded_even_with_many_small_render_frames ... FAILED
+
+failures:
+
+---- prediction_horizon_is_bounded_even_with_many_small_render_frames stdout ----
+
+thread 'prediction_horizon_is_bounded_even_with_many_small_render_frames' (31785) panicked at tests/prediction.rs:65:5:
+a small delta cannot evade the half-second horizon
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    prediction_horizon_is_bounded_even_with_many_small_render_frames
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-horizon-red: 3.983 s; exit=101

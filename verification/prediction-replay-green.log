@@ -1,0 +1,13 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 51.40s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 3 tests
+test reconciliation_replays_actual_steps_not_acknowledged_messages ... ok
+test movement_snapshot_exposes_authoritative_directed_rail_state ... ok
+test prediction_uses_shared_fixed_travel_before_new_authority ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+TIMING prediction-replay-green: 51.616 s; exit=0

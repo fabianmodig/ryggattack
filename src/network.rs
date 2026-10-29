@@ -171,6 +171,15 @@ pub struct RailState {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MotionFrame {
     pub rails: [RailState; 4],
+    pub applied: [AppliedInput; 4],
+}
+/// Held control selected at the boundary of a completed simulation step.
+/// Zero denotes a server/direct-simulation control, not a client sequence.
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub struct AppliedInput {
+    pub sequence: u64,
+    pub since_tick: u64,
+    pub axes: [f32; 2],
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

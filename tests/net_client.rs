@@ -57,6 +57,66 @@ fn welcome(edges: Vec<(usize, usize)>) -> ServerMessage {
     }
 }
 #[test]
+fn changed_held_intent_is_sent_without_waiting_for_snapshot_ack() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = format!("ws://{}", listener.local_addr().unwrap());
+    let thread = std::thread::spawn(move || {
+        let (stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_millis(40)))
+            .unwrap();
+        let mut ws = tungstenite::accept(stream).unwrap();
+        ws.read().unwrap();
+        ws.send(Message::text(
+            serde_json::to_string(&welcome(grid())).unwrap(),
+        ))
+        .unwrap();
+        let mut sim = ryggattack::headless::Simulation::new(Default::default()).unwrap();
+        sim.step();
+        ws.send(Message::text(
+            serde_json::to_string(&ServerMessage::State(sim.network_frame())).unwrap(),
+        ))
+        .unwrap();
+        let deadline = Instant::now() + Duration::from_millis(600);
+        let mut inputs = Vec::new();
+        while Instant::now() < deadline {
+            if let Ok(Message::Text(text)) = ws.read()
+                && let Ok(ClientMessage::Input {
+                    sequence,
+                    horizontal,
+                    ..
+                }) = decode_client(&text)
+            {
+                inputs.push((sequence, horizontal));
+            }
+        }
+        inputs
+    });
+    let mut client = NetworkClient::connect(&address, "prediction transport").unwrap();
+    let start = Instant::now();
+    while start.elapsed() < Duration::from_millis(500) {
+        client.pump(ryggattack::input::ControlIntent {
+            horizontal: if start.elapsed() >= Duration::from_millis(150) {
+                1.0
+            } else {
+                0.0
+            },
+            ..Default::default()
+        });
+        std::thread::sleep(Duration::from_millis(3));
+    }
+    let inputs = thread.join().unwrap();
+    assert!(
+        inputs.iter().any(|(seq, axis)| *seq > 1 && *axis == 1.0),
+        "an in-flight neutral packet must not block a new steering state: {inputs:?}"
+    );
+    assert!(
+        inputs.len() <= 20,
+        "bounded send cadence, not a render-rate flood"
+    );
+}
+
+#[test]
 fn room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay() {
     let lobby = ryggattack::rooms::Lobby::new(7, "0123456789abcdef0123".into(), 9, "Ada".into());
     let client = backend(vec![

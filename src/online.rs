@@ -8,7 +8,8 @@ struct View {
     edges: Option<Vec<(usize, usize)>>,
     frame: Option<Frame>,
     previous: Option<Frame>,
-    alpha: f32,
+    poses: [Option<([f32; 3], [f32; 3])>; 4],
+    movement: Option<crate::prediction::Movement>,
     built: bool,
     epoch: u64,
     reset_replicas: bool,
@@ -405,6 +406,7 @@ fn canvas_focused() -> bool {
 }
 #[allow(clippy::too_many_arguments)]
 fn network_input(
+    time: Res<Time<Real>>,
     mut client: NonSendMut<NetworkClient>,
     mut view: ResMut<View>,
     keys: Res<ButtonInput<KeyCode>>,
@@ -491,8 +493,15 @@ fn network_input(
         *fire = false;
     }
     sync_visual_boundary(&client, &mut view);
-    // One snapshot interval of visual interpolation, no extrapolation/prediction.
-    view.alpha = (client.received.elapsed().as_secs_f32() / 0.0625).clamp(0., 1.);
+    let now = time.elapsed_secs_f64();
+    update_cart_movement(
+        &mut view,
+        time.delta_secs_f64(),
+        now,
+        (now - client.frame_received.elapsed().as_secs_f64()).max(0.0),
+        client.seat,
+        client.travel_intent(intent),
+    );
     let detail=client.frame.as_ref().map(|f|format!("tick {}  wins {:?}  winner {:?}\nPlayers: {:?}\nPowerups: speed {:.1}s / all-hits {:.1}s; drop {:.1}s",f.tick,f.wins,f.winner,f.names,client.seat.map_or(0.,|s|f.carts[s].speed_seconds),client.seat.map_or(0.,|s|f.carts[s].all_hits_seconds),f.until_drop)).unwrap_or_default();
     let lobby_detail=client.lobby.as_ref().map(|l|format!("Room {}  ID {}  {:?}\nShare: ?online={}&room={}\nHost: {}  Arena {:?}  First to {}  Bots {}\n{}\nR: ready/unready • Host B: bots / T: target / V: arena • L: leave",l.code,l.id,l.phase,entry.address,l.code,l.humans.iter().find(|h|h.id==l.host).map_or("?",|h|h.name.as_str()),l.settings.arena,l.settings.wins_target,l.settings.bots,l.humans.iter().map(|h|format!("{}: {}{} [{}]",h.seat+1,h.name,if h.id==l.host{" (host)"}else{""},if !h.connected {"BOT / reconnect reserved"}else if h.ready{"ready"}else{"not ready"})).collect::<Vec<_>>().join("\n"))).unwrap_or_else(||format!("F2: create room • Type code + Enter: join\nRoom code: {} (Backspace to edit)\nName: {} (set --name on launch) • Backend {}",entry.code,entry.name,entry.address));
     let label = format!(
@@ -542,6 +551,37 @@ fn network_input(
         .ok();
     }
 }
+fn update_cart_movement(
+    view: &mut View,
+    delta: f64,
+    now: f64,
+    received: f64,
+    seat: Option<usize>,
+    intent: Option<ControlIntent>,
+) {
+    let (Some(frame), Some(edges), Some(seat), Some(intent)) =
+        (&view.frame, &view.edges, seat, intent)
+    else {
+        view.movement = None;
+        view.poses = [None; 4];
+        return;
+    };
+    if view.movement.is_none() {
+        view.movement = Some(crate::prediction::Movement::new(edges.clone()));
+    } else if let Some(movement) = &mut view.movement {
+        movement.advance(delta, intent);
+    }
+    let movement = view.movement.as_mut().unwrap();
+    movement.observe(frame, received, seat);
+    view.poses = std::array::from_fn(|id| {
+        if id == seat {
+            movement.local_pose()
+        } else {
+            movement.remote_pose(id, now)
+        }
+    });
+}
+
 fn sync_visual_boundary(client: &NetworkClient, view: &mut View) {
     if let Some(edges) = &client.edges
         && view.edges.as_ref() != Some(edges)
@@ -550,10 +590,14 @@ fn sync_visual_boundary(client: &NetworkClient, view: &mut View) {
         view.built = false;
         view.reset_replicas = true;
         view.edges = Some(edges.clone());
+        view.movement = None;
+        view.poses = [None; 4];
     }
     let identity = (client.room, client.participant, client.seat);
     if view.epoch != client.visual_epoch || view.identity != identity {
         view.reset_replicas = true;
+        view.movement = None;
+        view.poses = [None; 4];
     }
     view.epoch = client.visual_epoch;
     view.identity = identity;
@@ -568,6 +612,10 @@ fn sync_visual_boundary(client: &NetworkClient, view: &mut View) {
     }
     view.environment = lobby.map(|lobby| lobby.settings.arena);
     let running = lobby.is_some_and(|l| l.phase == crate::rooms::Phase::Running);
+    if !running {
+        view.movement = None;
+        view.poses = [None; 4];
+    }
     view.frame = running.then(|| client.frame.clone()).flatten();
     view.previous = running.then(|| client.previous.clone()).flatten();
 }
@@ -671,21 +719,9 @@ fn render_snapshot(
         let Some(cart) = frame.carts.iter().find(|c| c.id == player.id) else {
             continue;
         };
-        let mut position = Vec3::from_array(cart.position);
-        let mut forward = Vec3::from_array(cart.forward);
-        if let Some(old) = view
-            .previous
-            .as_ref()
-            .and_then(|p| p.carts.iter().find(|c| c.id == cart.id))
-        {
-            let previous = Vec3::from_array(old.position);
-            if old.alive == cart.alive && previous.distance(position) < 2. {
-                position = previous.lerp(position, view.alpha);
-                forward = Vec3::from_array(old.forward)
-                    .lerp(forward, view.alpha)
-                    .normalize_or_zero();
-            }
-        }
+        let (position, forward) = view.poses[cart.id].unwrap_or((cart.position, cart.forward));
+        let position = Vec3::from_array(position);
+        let forward = Vec3::from_array(forward);
         transform.translation = position;
         if forward.length_squared() > 0.5 {
             transform.look_to(forward, Vec3::Y);
@@ -1405,6 +1441,64 @@ mod tests {
                 .query::<(&crate::players::Player, &Visibility)>()
                 .iter(world)
                 .all(|(_, v)| *v == Visibility::Hidden)
+        );
+    }
+    #[test]
+    fn online_update_pipeline_predicts_between_frames_and_clears_at_disconnect() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let mut view = View {
+            edges: Some(sim.network_edges()),
+            frame: Some(sim.network_frame()),
+            ..default()
+        };
+        let intent = Some(ControlIntent::default());
+        update_cart_movement(&mut view, 0.0, 0.0, 0.0, Some(0), intent);
+        let authority = view.frame.as_ref().unwrap().carts[0].position;
+        update_cart_movement(&mut view, 0.03125, 0.03125, 0.0, Some(0), intent);
+        assert_ne!(
+            view.poses[0].unwrap().0,
+            authority,
+            "real online update projects movement without receiving another frame"
+        );
+        assert_eq!(view.frame.as_ref().unwrap().carts[0].position, authority);
+        update_cart_movement(&mut view, 0.015625, 0.046875, 0.0, Some(0), None);
+        assert!(view.poses.iter().all(Option::is_none));
+        assert!(view.movement.is_none());
+    }
+    #[test]
+    fn real_replica_renderer_uses_predicted_pose_without_mutating_authority() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let frame = sim.network_frame();
+        let authority = frame.carts[0].position;
+        let mut poses = [None; 4];
+        poses[0] = Some((
+            [authority[0] + 0.1, authority[1], authority[2]],
+            frame.carts[0].forward,
+        ));
+        let mut app = App::new();
+        app.init_resource::<Assets<Mesh>>()
+            .init_resource::<Assets<StandardMaterial>>()
+            .insert_resource(View {
+                edges: Some(sim.network_edges()),
+                frame: Some(frame),
+                poses,
+                ..default()
+            })
+            .add_systems(Update, render_snapshot);
+        app.update();
+        app.update();
+        let world = app.world_mut();
+        let rendered = world
+            .query::<(&crate::players::Player, &Transform)>()
+            .iter(world)
+            .find(|(p, _)| p.id == 0)
+            .unwrap()
+            .1
+            .translation;
+        assert_eq!(rendered.to_array(), poses[0].unwrap().0);
+        assert_eq!(
+            world.resource::<View>().frame.as_ref().unwrap().carts[0].position,
+            authority
         );
     }
     #[test]

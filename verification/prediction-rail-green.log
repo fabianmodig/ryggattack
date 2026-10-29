@@ -1,0 +1,13 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0365]: `RailPath` is only public within the crate, and cannot be re-exported outside
+   --> src/network.rs:161:9
+    |
+161 | pub use crate::tracks::RailPath;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ re-export of crate public `RailPath`
+    |
+    = note: consider declaring type or module `RailPath` with `pub`
+
+For more information about this error, try `rustc --explain E0365`.
+error: could not compile `ryggattack` (lib) due to 1 previous error
+
+TIMING prediction-rail-green: 3.389 s; exit=101

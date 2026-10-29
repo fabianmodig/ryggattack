@@ -709,8 +709,9 @@ impl Room {
                                         peer.sequence = sequence;
                                         peer.last_input = Instant::now();
                                         if let Some(sim) = &mut self.simulation {
-                                            let _ = sim.submit(
+                                            let _ = sim.submit_sequenced(
                                                 seat,
+                                                sequence,
                                                 ControlIntent {
                                                     horizontal,
                                                     vertical,

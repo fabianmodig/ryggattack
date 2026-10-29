@@ -1,0 +1,15 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 54.91s
+     Running tests/net_client.rs (/home/hermes/src/ryggattack/target/debug/deps/net_client-802a20fed516a206)
+
+running 5 tests
+test room_adapter_publishes_validated_identity_and_lobby_without_starting_gameplay ... ok
+test changed_held_intent_is_sent_without_waiting_for_snapshot_ack ... ok
+test malicious_backend_topologies_fail_before_renderer ... ok
+test malicious_backend_states_are_rejected_and_cart_order_is_canonical ... ok
+test malformed_lobbies_and_identity_mismatches_never_reach_presentation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.02s
+
+
+TIMING prediction-delivery-green: 58.981 s; exit=0

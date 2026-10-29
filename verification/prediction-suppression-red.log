@@ -1,0 +1,50 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0599]: no method named `travel_intent` found for struct `net_client::NetworkClient` in the current scope
+   --> src/net_client.rs:744:27
+    |
+219 | pub struct NetworkClient {
+    | ------------------------ method `travel_intent` not found for this struct
+...
+744 |         assert_eq!(client.travel_intent(held),None);
+    |                           ^^^^^^^^^^^^^ method not found in `net_client::NetworkClient`
+
+error[E0599]: no method named `travel_intent` found for struct `net_client::NetworkClient` in the current scope
+   --> src/net_client.rs:746:27
+    |
+219 | pub struct NetworkClient {
+    | ------------------------ method `travel_intent` not found for this struct
+...
+746 |         assert_eq!(client.travel_intent(held),Some(held));
+    |                           ^^^^^^^^^^^^^ method not found in `net_client::NetworkClient`
+
+error[E0599]: no method named `travel_intent` found for struct `net_client::NetworkClient` in the current scope
+   --> src/net_client.rs:748:27
+    |
+219 | pub struct NetworkClient {
+    | ------------------------ method `travel_intent` not found for this struct
+...
+748 |         assert_eq!(client.travel_intent(held),Some(ControlIntent::default()));
+    |                           ^^^^^^^^^^^^^ method not found in `net_client::NetworkClient`
+
+error[E0599]: no method named `travel_intent` found for struct `net_client::NetworkClient` in the current scope
+   --> src/net_client.rs:750:27
+    |
+219 | pub struct NetworkClient {
+    | ------------------------ method `travel_intent` not found for this struct
+...
+750 |         assert_eq!(client.travel_intent(held),None);
+    |                           ^^^^^^^^^^^^^ method not found in `net_client::NetworkClient`
+
+error[E0599]: no method named `travel_intent` found for struct `net_client::NetworkClient` in the current scope
+   --> src/net_client.rs:752:27
+    |
+219 | pub struct NetworkClient {
+    | ------------------------ method `travel_intent` not found for this struct
+...
+752 |         assert_eq!(client.travel_intent(held),None);
+    |                           ^^^^^^^^^^^^^ method not found in `net_client::NetworkClient`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `ryggattack` (lib test) due to 5 previous errors
+
+TIMING prediction-suppression-red: 1.427 s; exit=101

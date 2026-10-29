@@ -1,0 +1,23 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0599]: no method named `remote_pose` found for struct `Movement` in the current scope
+   --> tests/prediction.rs:132:22
+    |
+132 |     let a = movement.remote_pose(1, 0.15625).unwrap().0;
+    |                      ^^^^^^^^^^^ method not found in `Movement`
+
+error[E0599]: no method named `remote_pose` found for struct `Movement` in the current scope
+   --> tests/prediction.rs:133:22
+    |
+133 |     let b = movement.remote_pose(1, 0.171875).unwrap().0;
+    |                      ^^^^^^^^^^^ method not found in `Movement`
+
+error[E0599]: no method named `remote_pose` found for struct `Movement` in the current scope
+   --> tests/prediction.rs:135:31
+    |
+135 |     let final_pose = movement.remote_pose(1, 1.0).unwrap().0;
+    |                               ^^^^^^^^^^^ method not found in `Movement`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `ryggattack` (test "prediction") due to 3 previous errors
+
+TIMING prediction-remote-red: 1.057 s; exit=101

@@ -1,0 +1,21 @@
+{
+  "base": "a48fbf5",
+  "scope": "isolated-loopback-transport-only; no renderer",
+  "frames": 36,
+  "observedServerHz": 63.99017473648923,
+  "snapshotGapMs": {
+    "min": 62.16573500000004,
+    "mean": 62.50959645714286,
+    "max": 62.83959999999979
+  },
+  "tickGaps": [
+    4
+  ],
+  "inputToSnapshotAckMs": {
+    "count": 12,
+    "min": 32.32335400000011,
+    "mean": 36.8793761666667,
+    "max": 59.35281799999984
+  },
+  "notes": "ack is latest received held intent, not consumed client-step count; timing includes server batching and Node scheduling"
+}

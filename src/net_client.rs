@@ -1,5 +1,5 @@
-//! Shared native/browser adapter. Latest-state mailbox and stop-and-wait input
-//! bound queues even if rendering stalls. No client simulation or hit claims.
+//! Shared native/browser adapter. Latest-state mailbox and bounded held-input
+//! delivery independent of snapshot acknowledgments. No client hit claims.
 use crate::{input::ControlIntent, network::*};
 use std::{
     ops::ControlFlow,
@@ -70,16 +70,20 @@ fn valid_frame(frame: &Frame) -> bool {
     }
     if frame.motion.as_ref().is_some_and(|motion| {
         let adjacent = |a: usize, b: usize| {
-            a < 25 && b < 25 && a != b
+            a < 25
+                && b < 25
+                && a != b
                 && ((a / 5 == b / 5 && a.abs_diff(b) == 1) || a.abs_diff(b) == 5)
         };
         motion.rails.iter().any(|rail| {
-            !rail.progress.is_finite() || !(0.0..=1.0).contains(&rail.progress)
+            !rail.progress.is_finite()
+                || !(0.0..=1.0).contains(&rail.progress)
                 || !bounded(&rail.requested_turn, -1.0, 1.0)
                 || match rail.path {
                     RailPath::Edge { from, to } => !adjacent(from, to),
-                    RailPath::Junction { from, node, to } =>
-                        from == to || !adjacent(from, node) || !adjacent(node, to),
+                    RailPath::Junction { from, node, to } => {
+                        from == to || !adjacent(from, node) || !adjacent(node, to)
+                    }
                 }
         })
     }) {
@@ -212,6 +216,7 @@ struct Inbox {
     lobby: Option<crate::rooms::Lobby>,
     notice: Option<String>,
     frame: Option<Frame>,
+    frame_received: Option<Instant>,
     frame_barrier: bool,
     error: Option<String>,
 }
@@ -232,9 +237,12 @@ pub struct NetworkClient {
     /// Presentation invalidation survives coalesced Lobby/Welcome + State.
     pub(crate) visual_epoch: u64,
     pub received: Instant,
+    /// Callback arrival, independent of renderer consumption and lobby traffic.
+    pub frame_received: Instant,
     pub status: String,
     pub rtt_ms: Option<f64>,
     sequence: u64,
+    input_flight: std::collections::VecDeque<(u64, Instant)>,
     sent: Instant,
     acknowledged: bool,
     failed: bool,
@@ -279,9 +287,11 @@ impl NetworkClient {
             previous: None,
             visual_epoch: 0,
             received: now,
+            frame_received: now,
             status: "Connecting…".into(),
             rtt_ms: None,
             sequence: 0,
+            input_flight: Default::default(),
             sent: now,
             acknowledged: true,
             failed: false,
@@ -470,7 +480,10 @@ impl NetworkClient {
                             }
                             Some(ServerMessage::State(mut frame)) if valid_frame(&frame) => {
                                 frame.carts.sort_unstable_by_key(|cart| cart.id);
-                                inbox.frame = Some(frame)
+                                if inbox.frame.as_ref().is_none_or(|old| frame.tick > old.tick) {
+                                    inbox.frame = Some(frame);
+                                    inbox.frame_received = Some(Instant::now());
+                                }
                             }
                             Some(ServerMessage::Error(err)) => inbox.error = Some(err),
                             Some(ServerMessage::Lobby(lobby)) if valid_lobby(&lobby) => {
@@ -518,6 +531,7 @@ impl NetworkClient {
         self.retry_at =
             Instant::now() + Duration::from_millis((250u64 << self.retry_count.min(4)).min(4000));
         self.sequence = 0;
+        self.input_flight.clear();
         self.awaiting_welcome = true;
         self.acknowledged = true;
         self.suppress_until_neutral = true;
@@ -526,6 +540,23 @@ impl NetworkClient {
             "Retrying {}/12 — bot takeover; seat reserved up to 60s",
             self.retry_count
         );
+    }
+    /// Prediction must use the same neutral-until-release gate as transport.
+    /// None means admission/recovery is not established: clear speculation.
+    pub(crate) fn travel_intent(&self, intent: ControlIntent) -> Option<ControlIntent> {
+        if self.failed
+            || self.awaiting_welcome
+            || self.retry_started.is_some()
+            || self.seat.is_none()
+        {
+            None
+        } else {
+            Some(if self.suppress_until_neutral {
+                ControlIntent::default()
+            } else {
+                intent
+            })
+        }
     }
     /// Returns true only when an intent was sent; caller may retain fire taps.
     pub fn pump(&mut self, intent: ControlIntent) -> bool {
@@ -566,6 +597,7 @@ impl NetworkClient {
         // Latest-state coalescing may hide Lobby/Countdown behind Running.
         // Preserve that boundary even when no non-running lobby reaches pump.
         if inbox.frame_barrier {
+            self.input_flight.clear();
             self.visual_epoch = self.visual_epoch.wrapping_add(1);
             self.frame = None;
             self.previous = None;
@@ -590,6 +622,7 @@ impl NetworkClient {
             self.awaiting_welcome = false;
             self.received = Instant::now();
             self.sequence = 0;
+            self.input_flight.clear();
             self.acknowledged = true;
             self.frame = None;
             self.previous = None;
@@ -668,6 +701,13 @@ impl NetworkClient {
             .as_ref()
             .is_none_or(|l| l.phase == crate::rooms::Phase::Running);
         if let Some(frame) = inbox.frame.filter(|_| running) {
+            if let Some(seat) = self.seat {
+                let ack = frame.ack[seat];
+                if let Some((_, sent)) = self.input_flight.iter().find(|(seq, _)| *seq == ack) {
+                    self.rtt_ms = Some(sent.elapsed().as_secs_f64() * 1000.0);
+                }
+                self.input_flight.retain(|(seq, _)| *seq > ack);
+            }
             if let Some(seat) = self.seat
                 && !self.acknowledged
                 && frame.ack[seat] >= self.sequence
@@ -678,11 +718,15 @@ impl NetworkClient {
             if self.frame.as_ref().is_none_or(|old| frame.tick > old.tick) {
                 self.previous = self.frame.take();
                 self.frame = Some(frame);
+                self.frame_received = inbox.frame_received.unwrap_or_else(Instant::now);
                 self.received = Instant::now();
             }
         }
-        if ((self.awaiting_welcome || !self.acknowledged)
-            && self.sent.elapsed() > Duration::from_secs(5))
+        if (self.awaiting_welcome && self.sent.elapsed() > Duration::from_secs(5))
+            || self
+                .input_flight
+                .front()
+                .is_some_and(|(_, sent)| sent.elapsed() > Duration::from_secs(5))
             || (self.seat.is_some()
                 && self.received.elapsed() > Duration::from_secs(5)
                 && self.retry_started.is_none())
@@ -693,11 +737,12 @@ impl NetworkClient {
         if self.seat.is_some()
             && !self.awaiting_welcome
             && running
-            && self.acknowledged
-            && (self.sequence == 0 || self.sent.elapsed() >= Duration::from_millis(62))
+            && self.input_flight.len() < 32
+            && (self.sequence == 0 || self.sent.elapsed() >= Duration::from_millis(31))
         {
             self.sequence += 1;
             self.sent = Instant::now();
+            self.input_flight.push_back((self.sequence, self.sent));
             self.acknowledged = false;
             sender.send(ewebsock::WsMessage::Text(
                 serde_json::to_string(&ClientMessage::Input {
@@ -717,13 +762,54 @@ impl NetworkClient {
 mod resilience_tests {
     use super::*;
     #[test]
+    fn prediction_respects_admission_reconnect_and_neutral_release_suppression() {
+        let mut client = NetworkClient::connect("ws://127.0.0.1:9", "gate test").unwrap();
+        let held = ControlIntent {
+            horizontal: 1.0,
+            fire: true,
+            ..Default::default()
+        };
+        assert_eq!(client.travel_intent(held), None);
+        client.awaiting_welcome = false;
+        client.seat = Some(0);
+        assert_eq!(client.travel_intent(held), Some(held));
+        client.suppress_until_neutral = true;
+        assert_eq!(client.travel_intent(held), Some(ControlIntent::default()));
+        client.retry_started = Some(Instant::now());
+        assert_eq!(client.travel_intent(held), None);
+        client.retry_started = None;
+        client.failed = true;
+        assert_eq!(client.travel_intent(held), None);
+    }
+    #[test]
+    fn frame_arrival_time_survives_a_late_adapter_poll() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        sim.step();
+        let mut client = NetworkClient::connect("ws://127.0.0.1:9", "clock test").unwrap();
+        let arrival = Instant::now() - Duration::from_millis(200);
+        {
+            let mut inbox = client.inbox.lock().unwrap();
+            inbox.frame = Some(sim.network_frame());
+            inbox.frame_received = Some(arrival);
+        }
+        client.pump(Default::default());
+        assert!(client.frame.is_some());
+        assert!(
+            client.frame_received.elapsed() >= Duration::from_millis(190),
+            "render consumption must not reset snapshot time"
+        );
+    }
+    #[test]
     fn prediction_rail_metadata_rejects_invalid_paths_and_progress() {
         let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
         let frame = sim.network_frame();
         assert!(valid_frame(&frame));
         let mut bad = frame.clone();
         bad.motion.as_mut().unwrap().rails[0].path = RailPath::Edge { from: 25, to: 26 };
-        assert!(!valid_frame(&bad), "untrusted rail indices cannot reach traversal");
+        assert!(
+            !valid_frame(&bad),
+            "untrusted rail indices cannot reach traversal"
+        );
         let mut bad = frame.clone();
         bad.motion.as_mut().unwrap().rails[0].progress = f32::NAN;
         assert!(!valid_frame(&bad));

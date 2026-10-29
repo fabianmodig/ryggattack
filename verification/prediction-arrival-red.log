@@ -1,0 +1,21 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0609]: no field `frame_received` on type `std::sync::MutexGuard<'_, Inbox>`
+   --> src/net_client.rs:737:97
+    |
+737 |         {let mut inbox=client.inbox.lock().unwrap();inbox.frame=Some(sim.network_frame());inbox.frame_received=Some(arrival);}
+    |                                                                                                 ^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `opened`, `disconnected`, `welcome`, `lobby`, `notice` ... and 3 others
+
+error[E0609]: no field `frame_received` on type `net_client::NetworkClient`
+   --> src/net_client.rs:740:24
+    |
+740 |         assert!(client.frame_received.elapsed()>=Duration::from_millis(190),"render consumption must not reset snapshot time");
+    |                        ^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `sender`, `address`, `inbox`, `name`, `room_code` ... and 24 others
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `ryggattack` (lib test) due to 2 previous errors
+
+TIMING prediction-arrival-red: 1.255 s; exit=101

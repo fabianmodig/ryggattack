@@ -1,0 +1,26 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.89s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test stale_or_duplicate_frames_do_not_rewind_prediction ... FAILED
+
+failures:
+
+---- stale_or_duplicate_frames_do_not_rewind_prediction stdout ----
+
+thread 'stale_or_duplicate_frames_do_not_rewind_prediction' (32709) panicked at tests/prediction.rs:81:5:
+assertion `left == right` failed
+  left: Some([-5.8375, 0.62, -7.0])
+ right: Some([-5.575, 0.62, -7.0])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    stale_or_duplicate_frames_do_not_rewind_prediction
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-stale-red: 2.992 s; exit=101

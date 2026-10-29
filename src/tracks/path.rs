@@ -68,7 +68,7 @@ pub(super) fn track_corner_pose(node: usize, directions: [Vec3; 2], progress: f3
     (center + radial * TRACK_CORNER_RADIUS, tangent)
 }
 
-fn track_path_length(path: RailPath) -> f32 {
+pub(crate) fn track_path_length(path: RailPath) -> f32 {
     match path {
         RailPath::Edge { from, to } => {
             let [start, end] = track_straight_endpoints((from, to));

@@ -70,6 +70,8 @@ pub struct Simulation {
     tick: u64,
     network_ids: std::collections::HashMap<Entity, u64>,
     next_network_id: u64,
+    held_sequence: [u64; 4],
+    applied: [crate::network::AppliedInput; 4],
 }
 impl Simulation {
     pub fn new(config: SimulationConfig) -> Result<Self, &'static str> {
@@ -118,6 +120,8 @@ impl Simulation {
             tick: 0,
             network_ids: Default::default(),
             next_network_id: 1,
+            held_sequence: [0; 4],
+            applied: Default::default(),
         })
     }
 
@@ -136,11 +140,29 @@ impl Simulation {
             return Err("seat is not externally controlled");
         }
         inputs.intents[seat] = intent;
+        self.held_sequence[seat] = 0;
+        Ok(())
+    }
+
+    /// Transport validates monotonic socket ownership/sequence before calling.
+    /// Submission replaces held intent; it does not itself execute a tick.
+    pub fn submit_sequenced(
+        &mut self,
+        seat: usize,
+        sequence: u64,
+        intent: ControlIntent,
+    ) -> Result<(), &'static str> {
+        self.submit(seat, intent)?;
+        self.held_sequence[seat] = sequence;
         Ok(())
     }
 
     /// Change only the controller, never character identity, lifetime or buffs.
     pub fn set_external(&mut self, seat: usize, external: bool) -> Result<(), &'static str> {
+        if seat >= 4 {
+            return Err("inactive seat");
+        }
+        self.held_sequence[seat] = 0;
         let world = self.app.world_mut();
         {
             let mut inputs = world.resource_mut::<SeatInputs>();
@@ -169,6 +191,22 @@ impl Simulation {
     /// Exactly one gameplay tick, independent of wall time and render cadence.
     pub fn step(&mut self) {
         let world = self.app.world_mut();
+        let inputs = world.resource::<SeatInputs>();
+        for seat in 0..4 {
+            let sequence = self.held_sequence[seat];
+            let intent = inputs.intents[seat];
+            let axes = [intent.horizontal, intent.vertical];
+            if self.applied[seat].sequence != sequence
+                || self.applied[seat].axes != axes
+                || self.applied[seat].since_tick == 0
+            {
+                self.applied[seat] = crate::network::AppliedInput {
+                    sequence,
+                    axes,
+                    since_tick: self.tick + 1,
+                };
+            }
+        }
         let generic = {
             let mut fixed = world.resource_mut::<Time<Fixed>>();
             fixed.advance_by(TICK_DURATION);
@@ -257,15 +295,24 @@ impl Simulation {
         let mut rails: Vec<_> = world
             .query::<(&Player, &crate::tracks::RailFollower)>()
             .iter(world)
-            .map(|(player, rail)| (player.id, crate::network::RailState {
-                path: rail.path,
-                progress: rail.progress,
-                requested_turn: rail.requested_turn.to_array(),
-            }))
+            .map(|(player, rail)| {
+                (
+                    player.id,
+                    crate::network::RailState {
+                        path: rail.path,
+                        progress: rail.progress,
+                        requested_turn: rail.requested_turn.to_array(),
+                    },
+                )
+            })
             .collect();
         rails.sort_by_key(|(seat, _)| *seat);
-        let rails = rails.into_iter().map(|(_, rail)| rail).collect::<Vec<_>>()
-            .try_into().expect("the shared scene always has four cart entities");
+        let rails = rails
+            .into_iter()
+            .map(|(_, rail)| rail)
+            .collect::<Vec<_>>()
+            .try_into()
+            .expect("the shared scene always has four cart entities");
         Frame {
             tick: snap.tick,
             simulation_tick: snap.tick,
@@ -278,7 +325,10 @@ impl Simulation {
             transition: snap.transition,
             until_drop: snap.until_drop,
             bodies,
-            motion: Some(crate::network::MotionFrame { rails }),
+            motion: Some(crate::network::MotionFrame {
+                rails,
+                applied: self.applied,
+            }),
         }
     }
 

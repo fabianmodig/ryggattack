@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 06s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test online::tests::real_replica_renderer_uses_predicted_pose_without_mutating_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 197 filtered out; finished in 0.02s
+
+
+TIMING prediction-renderer-green: 66.491 s; exit=0

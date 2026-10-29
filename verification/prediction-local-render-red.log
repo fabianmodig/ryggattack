@@ -1,0 +1,29 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0599]: no method named `local_pose` found for struct `Movement` in the current scope
+   --> tests/prediction.rs:161:27
+    |
+161 |     let previous=movement.local_pose().unwrap().0;
+    |                           ^^^^^^^^^^
+    |
+help: there is a method `local_position` with a similar name
+    |
+161 -     let previous=movement.local_pose().unwrap().0;
+161 +     let previous=movement.local_position().unwrap().0;
+    |
+
+error[E0599]: no method named `local_pose` found for struct `Movement` in the current scope
+   --> tests/prediction.rs:163:25
+    |
+163 |     let middle=movement.local_pose().unwrap().0;
+    |                         ^^^^^^^^^^
+    |
+help: there is a method `local_position` with a similar name
+    |
+163 -     let middle=movement.local_pose().unwrap().0;
+163 +     let middle=movement.local_position().unwrap().0;
+    |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `ryggattack` (test "prediction") due to 2 previous errors
+
+TIMING prediction-local-render-red: 0.896 s; exit=101

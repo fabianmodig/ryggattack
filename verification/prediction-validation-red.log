@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 11s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test net_client::resilience_tests::prediction_rail_metadata_rejects_invalid_paths_and_progress ... FAILED
+
+failures:
+
+---- net_client::resilience_tests::prediction_rail_metadata_rejects_invalid_paths_and_progress stdout ----
+
+thread 'net_client::resilience_tests::prediction_rail_metadata_rejects_invalid_paths_and_progress' (28200) panicked at src/net_client.rs:709:9:
+untrusted rail indices cannot reach traversal
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    net_client::resilience_tests::prediction_rail_metadata_rejects_invalid_paths_and_progress
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 196 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING prediction-validation-red: 71.957 s; exit=101
