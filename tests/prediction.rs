@@ -28,7 +28,7 @@ fn prediction_uses_shared_fixed_travel_before_new_authority() {
             assert!((predicted[axis] - authoritative[axis]).abs() < 1e-4);
         }
         let tick = sim.snapshot().tick;
-        if tick % 8 == 0 {
+        if tick.is_multiple_of(8) {
             movement.observe(&sim.network_frame(), tick as f64 / 64.0, 0);
         }
     }
@@ -334,6 +334,116 @@ fn small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_tim
             "decay must not depend on render partition"
         );
     }
+}
+
+#[test]
+fn a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix() {
+    let mut sim = Simulation::new(Default::default()).unwrap();
+    let mut movement = Movement::new(sim.network_edges());
+    movement.observe(&sim.network_frame(), 0.0, 0);
+    for _ in 0..8 {
+        movement.advance(1.0 / 64.0, Default::default());
+    }
+    for _ in 0..4 {
+        sim.step();
+    }
+    let fresh = sim.network_frame();
+    movement.observe(&fresh, 0.1, 0);
+    let before = movement.local_position();
+    let mut regressed = fresh;
+    regressed.tick += 1;
+    regressed.simulation_tick = 2;
+    regressed.motion.as_mut().unwrap().rails[0].progress -= 0.01;
+    movement.observe(&regressed, 0.2, 0);
+    assert_eq!(
+        movement.local_position(),
+        before,
+        "publication freshness cannot validate a regressing simulation clock"
+    );
+}
+
+#[test]
+fn maximum_authoritative_tick_disables_speculation_without_panicking() {
+    let mut sim = Simulation::new(Default::default()).unwrap();
+    let mut movement = Movement::new(sim.network_edges());
+    let mut frame = sim.network_frame();
+    frame.simulation_tick = u64::MAX;
+    movement.observe(&frame, 0.0, 0);
+    movement.advance(1.0 / 64.0, Default::default());
+    assert!(movement.local_position().is_none());
+}
+
+#[test]
+fn a_reversal_correction_discards_pre_collision_speculation() {
+    use ryggattack::network::RailPath;
+    let mut sim = Simulation::new(Default::default()).unwrap();
+    let mut movement = Movement::new(sim.network_edges());
+    movement.observe(&sim.network_frame(), 0.0, 0);
+    for _ in 0..8 {
+        movement.advance(1.0 / 64.0, Default::default());
+    }
+    for _ in 0..4 {
+        sim.step();
+    }
+    let mut reversed = sim.network_frame();
+    let rail = &mut reversed.motion.as_mut().unwrap().rails[0];
+    let RailPath::Edge { from, to } = rail.path else {
+        panic!("edge fixture");
+    };
+    rail.path = RailPath::Edge { from: to, to: from };
+    rail.progress = 1.0 - rail.progress;
+    movement.observe(&reversed, 0.1, 0);
+    assert_eq!(
+        movement.local_position(),
+        Some(reversed.carts[0].position),
+        "reversal snaps to authority without old suffix"
+    );
+    assert_eq!(movement.local_pose().unwrap().0, reversed.carts[0].position);
+}
+
+#[test]
+fn a_stall_clears_remote_interpolation_until_fresh_authority() {
+    let mut sim = Simulation::new(Default::default()).unwrap();
+    let mut movement = Movement::new(sim.network_edges());
+    movement.observe(&sim.network_frame(), 0.0, 0);
+    for tick in 1..=8 {
+        sim.step();
+        if tick % 4 == 0 {
+            movement.observe(&sim.network_frame(), tick as f64 / 64.0, 0);
+        }
+    }
+    movement.advance(10.0, Default::default());
+    assert!(
+        movement.remote_pose(1, 0.15625).is_none(),
+        "caller must fall back to current authority after a stall"
+    );
+}
+
+#[test]
+fn remote_motion_on_an_absent_track_falls_back_to_cart_authority() {
+    let mut sim = Simulation::new(Default::default()).unwrap();
+    let initial = sim.network_frame();
+    let path = initial.motion.as_ref().unwrap().rails[1].path;
+    let ryggattack::network::RailPath::Edge { from, to } = path else {
+        panic!("edge fixture");
+    };
+    let edges = sim
+        .network_edges()
+        .into_iter()
+        .filter(|&(a, b)| (a, b) != (from, to) && (a, b) != (to, from))
+        .collect();
+    let mut movement = Movement::new(edges);
+    movement.observe(&initial, 0.0, 0);
+    for tick in 1..=8 {
+        sim.step();
+        if tick % 4 == 0 {
+            movement.observe(&sim.network_frame(), tick as f64 / 64.0, 0);
+        }
+    }
+    assert_eq!(
+        movement.remote_pose(1, 0.15625).unwrap().0,
+        sim.snapshot().carts[1].position
+    );
 }
 
 #[test]

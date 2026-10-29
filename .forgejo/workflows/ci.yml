@@ -61,6 +61,7 @@ jobs:
           node scripts/rooms-ui.test.mjs
           node --test scripts/resilience-harness.test.mjs
           node --test scripts/network-harness.test.mjs
+          node --test scripts/prediction-delay.test.mjs
           node --test scripts/client-feedback-helpers.test.mjs
           node --test scripts/solo-bots-helpers.test.mjs
           node --test scripts/online-hud*.test.mjs

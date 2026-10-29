@@ -325,10 +325,10 @@ impl Simulation {
             transition: snap.transition,
             until_drop: snap.until_drop,
             bodies,
-            motion: Some(crate::network::MotionFrame {
+            motion: Some(Box::new(crate::network::MotionFrame {
                 rails,
                 applied: self.applied,
-            }),
+            })),
         }
     }
 

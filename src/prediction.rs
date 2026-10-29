@@ -8,6 +8,8 @@ use crate::{
     tracks::{RailFollower, RailMap, track_pose},
 };
 use bevy::prelude::*;
+#[cfg(test)]
+mod tests;
 
 /// Interpolate a proven directed route (at most one seam/junction between
 /// samples), using the actual path geometry, never a straight world chord.
@@ -139,8 +141,9 @@ pub struct Movement {
     local: Option<Travel>,
     remainder: f64,
     head: u64,
-    history: std::collections::VecDeque<(u64, ControlIntent)>,
+    history: std::collections::VecDeque<(u64, ControlIntent, Travel)>,
     last_frame: Option<u64>,
+    last_simulation: Option<u64>,
     remote: std::collections::VecDeque<(Frame, f64)>,
     remote_cursor: f64,
     jitter: f64,
@@ -158,6 +161,7 @@ impl Movement {
             head: 0,
             history: Default::default(),
             last_frame: None,
+            last_simulation: None,
             remote: Default::default(),
             remote_cursor: 0.0,
             jitter: 0.0,
@@ -167,9 +171,14 @@ impl Movement {
         }
     }
     pub fn observe(&mut self, frame: &Frame, received: f64, seat: usize) {
-        if self.last_frame.is_some_and(|tick| frame.tick <= tick) {
+        if self.last_frame.is_some_and(|tick| frame.tick <= tick)
+            || self
+                .last_simulation
+                .is_some_and(|tick| frame.simulation_tick < tick)
+        {
             return;
         }
+        self.last_simulation = Some(frame.simulation_tick);
         let old_visual = self.visual_rail();
         self.last_frame = Some(frame.tick);
         let live = frame
@@ -178,7 +187,37 @@ impl Movement {
             .find(|cart| cart.id == seat)
             .is_some_and(|cart| cart.alive && cart.active);
         let lifecycle = (seat, live, frame.round_finished, frame.wins);
-        let boundary = self.lifecycle.is_some_and(|old| old != lifecycle);
+        let predicted_at_tick = self
+            .history
+            .iter()
+            .find(|(tick, _, _)| *tick == frame.simulation_tick)
+            .map(|(_, _, state)| state);
+        let discontinuity = predicted_at_tick
+            .zip(frame.motion.as_ref().and_then(|m| m.rails.get(seat)))
+            .is_some_and(|(old, new)| {
+                let old = old.rail_state();
+                // Compare at the corrected tick, not the future prediction head.
+                if old.path == new.path {
+                    (old.progress - new.progress).abs() * crate::tracks::track_path_length(old.path)
+                        > 2.0
+                } else {
+                    interpolate_rail(&old, new, 0.5).is_none()
+                        && interpolate_rail(new, &old, 0.5).is_none()
+                }
+            });
+        // Every replayed tick must have a recorded actual local step. A
+        // delivery watermark or a newer publication number cannot fill gaps.
+        let complete_suffix = self
+            .history
+            .iter()
+            .filter(|(tick, _, _)| *tick > frame.simulation_tick)
+            .try_fold(frame.simulation_tick, |previous, (tick, _, _)| {
+                (previous.checked_add(1) == Some(*tick)).then_some(*tick)
+            })
+            == Some(self.head);
+        let boundary = self.lifecycle.is_some_and(|old| old != lifecycle)
+            || discontinuity
+            || (self.local.is_some() && frame.simulation_tick <= self.head && !complete_suffix);
         self.lifecycle = Some(lifecycle);
         if boundary {
             self.remote.clear();
@@ -200,19 +239,7 @@ impl Movement {
         }
         self.local = frame.motion.as_ref().and_then(|motion| {
             let rail = motion.rails.get(seat)?;
-            let edge = |a, b| {
-                self.map
-                    .edges
-                    .iter()
-                    .any(|&(x, y)| (x == a && y == b) || (x == b && y == a))
-            };
-            let valid = match rail.path {
-                RailPath::Edge { from, to } => edge(from, to),
-                RailPath::Junction { from, node, to } => {
-                    edge(from, node) && edge(node, to) && from != to
-                }
-            };
-            if !valid || !rail.progress.is_finite() || !(0.0..=1.0).contains(&rail.progress) {
+            if !self.valid_rail(rail) {
                 return None;
             }
             let cart = frame.carts.iter().find(|cart| cart.id == seat)?;
@@ -231,12 +258,13 @@ impl Movement {
             })
         });
         self.history
-            .retain(|(tick, _)| *tick > frame.simulation_tick);
+            .retain(|(tick, _, _)| *tick > frame.simulation_tick);
         if let Some(local) = &mut self.local {
             self.previous = Some(local.clone());
-            for (_, intent) in &self.history {
+            for (_, intent, state) in &mut self.history {
                 self.previous = Some(local.clone());
                 local.step(&self.map, *intent);
+                *state = local.clone();
             }
         }
         self.head = self.head.max(frame.simulation_tick);
@@ -260,9 +288,7 @@ impl Movement {
             || !intent.vertical.is_finite()
             || intent.vertical.abs() > 1.0
         {
-            self.local = None;
-            self.history.clear();
-            self.remainder = 0.0;
+            self.invalidate();
             return;
         }
         self.remainder += delta;
@@ -272,19 +298,58 @@ impl Movement {
         let dt = crate::simulation::TICK_DURATION.as_secs_f64();
         while self.remainder >= dt {
             if self.history.len() >= 32 {
-                self.local = None;
-                self.history.clear();
-                self.remainder = 0.0;
+                self.invalidate();
                 return;
             }
             if let Some(local) = &mut self.local {
                 self.previous = Some(local.clone());
                 local.step(&self.map, intent);
-                self.head += 1;
-                self.history.push_back((self.head, intent));
+                let Some(next) = self.head.checked_add(1) else {
+                    self.local = None;
+                    self.previous = None;
+                    self.correction = None;
+                    self.history.clear();
+                    self.remainder = 0.0;
+                    return;
+                };
+                self.head = next;
+                self.history.push_back((self.head, intent, local.clone()));
             }
             self.remainder -= dt;
         }
+    }
+    fn invalidate(&mut self) {
+        self.local = None;
+        self.previous = None;
+        self.correction = None;
+        self.history.clear();
+        self.remainder = 0.0;
+        self.remote.clear();
+        self.remote_cursor = 0.0;
+        self.jitter = 0.0;
+    }
+    fn valid_rail(&self, rail: &RailState) -> bool {
+        let edge = |a, b| {
+            self.map
+                .edges
+                .iter()
+                .any(|&(x, y)| (x == a && y == b) || (x == b && y == a))
+        };
+        rail.progress.is_finite()
+            && (0.0..=1.0).contains(&rail.progress)
+            && rail
+                .requested_turn
+                .iter()
+                .all(|v| v.is_finite() && v.abs() <= 1.0)
+            && match rail.path {
+                RailPath::Edge { from, to } => from != to && edge(from, to),
+                RailPath::Junction { from, node, to } => {
+                    from != to && edge(from, node) && edge(node, to)
+                }
+            }
+    }
+    pub fn clock(&self) -> (u64, usize) {
+        (self.head, self.history.len())
     }
     pub fn local_position(&self) -> Option<[f32; 3]> {
         self.local.as_ref().map(Travel::position)
@@ -341,8 +406,11 @@ impl Movement {
             if old.alive != new.alive || old.active != new.active {
                 return Some(authority);
             }
-            let from = &a.motion.as_ref()?.rails[seat];
-            let to = &b.motion.as_ref()?.rails[seat];
+            let from = a.motion.as_ref()?.rails.get(seat)?;
+            let to = b.motion.as_ref()?.rails.get(seat)?;
+            if !self.valid_rail(from) || !self.valid_rail(to) {
+                return Some(authority);
+            }
             let span = b.simulation_tick.saturating_sub(a.simulation_tick);
             if span == 0 {
                 return Some(authority);

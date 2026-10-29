@@ -538,6 +538,22 @@ fn network_input(
     }
     #[cfg(target_arch = "wasm32")]
     {
+        // Opt-in latest-value diagnostics: no credentials, packet payloads or
+        // unbounded history. Used by the isolated latency acceptance harness.
+        if js_sys::Reflect::get(&js_sys::global(), &"ryggattackMovementDebug".into())
+            .ok()
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+        {
+            js_sys::Reflect::set(
+                &js_sys::global(),
+                &"ryggattackMovement".into(),
+                &wasm_bindgen::JsValue::from_str(
+                    &movement_snapshot(&view, client.seat, now).to_string(),
+                ),
+            )
+            .ok();
+        }
         js_sys::Reflect::set(&js_sys::global(), &"ryggattackRoom".into(), &wasm_bindgen::JsValue::from_str(&serde_json::json!({"lobby":client.lobby,"participant":client.participant,"status":client.status,"notice":client.notice}).to_string())).ok();
         js_sys::Reflect::set(
             &js_sys::global(),
@@ -550,6 +566,18 @@ fn network_input(
         )
         .ok();
     }
+}
+#[cfg(any(target_arch = "wasm32", test))]
+fn movement_snapshot(view: &View, seat: Option<usize>, now: f64) -> serde_json::Value {
+    serde_json::json!({
+        "time": now, "seat": seat,
+        "tick": view.frame.as_ref().map(|f| f.tick),
+        "simulation_tick": view.frame.as_ref().map(|f| f.simulation_tick),
+        "authority": view.frame.as_ref().map(|f| &f.carts),
+        "poses": view.poses,
+        "local_position": view.movement.as_ref().and_then(|m| m.local_position()),
+        "prediction_clock": view.movement.as_ref().map(|m| m.clock()),
+    })
 }
 fn update_cart_movement(
     view: &mut View,
@@ -1464,6 +1492,37 @@ mod tests {
         update_cart_movement(&mut view, 0.015625, 0.046875, 0.0, Some(0), None);
         assert!(view.poses.iter().all(Option::is_none));
         assert!(view.movement.is_none());
+    }
+    #[test]
+    fn movement_diagnostics_expose_only_bounded_presentation_state() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let mut view = View {
+            frame: Some(sim.network_frame()),
+            edges: Some(sim.network_edges()),
+            ..Default::default()
+        };
+        update_cart_movement(
+            &mut view,
+            0.0,
+            0.0,
+            0.0,
+            Some(0),
+            Some(ControlIntent::default()),
+        );
+        update_cart_movement(
+            &mut view,
+            0.03125,
+            0.03125,
+            0.0,
+            Some(0),
+            Some(ControlIntent::default()),
+        );
+        let value = movement_snapshot(&view, Some(0), 0.03125);
+        assert_eq!(value["seat"], 0);
+        assert_eq!(value["simulation_tick"], 0);
+        assert_ne!(value["local_position"], value["authority"][0]["position"]);
+        assert_eq!(value["poses"].as_array().unwrap().len(), 4);
+        assert!(!value.to_string().contains("credential"));
     }
     #[test]
     fn real_replica_renderer_uses_predicted_pose_without_mutating_authority() {

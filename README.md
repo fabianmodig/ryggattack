@@ -74,6 +74,14 @@ lobby occupy the menu; during gameplay only the HUD and contextual input menu
 are shown, never the create/join form. Native CLI online entry remains supported. See
 [HUD lifecycle, fallback and verification](docs/online-hud.md).
 
+Online cart travel uses bounded shared-rule local prediction/reconciliation and
+rail-aware delayed remote interpolation when the server supplies the optional
+protocol-4 movement capability. Collisions, damage, pickups and outcomes remain
+server-authoritative; older servers fall back to authoritative poses. See
+[the movement design and acceptance matrix](docs/client-prediction.md) and
+[continuation verification and limitations](docs/client-prediction-continuation.md).
+These development notes do not imply that this branch is deployed.
+
 All humans must ready up for a two-second server countdown. Joining, unreadying
 or disconnecting cancels it; changing host settings clears readiness. Bots
 run the actual shared AI and do not ready up. One human with bots works;

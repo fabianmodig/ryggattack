@@ -479,6 +479,13 @@ impl NetworkClient {
                                     Some((seat, room, participant, edges, code, credential))
                             }
                             Some(ServerMessage::State(mut frame)) if valid_frame(&frame) => {
+                                if frame
+                                    .motion
+                                    .as_ref()
+                                    .is_some_and(|m| !m.valid(frame.simulation_tick))
+                                {
+                                    frame.motion = None;
+                                }
                                 frame.carts.sort_unstable_by_key(|cart| cart.id);
                                 if inbox.frame.as_ref().is_none_or(|old| frame.tick > old.tick) {
                                     inbox.frame = Some(frame);
@@ -816,6 +823,33 @@ mod resilience_tests {
         let mut old = frame;
         old.motion = None;
         assert!(valid_frame(&old), "older protocol-4 frames remain valid");
+    }
+    #[test]
+    fn malformed_optional_motion_preserves_authority_and_disables_prediction() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let original = sim.network_frame();
+        for broken in [
+            serde_json::json!({"rails": [], "applied": []}),
+            serde_json::json!("unknown future capability"),
+            {
+                let mut m = serde_json::to_value(original.motion.as_ref().unwrap()).unwrap();
+                m["rails"][0]["progress"] = serde_json::json!(1.1);
+                m
+            },
+            {
+                let mut m = serde_json::to_value(original.motion.as_ref().unwrap()).unwrap();
+                m["applied"][0]["axes"][0] = serde_json::json!(2.0);
+                m
+            },
+        ] {
+            let mut value = serde_json::to_value(&original).unwrap();
+            value["motion"] = broken;
+            let frame: Frame = serde_json::from_value(value)
+                .expect("optional capability cannot discard valid authority");
+            assert!(frame.motion.is_none());
+            assert!(valid_frame(&frame));
+            assert_eq!(frame.carts[0].position, original.carts[0].position);
+        }
     }
     #[test]
     fn visual_descriptors_validate_after_wire_decode() {

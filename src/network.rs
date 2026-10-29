@@ -173,6 +173,43 @@ pub struct MotionFrame {
     pub rails: [RailState; 4],
     pub applied: [AppliedInput; 4],
 }
+impl MotionFrame {
+    pub fn valid(&self, tick: u64) -> bool {
+        let adjacent = |a: usize, b: usize| {
+            a < 25
+                && b < 25
+                && a != b
+                && ((a / 5 == b / 5 && a.abs_diff(b) == 1) || a.abs_diff(b) == 5)
+        };
+        self.rails.iter().all(|rail| {
+            rail.progress.is_finite()
+                && (0.0..=1.0).contains(&rail.progress)
+                && rail
+                    .requested_turn
+                    .iter()
+                    .all(|v| v.is_finite() && v.abs() <= 1.0)
+                && match rail.path {
+                    RailPath::Edge { from, to } => adjacent(from, to),
+                    RailPath::Junction { from, node, to } => {
+                        from != to && adjacent(from, node) && adjacent(node, to)
+                    }
+                }
+        }) && self.applied.iter().all(|input| {
+            input.since_tick <= tick && input.axes.iter().all(|v| v.is_finite() && v.abs() <= 1.0)
+        })
+    }
+}
+// Optional travel capability cannot invalidate otherwise valid authority. The
+// surrounding transport already bounds the complete JSON message size/depth.
+fn optional_motion<'de, D: serde::Deserializer<'de>>(
+    decoder: D,
+) -> Result<Option<Box<MotionFrame>>, D::Error> {
+    let value = serde_json::Value::deserialize(decoder)?;
+    Ok(serde_json::from_value::<MotionFrame>(value)
+        .ok()
+        .filter(|motion| motion.valid(u64::MAX))
+        .map(Box::new))
+}
 /// Held control selected at the boundary of a completed simulation step.
 /// Zero denotes a server/direct-simulation control, not a client sequence.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
@@ -195,8 +232,12 @@ pub struct Frame {
     pub transition: f32,
     pub until_drop: f32,
     pub bodies: Vec<Body>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub motion: Option<MotionFrame>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "optional_motion"
+    )]
+    pub motion: Option<Box<MotionFrame>>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 pub enum ServerMessage {
