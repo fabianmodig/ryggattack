@@ -133,7 +133,7 @@ try{
  // identity/state. Cancel after Hello has allocated a seat, before WASM consumes
  // Welcome; the existing authoritative observer must see that seat revoked.
  let delayAdmission=true,delayedRoute,delayedMessages=[];
- await a.page.routeWebSocket(address,route=>{
+ await a.page.routeWebSocket(new URL(address).href,route=>{
   const upstream=route.connectToServer();
   route.onMessage(message=>upstream.send(message));
   upstream.onMessage(message=>{
