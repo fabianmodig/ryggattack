@@ -96,4 +96,14 @@ assert.equal(editing.env.document.activeElement,field,'idle bridge frames preser
 const selector=editing.$('target-room');selector.options=[{value:'1'},{value:'3'},{value:'5',disabled:true}];selector.value='1';selector.dispatchEvent=()=>{};selector.focus();
 navigateControls(visibleRoot,{controller:true,right:true},()=>assert.fail('setting navigated'));assert.equal(selector.value,'3');assert.equal(editing.env.document.activeElement,selector);
 navigateControls(visibleRoot,{controller:true,left:true},()=>assert.fail('setting navigated'));assert.equal(selector.value,'1');
-console.log('unified menu: validation, explicit admission, duplicate guard, invitations, scoped resume, lifecycle, authority, focus and shared navigation passed');
+// Clipboard success and unavailable fallbacks remain visible and actionable.
+const copied=fixture();copied.publish({lobby,participant:1,status:'Online',notice:''});
+let clipboardText;copied.env.navigator.clipboard.writeText=async text=>{clipboardText=text;};
+await copied.$('copy-room').onclick();assert.equal(clipboardText,copied.$('share-room').value);assert.equal(copied.$('room-notice').textContent,'Link copied');
+copied.env.navigator.clipboard.writeText=async()=>{throw Error('permission denied');};
+await copied.$('copy-room').onclick();assert.match(copied.$('room-notice').textContent,/Clipboard unavailable/);assert.equal(copied.env.document.activeElement.id,'share-room');
+copied.publish({lobby,participant:2,status:'Online',notice:'Only the host can configure this room'});assert.match(copied.$('room-notice').textContent,/Only the host/);assert(copied.$('apply-room').disabled);
+// The in-match opener is not available while its menu is already open.
+copied.publish({lobby:{...lobby,phase:'Running'},participant:2,status:'Online',notice:''});assert(!copied.$('open-match-menu').hidden);
+copied.$('open-match-menu').click();copied.tick();assert(copied.$('open-match-menu').hidden);assert.equal(copied.menu.screen,'match');
+console.log('unified menu: validation, explicit admission, duplicate guard, invitations, scoped resume, lifecycle, authority, focus, clipboard and shared navigation passed');
