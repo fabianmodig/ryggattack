@@ -10,6 +10,7 @@ pub mod input;
 mod match_settings;
 pub mod net_client;
 pub mod network;
+pub mod prediction;
 mod online;
 mod players;
 mod powerups;

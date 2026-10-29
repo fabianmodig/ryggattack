@@ -228,6 +228,12 @@ pub(crate) fn bot_input(
     }
 }
 
+/// Pure travel only: also used by speculative client steps. No contact,
+/// pickup, projectile, scoring, RNG or other irreversible event is run here.
+pub(crate) fn travel_step(map: &RailMap, rail: &mut RailFollower, multiplier: f32, dt: f32) {
+    advance_cart(map, rail, PLAYER_SPEED * multiplier * dt);
+}
+
 pub(crate) fn move_players(
     time: Res<Time>,
     round: Res<Round>,
@@ -246,11 +252,7 @@ pub(crate) fn move_players(
         let multiplier = powerups
             .as_ref()
             .map_or(1.0, |p| p.buffs[player.id].multiplier());
-        advance_cart(
-            &rail_map,
-            &mut rail,
-            PLAYER_SPEED * multiplier * time.delta_secs(),
-        );
+        travel_step(&rail_map, &mut rail, multiplier, time.delta_secs());
         let (position, direction) = track_pose(rail.path, rail.progress);
         transform.translation = position;
         transform.look_at(position + direction, Vec3::Y);

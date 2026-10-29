@@ -6,7 +6,7 @@ use super::map::{RailMap, rail_position};
 
 pub(super) const TRACK_CORNER_RADIUS: f32 = 0.9;
 
-#[derive(Component)]
+#[derive(Component, Clone, Debug)]
 pub(crate) struct RailFollower {
     pub(crate) path: RailPath,
     pub(crate) progress: f32,
@@ -14,8 +14,8 @@ pub(crate) struct RailFollower {
     pub(crate) collision_cooldown: f32,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum RailPath {
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum RailPath {
     Edge { from: usize, to: usize },
     Junction { from: usize, node: usize, to: usize },
 }

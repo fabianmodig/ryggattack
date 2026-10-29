@@ -158,6 +158,21 @@ pub struct Body {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub explosion: Option<ExplosionVisual>,
 }
+pub use crate::tracks::RailPath;
+
+/// Additive protocol-4 travel capability. Older servers omit this field and
+/// newer clients must fall back to authoritative presentation, never infer rails.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct RailState {
+    pub path: RailPath,
+    pub progress: f32,
+    pub requested_turn: [f32; 3],
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct MotionFrame {
+    pub rails: [RailState; 4],
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Frame {
     pub tick: u64,
@@ -171,6 +186,8 @@ pub struct Frame {
     pub transition: f32,
     pub until_drop: f32,
     pub bodies: Vec<Body>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<MotionFrame>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 pub enum ServerMessage {

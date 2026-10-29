@@ -61,7 +61,7 @@ impl Buffs {
             Kind::AllHits => self.all_hits = 10.0,
         }
     }
-    fn tick(&mut self, dt: f32) {
+    pub(crate) fn tick(&mut self, dt: f32) {
         self.speed = (self.speed - dt).max(0.0);
         self.all_hits = (self.all_hits - dt).max(0.0);
     }

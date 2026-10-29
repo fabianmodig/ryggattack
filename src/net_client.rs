@@ -68,6 +68,23 @@ fn valid_frame(frame: &Frame) -> bool {
     {
         return false;
     }
+    if frame.motion.as_ref().is_some_and(|motion| {
+        let adjacent = |a: usize, b: usize| {
+            a < 25 && b < 25 && a != b
+                && ((a / 5 == b / 5 && a.abs_diff(b) == 1) || a.abs_diff(b) == 5)
+        };
+        motion.rails.iter().any(|rail| {
+            !rail.progress.is_finite() || !(0.0..=1.0).contains(&rail.progress)
+                || !bounded(&rail.requested_turn, -1.0, 1.0)
+                || match rail.path {
+                    RailPath::Edge { from, to } => !adjacent(from, to),
+                    RailPath::Junction { from, node, to } =>
+                        from == to || !adjacent(from, node) || !adjacent(node, to),
+                }
+        })
+    }) {
+        return false;
+    }
     let mut carts = [false; 4];
     for cart in &frame.carts {
         if cart.id >= 4
@@ -699,6 +716,21 @@ impl NetworkClient {
 #[cfg(test)]
 mod resilience_tests {
     use super::*;
+    #[test]
+    fn prediction_rail_metadata_rejects_invalid_paths_and_progress() {
+        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+        let frame = sim.network_frame();
+        assert!(valid_frame(&frame));
+        let mut bad = frame.clone();
+        bad.motion.as_mut().unwrap().rails[0].path = RailPath::Edge { from: 25, to: 26 };
+        assert!(!valid_frame(&bad), "untrusted rail indices cannot reach traversal");
+        let mut bad = frame.clone();
+        bad.motion.as_mut().unwrap().rails[0].progress = f32::NAN;
+        assert!(!valid_frame(&bad));
+        let mut old = frame;
+        old.motion = None;
+        assert!(valid_frame(&old), "older protocol-4 frames remain valid");
+    }
     #[test]
     fn visual_descriptors_validate_after_wire_decode() {
         let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();

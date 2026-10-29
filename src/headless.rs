@@ -254,6 +254,18 @@ impl Simulation {
         }
         self.network_ids.retain(|entity, _| live.contains(entity));
         bodies.sort_by_key(|body| body.id);
+        let mut rails: Vec<_> = world
+            .query::<(&Player, &crate::tracks::RailFollower)>()
+            .iter(world)
+            .map(|(player, rail)| (player.id, crate::network::RailState {
+                path: rail.path,
+                progress: rail.progress,
+                requested_turn: rail.requested_turn.to_array(),
+            }))
+            .collect();
+        rails.sort_by_key(|(seat, _)| *seat);
+        let rails = rails.into_iter().map(|(_, rail)| rail).collect::<Vec<_>>()
+            .try_into().expect("the shared scene always has four cart entities");
         Frame {
             tick: snap.tick,
             simulation_tick: snap.tick,
@@ -266,6 +278,7 @@ impl Simulation {
             transition: snap.transition,
             until_drop: snap.until_drop,
             bodies,
+            motion: Some(crate::network::MotionFrame { rails }),
         }
     }
 
