@@ -227,6 +227,7 @@ pub struct NetworkClient {
     retry_count: u32,
     suppress_until_neutral: bool,
     awaiting_welcome: bool,
+    leave_requested: bool,
 }
 impl NetworkClient {
     pub fn connect(address: &str, name: &str) -> Result<Self, String> {
@@ -273,6 +274,7 @@ impl NetworkClient {
             retry_count: 0,
             suppress_until_neutral: false,
             awaiting_welcome: true,
+            leave_requested: false,
         };
         #[cfg(target_arch = "wasm32")]
         if let Some(code) = room {
@@ -370,12 +372,31 @@ impl NetworkClient {
         self.status = status;
     }
     pub fn leave(&mut self) {
+        if self.failed && self.status == "Left room; create or join another" {
+            return;
+        }
+        // An allocated seat may already exist on the server before Welcome is
+        // consumed. Keep polling that admission/reconnect and release it once
+        // identity is validated, rather than closing into a reserved ghost seat.
+        if self.awaiting_welcome
+            && !self.failed
+            && (self.sender.is_some() || self.credential.is_some())
+        {
+            self.leave_requested = true;
+            self.status = "Canceling connection; waiting to release seat…".into();
+            return;
+        }
+        let released = if self.sender.is_none() && self.credential.is_none() && !self.failed {
+            true // Fresh connection canceled before opening any transport.
+        } else {
+            self.command(ClientMessage::Leave).is_ok()
+        };
         self.clear_claim();
-        let _ = self.command(ClientMessage::Leave);
         if let Some(sender) = &mut self.sender {
             sender.close();
         }
         self.failed = true;
+        self.leave_requested = false;
         self.credential = None;
         self.retry_started = None;
         self.seat = None;
@@ -384,7 +405,11 @@ impl NetworkClient {
         self.lobby = None;
         self.frame = None;
         self.previous = None;
-        self.status = "Left room; create or join another".into();
+        self.status = if released {
+            "Left room; create or join another"
+        } else {
+            "Connection closed; seat release unconfirmed. A disconnected seat may remain reserved for up to 60 seconds."
+        }.into();
     }
     fn open(address: &str, mailbox: Arc<Mutex<Inbox>>) -> Result<ewebsock::WsSender, String> {
         let options = ewebsock::Options {
@@ -487,6 +512,9 @@ impl NetworkClient {
     }
     /// Returns true only when an intent was sent; caller may retain fire taps.
     pub fn pump(&mut self, intent: ControlIntent) -> bool {
+        if self.failed && self.leave_requested {
+            self.leave();
+        }
         if self.failed || Instant::now() < self.retry_at {
             return false;
         }
@@ -558,6 +586,10 @@ impl NetworkClient {
         }
         if let Some(error) = inbox.error {
             self.fail_terminal(error);
+            return false;
+        }
+        if self.leave_requested && !self.awaiting_welcome {
+            self.leave();
             return false;
         }
         let sender = self.sender.as_mut().expect("opened above");
@@ -925,6 +957,48 @@ mod resilience_tests {
             invalid[k] = v;
             assert!(StoredClaim::parse(&invalid.to_string()).is_none());
         }
+    }
+    #[test]
+    fn cancel_with_coalesced_welcome_and_disconnect_does_not_confirm_release() {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut c =
+            NetworkClient::connect(&format!("ws://{}", listener.local_addr().unwrap()), "Ada")
+                .unwrap();
+        c.leave_requested = true;
+        {
+            let mut inbox = c.inbox.lock().unwrap();
+            inbox.welcome = Some((0, 1, 1, vec![], "a".repeat(20), "b".repeat(64)));
+            inbox.disconnected = true;
+        }
+        c.pump(Default::default());
+        assert!(
+            !c.failed,
+            "a closed connection cannot confirm Leave delivery"
+        );
+        assert!(c.leave_requested, "retry must retain release ownership");
+        assert!(c.status.starts_with("Retrying"));
+        assert!(
+            c.credential.is_some(),
+            "preserve claim so retry can release it"
+        );
+    }
+    #[test]
+    fn failed_leave_does_not_claim_seat_release() {
+        let mut c = NetworkClient::connect("ws://127.0.0.1:1", "Ada").unwrap();
+        c.credential = Some("a".repeat(64));
+        c.retry_count = 12;
+        c.leave();
+        assert!(c.leave_requested);
+        c.retry();
+        assert!(c.failed);
+        c.pump(Default::default());
+        assert!(
+            c.status
+                .starts_with("Connection closed; seat release unconfirmed.")
+        );
+        assert!(c.credential.is_none());
+        assert!(c.sender.is_none());
+        assert!(!c.leave_requested);
     }
     #[test]
     fn retries_are_bounded_and_leave_disables_reconnect() {

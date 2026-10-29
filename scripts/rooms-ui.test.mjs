@@ -86,6 +86,16 @@ waiting.publish({lobby:null,status:'Waiting for seat…',notice:''});
 assert(waiting.$('create-room').disabled,'Waiting for seat keeps duplicate admission disabled');
 waiting.$('create-room').click();assert.equal(waiting.calls.length,0);
 waiting.$('setup-back').click();assert.equal(waiting.env.ryggattackCommand,'"Leave"');assert.equal(waiting.calls.length,0);
+// A failed cancellation must recover without claiming authoritative seat release.
+waiting.publish({lobby,participant:1,status:'Canceling connection; waiting to release seat…',notice:''});
+assert(waiting.$('leave-room').disabled,'a retained lobby cannot clear cancellation ownership');
+waiting.publish({lobby:null,status:'Connection closed; seat release unconfirmed. A disconnected seat may remain reserved for up to 60 seconds.',notice:''});
+assert.equal(waiting.$('create-room').disabled,false);
+assert.match(waiting.$('room-notice').textContent,/release unconfirmed/);
+assert(!waiting.$('room-notice').textContent.includes('Your seat has been released'));
+// Browser text follows the existing monospace game menu rather than a second design.
+assert.match(html,/font-family:\s*monospace/);
+assert(!html.includes('system-ui'));
 // Model visibility correctly: a hidden main-menu button cannot receive focus.
 const editing=fixture();editing.$('play-online').click();const field=editing.$('player-name'),hidden=editing.$('play-local'),action=editing.$('create-room');
 hidden.getClientRects=()=>[];const visibleRoot=editing.$('online-entry');visibleRoot.children=[hidden,field,action];field.focus();

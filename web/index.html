@@ -15,7 +15,7 @@
         overflow: hidden;
         background: #090b13;
         color: #c8d2e6;
-        font-family: system-ui, sans-serif;
+        font-family: monospace;
       }
 
       #game {
@@ -33,7 +33,7 @@
       [hidden] { display: none !important; }
       #online-entry { position:absolute; inset:0; z-index:6; overflow:auto; background:#060911; }
       .menu-panel { box-sizing:border-box; width:min(100%,660px); min-height:100%; margin:auto; padding:clamp(20px,5vh,48px) 22px; display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:16px; }
-      h1 { color:#f2c73d; font-size:clamp(30px,7vw,68px); font-weight:500; text-align:center; margin:0; overflow-wrap:anywhere; }
+      h1 { color:#f2c73d; font-size:clamp(30px,7vw,68px); font-weight:700; text-align:center; margin:0; overflow-wrap:anywhere; }
       #menu-subtitle { color:#b8c7e6; font-size:24px; text-align:center; margin:0 0 10px; }
       .menu-stack { display:flex; flex-direction:column; gap:14px; }
       #main-controls { align-items:center; }
@@ -44,7 +44,7 @@
       #online-entry :focus-visible, #open-match-menu:focus-visible { outline:2px solid #f2c73d; outline-offset:3px; }
       #online-entry :disabled { opacity:.48; cursor:not-allowed; }
       #online-entry label { display:flex; flex-direction:column; gap:6px; color:#b8c7e6; font-size:14px; letter-spacing:.04em; min-width:0; }
-      #online-entry input, #online-entry select { box-sizing:border-box; width:100%; min-width:0; min-height:42px; color:white; background:#121929; border:1px solid #547ab8; border-radius:8px; padding:9px 12px; font:18px system-ui,sans-serif; }
+      #online-entry input, #online-entry select { box-sizing:border-box; width:100%; min-width:0; min-height:42px; color:white; background:#121929; border:1px solid #547ab8; border-radius:8px; padding:9px 12px; font:18px monospace; }
       #online-entry small, #host-permissions { color:#9caec7; font-size:14px; line-height:1.5; }
       #online-entry p { overflow-wrap:anywhere; margin:0; line-height:1.5; }
       #room-notice { color:#f2c73d; border-left:3px solid #547ab8; padding-left:12px; min-height:24px; }

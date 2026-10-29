@@ -143,10 +143,10 @@ export function installRoomControls(env=globalThis) {
     if(raw&&raw!==lastRaw){
       lastRaw=raw;try{room=JSON.parse(raw);}catch{return;}
       const l=room.lobby;
-      if(pending?.kind==='leave'&&!l&&room.status==='Left room; create or join another'){
-        pending=null;setBusy(false);notice('Left room. Your seat has been released.');show('setup');
+      if(pending?.kind==='leave'&&!l&&(room.status==='Left room; create or join another'||room.status.startsWith('Connection closed; seat release unconfirmed.'))){
+        pending=null;setBusy(false);notice(room.status==='Left room; create or join another'?'Left room. Your seat has been released.':room.status);show('setup');
       } else if(l){
-        pending=null;setBusy(false);
+        if(pending?.kind!=='leave')pending=null;setBusy(false);
         const running=l.phase==='Running', host=l.host===room.participant;
         $('room-info').textContent=`Room ${l.code} · ${typeof l.phase==='string'?l.phase:`Starting in ${(l.phase.Countdown.ticks_left/64).toFixed(1)}s`}`;
         $('room-roster').replaceChildren(...l.humans.map(h=>{const card=document.createElement('li');card.className='seat-card';card.textContent=`P${h.seat+1} · ${h.name}${h.id===room.participant?' (you)':''}${h.id===l.host?' · HOST':''} — ${participantStatus(h,l.phase)}`;return card;}));

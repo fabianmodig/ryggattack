@@ -128,14 +128,40 @@ try{
  const sockets=a.sockets;await a.page.locator('#play-local').click();await a.page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Lobby',null,{timeout:180000,polling:20});await a.page.locator('canvas').focus();await a.page.mouse.move(0,0);const neutral=await a.page.evaluate(()=>globalThis.__testPadPolls??0);await a.page.waitForFunction(n=>(globalThis.__testPadPolls??0)>n+2,neutral,{timeout:60000,polling:20});await hold(a,'w');await hold(a,'Enter');await a.page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Playing',null,{timeout:60000});await shot(a,'local-after-online');assert.equal(a.sockets,sockets,'no hidden online transport in local game');
  await hold(a,'Escape');await hold(a,'ArrowDown');await hold(a,'Enter');await visible(a,'#play-online');
  await setup(a);await a.page.locator('#backend').fill(address);await a.page.locator('#room-code').fill('0'.repeat(20));expectedError=true;await a.page.locator('#join-room').click({noWaitAfter:true});await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('room not found'),null,{timeout:120000});await shot(a,'invalid-room-feedback');assert(await a.page.locator('#join-room').isEnabled());expectedError=false;
- const cap=await rawJoin();for(let i=0;i<3;i++)await rawJoin(cap.lobby.code);await until(()=>cap.lobby.humans.length===4,'full room has four real peers');
+ const cap=await rawJoin();
+ // Delay real server bytes at the browser transport boundary, never synthesize
+ // identity/state. Cancel after Hello has allocated a seat, before WASM consumes
+ // Welcome; the existing authoritative observer must see that seat revoked.
+ let delayAdmission=true,delayedRoute,delayedMessages=[];
+ await a.page.routeWebSocket(address,route=>{
+  const upstream=route.connectToServer();
+  route.onMessage(message=>upstream.send(message));
+  upstream.onMessage(message=>{
+   if(!delayAdmission){route.send(message);return;}
+   // Lobby is a latest-value mailbox on the real adapter too. Retain Welcome
+   // plus the latest actual Lobby while a software-rendered frame is pending.
+   const parsed=JSON.parse(String(message));
+   if(parsed.Lobby)delayedMessages=delayedMessages.filter(m=>!JSON.parse(String(m)).Lobby);
+   delayedRoute=route;delayedMessages.push(message);
+  });
+ });
+ await a.page.locator('#room-code').fill(cap.lobby.code);await a.page.locator('#join-room').click({noWaitAfter:true});
+ await until(()=>cap.lobby.humans.length===2&&delayedMessages.some(m=>JSON.parse(String(m)).Welcome),'allocated seat with held Welcome');
+ await a.page.locator('#setup-back').click();
+ await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('Canceling connection; waiting to release seat'),null,{timeout:120000});
+ assert.equal(cap.lobby.humans.length,2,'cancel cannot announce release before validated admission');
+ delayAdmission=false;for(const message of delayedMessages)delayedRoute.send(message);delayedMessages=[];
+ await until(()=>cap.lobby.humans.length===1,'cancel before Welcome revoked authoritative seat');
+ await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('Your seat has been released'),null,{timeout:120000});
+ await shot(a,'canceled-admission-feedback');evidence.checks.push('real delayed-Welcome cancellation revokes authoritative seat');
+ for(let i=0;i<3;i++)await rawJoin(cap.lobby.code);await until(()=>cap.lobby.humans.length===4,'full room has four real peers');
  await a.page.locator('#room-code').fill(cap.lobby.code);expectedError=true;await a.page.locator('#join-room').click({noWaitAfter:true});await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('room full'),null,{timeout:120000});await shot(a,'full-room-feedback');
  evidence.formerly_valid_invite={room:cap.identity.room,code:cap.lobby.code,connected_before_restart:4};
  for(const peer of rawPeers){peer.ws.send(JSON.stringify('Leave'));peer.ws.close();}
  const bind=new URL(address).host;await stopBackend();assert.equal(await startBackend(bind),address);
  await a.page.locator('#join-room').click({noWaitAfter:true});await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('room not found'),null,{timeout:120000});await shot(a,'expired-invitation-feedback');evidence.formerly_valid_invite.rejected_after_isolated_restart=true;
  await stopBackend();await a.page.locator('#create-room').click({noWaitAfter:true});await a.page.waitForFunction(()=>document.getElementById('room-notice').textContent.includes('Backend unavailable'),null,{timeout:120000});await shot(a,'backend-failure-feedback');assert(await a.page.locator('#join-room').isEnabled());expectedError=false;
- evidence.checks=['normal main local/online choice','local setup and later real local match after online Leave','keyboard accept and field Escape','visible validation without sockets','one socket per explicit fresh admission','invitation prefill without autojoin','390px invitation has no horizontal overflow','two separate rendered WASM clients','authoritative host/guest roster and permissions','host settings','countdown start/cancel','real keyboard network gameplay','no creation form in match menu; neutral input while menu focused','natural match return to same lobby','saved-seat reload keeps participant and seat','explicit peer Leave removes roster seat','online transport absent during later local play','real missing-room feedback and enabled recovery'];
+ evidence.checks=['real delayed-Welcome cancellation revokes authoritative seat','normal main local/online choice','local setup and later real local match after online Leave','keyboard accept and field Escape','visible validation without sockets','one socket per explicit fresh admission','invitation prefill without autojoin','390px invitation has no horizontal overflow','two separate rendered WASM clients','authoritative host/guest roster and permissions','host settings','countdown start/cancel','real keyboard network gameplay','no creation form in match menu; neutral input while menu focused','natural match return to same lobby','saved-seat reload keeps participant and seat','explicit peer Leave removes roster seat','online transport absent during later local play','real missing-room feedback and enabled recovery'];
  evidence.checks.push('real four-peer full-room rejection','formerly valid invitation rejected after isolated backend reset','backend unavailable feedback and enabled recovery');
  assert.equal(evidence.errors.length,0,JSON.stringify(evidence.errors));evidence.status='passed';
 }catch(error){evidence.status='failed';evidence.failure=String(error.stack??error);for(const c of clients){if(c.page.isClosed())continue;try{evidence.failure_state??=[];evidence.failure_state.push({name:c.name,identity:c.identity,lobby:c.lobby,states:c.states,commands:c.commands,input_tail:c.inputs.slice(-20),page_state:await c.page.evaluate(()=>({active:document.activeElement?.id,focused:document.hasFocus(),hud:JSON.parse(globalThis.ryggattackHud??'null')})),notice:await c.page.locator('#room-notice').textContent(),local:await c.page.evaluate(()=>globalThis.ryggattackLocalScreen)});await shot(c,c.name+'-failure');}catch{}}process.exitCode=1;

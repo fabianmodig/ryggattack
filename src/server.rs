@@ -1059,6 +1059,78 @@ mod tests {
         assert_eq!(r.lobby.join(3, "new".into()).unwrap(), 0);
     }
     #[test]
+    fn cancel_admission_before_welcome_releases_authoritative_seat() {
+        let mut server = Server::bind("127.0.0.1:0").unwrap();
+        let mut client = crate::net_client::NetworkClient::connect(
+            &format!("ws://{}", server.local_addr()),
+            "cancel",
+        )
+        .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        // Send Hello, then deliberately do not pump the client's Welcome.
+        while !client.status.contains("Waiting for seat") {
+            assert!(Instant::now() < deadline);
+            client.pump(ControlIntent::default());
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        while server.rooms.is_empty() {
+            assert!(Instant::now() < deadline);
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert_eq!(client.seat, None, "Welcome must remain unprocessed");
+        assert_eq!(server.rooms[0].lobby.humans.len(), 1);
+        client.leave();
+        let deadline = Instant::now() + Duration::from_secs(3);
+        while !server.rooms[0].lobby.humans.is_empty() && Instant::now() < deadline {
+            client.pump(ControlIntent::default());
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(
+            server.rooms[0].lobby.humans.is_empty(),
+            "Cancel must transmit Leave, not reserve an abandoned seat"
+        );
+        assert_eq!(client.status, "Left room; create or join another");
+    }
+    #[test]
+    fn leave_during_reconnect_releases_reserved_authoritative_seat() {
+        let mut server = Server::bind("127.0.0.1:0").unwrap();
+        let mut client = crate::net_client::NetworkClient::connect(
+            &format!("ws://{}", server.local_addr()),
+            "cancel retry",
+        )
+        .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while client.participant.is_none() {
+            assert!(Instant::now() < deadline);
+            client.pump(ControlIntent::default());
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        server.rooms[0].disconnect(0, Instant::now(), false);
+        while !client.status.contains("Retrying") {
+            assert!(Instant::now() < deadline);
+            client.pump(ControlIntent::default());
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(!server.rooms[0].lobby.humans[0].connected);
+        client.leave();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while !server.rooms[0].lobby.humans.is_empty() && Instant::now() < deadline {
+            client.pump(ControlIntent::default());
+            server.tick();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(
+            server.rooms[0].lobby.humans.is_empty(),
+            "Leave must reconnect to revoke the reserved seat"
+        );
+        assert_eq!(client.status, "Left room; create or join another");
+    }
+    #[test]
     fn shared_adapter_automatically_reconnects_same_seat_with_neutral_sequence() {
         let mut server = Server::bind("127.0.0.1:0").unwrap();
         let mut client = crate::net_client::NetworkClient::connect(
