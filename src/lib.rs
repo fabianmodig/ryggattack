@@ -7,20 +7,20 @@ mod explosions;
 mod game;
 pub mod headless;
 pub mod input;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod management;
 mod match_settings;
 pub mod net_client;
 pub mod network;
-pub mod prediction;
 mod online;
 mod players;
 mod powerups;
+pub mod prediction;
 pub mod rooms;
 mod scene;
 mod scenery;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod server;
-#[cfg(not(target_arch = "wasm32"))]
-pub mod management;
 mod settings;
 mod simulation;
 mod tracks;
