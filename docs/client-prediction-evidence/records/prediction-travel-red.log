@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0432]: unresolved import `ryggattack::prediction`
+ --> tests/prediction.rs:2:40
+  |
+2 | use ryggattack::{input::ControlIntent, prediction::Movement};
+  |                                        ^^^^^^^^^^ could not find `prediction` in `ryggattack`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `ryggattack` (test "prediction") due to 1 previous error
+
+TIMING prediction-travel-red: 10.793 s; exit=101

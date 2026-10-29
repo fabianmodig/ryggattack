@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 54.01s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 14 tests
+test maximum_authoritative_tick_disables_speculation_without_panicking ... ok
+test a_long_render_stall_discards_speculation_instead_of_catching_up ... ok
+test local_rendering_interpolates_between_actual_fixed_steps ... ok
+test movement_snapshot_exposes_authoritative_directed_rail_state ... ok
+test rail_interpolation_follows_the_curve_and_never_cuts_the_corner ... ok
+test a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix ... ok
+test prediction_horizon_is_bounded_even_with_many_small_render_frames ... ok
+test a_death_respawn_boundary_cannot_replay_previous_life_inputs ... ok
+test processed_input_reports_the_held_state_selected_at_a_completed_tick ... ok
+test reconciliation_replays_actual_steps_not_acknowledged_messages ... ok
+test remote_carts_move_between_samples_and_stop_without_extrapolation ... ok
+test stale_or_duplicate_frames_do_not_rewind_prediction ... ok
+test small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time ... ok
+test prediction_uses_shared_fixed_travel_before_new_authority ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+
+TIMING prediction-clock-green: 54.287 s; exit=0

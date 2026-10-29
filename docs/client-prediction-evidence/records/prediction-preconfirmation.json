@@ -1,0 +1,1181 @@
+[
+  {
+    "file": "asymmetric-jitter-PredictGuest.json",
+    "seat": 1,
+    "preconfirmation_observations": [
+      {
+        "sequence": 74,
+        "input_at_ms": 30741.699999999255,
+        "render_at_ms": 30741.800000000745,
+        "confirmation_at_ms": 30970.900000000373,
+        "render_before_confirmation_ms": 229.09999999962747,
+        "render_distance_from_last_authority": 0.11245441436767578,
+        "prediction_tick": 1672,
+        "authority_tick": 1670
+      },
+      {
+        "sequence": 75,
+        "input_at_ms": 30940.900000000373,
+        "render_at_ms": 31137,
+        "confirmation_at_ms": 31233.5,
+        "render_before_confirmation_ms": 96.5,
+        "render_distance_from_last_authority": 0.02383435982101406,
+        "prediction_tick": 1699,
+        "authority_tick": 1698
+      },
+      {
+        "sequence": 76,
+        "input_at_ms": 31136.800000000745,
+        "render_at_ms": 31137,
+        "confirmation_at_ms": 31420.699999999255,
+        "render_before_confirmation_ms": 283.69999999925494,
+        "render_distance_from_last_authority": 0.02383435982101406,
+        "prediction_tick": 1699,
+        "authority_tick": 1698
+      },
+      {
+        "sequence": 77,
+        "input_at_ms": 31351.800000000745,
+        "render_at_ms": 31352,
+        "confirmation_at_ms": 31595.900000000373,
+        "render_before_confirmation_ms": 243.90000000037253,
+        "render_distance_from_last_authority": 0.09938455275414375,
+        "prediction_tick": 1712,
+        "authority_tick": 1710
+      },
+      {
+        "sequence": 78,
+        "input_at_ms": 31740.800000000745,
+        "render_at_ms": 31933.400000000373,
+        "confirmation_at_ms": 32045.199999999255,
+        "render_before_confirmation_ms": 111.79999999888241,
+        "render_distance_from_last_authority": 0.7735347747802734,
+        "prediction_tick": 1762,
+        "authority_tick": 1750
+      },
+      {
+        "sequence": 79,
+        "input_at_ms": 31933.199999999255,
+        "render_at_ms": 31933.400000000373,
+        "confirmation_at_ms": 32171,
+        "render_before_confirmation_ms": 237.59999999962747,
+        "render_distance_from_last_authority": 0.7735347747802734,
+        "prediction_tick": 1762,
+        "authority_tick": 1750
+      },
+      {
+        "sequence": 80,
+        "input_at_ms": 32131.599999999627,
+        "render_at_ms": 32131.699999999255,
+        "confirmation_at_ms": 32433.099999999627,
+        "render_before_confirmation_ms": 301.40000000037253,
+        "render_distance_from_last_authority": 0.7974746227264404,
+        "prediction_tick": 1775,
+        "authority_tick": 1762
+      },
+      {
+        "sequence": 81,
+        "input_at_ms": 32334.099999999627,
+        "render_at_ms": 32334.199999999255,
+        "confirmation_at_ms": 32621.099999999627,
+        "render_before_confirmation_ms": 286.90000000037253,
+        "render_distance_from_last_authority": 0.8411550521851958,
+        "prediction_tick": 1787,
+        "authority_tick": 1774
+      },
+      {
+        "sequence": 82,
+        "input_at_ms": 32533.300000000745,
+        "render_at_ms": 32533.400000000373,
+        "confirmation_at_ms": 32795.90000000037,
+        "render_before_confirmation_ms": 262.5,
+        "render_distance_from_last_authority": 0.9013739656257733,
+        "prediction_tick": 1800,
+        "authority_tick": 1786
+      },
+      {
+        "sequence": 86,
+        "input_at_ms": 33328.699999999255,
+        "render_at_ms": 33524.90000000037,
+        "confirmation_at_ms": 33608.300000000745,
+        "render_before_confirmation_ms": 83.40000000037253,
+        "render_distance_from_last_authority": 0.042659759521484375,
+        "prediction_tick": 1851,
+        "authority_tick": 1850
+      },
+      {
+        "sequence": 87,
+        "input_at_ms": 33524.800000000745,
+        "render_at_ms": 33524.90000000037,
+        "confirmation_at_ms": 33783.199999999255,
+        "render_before_confirmation_ms": 258.2999999988824,
+        "render_distance_from_last_authority": 0.042659759521484375,
+        "prediction_tick": 1851,
+        "authority_tick": 1850
+      },
+      {
+        "sequence": 88,
+        "input_at_ms": 33729.90000000037,
+        "render_at_ms": 33730.09999999963,
+        "confirmation_at_ms": 34045.800000000745,
+        "render_before_confirmation_ms": 315.7000000011176,
+        "render_distance_from_last_authority": 0.07969474792480469,
+        "prediction_tick": 1864,
+        "authority_tick": 1862
+      },
+      {
+        "sequence": 90,
+        "input_at_ms": 34130.59999999963,
+        "render_at_ms": 34328.800000000745,
+        "confirmation_at_ms": 34407.90000000037,
+        "render_before_confirmation_ms": 79.09999999962747,
+        "render_distance_from_last_authority": 0.03769493103328941,
+        "prediction_tick": 1903,
+        "authority_tick": 1902
+      },
+      {
+        "sequence": 91,
+        "input_at_ms": 34328.59999999963,
+        "render_at_ms": 34328.800000000745,
+        "confirmation_at_ms": 34620.800000000745,
+        "render_before_confirmation_ms": 292.0,
+        "render_distance_from_last_authority": 0.03769493103328941,
+        "prediction_tick": 1903,
+        "authority_tick": 1902
+      },
+      {
+        "sequence": 92,
+        "input_at_ms": 34712.40000000037,
+        "render_at_ms": 34728.699999999255,
+        "confirmation_at_ms": 34984.199999999255,
+        "render_before_confirmation_ms": 255.5,
+        "render_distance_from_last_authority": 1.285934686660855,
+        "prediction_tick": 1950,
+        "authority_tick": 1930
+      },
+      {
+        "sequence": 93,
+        "input_at_ms": 34921.5,
+        "render_at_ms": 34921.800000000745,
+        "confirmation_at_ms": 35247.199999999255,
+        "render_before_confirmation_ms": 325.3999999985099,
+        "render_distance_from_last_authority": 0.8306548595428467,
+        "prediction_tick": 1951,
+        "authority_tick": 1938
+      },
+      {
+        "sequence": 94,
+        "input_at_ms": 35118.90000000037,
+        "render_at_ms": 35119,
+        "confirmation_at_ms": 35346.800000000745,
+        "render_before_confirmation_ms": 227.80000000074506,
+        "render_distance_from_last_authority": 0.8495547771453857,
+        "prediction_tick": 1963,
+        "authority_tick": 1950
+      },
+      {
+        "sequence": 95,
+        "input_at_ms": 35309.300000000745,
+        "render_at_ms": 35309.40000000037,
+        "confirmation_at_ms": 35609.09999999963,
+        "render_before_confirmation_ms": 299.69999999925494,
+        "render_distance_from_last_authority": 0.6290551424026489,
+        "prediction_tick": 1976,
+        "authority_tick": 1966
+      },
+      {
+        "sequence": 96,
+        "input_at_ms": 35509.90000000037,
+        "render_at_ms": 35510.09999999963,
+        "confirmation_at_ms": 35795.300000000745,
+        "render_before_confirmation_ms": 285.2000000011176,
+        "render_distance_from_last_authority": 0.641234964132489,
+        "prediction_tick": 1988,
+        "authority_tick": 1978
+      },
+      {
+        "sequence": 97,
+        "input_at_ms": 35702.300000000745,
+        "render_at_ms": 35702.5,
+        "confirmation_at_ms": 35970.09999999963,
+        "render_before_confirmation_ms": 267.59999999962747,
+        "render_distance_from_last_authority": 0.6958346664905548,
+        "prediction_tick": 2001,
+        "authority_tick": 1990
+      },
+      {
+        "sequence": 98,
+        "input_at_ms": 35895.199999999255,
+        "render_at_ms": 35895.300000000745,
+        "confirmation_at_ms": 36232.90000000037,
+        "render_before_confirmation_ms": 337.59999999962747,
+        "render_distance_from_last_authority": 0.7168349027633667,
+        "prediction_tick": 2013,
+        "authority_tick": 2002
+      },
+      {
+        "sequence": 99,
+        "input_at_ms": 36089.09999999963,
+        "render_at_ms": 36089.5,
+        "confirmation_at_ms": 36371.40000000037,
+        "render_before_confirmation_ms": 281.90000000037253,
+        "render_distance_from_last_authority": 0.7399349212646484,
+        "prediction_tick": 2026,
+        "authority_tick": 2014
+      },
+      {
+        "sequence": 100,
+        "input_at_ms": 36485.300000000745,
+        "render_at_ms": 36485.40000000037,
+        "confirmation_at_ms": 36808.09999999963,
+        "render_before_confirmation_ms": 322.69999999925494,
+        "render_distance_from_last_authority": 0.0036749839782714844,
+        "prediction_tick": 2039,
+        "authority_tick": 2038
+      },
+      {
+        "sequence": 101,
+        "input_at_ms": 36688.699999999255,
+        "render_at_ms": 36689,
+        "confirmation_at_ms": 36998,
+        "render_before_confirmation_ms": 309,
+        "render_distance_from_last_authority": 0.597135066986084,
+        "prediction_tick": 2064,
+        "authority_tick": 2054
+      },
+      {
+        "sequence": 102,
+        "input_at_ms": 36897.800000000745,
+        "render_at_ms": 36898,
+        "confirmation_at_ms": 37182.699999999255,
+        "render_before_confirmation_ms": 284.69999999925494,
+        "render_distance_from_last_authority": 0.6933145523071289,
+        "prediction_tick": 2077,
+        "authority_tick": 2066
+      },
+      {
+        "sequence": 103,
+        "input_at_ms": 37092,
+        "render_at_ms": 37092.199999999255,
+        "confirmation_at_ms": 37408.5,
+        "render_before_confirmation_ms": 316.30000000074506,
+        "render_distance_from_last_authority": 0.7517308613709617,
+        "prediction_tick": 2090,
+        "authority_tick": 2078
+      },
+      {
+        "sequence": 104,
+        "input_at_ms": 37283.199999999255,
+        "render_at_ms": 37283.300000000745,
+        "confirmation_at_ms": 37545.09999999963,
+        "render_before_confirmation_ms": 261.7999999988824,
+        "render_distance_from_last_authority": 0.754904778870607,
+        "prediction_tick": 2102,
+        "authority_tick": 2090
+      },
+      {
+        "sequence": 105,
+        "input_at_ms": 37485.09999999963,
+        "render_at_ms": 37485.199999999255,
+        "confirmation_at_ms": 37807.90000000037,
+        "render_before_confirmation_ms": 322.7000000011176,
+        "render_distance_from_last_authority": 0.7905304086313049,
+        "prediction_tick": 2115,
+        "authority_tick": 2102
+      },
+      {
+        "sequence": 106,
+        "input_at_ms": 37693.59999999963,
+        "render_at_ms": 37693.699999999255,
+        "confirmation_at_ms": 37983.5,
+        "render_before_confirmation_ms": 289.80000000074506,
+        "render_distance_from_last_authority": 0.5920953750610352,
+        "prediction_tick": 2128,
+        "authority_tick": 2118
+      },
+      {
+        "sequence": 107,
+        "input_at_ms": 37885.59999999963,
+        "render_at_ms": 37885.699999999255,
+        "confirmation_at_ms": 38170.699999999255,
+        "render_before_confirmation_ms": 285.0,
+        "render_distance_from_last_authority": 0.6667653152328535,
+        "prediction_tick": 2141,
+        "authority_tick": 2130
+      },
+      {
+        "sequence": 108,
+        "input_at_ms": 38191.90000000037,
+        "render_at_ms": 38192.09999999963,
+        "confirmation_at_ms": 38483.800000000745,
+        "render_before_confirmation_ms": 291.7000000011176,
+        "render_distance_from_last_authority": 0.17434173088146424,
+        "prediction_tick": 2153,
+        "authority_tick": 2150
+      },
+      {
+        "sequence": 109,
+        "input_at_ms": 38392.699999999255,
+        "render_at_ms": 38392.800000000745,
+        "confirmation_at_ms": 38658,
+        "render_before_confirmation_ms": 265.19999999925494,
+        "render_distance_from_last_authority": 0.6731548309326172,
+        "prediction_tick": 2173,
+        "authority_tick": 2162
+      },
+      {
+        "sequence": 110,
+        "input_at_ms": 38592.59999999963,
+        "render_at_ms": 38592.800000000745,
+        "confirmation_at_ms": 38933.199999999255,
+        "render_before_confirmation_ms": 340.3999999985099,
+        "render_distance_from_last_authority": 0.7275882142316302,
+        "prediction_tick": 2186,
+        "authority_tick": 2174
+      },
+      {
+        "sequence": 111,
+        "input_at_ms": 38784,
+        "render_at_ms": 38784.199999999255,
+        "confirmation_at_ms": 39058.5,
+        "render_before_confirmation_ms": 274.30000000074506,
+        "render_distance_from_last_authority": 0.7571920404815901,
+        "prediction_tick": 2198,
+        "authority_tick": 2186
+      },
+      {
+        "sequence": 112,
+        "input_at_ms": 38976.800000000745,
+        "render_at_ms": 38976.90000000037,
+        "confirmation_at_ms": 39245.90000000037,
+        "render_before_confirmation_ms": 269.0,
+        "render_distance_from_last_authority": 0.7956722611036946,
+        "prediction_tick": 2211,
+        "authority_tick": 2198
+      },
+      {
+        "sequence": 113,
+        "input_at_ms": 39178.300000000745,
+        "render_at_ms": 39178.40000000037,
+        "confirmation_at_ms": 39471.40000000037,
+        "render_before_confirmation_ms": 293.0,
+        "render_distance_from_last_authority": 0.5568151473999023,
+        "prediction_tick": 2223,
+        "authority_tick": 2214
+      },
+      {
+        "sequence": 114,
+        "input_at_ms": 39375.90000000037,
+        "render_at_ms": 39376.09999999963,
+        "confirmation_at_ms": 39608,
+        "render_before_confirmation_ms": 231.90000000037253,
+        "render_distance_from_last_authority": 0.6059537465556816,
+        "prediction_tick": 2236,
+        "authority_tick": 2226
+      },
+      {
+        "sequence": 115,
+        "input_at_ms": 39758.699999999255,
+        "render_at_ms": 39946.800000000745,
+        "confirmation_at_ms": 40045.90000000037,
+        "render_before_confirmation_ms": 99.09999999962747,
+        "render_distance_from_last_authority": 0.7529551386833191,
+        "prediction_tick": 2274,
+        "authority_tick": 2262
+      },
+      {
+        "sequence": 116,
+        "input_at_ms": 39946.59999999963,
+        "render_at_ms": 39946.800000000745,
+        "confirmation_at_ms": 40233,
+        "render_before_confirmation_ms": 286.19999999925494,
+        "render_distance_from_last_authority": 0.7529551386833191,
+        "prediction_tick": 2274,
+        "authority_tick": 2262
+      },
+      {
+        "sequence": 117,
+        "input_at_ms": 40142.199999999255,
+        "render_at_ms": 40142.300000000745,
+        "confirmation_at_ms": 40407.59999999963,
+        "render_before_confirmation_ms": 265.2999999988824,
+        "render_distance_from_last_authority": 0.7554749548436716,
+        "prediction_tick": 2286,
+        "authority_tick": 2274
+      },
+      {
+        "sequence": 118,
+        "input_at_ms": 40323.09999999963,
+        "render_at_ms": 40323.199999999255,
+        "confirmation_at_ms": 40620.800000000745,
+        "render_before_confirmation_ms": 297.6000000014901,
+        "render_distance_from_last_authority": 0.7886545956134796,
+        "prediction_tick": 2299,
+        "authority_tick": 2286
+      },
+      {
+        "sequence": 119,
+        "input_at_ms": 40535.59999999963,
+        "render_at_ms": 40535.800000000745,
+        "confirmation_at_ms": 40807.699999999255,
+        "render_before_confirmation_ms": 271.8999999985099,
+        "render_distance_from_last_authority": 0.760934948921353,
+        "prediction_tick": 2310,
+        "authority_tick": 2298
+      },
+      {
+        "sequence": 120,
+        "input_at_ms": 40723.5,
+        "render_at_ms": 40723.699999999255,
+        "confirmation_at_ms": 41032.90000000037,
+        "render_before_confirmation_ms": 309.2000000011176,
+        "render_distance_from_last_authority": 0.6034349203109741,
+        "prediction_tick": 2324,
+        "authority_tick": 2314
+      },
+      {
+        "sequence": 121,
+        "input_at_ms": 40909.300000000745,
+        "render_at_ms": 40909.5,
+        "confirmation_at_ms": 41170.699999999255,
+        "render_before_confirmation_ms": 261.19999999925494,
+        "render_distance_from_last_authority": 0.8671951293945312,
+        "prediction_tick": 2336,
+        "authority_tick": 2322
+      },
+      {
+        "sequence": 122,
+        "input_at_ms": 41125.199999999255,
+        "render_at_ms": 41125.40000000037,
+        "confirmation_at_ms": 41433.199999999255,
+        "render_before_confirmation_ms": 307.7999999988824,
+        "render_distance_from_last_authority": 0.5975549221038818,
+        "prediction_tick": 2348,
+        "authority_tick": 2338
+      },
+      {
+        "sequence": 123,
+        "input_at_ms": 41344.09999999963,
+        "render_at_ms": 41344.300000000745,
+        "confirmation_at_ms": 41657.800000000745,
+        "render_before_confirmation_ms": 313.5,
+        "render_distance_from_last_authority": 0.7185149192810059,
+        "prediction_tick": 2361,
+        "authority_tick": 2350
+      },
+      {
+        "sequence": 124,
+        "input_at_ms": 41520.90000000037,
+        "render_at_ms": 41521.199999999255,
+        "confirmation_at_ms": 41795.59999999963,
+        "render_before_confirmation_ms": 274.40000000037253,
+        "render_distance_from_last_authority": 0.8537554740907093,
+        "prediction_tick": 2376,
+        "authority_tick": 2362
+      },
+      {
+        "sequence": 125,
+        "input_at_ms": 41736.800000000745,
+        "render_at_ms": 41737,
+        "confirmation_at_ms": 42057.800000000745,
+        "render_before_confirmation_ms": 320.80000000074506,
+        "render_distance_from_last_authority": 0.7987769781127544,
+        "prediction_tick": 2387,
+        "authority_tick": 2374
+      },
+      {
+        "sequence": 126,
+        "input_at_ms": 41951.09999999963,
+        "render_at_ms": 41951.300000000745,
+        "confirmation_at_ms": 42232.90000000037,
+        "render_before_confirmation_ms": 281.59999999962747,
+        "render_distance_from_last_authority": 0.6458282575852689,
+        "prediction_tick": 2401,
+        "authority_tick": 2390
+      },
+      {
+        "sequence": 127,
+        "input_at_ms": 42347.59999999963,
+        "render_at_ms": 42347.699999999255,
+        "confirmation_at_ms": 42643.800000000745,
+        "render_before_confirmation_ms": 296.1000000014901,
+        "render_distance_from_last_authority": 0.02803516387939453,
+        "prediction_tick": 2415,
+        "authority_tick": 2414
+      },
+      {
+        "sequence": 128,
+        "input_at_ms": 42538.09999999963,
+        "render_at_ms": 42538.300000000745,
+        "confirmation_at_ms": 42858.699999999255,
+        "render_before_confirmation_ms": 320.3999999985099,
+        "render_distance_from_last_authority": 0.8646752834321383,
+        "prediction_tick": 2440,
+        "authority_tick": 2426
+      }
+    ],
+    "unique_authoritative_routes": 42,
+    "junction_observed": true,
+    "speed_observed": true,
+    "death_observed": false
+  },
+  {
+    "file": "asymmetric-jitter-PredictHost.json",
+    "seat": 0,
+    "preconfirmation_observations": [
+      {
+        "sequence": 68,
+        "input_at_ms": 33418.10000000149,
+        "render_at_ms": 33418.300000000745,
+        "confirmation_at_ms": 33662.60000000149,
+        "render_before_confirmation_ms": 244.30000000074506,
+        "render_distance_from_last_authority": 0.026774883270263672,
+        "prediction_tick": 1675,
+        "authority_tick": 1674
+      },
+      {
+        "sequence": 69,
+        "input_at_ms": 33614.90000000037,
+        "render_at_ms": 33615.10000000149,
+        "confirmation_at_ms": 33900,
+        "render_before_confirmation_ms": 284.8999999985099,
+        "render_distance_from_last_authority": 0.08596264969436378,
+        "prediction_tick": 1688,
+        "authority_tick": 1686
+      },
+      {
+        "sequence": 70,
+        "input_at_ms": 33818.40000000037,
+        "render_at_ms": 33818.60000000149,
+        "confirmation_at_ms": 34074.300000000745,
+        "render_before_confirmation_ms": 255.69999999925494,
+        "render_distance_from_last_authority": 0.12327866923432003,
+        "prediction_tick": 1700,
+        "authority_tick": 1698
+      },
+      {
+        "sequence": 71,
+        "input_at_ms": 34018,
+        "render_at_ms": 34018.20000000112,
+        "confirmation_at_ms": 34287.60000000149,
+        "render_before_confirmation_ms": 269.40000000037253,
+        "render_distance_from_last_authority": 0.18595552444458008,
+        "prediction_tick": 1713,
+        "authority_tick": 1710
+      },
+      {
+        "sequence": 72,
+        "input_at_ms": 34392.70000000112,
+        "render_at_ms": 34589.40000000037,
+        "confirmation_at_ms": 34699.20000000112,
+        "render_before_confirmation_ms": 109.80000000074506,
+        "render_distance_from_last_authority": 0.9822745323181152,
+        "prediction_tick": 1761,
+        "authority_tick": 1746
+      },
+      {
+        "sequence": 73,
+        "input_at_ms": 34589.20000000112,
+        "render_at_ms": 34589.40000000037,
+        "confirmation_at_ms": 34837.300000000745,
+        "render_before_confirmation_ms": 247.90000000037253,
+        "render_distance_from_last_authority": 0.9822745323181152,
+        "prediction_tick": 1761,
+        "authority_tick": 1746
+      },
+      {
+        "sequence": 74,
+        "input_at_ms": 34787.300000000745,
+        "render_at_ms": 34787.5,
+        "confirmation_at_ms": 35099.70000000112,
+        "render_before_confirmation_ms": 312.2000000011176,
+        "render_distance_from_last_authority": 1.0200749635696411,
+        "prediction_tick": 1774,
+        "authority_tick": 1758
+      },
+      {
+        "sequence": 75,
+        "input_at_ms": 34993.40000000037,
+        "render_at_ms": 34993.60000000149,
+        "confirmation_at_ms": 35274.40000000037,
+        "render_before_confirmation_ms": 280.7999999988824,
+        "render_distance_from_last_authority": 0.8382149934768677,
+        "prediction_tick": 1787,
+        "authority_tick": 1774
+      },
+      {
+        "sequence": 76,
+        "input_at_ms": 35183.5,
+        "render_at_ms": 35183.60000000149,
+        "confirmation_at_ms": 35462.300000000745,
+        "render_before_confirmation_ms": 278.69999999925494,
+        "render_distance_from_last_authority": 0.8797950446605682,
+        "prediction_tick": 1800,
+        "authority_tick": 1786
+      },
+      {
+        "sequence": 78,
+        "input_at_ms": 35579.70000000112,
+        "render_at_ms": 35774.800000000745,
+        "confirmation_at_ms": 35849.40000000037,
+        "render_before_confirmation_ms": 74.59999999962747,
+        "render_distance_from_last_authority": 0.021668076515197754,
+        "prediction_tick": 1823,
+        "authority_tick": 1822
+      },
+      {
+        "sequence": 79,
+        "input_at_ms": 35774.70000000112,
+        "render_at_ms": 35774.800000000745,
+        "confirmation_at_ms": 36087.5,
+        "render_before_confirmation_ms": 312.69999999925494,
+        "render_distance_from_last_authority": 0.021668076515197754,
+        "prediction_tick": 1823,
+        "authority_tick": 1822
+      },
+      {
+        "sequence": 80,
+        "input_at_ms": 35993.5,
+        "render_at_ms": 36190.90000000037,
+        "confirmation_at_ms": 36261.40000000037,
+        "render_before_confirmation_ms": 70.5,
+        "render_distance_from_last_authority": 0.03937482833862305,
+        "prediction_tick": 1851,
+        "authority_tick": 1850
+      },
+      {
+        "sequence": 81,
+        "input_at_ms": 36190.800000000745,
+        "render_at_ms": 36190.90000000037,
+        "confirmation_at_ms": 36474.60000000149,
+        "render_before_confirmation_ms": 283.7000000011176,
+        "render_distance_from_last_authority": 0.03937482833862305,
+        "prediction_tick": 1851,
+        "authority_tick": 1850
+      },
+      {
+        "sequence": 82,
+        "input_at_ms": 36375.300000000745,
+        "render_at_ms": 36375.5,
+        "confirmation_at_ms": 36712.10000000149,
+        "render_before_confirmation_ms": 336.6000000014901,
+        "render_distance_from_last_authority": 0.08347511291640099,
+        "prediction_tick": 1864,
+        "authority_tick": 1862
+      },
+      {
+        "sequence": 83,
+        "input_at_ms": 36575.800000000745,
+        "render_at_ms": 36772.10000000149,
+        "confirmation_at_ms": 36837.20000000112,
+        "render_before_confirmation_ms": 65.09999999962747,
+        "render_distance_from_last_authority": 0.25060562996569935,
+        "prediction_tick": 1890,
+        "authority_tick": 1886
+      },
+      {
+        "sequence": 84,
+        "input_at_ms": 36771.90000000037,
+        "render_at_ms": 36772.10000000149,
+        "confirmation_at_ms": 37099.5,
+        "render_before_confirmation_ms": 327.3999999985099,
+        "render_distance_from_last_authority": 0.25060562996569935,
+        "prediction_tick": 1890,
+        "authority_tick": 1886
+      },
+      {
+        "sequence": 85,
+        "input_at_ms": 36967.5,
+        "render_at_ms": 36967.70000000112,
+        "confirmation_at_ms": 37199.300000000745,
+        "render_before_confirmation_ms": 231.59999999962747,
+        "render_distance_from_last_authority": 0.2863729986575832,
+        "prediction_tick": 1903,
+        "authority_tick": 1898
+      },
+      {
+        "sequence": 86,
+        "input_at_ms": 37160,
+        "render_at_ms": 37160.20000000112,
+        "confirmation_at_ms": 37461.300000000745,
+        "render_before_confirmation_ms": 301.09999999962747,
+        "render_distance_from_last_authority": 0.059114933013916016,
+        "prediction_tick": 1915,
+        "authority_tick": 1914
+      },
+      {
+        "sequence": 87,
+        "input_at_ms": 37355.70000000112,
+        "render_at_ms": 37355.800000000745,
+        "confirmation_at_ms": 37649.5,
+        "render_before_confirmation_ms": 293.69999999925494,
+        "render_distance_from_last_authority": 0.0822153091430664,
+        "prediction_tick": 1928,
+        "authority_tick": 1926
+      },
+      {
+        "sequence": 88,
+        "input_at_ms": 37552.20000000112,
+        "render_at_ms": 37552.40000000037,
+        "confirmation_at_ms": 37824.90000000037,
+        "render_before_confirmation_ms": 272.5,
+        "render_distance_from_last_authority": 0.11699240819898721,
+        "prediction_tick": 1940,
+        "authority_tick": 1938
+      },
+      {
+        "sequence": 89,
+        "input_at_ms": 37748.40000000037,
+        "render_at_ms": 37748.5,
+        "confirmation_at_ms": 38036.70000000112,
+        "render_before_confirmation_ms": 288.2000000011176,
+        "render_distance_from_last_authority": 0.15301012262617897,
+        "prediction_tick": 1953,
+        "authority_tick": 1950
+      },
+      {
+        "sequence": 90,
+        "input_at_ms": 37944.300000000745,
+        "render_at_ms": 37944.5,
+        "confirmation_at_ms": 38224.20000000112,
+        "render_before_confirmation_ms": 279.7000000011176,
+        "render_distance_from_last_authority": 0.1884751319885254,
+        "prediction_tick": 1965,
+        "authority_tick": 1962
+      },
+      {
+        "sequence": 91,
+        "input_at_ms": 38328.10000000149,
+        "render_at_ms": 38522,
+        "confirmation_at_ms": 38586.800000000745,
+        "render_before_confirmation_ms": 64.80000000074506,
+        "render_distance_from_last_authority": 0.7461850723896349,
+        "prediction_tick": 2010,
+        "authority_tick": 1998
+      },
+      {
+        "sequence": 92,
+        "input_at_ms": 38521.90000000037,
+        "render_at_ms": 38522,
+        "confirmation_at_ms": 38849.60000000149,
+        "render_before_confirmation_ms": 327.6000000014901,
+        "render_distance_from_last_authority": 0.7461850723896349,
+        "prediction_tick": 2010,
+        "authority_tick": 1998
+      },
+      {
+        "sequence": 93,
+        "input_at_ms": 38718.10000000149,
+        "render_at_ms": 38718.300000000745,
+        "confirmation_at_ms": 38974.60000000149,
+        "render_before_confirmation_ms": 256.30000000074506,
+        "render_distance_from_last_authority": 0.5219550132751465,
+        "prediction_tick": 2022,
+        "authority_tick": 2014
+      },
+      {
+        "sequence": 94,
+        "input_at_ms": 38921.70000000112,
+        "render_at_ms": 38921.90000000037,
+        "confirmation_at_ms": 39212,
+        "render_before_confirmation_ms": 290.09999999962747,
+        "render_distance_from_last_authority": 0.5583737740402474,
+        "prediction_tick": 2035,
+        "authority_tick": 2026
+      },
+      {
+        "sequence": 95,
+        "input_at_ms": 39117,
+        "render_at_ms": 39117.20000000112,
+        "confirmation_at_ms": 39386.60000000149,
+        "render_before_confirmation_ms": 269.40000000037253,
+        "render_distance_from_last_authority": 0.6139603074003825,
+        "prediction_tick": 2048,
+        "authority_tick": 2038
+      },
+      {
+        "sequence": 96,
+        "input_at_ms": 39318.300000000745,
+        "render_at_ms": 39318.5,
+        "confirmation_at_ms": 39574.10000000149,
+        "render_before_confirmation_ms": 255.60000000149012,
+        "render_distance_from_last_authority": 0.6590661338452329,
+        "prediction_tick": 2061,
+        "authority_tick": 2050
+      },
+      {
+        "sequence": 97,
+        "input_at_ms": 39519.20000000112,
+        "render_at_ms": 39519.40000000037,
+        "confirmation_at_ms": 39836.40000000037,
+        "render_before_confirmation_ms": 317.0,
+        "render_distance_from_last_authority": 0.7176752090454102,
+        "prediction_tick": 2073,
+        "authority_tick": 2062
+      },
+      {
+        "sequence": 98,
+        "input_at_ms": 39724,
+        "render_at_ms": 39724.20000000112,
+        "confirmation_at_ms": 39975,
+        "render_before_confirmation_ms": 250.7999999988824,
+        "render_distance_from_last_authority": 0.5053475743205005,
+        "prediction_tick": 2086,
+        "authority_tick": 2078
+      },
+      {
+        "sequence": 99,
+        "input_at_ms": 39921.40000000037,
+        "render_at_ms": 39921.5,
+        "confirmation_at_ms": 40199.5,
+        "render_before_confirmation_ms": 278.0,
+        "render_distance_from_last_authority": 0.577100784030433,
+        "prediction_tick": 2099,
+        "authority_tick": 2090
+      },
+      {
+        "sequence": 100,
+        "input_at_ms": 40117.60000000149,
+        "render_at_ms": 40117.70000000112,
+        "confirmation_at_ms": 40412.5,
+        "render_before_confirmation_ms": 294.7999999988824,
+        "render_distance_from_last_authority": 0.626535415649417,
+        "prediction_tick": 2112,
+        "authority_tick": 2102
+      },
+      {
+        "sequence": 101,
+        "input_at_ms": 40331.300000000745,
+        "render_at_ms": 40331.5,
+        "confirmation_at_ms": 40599.20000000112,
+        "render_before_confirmation_ms": 267.7000000011176,
+        "render_distance_from_last_authority": 0.6664352416992188,
+        "prediction_tick": 2125,
+        "authority_tick": 2114
+      },
+      {
+        "sequence": 102,
+        "input_at_ms": 40530.20000000112,
+        "render_at_ms": 40530.40000000037,
+        "confirmation_at_ms": 40824.10000000149,
+        "render_before_confirmation_ms": 293.7000000011176,
+        "render_distance_from_last_authority": 0.5074219394131939,
+        "prediction_tick": 2138,
+        "authority_tick": 2130
+      },
+      {
+        "sequence": 103,
+        "input_at_ms": 40830.60000000149,
+        "render_at_ms": 40830.70000000112,
+        "confirmation_at_ms": 41086.5,
+        "render_before_confirmation_ms": 255.7999999988824,
+        "render_distance_from_last_authority": 0.03307485580444336,
+        "prediction_tick": 2151,
+        "authority_tick": 2150
+      },
+      {
+        "sequence": 104,
+        "input_at_ms": 41035.800000000745,
+        "render_at_ms": 41035.90000000037,
+        "confirmation_at_ms": 41349.90000000037,
+        "render_before_confirmation_ms": 314.0,
+        "render_distance_from_last_authority": 0.7693352699279785,
+        "prediction_tick": 2170,
+        "authority_tick": 2158
+      },
+      {
+        "sequence": 105,
+        "input_at_ms": 41234.300000000745,
+        "render_at_ms": 41234.40000000037,
+        "confirmation_at_ms": 41536.300000000745,
+        "render_before_confirmation_ms": 301.90000000037253,
+        "render_distance_from_last_authority": 0.5703331988925867,
+        "prediction_tick": 2183,
+        "authority_tick": 2174
+      },
+      {
+        "sequence": 106,
+        "input_at_ms": 41435.300000000745,
+        "render_at_ms": 41435.5,
+        "confirmation_at_ms": 41711.40000000037,
+        "render_before_confirmation_ms": 275.90000000037253,
+        "render_distance_from_last_authority": 0.6156471233443142,
+        "prediction_tick": 2196,
+        "authority_tick": 2186
+      },
+      {
+        "sequence": 107,
+        "input_at_ms": 41629.90000000037,
+        "render_at_ms": 41630.10000000149,
+        "confirmation_at_ms": 41975.10000000149,
+        "render_before_confirmation_ms": 345.0,
+        "render_distance_from_last_authority": 0.6840748786926685,
+        "prediction_tick": 2209,
+        "authority_tick": 2198
+      },
+      {
+        "sequence": 108,
+        "input_at_ms": 41828.40000000037,
+        "render_at_ms": 41828.60000000149,
+        "confirmation_at_ms": 42074.90000000037,
+        "render_before_confirmation_ms": 246.2999999988824,
+        "render_distance_from_last_authority": 0.7138948440551758,
+        "prediction_tick": 2221,
+        "authority_tick": 2210
+      },
+      {
+        "sequence": 109,
+        "input_at_ms": 42036.40000000037,
+        "render_at_ms": 42036.5,
+        "confirmation_at_ms": 42337,
+        "render_before_confirmation_ms": 300.5,
+        "render_distance_from_last_authority": 0.4904731269173772,
+        "prediction_tick": 2234,
+        "authority_tick": 2226
+      },
+      {
+        "sequence": 110,
+        "input_at_ms": 42239.70000000112,
+        "render_at_ms": 42239.90000000037,
+        "confirmation_at_ms": 42523.800000000745,
+        "render_before_confirmation_ms": 283.90000000037253,
+        "render_distance_from_last_authority": 0.5797341042656899,
+        "prediction_tick": 2247,
+        "authority_tick": 2238
+      },
+      {
+        "sequence": 111,
+        "input_at_ms": 42445.800000000745,
+        "render_at_ms": 42445.90000000037,
+        "confirmation_at_ms": 42699.90000000037,
+        "render_before_confirmation_ms": 254.0,
+        "render_distance_from_last_authority": 0.655095100402832,
+        "prediction_tick": 2260,
+        "authority_tick": 2250
+      },
+      {
+        "sequence": 112,
+        "input_at_ms": 42641.300000000745,
+        "render_at_ms": 42641.40000000037,
+        "confirmation_at_ms": 42962.40000000037,
+        "render_before_confirmation_ms": 321.0,
+        "render_distance_from_last_authority": 0.7252172850587164,
+        "prediction_tick": 2274,
+        "authority_tick": 2262
+      },
+      {
+        "sequence": 113,
+        "input_at_ms": 42834.60000000149,
+        "render_at_ms": 42834.800000000745,
+        "confirmation_at_ms": 43099.10000000149,
+        "render_before_confirmation_ms": 264.30000000074506,
+        "render_distance_from_last_authority": 0.7392383201001252,
+        "prediction_tick": 2286,
+        "authority_tick": 2274
+      },
+      {
+        "sequence": 114,
+        "input_at_ms": 43030.90000000037,
+        "render_at_ms": 43031.10000000149,
+        "confirmation_at_ms": 43324.800000000745,
+        "render_before_confirmation_ms": 293.69999999925494,
+        "render_distance_from_last_authority": 0.5232148175068946,
+        "prediction_tick": 2298,
+        "authority_tick": 2290
+      },
+      {
+        "sequence": 115,
+        "input_at_ms": 43224.90000000037,
+        "render_at_ms": 43225.10000000149,
+        "confirmation_at_ms": 43537.40000000037,
+        "render_before_confirmation_ms": 312.2999999988824,
+        "render_distance_from_last_authority": 0.8230948448181152,
+        "prediction_tick": 2311,
+        "authority_tick": 2298
+      },
+      {
+        "sequence": 116,
+        "input_at_ms": 43423.60000000149,
+        "render_at_ms": 43423.70000000112,
+        "confirmation_at_ms": 43724.60000000149,
+        "render_before_confirmation_ms": 300.90000000037253,
+        "render_distance_from_last_authority": 0.5809477824804082,
+        "prediction_tick": 2323,
+        "authority_tick": 2314
+      },
+      {
+        "sequence": 117,
+        "input_at_ms": 43622.5,
+        "render_at_ms": 43622.70000000112,
+        "confirmation_at_ms": 43949.5,
+        "render_before_confirmation_ms": 326.7999999988824,
+        "render_distance_from_last_authority": 0.6214556906632077,
+        "prediction_tick": 2336,
+        "authority_tick": 2326
+      },
+      {
+        "sequence": 118,
+        "input_at_ms": 43814.10000000149,
+        "render_at_ms": 43814.20000000112,
+        "confirmation_at_ms": 44087.5,
+        "render_before_confirmation_ms": 273.2999999988824,
+        "render_distance_from_last_authority": 0.6823954582214772,
+        "prediction_tick": 2349,
+        "authority_tick": 2338
+      },
+      {
+        "sequence": 119,
+        "input_at_ms": 44028,
+        "render_at_ms": 44028.10000000149,
+        "confirmation_at_ms": 44349.300000000745,
+        "render_before_confirmation_ms": 321.19999999925494,
+        "render_distance_from_last_authority": 0.7017154693603516,
+        "prediction_tick": 2361,
+        "authority_tick": 2350
+      },
+      {
+        "sequence": 120,
+        "input_at_ms": 44233.70000000112,
+        "render_at_ms": 44233.800000000745,
+        "confirmation_at_ms": 44524,
+        "render_before_confirmation_ms": 290.19999999925494,
+        "render_distance_from_last_authority": 0.5411717521342915,
+        "prediction_tick": 2375,
+        "authority_tick": 2366
+      },
+      {
+        "sequence": 121,
+        "input_at_ms": 44433.60000000149,
+        "render_at_ms": 44433.70000000112,
+        "confirmation_at_ms": 44711.70000000112,
+        "render_before_confirmation_ms": 278.0,
+        "render_distance_from_last_authority": 0.6159670733946877,
+        "prediction_tick": 2388,
+        "authority_tick": 2378
+      },
+      {
+        "sequence": 122,
+        "input_at_ms": 44634.5,
+        "render_at_ms": 44634.60000000149,
+        "confirmation_at_ms": 44974.40000000037,
+        "render_before_confirmation_ms": 339.7999999988824,
+        "render_distance_from_last_authority": 0.6769351959228516,
+        "prediction_tick": 2401,
+        "authority_tick": 2390
+      },
+      {
+        "sequence": 123,
+        "input_at_ms": 44838,
+        "render_at_ms": 44838.20000000112,
+        "confirmation_at_ms": 45099.300000000745,
+        "render_before_confirmation_ms": 261.09999999962747,
+        "render_distance_from_last_authority": 0.46977524772516227,
+        "prediction_tick": 2414,
+        "authority_tick": 2406
+      },
+      {
+        "sequence": 124,
+        "input_at_ms": 45027.800000000745,
+        "render_at_ms": 45028,
+        "confirmation_at_ms": 45336.5,
+        "render_before_confirmation_ms": 308.5,
+        "render_distance_from_last_authority": 0.529543048489654,
+        "prediction_tick": 2427,
+        "authority_tick": 2418
+      },
+      {
+        "sequence": 125,
+        "input_at_ms": 45222.90000000037,
+        "render_at_ms": 45223,
+        "confirmation_at_ms": 45511.90000000037,
+        "render_before_confirmation_ms": 288.90000000037253,
+        "render_distance_from_last_authority": 0.546918799151055,
+        "prediction_tick": 2439,
+        "authority_tick": 2430
+      }
+    ],
+    "unique_authoritative_routes": 29,
+    "junction_observed": true,
+    "speed_observed": false,
+    "death_observed": false
+  },
+  {
+    "file": "zero-PredictGuest.json",
+    "seat": 1,
+    "preconfirmation_observations": [
+      {
+        "sequence": 24,
+        "input_at_ms": 19103.800000000745,
+        "render_at_ms": 19104,
+        "confirmation_at_ms": 19134.800000000745,
+        "render_before_confirmation_ms": 30.800000000745058,
+        "render_distance_from_last_authority": 0.44971513748194225,
+        "prediction_tick": 945,
+        "authority_tick": 938
+      },
+      {
+        "sequence": 25,
+        "input_at_ms": 19434.5,
+        "render_at_ms": 19434.699999999255,
+        "confirmation_at_ms": 19446.900000000373,
+        "render_before_confirmation_ms": 12.200000001117587,
+        "render_distance_from_last_authority": 0.6504747867584229,
+        "prediction_tick": 968,
+        "authority_tick": 958
+      },
+      {
+        "sequence": 26,
+        "input_at_ms": 19794,
+        "render_at_ms": 19794.199999999255,
+        "confirmation_at_ms": 19821.699999999255,
+        "render_before_confirmation_ms": 27.5,
+        "render_distance_from_last_authority": 0.4644150733947754,
+        "prediction_tick": 990,
+        "authority_tick": 982
+      },
+      {
+        "sequence": 29,
+        "input_at_ms": 20812.400000000373,
+        "render_at_ms": 20812.5,
+        "confirmation_at_ms": 20821.900000000373,
+        "render_before_confirmation_ms": 9.400000000372529,
+        "render_distance_from_last_authority": 0.028874874114990234,
+        "prediction_tick": 1047,
+        "authority_tick": 1046
+      },
+      {
+        "sequence": 30,
+        "input_at_ms": 21126.599999999627,
+        "render_at_ms": 21126.800000000745,
+        "confirmation_at_ms": 21134.099999999627,
+        "render_before_confirmation_ms": 7.299999998882413,
+        "render_distance_from_last_authority": 0.18259525299072266,
+        "prediction_tick": 1069,
+        "authority_tick": 1066
+      },
+      {
+        "sequence": 31,
+        "input_at_ms": 21393.699999999255,
+        "render_at_ms": 21394,
+        "confirmation_at_ms": 21445.599999999627,
+        "render_before_confirmation_ms": 51.59999999962747,
+        "render_distance_from_last_authority": 0.18729548455473766,
+        "prediction_tick": 1089,
+        "authority_tick": 1086
+      }
+    ],
+    "unique_authoritative_routes": 42,
+    "junction_observed": true,
+    "speed_observed": false,
+    "death_observed": false
+  },
+  {
+    "file": "zero-PredictHost.json",
+    "seat": 0,
+    "preconfirmation_observations": [],
+    "unique_authoritative_routes": 42,
+    "junction_observed": true,
+    "speed_observed": false,
+    "death_observed": false
+  }
+]

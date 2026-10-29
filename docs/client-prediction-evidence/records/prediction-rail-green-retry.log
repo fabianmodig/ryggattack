@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 07s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test movement_snapshot_exposes_authoritative_directed_rail_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+TIMING prediction-rail-green-retry: 67.211 s; exit=0

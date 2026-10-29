@@ -1,0 +1,9 @@
+{"settings":{"name":"zero","up":0,"down":0,"jitter":0},"clients":[{"name":"PredictHost","seat":0,"metrics":{"samples":54,"local_between_unchanged_authority":1,"remote_between_unchanged_authority":0,"predicted_ahead_samples":31,"common_tick_comparisons":30,"matching_authoritative_positions":30,"render_gap_ms":{"min":6.099999999627471,"mean":337.6320754716981,"max":2068.5999999996275},"server_hz":72.30345271165821}},{"name":"PredictGuest","seat":1,"metrics":{"samples":58,"local_between_unchanged_authority":3,"remote_between_unchanged_authority":3,"predicted_ahead_samples":41,"common_tick_comparisons":21,"matching_authoritative_positions":21,"render_gap_ms":{"min":7.600000001490116,"mean":315.94736842105266,"max":2153.10000000149},"server_hz":63.46009107498096}}]}
+{"settings":{"name":"asymmetric-jitter","up":90,"down":150,"jitter":25},"clients":[{"name":"PredictHost","seat":0,"metrics":{"samples":92,"local_between_unchanged_authority":7,"remote_between_unchanged_authority":3,"predicted_ahead_samples":83,"common_tick_comparisons":29,"matching_authoritative_positions":29,"render_gap_ms":{"min":5.399999998509884,"mean":197.74615384615794,"max":400.7000000011176},"server_hz":64.15575591853954}},{"name":"PredictGuest","seat":1,"metrics":{"samples":92,"local_between_unchanged_authority":9,"remote_between_unchanged_authority":7,"predicted_ahead_samples":86,"common_tick_comparisons":27,"matching_authoritative_positions":27,"render_gap_ms":{"min":5.699999999254942,"mean":198.425274725287,"max":407.59999999962747},"server_hz":63.954793597948644}}]}
+failed AssertionError [ERR_ASSERTION]: [{"case":"zero","client":"PredictHost","error":"AssertionError [ERR_ASSERTION]: remote pose advances between authoritative samples"}]
+
+1 !== 0
+
+    at file:///home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:72:53
+
+TIMING prediction-browser-attempt4-lifecycle: 76.768 s; exit=1

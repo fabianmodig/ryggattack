@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 3.04s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time ... FAILED
+
+failures:
+
+---- small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time stdout ----
+
+thread 'small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time' (40100) panicked at tests/prediction.rs:181:28:
+small correction must not snap the rendered cart
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-residual-red: 3.131 s; exit=101

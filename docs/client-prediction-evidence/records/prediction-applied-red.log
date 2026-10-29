@@ -1,0 +1,42 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0599]: no method named `submit_sequenced` found for struct `Simulation` in the current scope
+  --> tests/prediction.rs:89:9
+   |
+89 |     sim.submit_sequenced(0, 2, right).unwrap();
+   |         ^^^^^^^^^^^^^^^^ method not found in `Simulation`
+
+error[E0599]: no method named `submit_sequenced` found for struct `Simulation` in the current scope
+  --> tests/prediction.rs:90:9
+   |
+90 |     sim.submit_sequenced(0, 3, up).unwrap();
+   |         ^^^^^^^^^^^^^^^^ method not found in `Simulation`
+
+error[E0609]: no field `applied` on type `MotionFrame`
+  --> tests/prediction.rs:91:52
+   |
+91 |     assert_eq!(sim.network_frame().motion.unwrap().applied[0].sequence, 0,
+   |                                                    ^^^^^^^ unknown field
+   |
+   = note: available field is: `rails`
+
+error[E0609]: no field `applied` on type `MotionFrame`
+  --> tests/prediction.rs:95:55
+   |
+95 |     let applied = sim.network_frame().motion.unwrap().applied[0];
+   |                                                       ^^^^^^^ unknown field
+   |
+   = note: available field is: `rails`
+
+error[E0609]: no field `applied` on type `MotionFrame`
+   --> tests/prediction.rs:101:55
+    |
+101 |     let neutral = sim.network_frame().motion.unwrap().applied[0];
+    |                                                       ^^^^^^^ unknown field
+    |
+    = note: available field is: `rails`
+
+Some errors have detailed explanations: E0599, E0609.
+For more information about an error, try `rustc --explain E0599`.
+error: could not compile `ryggattack` (test "prediction") due to 5 previous errors
+
+TIMING prediction-applied-red: 1.283 s; exit=101

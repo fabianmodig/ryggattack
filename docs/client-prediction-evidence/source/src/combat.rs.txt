@@ -1,0 +1,637 @@
+//! Missiles: firing, flight, what they strike, and the rear hits that score.
+
+use std::collections::HashSet;
+
+use bevy::light::NotShadowCaster;
+use bevy::prelude::*;
+
+use crate::explosions::{self, EffectAssets};
+use crate::players::{PLAYER_COLORS, PLAYER_RADIUS, Player};
+use crate::scene::ARENA_HALF_SIZE;
+use crate::scenery::{Scenery, Transient};
+use crate::settings::VideoSettings;
+#[cfg(test)]
+use crate::tracks::{RailFollower, RailMap};
+
+/// Radius a missile has to come within to strike something.
+const MISSILE_RADIUS: f32 = 0.18;
+
+const MISSILE_SPEED: f32 = 13.0;
+
+const SHOT_COOLDOWN: f32 = 0.5;
+
+const BACK_HIT_DOT_THRESHOLD: f32 = 0.45;
+
+#[derive(Component)]
+pub(crate) struct Projectile {
+    pub(crate) owner: usize,
+    velocity: Vec3,
+    remaining_life: f32,
+    /// Time until the next puff of exhaust.
+    trail: f32,
+}
+
+/// The meshes and materials every missile is built from.
+#[derive(Resource)]
+pub(crate) struct MissileAssets {
+    body: Handle<Mesh>,
+    nose: Handle<Mesh>,
+    fin: Handle<Mesh>,
+    exhaust: Handle<Mesh>,
+    hull: Handle<StandardMaterial>,
+    fins: Handle<StandardMaterial>,
+    paint: [Handle<StandardMaterial>; 4],
+    glow: [Handle<StandardMaterial>; 4],
+}
+
+impl MissileAssets {
+    pub(crate) fn new(meshes: &mut Assets<Mesh>, materials: &mut Assets<StandardMaterial>) -> Self {
+        Self {
+            body: meshes.add(Cylinder::new(0.11, 0.46)),
+            nose: meshes.add(Cone::new(0.11, 0.24)),
+            fin: meshes.add(Cuboid::new(0.03, 0.36, 0.14)),
+            exhaust: meshes.add(
+                Sphere::new(0.09)
+                    .mesh()
+                    .ico(2)
+                    .expect("two subdivisions are well within the limit"),
+            ),
+            hull: materials.add(StandardMaterial {
+                base_color: Color::srgb(0.88, 0.88, 0.86),
+                metallic: 0.6,
+                perceptual_roughness: 0.35,
+                ..default()
+            }),
+            fins: materials.add(StandardMaterial {
+                base_color: Color::srgb(0.18, 0.19, 0.21),
+                metallic: 0.5,
+                perceptual_roughness: 0.4,
+                ..default()
+            }),
+            paint: PLAYER_COLORS.map(|color| {
+                materials.add(StandardMaterial {
+                    base_color: color,
+                    metallic: 0.4,
+                    perceptual_roughness: 0.35,
+                    ..default()
+                })
+            }),
+            glow: PLAYER_COLORS.map(|color| {
+                materials.add(StandardMaterial {
+                    base_color: color,
+                    emissive: LinearRgba::from(color) * 8.0,
+                    unlit: true,
+                    ..default()
+                })
+            }),
+        }
+    }
+}
+
+pub(crate) fn fire_projectiles(
+    mut commands: Commands,
+    time: Res<Time>,
+    assets: Res<MissileAssets>,
+    mut players: Query<(&mut Player, &Transform)>,
+) {
+    for (mut player, transform) in &mut players {
+        player.shot_cooldown = (player.shot_cooldown - time.delta_secs()).max(0.0);
+        if !player.active || !player.alive || !player.wants_to_fire || player.shot_cooldown > 0.0 {
+            continue;
+        }
+
+        player.shot_cooldown = SHOT_COOLDOWN;
+        let forward = transform.forward().as_vec3();
+        let position = transform.translation + forward * 0.9 + Vec3::Y * 0.15;
+        spawn_missile(&mut commands, &assets, player.id, position, forward);
+    }
+}
+
+/// A missile pointing along `forward`: the hull in the owner's colour, a pale
+/// nose cone, two crossed fins, and a glowing exhaust.
+fn spawn_missile(
+    commands: &mut Commands,
+    assets: &MissileAssets,
+    owner: usize,
+    position: Vec3,
+    forward: Vec3,
+) {
+    let entity = commands
+        .spawn((
+            Projectile {
+                owner,
+                velocity: forward * MISSILE_SPEED,
+                remaining_life: 2.0,
+                trail: 0.0,
+            },
+            Transient,
+            Transform::from_translation(position).looking_to(forward, Vec3::Y),
+            Visibility::default(),
+        ))
+        .id();
+    missile_visual(commands, entity, assets, owner);
+}
+
+/// Presentation only: deliberately installs no projectile/gameplay components.
+pub(crate) fn missile_visual(
+    commands: &mut Commands,
+    entity: Entity,
+    assets: &MissileAssets,
+    owner: usize,
+) {
+    use std::f32::consts::FRAC_PI_2;
+    commands.entity(entity).with_children(|parent| {
+        // The primitives point along +Y; the missile flies along its own -Z.
+        parent.spawn((
+            Mesh3d(assets.body.clone()),
+            MeshMaterial3d(assets.paint[owner].clone()),
+            Transform::from_rotation(Quat::from_rotation_x(FRAC_PI_2)),
+        ));
+        parent.spawn((
+            Mesh3d(assets.nose.clone()),
+            MeshMaterial3d(assets.hull.clone()),
+            Transform::from_xyz(0.0, 0.0, -0.35).with_rotation(Quat::from_rotation_x(-FRAC_PI_2)),
+        ));
+        for roll in [0.0, FRAC_PI_2] {
+            parent.spawn((
+                Mesh3d(assets.fin.clone()),
+                MeshMaterial3d(assets.fins.clone()),
+                Transform::from_xyz(0.0, 0.0, 0.17).with_rotation(Quat::from_rotation_z(roll)),
+            ));
+        }
+        parent.spawn((
+            Mesh3d(assets.exhaust.clone()),
+            MeshMaterial3d(assets.glow[owner].clone()),
+            Transform::from_xyz(0.0, 0.0, 0.28),
+            NotShadowCaster,
+        ));
+    });
+}
+
+/// Fly every missile on, trailing smoke, and blow up the ones that reach a
+/// wall or run out of fuel.
+pub(crate) fn move_projectiles(
+    mut commands: Commands,
+    time: Res<Time>,
+    effects: Res<EffectAssets>,
+    settings: Res<VideoSettings>,
+    mut projectiles: Query<(Entity, &mut Projectile, &mut Transform)>,
+) {
+    // Seconds between the smoke puffs a missile leaves behind.
+    let trail_interval = settings.effects.budget().trail_interval;
+    for (entity, mut projectile, mut transform) in &mut projectiles {
+        transform.translation += projectile.velocity * time.delta_secs();
+        projectile.remaining_life -= time.delta_secs();
+        projectile.trail -= time.delta_secs();
+        if projectile.trail <= 0.0 {
+            projectile.trail = trail_interval;
+            let tail = transform.translation - projectile.velocity.normalize_or_zero() * 0.32;
+            explosions::puff(&mut commands, &effects, tail, 0.07, 0.28, 0.45, 0.5);
+        }
+
+        let inside = transform.translation.x.abs() <= ARENA_HALF_SIZE
+            && transform.translation.z.abs() <= ARENA_HALF_SIZE;
+        if projectile.remaining_life <= 0.0 || !inside {
+            let impact = wall_impact(transform.translation);
+            explosions::detonate(&mut commands, impact);
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+/// Where a missile that has left the arena met the wall: its position pulled
+/// back to the boundary.
+fn wall_impact(position: Vec3) -> Vec3 {
+    Vec3::new(
+        position.x.clamp(-ARENA_HALF_SIZE, ARENA_HALF_SIZE),
+        position.y,
+        position.z.clamp(-ARENA_HALF_SIZE, ARENA_HALF_SIZE),
+    )
+}
+
+/// Missiles fly low enough that trees and boulders are in their way.
+pub(crate) fn strike_scenery(
+    mut commands: Commands,
+    projectiles: Query<(Entity, &Transform), With<Projectile>>,
+    scenery: Query<(&Transform, &Scenery), Without<Projectile>>,
+) {
+    for (entity, missile) in &projectiles {
+        let struck = scenery.iter().any(|(prop, prop_scenery)| {
+            prop_scenery.height > missile.translation.y
+                && prop.translation.xz().distance(missile.translation.xz())
+                    < prop_scenery.hit_radius + MISSILE_RADIUS
+        });
+        if struck {
+            explosions::detonate(&mut commands, missile.translation);
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub(crate) fn detect_hits(
+    mut commands: Commands,
+    powerups: Option<Res<crate::powerups::Powerups>>,
+    projectiles: Query<(Entity, &Projectile, &Transform), Without<Player>>,
+    mut players: Query<(&mut Player, &Transform, &mut Visibility), Without<Projectile>>,
+) {
+    let player_snapshots: Vec<(usize, Vec3, Vec3)> = players
+        .iter()
+        .filter(|(player, _, _)| player.active && player.alive)
+        .map(|(player, transform, _)| {
+            (
+                player.id,
+                transform.translation,
+                transform.forward().as_vec3(),
+            )
+        })
+        .collect();
+    let mut consumed = HashSet::new();
+    let mut hits = Vec::new();
+
+    for (projectile_entity, projectile, projectile_transform) in &projectiles {
+        for (target_id, target_position, target_forward) in &player_snapshots {
+            if projectile.owner == *target_id || consumed.contains(&projectile_entity) {
+                continue;
+            }
+            let distance = projectile_transform.translation.distance(*target_position);
+            if distance > PLAYER_RADIUS + MISSILE_RADIUS {
+                continue;
+            }
+
+            consumed.insert(projectile_entity);
+            explosions::detonate(&mut commands, projectile_transform.translation);
+            let shot_direction = projectile.velocity.normalize_or_zero();
+            let all_hits = powerups
+                .as_ref()
+                .is_some_and(|p| p.buffs[projectile.owner].all_hits > 0.0);
+            if all_hits || is_rear_hit(shot_direction, *target_forward) {
+                hits.push((projectile.owner, *target_id));
+            }
+        }
+    }
+
+    for entity in consumed {
+        commands.entity(entity).despawn();
+    }
+
+    for (_, target_id) in hits {
+        for (mut player, _, mut visibility) in &mut players {
+            if player.id == target_id {
+                player.alive = false;
+                player.wants_to_fire = false;
+                *visibility = Visibility::Hidden;
+            }
+        }
+    }
+}
+
+fn is_rear_hit(shot_direction: Vec3, target_forward: Vec3) -> bool {
+    shot_direction
+        .normalize_or_zero()
+        .dot(target_forward.normalize_or_zero())
+        > BACK_HIT_DOT_THRESHOLD
+}
+
+/// Existing combat rail fixture, shared by the two entry-path regressions.
+/// Only projectile construction is exposed; movement, contact, death and scoring
+/// still run through each entry's complete fixed gameplay schedule.
+#[cfg(test)]
+pub(crate) fn parity_test_incoming_shot(world: &mut World, direction: Vec3) {
+    let path = crate::tracks::RailPath::Edge { from: 0, to: 1 };
+    let edge_length = crate::tracks::track_pose(path, 0.0)
+        .0
+        .distance(crate::tracks::track_pose(path, 1.0).0);
+    let position = crate::tracks::track_pose(
+        path,
+        0.8 + 4.2 * crate::simulation::TICK_DURATION.as_secs_f32() / edge_length,
+    )
+    .0;
+    let velocity = direction * MISSILE_SPEED;
+    world.spawn((
+        Projectile {
+            owner: 0,
+            velocity,
+            remaining_life: 1.0,
+            trail: 0.0,
+        },
+        Transform::from_translation(
+            position - velocity * crate::simulation::TICK_DURATION.as_secs_f32(),
+        ),
+        Transient,
+    ));
+}
+
+/// Gameplay-only readback: exhaust cadence and renderer children are cosmetic.
+#[cfg(test)]
+pub(crate) fn parity_test_projectiles(world: &mut World) -> Vec<(usize, [f32; 3], [f32; 3], f32)> {
+    world
+        .query::<(&Projectile, &Transform)>()
+        .iter(world)
+        .map(|(p, t)| {
+            (
+                p.owner,
+                t.translation.to_array(),
+                p.velocity.to_array(),
+                p.remaining_life,
+            )
+        })
+        .collect()
+}
+
+/// Unit combat fixture; the complete gameplay schedule still moves and strikes it.
+#[cfg(test)]
+pub(crate) fn parity_test_prop_shot(world: &mut World, impact: Vec3) {
+    let velocity = Vec3::X * MISSILE_SPEED;
+    world.spawn((
+        Projectile {
+            owner: 0,
+            velocity,
+            remaining_life: 1.0,
+            trail: 0.0,
+        },
+        Transform::from_translation(
+            impact - velocity * crate::simulation::TICK_DURATION.as_secs_f32(),
+        ),
+        Transient,
+    ));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn shared_headless_tick_resolves_rear_hit_before_match_scoring() {
+        use crate::headless::{Simulation, SimulationConfig, TICK_DURATION};
+        use crate::tracks::{RailPath, track_pose};
+        let mut simulation = Simulation::new(SimulationConfig {
+            human_seats: [true, true, false, false],
+            bots: 0,
+            wins_target: 1,
+            ..default()
+        })
+        .unwrap();
+        let path = RailPath::Edge { from: 0, to: 1 };
+        let world = simulation.app.world_mut();
+        for (player, mut rail, mut transform) in world
+            .query::<(&Player, &mut RailFollower, &mut Transform)>()
+            .iter_mut(world)
+        {
+            rail.path = path;
+            rail.progress = if player.id == 1 { 0.8 } else { 0.0 };
+            let (position, forward) = track_pose(path, rail.progress);
+            *transform = Transform::from_translation(position).looking_to(forward, Vec3::Y);
+        }
+        let edge_length = track_pose(path, 0.0).0.distance(track_pose(path, 1.0).0);
+        let (position, forward) =
+            track_pose(path, 0.8 + 4.2 * TICK_DURATION.as_secs_f32() / edge_length);
+        world.spawn((
+            Projectile {
+                owner: 0,
+                velocity: forward * MISSILE_SPEED,
+                remaining_life: 1.0,
+                trail: 0.0,
+            },
+            Transform::from_translation(
+                position - forward * MISSILE_SPEED * TICK_DURATION.as_secs_f32(),
+            ),
+            Transient,
+        ));
+        simulation.step();
+        let snapshot = simulation.snapshot();
+        assert!(!snapshot.carts[1].alive);
+        assert_eq!(snapshot.wins, [1, 0, 0, 0]);
+        assert_eq!(snapshot.winner, Some(0));
+        assert!(snapshot.round_finished);
+        for _ in 0..128 {
+            simulation.step();
+        }
+        assert_eq!(
+            simulation.snapshot().wins,
+            [1, 0, 0, 0],
+            "match winner stops scoring"
+        );
+    }
+
+    #[test]
+    fn all_hits_buff_belongs_to_attacker_and_never_hits_self() {
+        for direction in [Vec3::Z, Vec3::X] {
+            for owner in [0, 1] {
+                for buffed in [0, 1] {
+                    let mut app = App::new();
+                    let mut powerups = crate::powerups::Powerups::default();
+                    powerups.buffs[buffed].grant(crate::powerups::Kind::AllHits);
+                    app.insert_resource(powerups);
+                    let target = app
+                        .world_mut()
+                        .spawn((
+                            Player {
+                                id: 1,
+                                active: true,
+                                alive: true,
+                                score: 0,
+                                shot_cooldown: 0.0,
+                                wants_to_fire: false,
+                                input: None,
+                            },
+                            Transform::default(),
+                            Visibility::Inherited,
+                        ))
+                        .id();
+                    app.world_mut().spawn((
+                        Projectile {
+                            owner,
+                            velocity: direction,
+                            remaining_life: 1.0,
+                            trail: 0.0,
+                        },
+                        Transform::default(),
+                    ));
+                    app.add_systems(Update, detect_hits);
+                    app.update();
+                    assert_eq!(
+                        !app.world().get::<Player>(target).unwrap().alive,
+                        owner == 0 && buffed == 0
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn simultaneous_rear_hits_eliminate_both_before_round_resolution() {
+        let mut app = App::new();
+        for id in 0..2 {
+            app.world_mut().spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: true,
+                    input: None,
+                },
+                Transform::default(),
+                Visibility::Inherited,
+            ));
+            app.world_mut().spawn((
+                Projectile {
+                    owner: id,
+                    velocity: Vec3::NEG_Z,
+                    remaining_life: 1.0,
+                    trail: 0.0,
+                },
+                Transform::default(),
+            ));
+        }
+        app.add_systems(Update, detect_hits);
+        app.update();
+        assert!(
+            app.world_mut()
+                .query::<&Player>()
+                .iter(app.world())
+                .all(|p| !p.alive && !p.wants_to_fire)
+        );
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            0
+        );
+    }
+
+    #[test]
+    fn held_fire_obeys_500ms_boundary_and_dead_carts_cannot_shoot() {
+        let mut app = App::new();
+        let assets = MissileAssets::new(&mut Assets::default(), &mut Assets::default());
+        app.insert_resource(assets)
+            .insert_resource(Time::<()>::default());
+        let cart = app
+            .world_mut()
+            .spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id: 0,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: true,
+                    input: None,
+                },
+                Transform::default(),
+            ))
+            .id();
+        app.add_systems(Update, fire_projectiles);
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_millis(499));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_millis(1));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            2
+        );
+        app.world_mut().get_mut::<Player>(cart).unwrap().alive = false;
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(std::time::Duration::from_secs(1));
+        app.update();
+        assert_eq!(
+            app.world_mut()
+                .query::<&Projectile>()
+                .iter(app.world())
+                .count(),
+            2
+        );
+    }
+
+    #[test]
+    fn rear_hit_hides_target_without_awarding_a_hit_point() {
+        let mut app = App::new();
+        app.insert_resource(RailMap::random());
+        let target = app
+            .world_mut()
+            .spawn((
+                Player {
+                    active: true,
+                    alive: true,
+                    id: 1,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: None,
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+                Transform::default(),
+                Visibility::Inherited,
+            ))
+            .id();
+        app.world_mut().spawn((
+            Projectile {
+                owner: 0,
+                velocity: Vec3::NEG_Z,
+                remaining_life: 1.0,
+                trail: 0.0,
+            },
+            Transform::default(),
+        ));
+        app.add_systems(Update, detect_hits);
+        app.update();
+        assert_eq!(
+            *app.world().get::<Visibility>(target).unwrap(),
+            Visibility::Hidden
+        );
+        assert_eq!(app.world().get::<Player>(target).unwrap().score, 0);
+    }
+
+    #[test]
+    fn fire_cooldown_is_exactly_half_a_second() {
+        assert_eq!(SHOT_COOLDOWN, 0.5);
+    }
+
+    #[test]
+    fn a_shot_travelling_with_the_target_is_a_rear_hit() {
+        assert!(is_rear_hit(Vec3::NEG_Z, Vec3::NEG_Z));
+    }
+
+    #[test]
+    fn frontal_and_side_hits_do_not_score() {
+        assert!(!is_rear_hit(Vec3::Z, Vec3::NEG_Z));
+        assert!(!is_rear_hit(Vec3::X, Vec3::NEG_Z));
+    }
+
+    #[test]
+    fn a_missile_past_the_wall_blows_up_on_it() {
+        let impact = wall_impact(Vec3::new(ARENA_HALF_SIZE + 0.4, 0.77, 2.0));
+        assert_eq!(impact, Vec3::new(ARENA_HALF_SIZE, 0.77, 2.0));
+        let inside = Vec3::new(1.0, 0.77, -3.0);
+        assert_eq!(wall_impact(inside), inside);
+    }
+}

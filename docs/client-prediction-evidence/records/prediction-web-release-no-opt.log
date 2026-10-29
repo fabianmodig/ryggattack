@@ -1,0 +1,29 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+warning: variants `Start` and `Exit` are never constructed
+  --> src/ui/mod.rs:48:5
+   |
+47 | pub(crate) enum MenuAction {
+   |                 ---------- variants in this enum
+48 |     Start,
+   |     ^^^^^
+...
+54 |     Exit,
+   |     ^^^^
+   |
+   = note: `MenuAction` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `main_menu` is never used
+   --> src/ui/mod.rs:377:4
+    |
+377 | fn main_menu(commands: &mut Commands) {
+    |    ^^^^^^^^^
+
+warning: `ryggattack` (lib) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 6m 43s
+note: wasm-opt was not found, so the module keeps its full size.
+
+Built dist/web. Serve it with:
+  python3 -m http.server 8080 --directory dist/web
+
+TIMING prediction-web-release-no-opt: 413.573 s; exit=0

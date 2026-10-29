@@ -1,0 +1,27 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 44.18s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 2 tests
+test prediction::tests::a_missing_history_step_falls_back_instead_of_silently_shortening_replay ... FAILED
+test prediction::tests::shared_speed_expiry_and_contact_corrections_do_not_predict_outcomes ... ok
+
+failures:
+
+---- prediction::tests::a_missing_history_step_falls_back_instead_of_silently_shortening_replay stdout ----
+
+thread 'prediction::tests::a_missing_history_step_falls_back_instead_of_silently_shortening_replay' (58421) panicked at src/prediction/tests.rs:50:5:
+assertion `left == right` failed
+  left: Some([-5.6406245, 0.62, -7.0])
+ right: Some([-5.8375, 0.62, -7.0])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    prediction::tests::a_missing_history_step_falls_back_instead_of_silently_shortening_replay
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 203 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING prediction-suffix-observed-red: 44.240 s; exit=101

@@ -1,0 +1,56 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.15s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 17 tests
+test a_long_render_stall_discards_speculation_instead_of_catching_up ... ok
+test local_rendering_interpolates_between_actual_fixed_steps ... ok
+test a_death_respawn_boundary_cannot_replay_previous_life_inputs ... ok
+test a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix ... ok
+test a_reversal_correction_discards_pre_collision_speculation ... FAILED
+test a_stall_clears_remote_interpolation_until_fresh_authority ... FAILED
+test rail_interpolation_follows_the_curve_and_never_cuts_the_corner ... ok
+test movement_snapshot_exposes_authoritative_directed_rail_state ... ok
+test maximum_authoritative_tick_disables_speculation_without_panicking ... ok
+test prediction_horizon_is_bounded_even_with_many_small_render_frames ... ok
+test processed_input_reports_the_held_state_selected_at_a_completed_tick ... ok
+test reconciliation_replays_actual_steps_not_acknowledged_messages ... ok
+test remote_motion_on_an_absent_track_falls_back_to_cart_authority ... FAILED
+test remote_carts_move_between_samples_and_stop_without_extrapolation ... ok
+test small_corrections_fix_simulation_immediately_but_decay_visual_residual_by_time ... ok
+test stale_or_duplicate_frames_do_not_rewind_prediction ... ok
+test prediction_uses_shared_fixed_travel_before_new_authority ... ok
+
+failures:
+
+---- a_reversal_correction_discards_pre_collision_speculation stdout ----
+
+thread 'a_reversal_correction_discards_pre_collision_speculation' (53554) panicked at tests/prediction.rs:384:5:
+assertion `left == right` failed: reversal snaps to authority without old suffix
+  left: Some([-6.1, 0.62, -7.0])
+ right: Some([-5.8375, 0.62, -7.0])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_stall_clears_remote_interpolation_until_fresh_authority stdout ----
+
+thread 'a_stall_clears_remote_interpolation_until_fresh_authority' (53555) panicked at tests/prediction.rs:398:5:
+caller must fall back to current authority after a stall
+
+---- remote_motion_on_an_absent_track_falls_back_to_cart_authority stdout ----
+
+thread 'remote_motion_on_an_absent_track_falls_back_to_cart_authority' (53571) panicked at tests/prediction.rs:414:5:
+assertion `left == right` failed
+  left: [5.96875, 0.62, 6.9999995]
+ right: [5.575, 0.62, 7.0]
+
+
+failures:
+    a_reversal_correction_discards_pre_collision_speculation
+    a_stall_clears_remote_interpolation_until_fresh_authority
+    remote_motion_on_an_absent_track_falls_back_to_cart_authority
+
+test result: FAILED. 14 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-barriers-red: 4.265 s; exit=101

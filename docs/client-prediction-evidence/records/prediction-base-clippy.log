@@ -1,0 +1,99 @@
+    Checking ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/baseline-clippy)
+warning: this function has too many arguments (8/7)
+   --> src/explosions.rs:222:1
+    |
+222 | / pub(crate) fn run_detonations(
+223 | |     mut commands: Commands,
+224 | |     time: Res<Time>,
+225 | |     assets: Res<EffectAssets>,
+...   |
+230 | |     mut wrecked: Local<HashSet<Entity>>,
+231 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:582:19
+    |
+582 |       mut replicas: Query<
+    |  ___________________^
+583 | |         (
+584 | |             Entity,
+585 | |             &Replica,
+...   |
+589 | |         Without<crate::players::Player>,
+590 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+    = note: `#[warn(clippy::type_complexity)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:593:16
+    |
+593 |       cosmetics: Query<
+    |  ________________^
+594 | |         Entity,
+595 | |         Or<(
+596 | |             With<crate::explosions::Smoke>,
+...   |
+600 | |         )>,
+601 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: this `if` statement can be collapsed
+   --> src/online.rs:734:13
+    |
+734 | /             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity) {
+735 | |                 if let Some(blast) = frame.bodies.iter().find(|body| {
+736 | |                     body.explosion
+737 | |                         .and_then(|effect| effect.burst)
+...   |
+762 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#collapsible_if
+    = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+    |
+734 ~             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity)
+735 ~                 && let Some(blast) = frame.bodies.iter().find(|body| {
+736 |                     body.explosion
+...
+760 |                     }
+761 ~                 }
+    |
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/settings.rs:715:25
+    |
+715 |     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:519:17
+    |
+519 |     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:599:14
+    |
+599 |     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: `ryggattack` (lib) generated 7 warnings (run `cargo clippy --fix --lib -p ryggattack -- ` to apply 1 suggestion)
+warning: `ryggattack` (lib test) generated 7 warnings (7 duplicates)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 6.52s
+
+TIMING prediction-base-clippy: 6.584 s; exit=0

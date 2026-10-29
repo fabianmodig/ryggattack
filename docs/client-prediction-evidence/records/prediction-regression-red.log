@@ -1,0 +1,23 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.85s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+
+thread 'a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix' (52732) panicked at tests/prediction.rs:356:5:
+assertion `left == right` failed: publication freshness cannot validate a regressing simulation clock
+  left: Some([-5.5919995, 0.62, -6.9999995])
+ right: Some([-5.575, 0.62, -7.0])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix ... FAILED
+
+failures:
+
+failures:
+    a_regressing_simulation_clock_cannot_replay_an_incomplete_suffix
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-regression-red: 2.923 s; exit=101

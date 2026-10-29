@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 23.85s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test net_client::resilience_tests::prediction_rail_metadata_rejects_invalid_paths_and_progress ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 196 filtered out; finished in 0.01s
+
+
+TIMING prediction-validation-green: 23.911 s; exit=0

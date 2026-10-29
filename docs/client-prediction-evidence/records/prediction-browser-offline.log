@@ -1,0 +1,9 @@
+passed [
+  'normal menu selects offline play',
+  'real keyboard claims seat and starts actual game',
+  'steering and fire keys exercised',
+  'same recorded WASM artifact',
+  'no online WebSocket'
+]
+
+TIMING prediction-browser-offline: 28.608 s; exit=0

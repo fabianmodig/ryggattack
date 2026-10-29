@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.42s
+     Running tests/net_client.rs (/home/hermes/src/ryggattack/target/debug/deps/net_client-802a20fed516a206)
+
+running 1 test
+test changed_held_intent_is_sent_without_waiting_for_snapshot_ack ... FAILED
+
+failures:
+
+---- changed_held_intent_is_sent_without_waiting_for_snapshot_ack stdout ----
+
+thread 'changed_held_intent_is_sent_without_waiting_for_snapshot_ack' (34483) panicked at tests/net_client.rs:91:5:
+an in-flight neutral packet must not block a new steering state: [(1, 0.0)]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    changed_held_intent_is_sent_without_waiting_for_snapshot_ack
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.64s
+
+error: test failed, to rerun pass `--test net_client`
+
+TIMING prediction-delivery-red: 5.163 s; exit=101

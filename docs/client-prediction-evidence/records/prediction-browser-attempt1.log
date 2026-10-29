@@ -1,0 +1,11 @@
+failed locator.fill: Error: Element is not an <input>, <textarea> or [contenteditable] element
+Call log:
+  - waiting for locator('#target-room')
+    - locator resolved to <select id="target-room" aria-label="Win target">…</select>
+    - fill("1")
+  - attempting fill action
+    - waiting for element to be visible, enabled and editable
+
+    at /home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:58:120
+
+TIMING prediction-browser-attempt1: 12.516 s; exit=1

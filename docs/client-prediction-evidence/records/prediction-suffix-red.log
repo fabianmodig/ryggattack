@@ -1,0 +1,63 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0277]: `powerups::Buffs` is not a `Component`
+    --> src/prediction/tests.rs:11:70
+     |
+  11 | ... mut buffs) in world.query::<(&Player, &mut RailFollower, &mut Transform, &mut Buffs)>().iter_mut(world) {
+     |                         -----   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ invalid `Component`
+     |                         |
+     |                         required by a bound introduced by this call
+     |
+help: the trait `bevy::bevy_ecs::component::Component` is not implemented for `powerups::Buffs`
+    --> src/powerups.rs:53:1
+     |
+  53 | pub(crate) struct Buffs {
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+     = note: consider annotating `powerups::Buffs` with `#[derive(Component)]`
+     = help: the following other types implement trait `bevy::bevy_ecs::component::Component`:
+               Aabb
+               AccessibilityNode
+               AccessibilityRequested
+               AccessibleLabel
+               AccumulatedMouseMotion
+               AccumulatedMouseScroll
+               ActivateOnPress
+               ActiveDescendant
+             and 766 others
+     = note: required for `&mut powerups::Buffs` to implement `QueryData`
+     = note: 1 redundant requirement hidden
+     = note: required for `(&Player, &mut RailFollower, &mut Transform, &mut Buffs)` to implement `QueryData`
+note: required by a bound in `bevy::bevy_ecs::world::World::query`
+    --> /home/hermes/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ecs-0.19.1/src/world/mod.rs:1803:21
+     |
+1803 |     pub fn query<D: QueryData>(&mut self) -> QueryState<D, ()> {
+     |                     ^^^^^^^^^ required by this bound in `World::query`
+     = note: the full name for the type has been written to '/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8.long-type-1915736623822430459.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0599]: the method `iter_mut` exists for struct `QueryState<(&Player, &mut RailFollower, &mut Transform, &mut Buffs)>`, but its trait bounds were not satisfied
+   --> src/prediction/tests.rs:11:130
+    |
+ 11 | ... &mut Transform, &mut Buffs)>().iter_mut(world) {
+    |                                    ^^^^^^^^ method cannot be called due to unsatisfied trait bounds
+    |
+   ::: src/powerups.rs:53:1
+    |
+ 53 | pub(crate) struct Buffs {
+    | ----------------------- doesn't satisfy `_: Component`
+    |
+    = note: the following trait bounds were not satisfied:
+            `powerups::Buffs: bevy::bevy_ecs::component::Component`
+            which is required by `(&players::Player, &mut tracks::path::RailFollower, &mut bevy::bevy_transform::components::Transform, &mut powerups::Buffs): QueryData`
+note: the trait `bevy::bevy_ecs::component::Component` must be implemented
+   --> /home/hermes/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ecs-0.19.1/src/component/mod.rs:511:1
+    |
+511 | pub trait Component: Send + Sync + 'static {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: the full name for the type has been written to '/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8.long-type-7064164516934318344.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+Some errors have detailed explanations: E0277, E0599.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `ryggattack` (lib test) due to 2 previous errors
+
+TIMING prediction-suffix-red: 1.342 s; exit=101

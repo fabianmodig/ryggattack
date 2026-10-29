@@ -1,0 +1,8 @@
+{"settings":{"name":"zero","up":0,"down":0,"jitter":0},"clients":[{"name":"PredictHost","seat":0,"metrics":{"samples":22,"local_between_unchanged_authority":0,"remote_between_unchanged_authority":0,"predicted_ahead_samples":0,"common_tick_comparisons":21,"matching_authoritative_positions":21,"render_gap_ms":{"min":525.6999999992549,"mean":807.8333333333334,"max":1680},"server_hz":64.08968089144817}},{"name":"PredictGuest","seat":1,"metrics":{"samples":31,"local_between_unchanged_authority":0,"remote_between_unchanged_authority":0,"predicted_ahead_samples":1,"common_tick_comparisons":27,"matching_authoritative_positions":27,"render_gap_ms":{"min":15.099999999627471,"mean":599.9533333333209,"max":1530.5999999996275},"server_hz":63.484098978470634}}]}
+failed AssertionError [ERR_ASSERTION]: local actual-step speculation before next authority
+    at file:///home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:65:274
+    at runNextTicks (node:internal/process/task_queues:64:5)
+    at process.processImmediate (node:internal/timers:452:9)
+    at process.callbackTrampoline (node:internal/async_hooks:130:17)
+
+TIMING prediction-browser-attempt2: 62.172 s; exit=1

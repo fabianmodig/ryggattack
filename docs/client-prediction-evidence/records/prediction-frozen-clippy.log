@@ -1,0 +1,198 @@
+warning: this function has too many arguments (8/7)
+   --> src/explosions.rs:222:1
+    |
+222 | / pub(crate) fn run_detonations(
+223 | |     mut commands: Commands,
+224 | |     time: Res<Time>,
+225 | |     assets: Res<EffectAssets>,
+...   |
+230 | |     mut wrecked: Local<HashSet<Entity>>,
+231 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:582:19
+    |
+582 |       mut replicas: Query<
+    |  ___________________^
+583 | |         (
+584 | |             Entity,
+585 | |             &Replica,
+...   |
+589 | |         Without<crate::players::Player>,
+590 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+    = note: `#[warn(clippy::type_complexity)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:593:16
+    |
+593 |       cosmetics: Query<
+    |  ________________^
+594 | |         Entity,
+595 | |         Or<(
+596 | |             With<crate::explosions::Smoke>,
+...   |
+600 | |         )>,
+601 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: this `if` statement can be collapsed
+   --> src/online.rs:734:13
+    |
+734 | /             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity) {
+735 | |                 if let Some(blast) = frame.bodies.iter().find(|body| {
+736 | |                     body.explosion
+737 | |                         .and_then(|effect| effect.burst)
+...   |
+762 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#collapsible_if
+    = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+    |
+734 ~             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity)
+735 ~                 && let Some(blast) = frame.bodies.iter().find(|body| {
+736 |                     body.explosion
+...
+760 |                     }
+761 ~                 }
+    |
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/settings.rs:715:25
+    |
+715 |     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:519:17
+    |
+519 |     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:599:14
+    |
+599 |     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: `ryggattack` (lib) generated 7 warnings (run `cargo clippy --fix --lib -p ryggattack -- ` to apply 1 suggestion)
+    Checking ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0432]: unresolved import `ryggattack::prediction`
+ --> tests/prediction.rs:2:40
+  |
+2 | use ryggattack::{input::ControlIntent, prediction::Movement};
+  |                                        ^^^^^^^^^^ could not find `prediction` in `ryggattack`
+
+error[E0432]: unresolved imports `ryggattack::network::RailPath`, `ryggattack::network::RailState`, `ryggattack::prediction`
+   --> tests/prediction.rs:174:19
+    |
+174 |         network::{RailPath, RailState},
+    |                   ^^^^^^^^  ^^^^^^^^^ no `RailState` in `network`
+    |                   |
+    |                   no `RailPath` in `network`
+175 |         prediction::interpolate_rails,
+    |         ^^^^^^^^^^ could not find `prediction` in `ryggattack`
+
+error[E0432]: unresolved import `ryggattack::network::RailPath`
+   --> tests/prediction.rs:378:9
+    |
+378 |     use ryggattack::network::RailPath;
+    |         ^^^^^^^^^^^^^^^^^^^^^--------
+    |                              |
+    |                              no `RailPath` in `network`
+
+error[E0433]: cannot find `RailPath` in `network`
+   --> tests/prediction.rs:427:30
+    |
+427 |     let ryggattack::network::RailPath::Edge { from, to } = path else {
+    |                              ^^^^^^^^ could not find `RailPath` in `network`
+
+error[E0599]: no method named `submit_sequenced` found for struct `ryggattack::headless::Simulation` in the current scope
+   --> tests/prediction.rs:140:9
+    |
+140 |     sim.submit_sequenced(0, 2, right).unwrap();
+    |         ^^^^^^^^^^^^^^^^ method not found in `ryggattack::headless::Simulation`
+
+error[E0599]: no method named `submit_sequenced` found for struct `ryggattack::headless::Simulation` in the current scope
+   --> tests/prediction.rs:141:9
+    |
+141 |     sim.submit_sequenced(0, 3, up).unwrap();
+    |         ^^^^^^^^^^^^^^^^ method not found in `ryggattack::headless::Simulation`
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:143:29
+    |
+143 |         sim.network_frame().motion.unwrap().applied[0].sequence,
+    |                             ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:151:39
+    |
+151 |     let applied = sim.network_frame().motion.unwrap().applied[0];
+    |                                       ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:163:39
+    |
+163 |     let neutral = sim.network_frame().motion.unwrap().applied[0];
+    |                                       ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:309:20
+    |
+309 |         correction.motion.as_mut().unwrap().rails[0].progress += 0.05;
+    |                    ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:356:15
+    |
+356 |     regressed.motion.as_mut().unwrap().rails[0].progress -= 0.01;
+    |               ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:389:30
+    |
+389 |     let rail = &mut reversed.motion.as_mut().unwrap().rails[0];
+    |                              ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+error[E0609]: no field `motion` on type `ryggattack::network::Frame`
+   --> tests/prediction.rs:426:24
+    |
+426 |     let path = initial.motion.as_ref().unwrap().rails[1].path;
+    |                        ^^^^^^ unknown field
+    |
+    = note: available fields are: `tick`, `simulation_tick`, `ack`, `names`, `carts` ... and 6 others
+
+Some errors have detailed explanations: E0432, E0433, E0599, E0609.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `ryggattack` (test "prediction") due to 13 previous errors
+
+TIMING prediction-frozen-clippy: 1.982 s; exit=101

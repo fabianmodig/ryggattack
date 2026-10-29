@@ -1,0 +1,136 @@
+    Checking ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+warning: this function has too many arguments (8/7)
+   --> src/explosions.rs:222:1
+    |
+222 | / pub(crate) fn run_detonations(
+223 | |     mut commands: Commands,
+224 | |     time: Res<Time>,
+225 | |     assets: Res<EffectAssets>,
+...   |
+230 | |     mut wrecked: Local<HashSet<Entity>>,
+231 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: large size difference between variants
+   --> src/network.rs:202:1
+    |
+202 | /  pub enum ServerMessage {
+203 | |/     Welcome {
+204 | ||         version: u32,
+205 | ||         seat: usize,
+206 | ||         room: u64,
+...   ||
+210 | ||         edges: Vec<(usize, usize)>,
+211 | ||     },
+    | ||_____- the second-largest variant contains at least 100 bytes
+212 | |      State(Frame),
+    | |      ------------ the largest variant contains at least 528 bytes
+...   |
+216 | |      Error(String),
+217 | |  }
+    | |__^ the entire enum is at least 528 bytes
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#large_enum_variant
+    = note: `#[warn(clippy::large_enum_variant)]` on by default
+help: consider boxing the large fields or introducing indirection in some other way to reduce the total size of the enum
+    |
+212 -     State(Frame),
+212 +     State(Box<Frame>),
+    |
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:630:19
+    |
+630 |       mut replicas: Query<
+    |  ___________________^
+631 | |         (
+632 | |             Entity,
+633 | |             &Replica,
+...   |
+637 | |         Without<crate::players::Player>,
+638 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+    = note: `#[warn(clippy::type_complexity)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:641:16
+    |
+641 |       cosmetics: Query<
+    |  ________________^
+642 | |         Entity,
+643 | |         Or<(
+644 | |             With<crate::explosions::Smoke>,
+...   |
+648 | |         )>,
+649 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: this `if` statement can be collapsed
+   --> src/online.rs:770:13
+    |
+770 | /             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity) {
+771 | |                 if let Some(blast) = frame.bodies.iter().find(|body| {
+772 | |                     body.explosion
+773 | |                         .and_then(|effect| effect.burst)
+...   |
+798 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#collapsible_if
+    = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+    |
+770 ~             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity)
+771 ~                 && let Some(blast) = frame.bodies.iter().find(|body| {
+772 |                     body.explosion
+...
+796 |                     }
+797 ~                 }
+    |
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/settings.rs:715:25
+    |
+715 |     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:519:17
+    |
+519 |     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:599:14
+    |
+599 |     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: `ryggattack` (lib) generated 8 warnings (run `cargo clippy --fix --lib -p ryggattack -- ` to apply 1 suggestion)
+warning: manual implementation of `.is_multiple_of()`
+  --> tests/prediction.rs:31:12
+   |
+31 |         if tick % 8 == 0 {
+   |            ^^^^^^^^^^^^^ help: replace with: `tick.is_multiple_of(8)`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#manual_is_multiple_of
+   = note: `#[warn(clippy::manual_is_multiple_of)]` on by default
+
+warning: `ryggattack` (test "prediction") generated 1 warning (run `cargo clippy --fix --test "prediction" -p ryggattack -- ` to apply 1 suggestion)
+warning: `ryggattack` (lib test) generated 8 warnings (8 duplicates)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 8.40s
+
+TIMING prediction-current-clippy: 8.513 s; exit=0

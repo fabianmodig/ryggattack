@@ -1,0 +1,11 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0425]: cannot find function `movement_snapshot` in this scope
+    --> src/online.rs:1474:21
+     |
+1474 |         let value = movement_snapshot(&view, Some(0), 0.03125);
+     |                     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `ryggattack` (lib test) due to 1 previous error
+
+TIMING prediction-diagnostics-red: 1.512 s; exit=101

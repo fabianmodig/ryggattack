@@ -1,0 +1,13 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0560]: struct `online::View` has no field named `poses`
+    --> src/online.rs:1417:86
+     |
+1417 |             .insert_resource(View {edges:Some(sim.network_edges()),frame:Some(frame),poses,..default()})
+     |                                                                                      ^^^^^ `online::View` does not have this field
+     |
+     = note: available fields are: `previous`, `alpha`, `built`, `epoch`, `reset_replicas` ... and 4 others
+
+For more information about this error, try `rustc --explain E0560`.
+error: could not compile `ryggattack` (lib test) due to 1 previous error
+
+TIMING prediction-renderer-red: 4.225 s; exit=101

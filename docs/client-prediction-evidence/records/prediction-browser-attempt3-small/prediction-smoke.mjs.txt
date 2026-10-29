@@ -1,0 +1,79 @@
+// Isolated prediction acceptance: two real WASM renderers, real menus/keys.
+// No production endpoints or credentials are recorded.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import net from 'node:net';import crypto from 'node:crypto';
+import {spawn,execFileSync} from 'node:child_process';import {createRequire} from 'node:module';
+import {openRoomMenu} from './menu-harness.mjs';import {delayPipe} from './prediction-delay.mjs';
+import {checkCopiedEntryArtifacts} from './online-hud-artifacts.mjs';
+const {chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url)('playwright');
+const root=path.resolve('dist/web'),out=path.resolve(process.argv[2]??'verification/prediction-browser');fs.mkdirSync(out,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const evidence={status:'running',errors:[],checks:[],cases:[],artifact:{},source:{},native_graphics:false,diagnostics:'opt-in pose targets consumed by actual replica renderer; screenshots are separate rendered evidence'};
+evidence.entry_graph=checkCopiedEntryArtifacts(path.resolve('web'),root);
+for(const name of fs.readdirSync(root).filter(f=>/\.(html|mjs|js|wasm)$/.test(f)))evidence.artifact[name]=sha(fs.readFileSync(path.join(root,name)));
+evidence.source_head=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+for(const file of execFileSync('git',['ls-files','src','web','assets','Cargo.toml','Cargo.lock','scripts/build-web.sh'],{encoding:'utf8'}).trim().split('\n'))evidence.source[file]=sha(fs.readFileSync(file));
+for(const file of ['prediction-smoke.mjs','prediction-delay.mjs','menu-harness.mjs','online-hud-artifacts.mjs']){evidence.harness??={};evidence.harness[file]=sha(fs.readFileSync(new URL(file,import.meta.url)));fs.copyFileSync(new URL(file,import.meta.url),path.join(out,file+'.txt'));}
+evidence.backend_sha256=sha(fs.readFileSync('target/debug/ryggattack-server'));
+const browsers=[],clients=[],sockets=new Set(),timers=[];let server,proxy,backendLog='',latency={up:0,down:0,jitter:0},streams=[];
+const front=http.createServer((req,res)=>{let file;try{let p=decodeURIComponent(req.url.split('?')[0]);if(p.includes('\0'))throw Error();if(p.endsWith('/'))p+='index.html';file=path.resolve(root,'.'+p);}catch{res.writeHead(400).end();return;}if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(e,b)=>{if(e){res.writeHead(404).end();return;}res.writeHead(200,{'content-type':({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.wasm':'application/wasm'})[path.extname(file)]??'application/octet-stream'}).end(b);});});
+const listen=s=>new Promise(r=>s.listen(0,'127.0.0.1',r));
+const until=async(p,label,ms=120000)=>{const end=performance.now()+ms;while(!p()){assert(performance.now()<end,label);await sleep(40);}};
+async function shot(c,name){const start=performance.now();try{await c.page.screenshot({path:path.join(out,name+'.png'),timeout:60000});evidence.screenshots??=[];evidence.screenshots.push(name+'.png');}finally{fs.appendFileSync(path.join(out,'captures.jsonl'),JSON.stringify({name,ms:performance.now()-start})+'\n');}}
+let origin,address;
+async function client(name,code){
+ const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});browsers.push(browser);
+ const page=await browser.newPage({viewport:{width:480,height:360}}),c={name,browser,page,inputs:[],states:0};clients.push(c);
+ await page.addInitScript(()=>{
+  globalThis.ryggattackMovementDebug=true;globalThis.__movementSamples=[];globalThis.__wire=[];globalThis.__inputs=[];
+  let value;Object.defineProperty(globalThis,'ryggattackMovement',{get:()=>value,set:v=>{value=v;const s=JSON.parse(v);if(s.tick!==null){__movementSamples.push({at:performance.now(),...s});if(__movementSamples.length>8192)__movementSamples.shift();}}});
+  const WS=globalThis.WebSocket;globalThis.WebSocket=class extends WS{
+   constructor(...args){super(...args);this.addEventListener('message',e=>{try{const m=JSON.parse(e.data);if(m.State){const f=m.State;__wire.push({at:performance.now(),tick:f.tick,simulation_tick:f.simulation_tick,ack:f.ack,carts:f.carts,motion:f.motion,wins:f.wins,round_finished:f.round_finished});if(__wire.length>8192)__wire.shift();}}catch{}});}
+   send(text){try{const m=JSON.parse(text);if(m.Input){__inputs.push({at:performance.now(),...m.Input});if(__inputs.length>8192)__inputs.shift();}}catch{}return super.send(text);}
+  };
+ });
+ page.on('pageerror',e=>evidence.errors.push(name+': '+e.message));page.on('console',m=>{if(m.type()==='error')evidence.errors.push(name+': '+m.text());});
+ page.on('websocket',ws=>{assert.equal(new URL(ws.url()).href,new URL(address).href);ws.on('framesent',({payload})=>{const m=JSON.parse(payload);if(m.Input)c.inputs.push(m.Input);});ws.on('framereceived',({payload})=>{const m=JSON.parse(payload);if(m.Welcome)c.identity={seat:m.Welcome.seat,participant:m.Welcome.participant,room:m.Welcome.room};if(m.Lobby)c.lobby=m.Lobby;if(m.State){c.states++;c.last=m.State;}});});
+ await page.goto(origin+'/?quality=0',{waitUntil:'domcontentloaded'});await openRoomMenu(page);await page.locator('#backend').fill(address);await page.locator('#player-name').fill(name);if(code)await page.locator('#room-code').fill(code);await page.locator(code?'#join-room':'#create-room').click({noWaitAfter:true});await until(()=>c.identity&&c.lobby,name+' admission');return c;
+}
+async function ready(c){await c.page.locator('#ready-room').waitFor({state:'visible',timeout:120000});await c.page.waitForFunction(()=>!document.getElementById('ready-room').disabled,null,{timeout:60000});await c.page.locator('#ready-room').click({force:true});}
+async function collect(c){return c.page.evaluate(()=>({samples:__movementSamples,wire:__wire,inputs:__inputs}));}
+function metrics(data,seat){
+ const samples=data.samples,dist=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));let localBetween=0,remoteBetween=0,predictedAhead=0,common=0,converged=0;const renderGaps=[];const remote=seat===0?1:0;
+ const wire=new Map(data.wire.map(f=>[f.simulation_tick,f]));
+ for(let i=1;i<samples.length;i++){
+  const a=samples[i-1],b=samples[i];renderGaps.push(b.at-a.at);
+  if(a.tick===b.tick){if(a.poses[seat]&&b.poses[seat]&&dist(a.poses[seat][0],b.poses[seat][0])>1e-5)localBetween++;if(a.poses[remote]&&b.poses[remote]&&dist(a.poses[remote][0],b.poses[remote][0])>1e-5)remoteBetween++;}
+  if(b.local_position&&b.prediction_clock[0]>b.simulation_tick)predictedAhead++;
+  const f=wire.get(b.prediction_clock?.[0]);if(f&&b.local_position){common++;if(dist(b.local_position,f.carts[seat].position)<1e-3)converged++;}
+ }
+ const a=data.wire[0],b=data.wire.at(-1);return {samples:samples.length,local_between_unchanged_authority:localBetween,remote_between_unchanged_authority:remoteBetween,predicted_ahead_samples:predictedAhead,common_tick_comparisons:common,matching_authoritative_positions:converged,render_gap_ms:renderGaps.length?{min:Math.min(...renderGaps),mean:renderGaps.reduce((a,b)=>a+b,0)/renderGaps.length,max:Math.max(...renderGaps)}:null,server_hz:a&&b?(b.simulation_tick-a.simulation_tick)/((b.at-a.at)/1000):null};
+}
+try{
+ await listen(front);origin=`http://127.0.0.1:${front.address().port}`;
+ for(const [p,status] of [['/%2e%2e/Cargo.toml',403],['/%ZZ',400],['/%00',400]]){const code=await new Promise((r,j)=>http.get({host:'127.0.0.1',port:front.address().port,path:p},s=>{s.resume();r(s.statusCode);}).on('error',j));assert.equal(code,status);}
+ server=spawn(path.resolve('target/debug/ryggattack-server'),['127.0.0.1:0'],{env:{...process.env,RYGGATTACK_ALLOWED_ORIGINS:origin},stdio:['ignore','pipe','pipe']});server.stderr.on('data',b=>backendLog+=b);
+ const port=await new Promise((r,j)=>{let text='';server.stdout.on('data',b=>{text+=b;const m=text.match(/ws:\/\/127\.0\.0\.1:(\d+)/);if(m)r(Number(m[1]));});server.once('error',j);server.once('exit',code=>j(Error('backend exit '+code)));timers.push(setTimeout(()=>j(Error('backend startup timeout')),10000));});
+ proxy=net.createServer(down=>{const up=net.connect(port,'127.0.0.1');for(const s of [up,down]){sockets.add(s);s.setNoDelay(true);s.on('close',()=>sockets.delete(s));s.on('error',()=>{up.destroy();down.destroy();});}for(const [source,target,direction] of [[down,up,'up'],[up,down,'down']]){let i=0;streams.push(delayPipe(source,target,()=>latency[direction]+(latency.jitter?[0,1,-1,0.5,-0.5][i++%5]*latency.jitter:0)));}});await listen(proxy);address=`ws://127.0.0.1:${proxy.address().port}`;
+ const a=await client('PredictHost');await a.page.locator('#bots-room').fill('0');await a.page.locator('#target-room').selectOption('1');await a.page.locator('#apply-room').click();await until(()=>a.lobby.settings.bots===0,'zero bots');const b=await client('PredictGuest',a.lobby.code);
+ await ready(a);await ready(b);await until(()=>a.last&&b.last,'both receive actual gameplay');
+ for(const c of [a,b]){await c.page.waitForFunction(()=>{try{return JSON.parse(globalThis.ryggattackHud).lobby?.phase==='Running';}catch{return false;}},null,{timeout:180000});await c.page.locator('canvas').focus();const n=c.inputs.length;await until(()=>c.inputs.length>n+2,'neutral first-render recovery',120000);}
+ const gameViewport={width:Number(process.env.PREDICTION_GAME_WIDTH??480),height:Number(process.env.PREDICTION_GAME_HEIGHT??360)};
+ assert(gameViewport.width>=160&&gameViewport.width<=640&&gameViewport.height>=120&&gameViewport.height<=480);
+ evidence.game_viewport=gameViewport;for(const c of [a,b])await c.page.setViewportSize(gameViewport);
+ const movementFailures=[];
+ for(const config of [{name:'zero',up:0,down:0,jitter:0},{name:'asymmetric-jitter',up:90,down:150,jitter:25}]){
+  latency=config;await sleep(1200);for(const c of [a,b])await c.page.evaluate(()=>{__movementSamples=[];__wire=[];__inputs=[];});
+  await a.page.locator('canvas').focus();await a.page.keyboard.down('d');await b.page.locator('canvas').focus();await b.page.keyboard.down('w');await sleep(12000);await a.page.keyboard.up('d');await b.page.keyboard.up('w');await sleep(6000);
+  const record={settings:config,clients:[]};for(const c of [a,b]){const data=await collect(c);fs.writeFileSync(path.join(out,config.name+'-'+c.name+'.json'),JSON.stringify(data));record.clients.push({name:c.name,seat:c.identity.seat,metrics:metrics(data,c.identity.seat)});}evidence.cases.push(record);console.log(JSON.stringify(record));
+  for(const c of record.clients){try{const data=await collect(clients.find(x=>x.name===c.name));assert(data.inputs.some(i=>i.horizontal!==0||i.vertical!==0),'real keyboard intent traversed the actual adapter');assert(c.metrics.samples>20,'real rendered movement observations');assert(c.metrics.predicted_ahead_samples>0,'local actual-step speculation before next authority');assert(c.metrics.local_between_unchanged_authority>0,'local pose advances while authority is unchanged');assert(c.metrics.remote_between_unchanged_authority>0,'remote pose advances between authoritative samples');assert(c.metrics.matching_authoritative_positions>0,'recorded predicted ticks converge with actual authority');}catch(error){movementFailures.push({case:config.name,client:c.name,error:String(error)});}}
+ }
+ for(const c of [a,b])await shot(c,c.name+'-movement');
+ evidence.movement_failures=movementFailures;assert.equal(movementFailures.length,0,JSON.stringify(movementFailures));
+ // Natural outcome/lifecycle, no winner injection. Ordinary first-room fixture.
+ for(const c of [a,b])await c.page.locator('canvas').focus();await a.page.keyboard.down('d');await a.page.keyboard.down('Space');await b.page.keyboard.down('Space');await until(()=>a.lobby.phase==='Lobby'&&b.lobby.phase==='Lobby','natural match return',240000);await a.page.keyboard.up('d');await a.page.keyboard.up('Space');await b.page.keyboard.up('Space');
+ for(const c of [a,b]){await c.page.waitForFunction(()=>JSON.parse(globalThis.ryggattackMovement).poses.every(p=>p===null),null,{timeout:120000});}
+ evidence.checks.push('two independent rendered clients; real menus and keyboard; zero and bounded asymmetric latency/jitter','natural match return clears prediction poses');
+ await b.browser.close();await a.page.locator('#leave-room').waitFor({state:'visible',timeout:120000});await a.page.locator('#leave-room').click();await a.page.locator('#setup-back').waitFor({state:'visible',timeout:120000});await a.page.locator('#setup-back').click();await a.page.locator('#play-local').click();await a.page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Lobby',null,{timeout:120000});await a.page.locator('canvas').focus();await a.page.keyboard.down('w');await sleep(1800);await a.page.keyboard.up('w');await a.page.keyboard.down('Enter');await sleep(1800);await a.page.keyboard.up('Enter');await a.page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Playing',null,{timeout:120000});await shot(a,'offline-same-artifact');evidence.checks.push('offline same-artifact graphical game');assert.equal(evidence.errors.length,0,JSON.stringify(evidence.errors));evidence.status='passed';
+}catch(error){evidence.status='failed';evidence.failure=String(error.stack??error);process.exitCode=1;for(const c of clients){if(c.page.isClosed())continue;try{fs.writeFileSync(path.join(out,c.name+'-failure-data.json'),JSON.stringify(await collect(c)));await shot(c,c.name+'-failure');}catch{}}}
+finally{evidence.streams=streams;evidence.backend_log=backendLog;fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(evidence,null,2));console.log(evidence.status,evidence.failure??evidence.checks);for(const t of timers)clearTimeout(t);await Promise.all(browsers.map(b=>b.close()));for(const s of sockets)s.destroy();server?.kill('SIGTERM');if(proxy)await new Promise(r=>proxy.close(r));await new Promise(r=>front.close(r));}

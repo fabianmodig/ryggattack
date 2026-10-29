@@ -1,0 +1,14 @@
+{
+  "source_manifest_sha256": "d4f47851d0bb32b211b5fd2d20bf34d85fcb900e3014c00b112772f4a664e381",
+  "artifact_sha256": {
+    "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+    "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+    "index.html": "4c57f05140ea34e2a76e8e4d477037cb4d7e82bf6fcdf106b087b39d896dd4df",
+    "online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+    "online-hud.mjs": "fe26248e56804717704f7496a64261d06445ef89514efece99dfd2ba64b6485a",
+    "refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+    "rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+    "ryggattack.js": "298a4ed2f5ce0fb348ce54fd31f605e98912b77a27943920cfaf248d7fff5bf3",
+    "ryggattack_bg.wasm": "65689e75e5dd901cb333de649adb1c8708c2e4e1998cb53d0d0c073397eef447"
+  }
+}

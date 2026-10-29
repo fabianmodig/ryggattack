@@ -1,0 +1,9 @@
+{"settings":{"name":"zero","up":0,"down":0,"jitter":0},"clients":[{"name":"PredictHost","seat":0,"metrics":{"samples":47,"local_between_unchanged_authority":1,"remote_between_unchanged_authority":1,"predicted_ahead_samples":28,"common_tick_comparisons":26,"matching_authoritative_positions":26,"render_gap_ms":{"min":9,"mean":382.8652173913205,"max":2260.5},"server_hz":63.99931734061758}},{"name":"PredictGuest","seat":1,"metrics":{"samples":55,"local_between_unchanged_authority":2,"remote_between_unchanged_authority":2,"predicted_ahead_samples":31,"common_tick_comparisons":30,"matching_authoritative_positions":30,"render_gap_ms":{"min":11.299999998882413,"mean":340.9666666666529,"max":1491.4000000003725},"server_hz":69.05397141511658}}]}
+{"settings":{"name":"asymmetric-jitter","up":90,"down":150,"jitter":25},"clients":[{"name":"PredictHost","seat":0,"metrics":{"samples":90,"local_between_unchanged_authority":4,"remote_between_unchanged_authority":2,"predicted_ahead_samples":80,"common_tick_comparisons":26,"matching_authoritative_positions":26,"render_gap_ms":{"min":6.599999999627471,"mean":200.12247191011656,"max":410},"server_hz":64.06464502160203}},{"name":"PredictGuest","seat":1,"metrics":{"samples":92,"local_between_unchanged_authority":7,"remote_between_unchanged_authority":6,"predicted_ahead_samples":79,"common_tick_comparisons":33,"matching_authoritative_positions":33,"render_gap_ms":{"min":5.5,"mean":200.585714285702,"max":390.90000000037253},"server_hz":63.17003627426271}}]}
+passed [
+  'two independent rendered clients; real menus and keyboard; zero and bounded asymmetric latency/jitter',
+  'natural match return clears prediction poses',
+  'offline same-artifact graphical game'
+]
+
+TIMING prediction-browser-attempt3-small: 85.548 s; exit=0

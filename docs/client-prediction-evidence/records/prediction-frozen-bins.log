@@ -1,0 +1,4 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 9.27s
+
+TIMING prediction-frozen-bins: 9.315 s; exit=0

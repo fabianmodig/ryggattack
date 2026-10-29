@@ -31,18 +31,21 @@ The exact compatibility version and clock accounting must be settled and exercis
 
 | Area | Required evidence | Status |
 |---|---|---|
-| Baseline | Real socket ticks/snapshot cadence and input-to-ack timing; separate render limits | Pending |
-| Shared travel | Pure step agrees with actual shared FixedUpdate, including speed expiry, rail seams and turns | Pending |
-| Accounting | Multiple inputs/tick, held input/multiple ticks, ack jumps/duplicates/stale frames, exact replay of actual steps | Pending |
-| Bounds | History/lead/catch-up/remote buffer bounded; stalls/background safe fallback | Pending |
-| Corrections | Route disagreement, reversal, contact displacement, speed change, death/respawn; no irreversible replay | Pending |
-| Presentation | Local between-tick interpolation; remote delay/jitter and rail bends; render-rate-independent correction decay | Pending |
-| Lifecycle | Real adapter/scheduler barriers, identity, reconnect, lobby/countdown/running/rematch; focus suppression | Pending |
-| Regression | Rust/Clippy, all Node/Helm CI gates, offline same-artifact browser interaction | Pending |
-| Browser | Two isolated Chromium processes, normal menus/keyboard, zero and added latency/jitter, quantitative movement before confirmation and convergence | Pending |
-| Provenance | Source revision, JS/WASM hashes, build durations, sanitized evidence and independent review | Pending |
+| Baseline | Real socket ticks/snapshot cadence and input-to-ack timing; separate render limits | Measured baseline; slow-render failures retained |
+| Shared travel | Pure step agrees with actual shared FixedUpdate, including speed expiry, rail seams and turns | Native shared-schedule tests pass |
+| Accounting | Multiple inputs/tick, held input/multiple ticks, ack jumps/duplicates/stale frames, exact replay of actual steps | Native tests + actual delayed-input browser observations |
+| Bounds | History/lead/catch-up/remote buffer bounded; stalls/background safe fallback | Native bounds tests + observed slow-render fallback |
+| Corrections | Route disagreement, reversal, contact displacement, speed change, death/respawn; no irreversible replay | Deterministic shared contact/speed tests; browser speed/junctions, natural outcomes and rematch; exact contact geometry is native evidence |
+| Presentation | Local between-tick interpolation; remote delay/jitter and rail bends; render-rate-independent correction decay | Deterministic geometry/decay tests + real two-renderer measurements, limited to small SwiftShader viewport |
+| Lifecycle | Real adapter/scheduler barriers, identity, reconnect, lobby/countdown/running/rematch; focus suppression | Native regression gates + actual saved-seat reload, neutral release, natural return/rematch/offline replay |
+| Regression | Rust/Clippy, all Node/Helm CI gates, offline same-artifact browser interaction | 252 Rust tests; baseline-matching Clippy; local Node/Helm/runtime gates; same-artifact offline replay |
+| Browser | Two isolated Chromium processes, normal menus/keyboard, zero and added latency/jitter, quantitative movement before confirmation and convergence | Strict attempt5 passed; earlier failed attempts retained; see continuation evidence limitations |
+| Provenance | Source revision, JS/WASM hashes, build durations, sanitized evidence and independent review | Frozen-source/artifact checks pass; package/Forgejo exact-head CI/reviewer gate tracked separately |
 
-## Native implementation checkpoint — not acceptance-complete
+## Historical native implementation checkpoint — f5fddab, not acceptance-complete
+
+The text below preserves the original continuation checkpoint. Current results and
+remaining review limitations are in [the continuation report](client-prediction-continuation.md).
 
 Current implementation is preserved on `feat/client-prediction-t4de42` in this task's `repo` worktree. The online update path now advances the bounded local movement model and supplies separate local/remote poses to the real replica renderer; it no longer uses world-space cart lerps. Welcome/identity/topology/non-running boundaries clear that model. Reconnect/admission uses the transport's neutral-release suppression gate. No WASM artifact or graphical replay has been produced for these changes.
 

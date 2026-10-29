@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 56.63s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test net_client::resilience_tests::malformed_optional_motion_preserves_authority_and_disables_prediction ... FAILED
+
+failures:
+
+---- net_client::resilience_tests::malformed_optional_motion_preserves_authority_and_disables_prediction stdout ----
+
+thread 'net_client::resilience_tests::malformed_optional_motion_preserves_authority_and_disables_prediction' (55678) panicked at src/net_client.rs:832:62:
+optional capability cannot discard valid authority: Error("invalid length 0, expected an array of length 4", line: 0, column: 0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    net_client::resilience_tests::malformed_optional_motion_preserves_authority_and_disables_prediction
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 201 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+TIMING prediction-optional-red: 56.706 s; exit=101

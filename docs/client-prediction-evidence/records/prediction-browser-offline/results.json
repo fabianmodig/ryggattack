@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "errors": [],
+  "websockets": 0,
+  "artifact": {
+    "index.html": "4c57f05140ea34e2a76e8e4d477037cb4d7e82bf6fcdf106b087b39d896dd4df",
+    "ryggattack.js": "298a4ed2f5ce0fb348ce54fd31f605e98912b77a27943920cfaf248d7fff5bf3",
+    "ryggattack_bg.wasm": "65689e75e5dd901cb333de649adb1c8708c2e4e1998cb53d0d0c073397eef447"
+  },
+  "native_graphics": false,
+  "harness_sha256": "de43e929263a45005151c84a544ecbc51ec12fe70e9e022666be497078012e8a",
+  "checks": [
+    "normal menu selects offline play",
+    "real keyboard claims seat and starts actual game",
+    "steering and fire keys exercised",
+    "same recorded WASM artifact",
+    "no online WebSocket"
+  ]
+}

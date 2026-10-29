@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Ryggattack</title>
+    <link rel="icon" href="data:," />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #090b13;
+        color: #c8d2e6;
+        font-family: monospace;
+      }
+
+      #game {
+        position: absolute;
+        inset: 0;
+      }
+
+      #game canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+
+      [hidden] { display: none !important; }
+      #online-entry { position:absolute; inset:0; z-index:6; overflow:auto; background:#060911; }
+      .menu-panel { box-sizing:border-box; width:min(100%,660px); min-height:100%; margin:auto; padding:clamp(20px,5vh,48px) 22px; display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:16px; }
+      h1 { color:#f2c73d; font-size:clamp(30px,7vw,68px); font-weight:700; text-align:center; margin:0; overflow-wrap:anywhere; }
+      #menu-subtitle { color:#b8c7e6; font-size:24px; text-align:center; margin:0 0 10px; }
+      .menu-stack { display:flex; flex-direction:column; gap:14px; }
+      #main-controls { align-items:center; }
+      #online-entry button, #open-match-menu { box-sizing:border-box; min-height:54px; padding:10px 18px; color:white; background:#212e4a; border:2px solid #547ab8; border-radius:12px; font:inherit; font-size:clamp(16px,3vw,23px); cursor:pointer; }
+      #main-controls button { width:min(100%,290px); height:62px; font-size:27px; }
+      #online-entry button:hover, #open-match-menu:hover { background:#38578a; }
+      #online-entry button:active { background:#e68c29; }
+      #online-entry :focus-visible, #open-match-menu:focus-visible { outline:2px solid #f2c73d; outline-offset:3px; }
+      #online-entry :disabled { opacity:.48; cursor:not-allowed; }
+      #online-entry label { display:flex; flex-direction:column; gap:6px; color:#b8c7e6; font-size:14px; letter-spacing:.04em; min-width:0; }
+      #online-entry input, #online-entry select { box-sizing:border-box; width:100%; min-width:0; min-height:42px; color:white; background:#121929; border:1px solid #547ab8; border-radius:8px; padding:9px 12px; font:18px monospace; }
+      #online-entry small, #host-permissions { color:#9caec7; font-size:14px; line-height:1.5; }
+      #online-entry p { overflow-wrap:anywhere; margin:0; line-height:1.5; }
+      #room-notice { color:#f2c73d; border-left:3px solid #547ab8; padding-left:12px; min-height:24px; }
+      #room-notice:empty { display:none; }
+      #room-roster { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0; margin:0; gap:10px; list-style:none; }
+      .seat-card { padding:14px; border:1px solid #547ab8; border-radius:12px; background:#121929; line-height:1.5; overflow-wrap:anywhere; }
+      .settings-row { display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; }
+      #apply-room { grid-column:1/-1; }
+      #online-entry summary { cursor:pointer; padding:8px 0; }
+      #open-match-menu { position:absolute; bottom:12px; right:12px; z-index:5; font-size:14px; max-width:calc(100% - 24px); }
+      body:has(#online-entry:not([hidden])) .rygg-online-hud { visibility:hidden; }
+      @media(max-width:440px) { #room-roster { grid-template-columns:1fr; } .menu-panel { padding:20px 16px; } #menu-subtitle { font-size:18px; } }
+
+      #status {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 1.5rem;
+        line-height: 1.5;
+        pointer-events: none;
+      }
+
+      #status.failed {
+        z-index: 10;
+        background: #060911ee;
+        color: #ff8080;
+        pointer-events: auto;
+        user-select: text;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"><canvas id="ryggattack-canvas" tabindex="0"></canvas></div>
+    <div id="status">Loading Ryggattack…</div>
+    <main id="online-entry" aria-label="Game menu">
+      <div class="menu-panel">
+        <h1 id="menu-title">RYGGATTACK</h1>
+        <p id="menu-subtitle">A railway battle</p>
+        <section id="main-controls" class="menu-stack" aria-label="Choose play mode">
+          <button id="play-local">PLAY LOCAL</button>
+          <button id="play-online">PLAY ONLINE</button>
+          <small>Arrow keys or D-pad: choose · Enter or A: select</small>
+        </section>
+        <section id="online-setup" hidden aria-label="Online setup">
+          <form id="room-form" class="menu-stack" novalidate>
+            <input id="quality-override" type="hidden" name="quality" disabled>
+            <label>PLAYER NAME <input id="player-name" value="Player" maxlength="24" required aria-label="Player name" autocomplete="nickname"></label>
+            <button id="create-room" type="button">CREATE PRIVATE ROOM</button>
+            <label>ROOM CODE <input id="room-code" maxlength="20" pattern="[a-f0-9]{20}" aria-label="Room code" spellcheck="false" autocomplete="off"></label>
+            <button id="join-room" type="button">JOIN ROOM</button>
+            <details><summary>Advanced · backend address</summary><label>BACKEND <input id="backend" required aria-label="Backend address" spellcheck="false"></label></details>
+            <small>Possession of a room link grants entry. Disconnect reserves your seat for 60 wall-clock seconds. LEAVE ROOM revokes it.</small>
+            <button id="setup-back" type="button">BACK</button>
+          </form>
+        </section>
+        <section id="room-controls" class="menu-stack" hidden aria-label="Room lobby">
+          <p id="room-info"></p><ul id="room-roster" aria-label="Room seats"></ul>
+          <label>SHARE LINK <input id="share-room" readonly aria-label="Share link"></label><button id="copy-room">COPY LINK</button>
+          <p id="host-permissions"></p>
+          <div id="room-settings" class="settings-row">
+            <label>ARENA <select id="arena-room" aria-label="Room arena"><option>Forest</option><option>Volcano</option></select></label>
+            <label>FIRST TO <select id="target-room" aria-label="Win target"><option>1</option><option selected>3</option><option>5</option><option>7</option></select></label>
+            <label>BOTS <input id="bots-room" type="number" min="0" max="3" value="3" aria-label="Bot count"></label>
+            <button id="apply-room">APPLY SETTINGS</button>
+          </div>
+          <button id="ready-room">READY</button><button id="leave-room">LEAVE ROOM</button>
+          <small>Everyone ready starts the countdown. NOT READY cancels it. The match returns here automatically when finished.</small>
+        </section>
+        <section id="match-menu" class="menu-stack" hidden aria-label="Online match menu">
+          <p>The match is not paused. Return to this room's lobby automatically after the match; leaving releases your seat.</p>
+          <button id="resume-match">RESUME INPUT</button><button id="leave-match">LEAVE ROOM</button>
+        </section>
+        <p id="room-notice" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+    <button id="open-match-menu" hidden>MENU · SERVER KEEPS RUNNING</button>
+
+    <script type="module">
+      import init from "./ryggattack.js";
+      import { calibrateRefreshRate } from "./refresh-rate.mjs";
+      import { installRoomControls } from "./rooms.mjs";
+      import { installOnlineHud } from "./online-hud-bridge.mjs";
+      installRoomControls();
+      installOnlineHud();
+
+      const status = document.getElementById("status");
+      const canvas = document.getElementById("ryggattack-canvas");
+
+      // Winit listens for key events on the canvas, so it has to hold focus
+      // for the keyboard controls to work.
+      if (document.getElementById('online-entry').hidden) canvas.focus();
+      window.addEventListener("pointerdown", (event) => {
+        if (!event.target.closest("#online-entry, .rygg-online-hud")) canvas.focus();
+      });
+
+      try {
+        // No game/GPU work during calibration: slow gameplay must never be
+        // mistaken for a low-refresh display. Rust validates this hint too.
+        window.ryggattackRefreshRate = await calibrateRefreshRate().catch(() => null);
+        await init();
+        status.remove();
+      } catch (error) {
+        // Winit stops its web event loop by throwing, so this particular
+        // exception means the game started rather than that it failed.
+        if (String(error.message).startsWith("Using exceptions for control flow")) {
+          status.remove();
+        } else {
+          status.classList.add("failed");
+          status.textContent = `Ryggattack failed to start: ${error}`;
+          throw error;
+        }
+      }
+    </script>
+  </body>
+</html>

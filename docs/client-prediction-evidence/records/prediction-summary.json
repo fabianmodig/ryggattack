@@ -1,0 +1,916 @@
+{
+  "rust_tests_passed": 252,
+  "rust_groups": [
+    205,
+    0,
+    0,
+    0,
+    0,
+    2,
+    5,
+    4,
+    17,
+    1,
+    1,
+    3,
+    1,
+    1,
+    5,
+    5,
+    2,
+    0
+  ],
+  "native_graphics": false,
+  "browser_runs": {
+    "prediction-browser-attempt1": {
+      "status": "failed",
+      "failure": "locator.fill: Error: Element is not an <input>, <textarea> or [contenteditable] element\nCall log:\n  - waiting for locator('#target-room')\n    - locator resolved to <select id=\"target-room\" aria-label=\"Win target\">\u2026</select>\n    - fill(\"1\")\n  - attempting fill action\n    - waiting for element to be visible, enabled and editable\n\n    at /home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:58:120",
+      "checks": [],
+      "cases": [],
+      "viewport": null
+    },
+    "prediction-browser-attempt2": {
+      "status": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: local actual-step speculation before next authority\n    at file:///home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:65:274\n    at runNextTicks (node:internal/process/task_queues:64:5)\n    at process.processImmediate (node:internal/timers:452:9)\n    at process.callbackTrampoline (node:internal/async_hooks:130:17)",
+      "checks": [],
+      "cases": [
+        {
+          "settings": {
+            "name": "zero",
+            "up": 0,
+            "down": 0,
+            "jitter": 0
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 22,
+                "local_between_unchanged_authority": 0,
+                "remote_between_unchanged_authority": 0,
+                "predicted_ahead_samples": 0,
+                "common_tick_comparisons": 21,
+                "matching_authoritative_positions": 21,
+                "render_gap_ms": {
+                  "min": 525.6999999992549,
+                  "mean": 807.8333333333334,
+                  "max": 1680
+                },
+                "server_hz": 64.08968089144817
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 31,
+                "local_between_unchanged_authority": 0,
+                "remote_between_unchanged_authority": 0,
+                "predicted_ahead_samples": 1,
+                "common_tick_comparisons": 27,
+                "matching_authoritative_positions": 27,
+                "render_gap_ms": {
+                  "min": 15.099999999627471,
+                  "mean": 599.9533333333209,
+                  "max": 1530.5999999996275
+                },
+                "server_hz": 63.484098978470634
+              }
+            }
+          ]
+        }
+      ],
+      "viewport": null
+    },
+    "prediction-browser-attempt3-small": {
+      "status": "passed",
+      "failure": null,
+      "checks": [
+        "two independent rendered clients; real menus and keyboard; zero and bounded asymmetric latency/jitter",
+        "natural match return clears prediction poses",
+        "offline same-artifact graphical game"
+      ],
+      "cases": [
+        {
+          "settings": {
+            "name": "zero",
+            "up": 0,
+            "down": 0,
+            "jitter": 0
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 47,
+                "local_between_unchanged_authority": 1,
+                "remote_between_unchanged_authority": 1,
+                "predicted_ahead_samples": 28,
+                "common_tick_comparisons": 26,
+                "matching_authoritative_positions": 26,
+                "render_gap_ms": {
+                  "min": 9,
+                  "mean": 382.8652173913205,
+                  "max": 2260.5
+                },
+                "server_hz": 63.99931734061758
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 55,
+                "local_between_unchanged_authority": 2,
+                "remote_between_unchanged_authority": 2,
+                "predicted_ahead_samples": 31,
+                "common_tick_comparisons": 30,
+                "matching_authoritative_positions": 30,
+                "render_gap_ms": {
+                  "min": 11.299999998882413,
+                  "mean": 340.9666666666529,
+                  "max": 1491.4000000003725
+                },
+                "server_hz": 69.05397141511658
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "name": "asymmetric-jitter",
+            "up": 90,
+            "down": 150,
+            "jitter": 25
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 90,
+                "local_between_unchanged_authority": 4,
+                "remote_between_unchanged_authority": 2,
+                "predicted_ahead_samples": 80,
+                "common_tick_comparisons": 26,
+                "matching_authoritative_positions": 26,
+                "render_gap_ms": {
+                  "min": 6.599999999627471,
+                  "mean": 200.12247191011656,
+                  "max": 410
+                },
+                "server_hz": 64.06464502160203
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 92,
+                "local_between_unchanged_authority": 7,
+                "remote_between_unchanged_authority": 6,
+                "predicted_ahead_samples": 79,
+                "common_tick_comparisons": 33,
+                "matching_authoritative_positions": 33,
+                "render_gap_ms": {
+                  "min": 5.5,
+                  "mean": 200.585714285702,
+                  "max": 390.90000000037253
+                },
+                "server_hz": 63.17003627426271
+              }
+            }
+          ]
+        }
+      ],
+      "viewport": {
+        "width": 240,
+        "height": 180
+      }
+    },
+    "prediction-browser-attempt4-lifecycle": {
+      "status": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: [{\"case\":\"zero\",\"client\":\"PredictHost\",\"error\":\"AssertionError [ERR_ASSERTION]: remote pose advances between authoritative samples\"}]\n\n1 !== 0\n\n    at file:///home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo/scripts/prediction-smoke.mjs:72:53",
+      "checks": [],
+      "cases": [
+        {
+          "settings": {
+            "name": "zero",
+            "up": 0,
+            "down": 0,
+            "jitter": 0
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 54,
+                "local_between_unchanged_authority": 1,
+                "remote_between_unchanged_authority": 0,
+                "predicted_ahead_samples": 31,
+                "common_tick_comparisons": 30,
+                "matching_authoritative_positions": 30,
+                "render_gap_ms": {
+                  "min": 6.099999999627471,
+                  "mean": 337.6320754716981,
+                  "max": 2068.5999999996275
+                },
+                "server_hz": 72.30345271165821
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 58,
+                "local_between_unchanged_authority": 3,
+                "remote_between_unchanged_authority": 3,
+                "predicted_ahead_samples": 41,
+                "common_tick_comparisons": 21,
+                "matching_authoritative_positions": 21,
+                "render_gap_ms": {
+                  "min": 7.600000001490116,
+                  "mean": 315.94736842105266,
+                  "max": 2153.10000000149
+                },
+                "server_hz": 63.46009107498096
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "name": "asymmetric-jitter",
+            "up": 90,
+            "down": 150,
+            "jitter": 25
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 92,
+                "local_between_unchanged_authority": 7,
+                "remote_between_unchanged_authority": 3,
+                "predicted_ahead_samples": 83,
+                "common_tick_comparisons": 29,
+                "matching_authoritative_positions": 29,
+                "render_gap_ms": {
+                  "min": 5.399999998509884,
+                  "mean": 197.74615384615794,
+                  "max": 400.7000000011176
+                },
+                "server_hz": 64.15575591853954
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 92,
+                "local_between_unchanged_authority": 9,
+                "remote_between_unchanged_authority": 7,
+                "predicted_ahead_samples": 86,
+                "common_tick_comparisons": 27,
+                "matching_authoritative_positions": 27,
+                "render_gap_ms": {
+                  "min": 5.699999999254942,
+                  "mean": 198.425274725287,
+                  "max": 407.59999999962747
+                },
+                "server_hz": 63.954793597948644
+              }
+            }
+          ]
+        }
+      ],
+      "viewport": {
+        "width": 240,
+        "height": 180
+      }
+    },
+    "prediction-browser-attempt5-lifecycle": {
+      "status": "passed",
+      "failure": null,
+      "checks": [
+        "saved-seat reload preserves identity and resumes predicted presentation after neutral release",
+        "two independent rendered clients; real menus and keyboard; zero and bounded asymmetric latency/jitter",
+        "natural match return clears prediction poses",
+        "fresh rematch respawns live carts and clears old prediction/score lifecycle",
+        "offline same-artifact graphical game"
+      ],
+      "cases": [
+        {
+          "settings": {
+            "name": "zero",
+            "up": 0,
+            "down": 0,
+            "jitter": 0
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 216,
+                "local_between_unchanged_authority": 10,
+                "remote_between_unchanged_authority": 8,
+                "predicted_ahead_samples": 199,
+                "common_tick_comparisons": 62,
+                "matching_authoritative_positions": 62,
+                "render_gap_ms": {
+                  "min": 8,
+                  "mean": 232.75069767442034,
+                  "max": 1436.2999999988824
+                },
+                "server_hz": 67.52499684976839
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 218,
+                "local_between_unchanged_authority": 21,
+                "remote_between_unchanged_authority": 8,
+                "predicted_ahead_samples": 199,
+                "common_tick_comparisons": 59,
+                "matching_authoritative_positions": 59,
+                "render_gap_ms": {
+                  "min": 4.700000001117587,
+                  "mean": 231.7442396313364,
+                  "max": 1803
+                },
+                "server_hz": 63.01348628119672
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "name": "asymmetric-jitter",
+            "up": 90,
+            "down": 150,
+            "jitter": 25
+          },
+          "clients": [
+            {
+              "name": "PredictHost",
+              "seat": 0,
+              "metrics": {
+                "samples": 245,
+                "local_between_unchanged_authority": 8,
+                "remote_between_unchanged_authority": 8,
+                "predicted_ahead_samples": 242,
+                "common_tick_comparisons": 64,
+                "matching_authoritative_positions": 63,
+                "render_gap_ms": {
+                  "min": 4.800000000745058,
+                  "mean": 203.422131147541,
+                  "max": 417.09999999962747
+                },
+                "server_hz": 64.02192290125834
+              }
+            },
+            {
+              "name": "PredictGuest",
+              "seat": 1,
+              "metrics": {
+                "samples": 252,
+                "local_between_unchanged_authority": 12,
+                "remote_between_unchanged_authority": 5,
+                "predicted_ahead_samples": 243,
+                "common_tick_comparisons": 67,
+                "matching_authoritative_positions": 66,
+                "render_gap_ms": {
+                  "min": 4.900000000372529,
+                  "mean": 203.08685258963698,
+                  "max": 415.19999999925494
+                },
+                "server_hz": 63.79073508059986
+              }
+            }
+          ]
+        }
+      ],
+      "viewport": {
+        "width": 240,
+        "height": 180
+      }
+    },
+    "prediction-browser-offline": {
+      "status": "passed",
+      "failure": null,
+      "checks": [
+        "normal menu selects offline play",
+        "real keyboard claims seat and starts actual game",
+        "steering and fire keys exercised",
+        "same recorded WASM artifact",
+        "no online WebSocket"
+      ],
+      "cases": null,
+      "viewport": null
+    }
+  },
+  "preconfirmation": [
+    {
+      "file": "asymmetric-jitter-PredictGuest.json",
+      "seat": 1,
+      "corrections": [
+        {
+          "predicted_tick": 6635,
+          "error_units": 0.2164785830984499,
+          "later_authority_matching_sample_after_ms": 399.09999999962747
+        }
+      ],
+      "unique_authoritative_routes": 39,
+      "junction_observed": true,
+      "speed_observed": true,
+      "death_observed": false,
+      "observations": 184,
+      "render_before_confirmation_ms": {
+        "min": 112.30000000074506,
+        "max": 353.19999999925494
+      }
+    },
+    {
+      "file": "asymmetric-jitter-PredictHost.json",
+      "seat": 0,
+      "corrections": [
+        {
+          "predicted_tick": 4331,
+          "error_units": 0.26249974114990243,
+          "later_authority_matching_sample_after_ms": 1450.7000000011176
+        }
+      ],
+      "unique_authoritative_routes": 29,
+      "junction_observed": true,
+      "speed_observed": true,
+      "death_observed": false,
+      "observations": 185,
+      "render_before_confirmation_ms": {
+        "min": 34.70000000111759,
+        "max": 353.7000000011176
+      }
+    },
+    {
+      "file": "zero-PredictGuest.json",
+      "seat": 1,
+      "corrections": [],
+      "unique_authoritative_routes": 60,
+      "junction_observed": true,
+      "speed_observed": true,
+      "death_observed": false,
+      "observations": 128,
+      "render_before_confirmation_ms": {
+        "min": 4.0,
+        "max": 64.80000000074506
+      }
+    },
+    {
+      "file": "zero-PredictHost.json",
+      "seat": 0,
+      "corrections": [],
+      "unique_authoritative_routes": 53,
+      "junction_observed": true,
+      "speed_observed": false,
+      "death_observed": false,
+      "observations": 141,
+      "render_before_confirmation_ms": {
+        "min": 4.0,
+        "max": 67.5
+      }
+    }
+  ],
+  "timings": [
+    {
+      "stage": "prediction-baseline-node",
+      "seconds": 1.158,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-baseline",
+      "seconds": 259.579,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-rail-red",
+      "seconds": 4.291,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-rail-green",
+      "seconds": 3.389,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-rail-green-retry",
+      "seconds": 67.211,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-validation-red",
+      "seconds": 71.957,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-validation-green",
+      "seconds": 23.911,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-travel-red",
+      "seconds": 10.793,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-travel-green",
+      "seconds": 42.744,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-replay-green",
+      "seconds": 51.616,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-stall-red",
+      "seconds": 2.973,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-stall-green",
+      "seconds": 22.563,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-horizon-red",
+      "seconds": 3.983,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-horizon-green",
+      "seconds": 18.707,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-stale-red",
+      "seconds": 2.992,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-stale-green",
+      "seconds": 22.727,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-applied-red",
+      "seconds": 1.283,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-applied-green",
+      "seconds": 62.004,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-delivery-red",
+      "seconds": 5.163,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-delivery-green",
+      "seconds": 58.981,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-curve-red",
+      "seconds": 0.649,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-curve-green",
+      "seconds": 49.393,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-remote-red",
+      "seconds": 1.057,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-remote-green",
+      "seconds": 49.51,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-life-red",
+      "seconds": 3.116,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-life-green",
+      "seconds": 49.327,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-local-render-red",
+      "seconds": 0.896,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-local-render-green",
+      "seconds": 21.153,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-residual-red",
+      "seconds": 3.131,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-residual-green",
+      "seconds": 21.173,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-renderer-red",
+      "seconds": 4.225,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-renderer-green",
+      "seconds": 66.491,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-arrival-red",
+      "seconds": 1.255,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-arrival-green",
+      "seconds": 51.607,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-suppression-red",
+      "seconds": 1.427,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-online-update-red",
+      "seconds": 1.139,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-current-cargo-test",
+      "seconds": 235.82,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-clippy",
+      "seconds": 8.513,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-node",
+      "seconds": 1.197,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-tls",
+      "seconds": 2.172,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-banner",
+      "seconds": 0.13,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-policy",
+      "seconds": 0.095,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-production-smoke",
+      "seconds": 5.105,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-sockets",
+      "seconds": 10.29,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-current-headless",
+      "seconds": 2.993,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-clock-red",
+      "seconds": 3.186,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-regression-red",
+      "seconds": 2.923,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-clock-green",
+      "seconds": 54.287,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-barriers-red",
+      "seconds": 4.265,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-barriers-green",
+      "seconds": 55.016,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-optional-red",
+      "seconds": 56.706,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-optional-green",
+      "seconds": 57.33,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-diagnostics-red",
+      "seconds": 1.512,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-diagnostics-green",
+      "seconds": 46.632,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-suffix-red",
+      "seconds": 1.342,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-suffix-observed-red",
+      "seconds": 44.24,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-delay-red",
+      "seconds": 0.138,
+      "exit": 1
+    },
+    {
+      "stage": "prediction-delay-green",
+      "seconds": 0.221,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-chart-version",
+      "seconds": 0.134,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-chart-lint",
+      "seconds": 0.152,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-chart-render",
+      "seconds": 0.265,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-all-node",
+      "seconds": 1.075,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-room-ui",
+      "seconds": 0.039,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-pages",
+      "seconds": 0.035,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-portable-build",
+      "seconds": 0.031,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-final-native",
+      "seconds": 224.165,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-final-clippy",
+      "seconds": 8.384,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-base-clippy",
+      "seconds": 6.584,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-native",
+      "seconds": 230.69,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-clippy",
+      "seconds": 1.982,
+      "exit": 101
+    },
+    {
+      "stage": "prediction-frozen-clippy-recheck",
+      "seconds": 7.481,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-bins",
+      "seconds": 9.315,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-tls",
+      "seconds": 2.23,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-banner",
+      "seconds": 0.062,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-policy",
+      "seconds": 0.105,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-production",
+      "seconds": 5.115,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-abuse",
+      "seconds": 10.293,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-frozen-headless",
+      "seconds": 6.266,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-web-release-no-opt",
+      "seconds": 413.573,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-browser-attempt1",
+      "seconds": 12.516,
+      "exit": 1
+    },
+    {
+      "stage": "prediction-browser-attempt2",
+      "seconds": 62.172,
+      "exit": 1
+    },
+    {
+      "stage": "prediction-browser-attempt3-small",
+      "seconds": 85.548,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-browser-offline",
+      "seconds": 28.608,
+      "exit": 0
+    },
+    {
+      "stage": "prediction-browser-attempt4-lifecycle",
+      "seconds": 76.768,
+      "exit": 1
+    },
+    {
+      "stage": "prediction-browser-attempt5-lifecycle",
+      "seconds": 185.817,
+      "exit": 0
+    }
+  ]
+}

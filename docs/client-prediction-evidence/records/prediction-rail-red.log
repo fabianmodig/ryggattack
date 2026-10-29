@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.20s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test movement_snapshot_exposes_authoritative_directed_rail_state ... FAILED
+
+failures:
+
+---- movement_snapshot_exposes_authoritative_directed_rail_state stdout ----
+
+thread 'movement_snapshot_exposes_authoritative_directed_rail_state' (25979) panicked at tests/prediction.rs:8:5:
+prediction needs exact rail state, not an inverse world-position guess
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    movement_snapshot_exposes_authoritative_directed_rail_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-rail-red: 4.291 s; exit=101

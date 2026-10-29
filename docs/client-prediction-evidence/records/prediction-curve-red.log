@@ -1,0 +1,13 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+error[E0432]: unresolved import `ryggattack::prediction::interpolate_rails`
+   --> tests/prediction.rs:108:54
+    |
+108 |     use ryggattack::{network::{RailState, RailPath}, prediction::interpolate_rails};
+    |                                                      ^^^^^^^^^^^^-----------------
+    |                                                                  |
+    |                                                                  no `interpolate_rails` in `prediction`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `ryggattack` (test "prediction") due to 1 previous error
+
+TIMING prediction-curve-red: 0.649 s; exit=101

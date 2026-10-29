@@ -1,0 +1,24 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/.hermes/kanban/workspaces/t_4de42a24/repo)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.88s
+     Running tests/prediction.rs (/home/hermes/src/ryggattack/target/debug/deps/prediction-99b7599ce4e75782)
+
+running 1 test
+test a_long_render_stall_discards_speculation_instead_of_catching_up ... FAILED
+
+failures:
+
+---- a_long_render_stall_discards_speculation_instead_of_catching_up stdout ----
+
+thread 'a_long_render_stall_discards_speculation_instead_of_catching_up' (30717) panicked at tests/prediction.rs:56:5:
+fallback to authority after a long stall
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_long_render_stall_discards_speculation_instead_of_catching_up
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test prediction`
+
+TIMING prediction-stall-red: 2.973 s; exit=101
