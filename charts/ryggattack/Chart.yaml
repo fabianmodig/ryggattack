@@ -5,4 +5,4 @@ type: application
 version: 0.1.0
 # CI commits a paired, published web/server immutable tag here with [skip ci].
 # Bootstrap placeholder; do not deploy before the first main release publishes.
-appVersion: sha-409ef4d
+appVersion: sha-968281d
