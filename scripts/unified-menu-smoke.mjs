@@ -7,7 +7,7 @@ const {chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.
 const root=path.resolve('dist/web'),out=path.resolve(process.argv[2]??'verification/unified-menu');fs.mkdirSync(out,{recursive:true});
 for(const file of ['index.html','ryggattack.js','ryggattack_bg.wasm','rooms.mjs'])assert(fs.existsSync(path.join(root,file)),`incomplete web artifact: ${file}`);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const evidence={checks:[],errors:[],expected_errors:[],screenshots:[],artifact:{},source:{},clients:[]};
+const evidence={checks:[],errors:[],expected_errors:[],screenshots:[],artifact:{},source:{},clients:[],concurrent_viewports:{host:{width:640,height:480},guest:{width:390,height:480}},backend_sha256:sha(fs.readFileSync('target/debug/ryggattack-server'))};
 for(const file of fs.readdirSync(root).filter(f=>/\.(html|mjs|js|wasm)$/.test(f)))evidence.artifact[file]=sha(fs.readFileSync(path.join(root,file)));
 evidence.source_head=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 for(const file of execFileSync('git',['ls-files','src','web','assets','Cargo.toml','Cargo.lock','scripts/build-web.sh'],{encoding:'utf8'}).trim().split('\n'))evidence.source[file]=sha(fs.readFileSync(file));
@@ -62,7 +62,7 @@ async function rawJoin(code=null){
 }
 async function browserClient(name,url=origin+'/?quality=0',viewport={width:960,height:720}){
  const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});browsers.push(browser);
- const page=await browser.newPage({viewport}),c={name,page,browser,welcomes:[],lobbies:[],inputs:[],sockets:0,states:0,commands:[],transitions:[]};clients.push(c);
+ const page=await browser.newPage({viewport}),c={name,page,browser,viewport,welcomes:[],lobbies:[],inputs:[],sockets:0,states:0,commands:[],transitions:[]};clients.push(c);
  // Synthetic browser device only: inputs still traverse gilrs and Bevy's real
  // gamepad/menu collector. This is not physical-controller coverage.
  await page.addInitScript(()=>{globalThis.__testPadEnabled=false;globalThis.__testPadButtons=Array(17).fill(false);Object.defineProperty(navigator,'getGamepads',{value:()=>{globalThis.__testPadPolls=(globalThis.__testPadPolls??0)+1;return globalThis.__testPadEnabled?[{id:'Menu acceptance standard pad',index:0,connected:true,mapping:'standard',timestamp:performance.now(),axes:[0,0,0,0],buttons:globalThis.__testPadButtons.map(pressed=>({pressed,touched:pressed,value:pressed?1:0}))}]:[];}});});
@@ -83,7 +83,10 @@ try{
  await a.page.locator('#room-code').fill('invalid');await a.page.locator('#join-room').click();assert.match(await a.page.locator('#room-notice').innerText(),/20-character/);assert.equal(a.sockets,0);
  await a.page.locator('#player-name').focus();await a.page.keyboard.press('Escape');assert(await a.page.locator('#online-setup').isVisible(),'field Escape does not navigate');await sleep(1200);assert.equal(await a.page.evaluate(()=>document.activeElement.id),'create-room','idle Bevy bridge does not refocus field');await shot(a,'validation-feedback');
  await enter(a);assert.equal(a.sockets,1);await a.page.evaluate(()=>{globalThis.__testPadEnabled=true;});await shot(a,'host-lobby');
- const invite=await a.page.locator('#share-room').inputValue();const b=await browserClient('MenuGuest',invite,{width:390,height:844});
+ // Desktop layout is captured at960px above. Use bounded real framebuffers
+ // for concurrent SwiftShader gameplay; resize host before starting its peer.
+ await a.page.setViewportSize({width:640,height:480});
+ const invite=await a.page.locator('#share-room').inputValue();const b=await browserClient('MenuGuest',invite,{width:390,height:480});
  await visible(b,'#online-setup');assert.equal(await b.page.locator('#room-code').inputValue(),a.lobby.code);await sleep(700);assert.equal(b.sockets,0,'fresh invite is not automatic admission');
  await shot(b,'narrow-invitation');assert(await b.page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
  await enter(b,a.lobby.code);assert.equal(b.sockets,1);await until(()=>a.lobby.humans.length===2,'authoritative roster');
@@ -105,11 +108,11 @@ try{
  await running(a,b);
  for(const c of [a,b]){await c.page.locator('canvas').focus();await c.page.keyboard.up('d');await c.page.keyboard.up('Space');const n=c.inputs.length;await until(()=>c.inputs.length>n+2,'processed neutral input after presentation warmup');assert(c.inputs.slice(n).every(i=>i.horizontal===0&&i.vertical===0&&!i.fire));}
  await a.page.locator('canvas').focus();await pad(a,9);await visible(a,'#match-menu');assert(!(await a.page.locator('#room-form').isVisible()));
- // Space on the initially focused Resume button would activate it on keyup.
- // Keep the actual menu open, focus canvas and verify fresh neutral wire input.
- await a.page.locator('canvas').focus();const before=a.inputs.length;await a.page.keyboard.down('Space');await until(()=>a.inputs.length>before+2,'fresh input during match menu');assert(a.inputs.slice(before).every(i=>i.horizontal===0&&i.vertical===0&&!i.fire),'menu suppresses gameplay');await a.page.keyboard.up('Space');
- assert(await a.page.locator('#match-menu').isVisible());await shot(a,'online-context-menu');await a.page.locator('#resume-match').click();
- // Seed1, two humans, zero bots, target1: ordinary real-server
+ // Space on Resume or on the canvas is a legitimate menu Accept. Focus a
+ // non-actionable part of the real visible DOM menu for the suppression check.
+ await a.page.locator('#match-menu').evaluate(e=>{e.tabIndex=-1;e.focus();});const before=a.inputs.length;await a.page.keyboard.down('Space');await until(()=>a.inputs.length>before+2,'fresh input during match menu');assert(a.inputs.slice(before).every(i=>i.horizontal===0&&i.vertical===0&&!i.fire),'menu suppresses gameplay');await a.page.keyboard.up('Space');
+ assert(await a.page.evaluate(()=>JSON.parse(globalThis.ryggattackHud).menu===true));assert(await a.page.locator('#match-menu').isVisible());await shot(a,'online-context-menu');await a.page.locator('#resume-match').click();
+ // First created room (observed ID/seed3), two humans, zero bots, target1: ordinary real-server
  // characterization reaches winner1 with host Right+fire and guest fire.
  // Capture first, with nobody firing, so screenshot time cannot alter the case.
  await running(a,b);await shot(a,'online-playing');
