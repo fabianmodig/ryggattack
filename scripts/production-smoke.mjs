@@ -5,7 +5,11 @@ import net from 'node:net';
 import path from 'node:path';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const external=process.env.PRODUCTION_WS;
-const child=external?null:spawn(path.resolve('target/debug/ryggattack-server'),['0.0.0.0:0'],{env:{...process.env,RYGGATTACK_MODE:'production',RYGGATTACK_ALLOWED_ORIGINS:'https://ryggattack.modig.online',RYGGATTACK_MANAGEMENT_BIND:'127.0.0.1:0'}});
+// Default release behavior stays canonical; beta explicitly selects its reviewed origin.
+const origin=process.env.PRODUCTION_ORIGIN??'https://ryggattack.modig.online';
+const reviewedOrigins=['https://ryggattack.modig.online','https://ryggattack-beta.modig.online'];
+assert(reviewedOrigins.includes(origin),'smoke requires a reviewed production origin');
+const child=external?null:spawn(path.resolve('target/debug/ryggattack-server'),['0.0.0.0:0'],{env:{...process.env,RYGGATTACK_MODE:'production',RYGGATTACK_ALLOWED_ORIGINS:origin,RYGGATTACK_MANAGEMENT_BIND:'127.0.0.1:0'}});
 let log=''; child?.stderr.on('data',b=>log+=b);
 const sockets=[];
 try {
@@ -14,10 +18,10 @@ try {
   const u=new URL(urls.ws);const socket=net.connect(+u.port,u.hostname);sockets.push(socket);
   return await new Promise((r,j)=>{let bytes='';socket.on('error',j);socket.on('data',b=>{bytes+=b.toString();if(bytes.includes('\r\n\r\n')){r(bytes.split('\r\n')[0]);socket.destroy();}});socket.write(`GET ${route} HTTP/1.1\r\nHost: ${u.host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n${origin===undefined?'':`Origin: ${origin}\r\n`}${extra}\r\n`);setTimeout(()=>j(Error('upgrade timeout')),3000).unref();});
  }
- assert.match(await upgrade('https://ryggattack.modig.online'),/101/);
+ assert.match(await upgrade(origin),/101/);
  assert.match(await upgrade(undefined),/101/,'native no-Origin allowed');
- for(const origin of ['null','https://evil.example','http://ryggattack.modig.online','https://ryggattack.modig.online:443','https://ryggattack.modig.online/','https://ryggattack.modig.online.evil'])assert.match(await upgrade(origin),/403/,origin);
- assert.match(await upgrade('https://ryggattack.modig.online','/ws','Origin: https://ryggattack.modig.online\r\n'),/403/);
+ for(const rejected of ['null','*','','https://evil.example','http://evil.example',...reviewedOrigins.filter(o=>o!==origin),origin.replace('https:','http:'),origin+':443',origin+'/',origin+'.evil',reviewedOrigins.join(',')])assert.match(await upgrade(rejected),/403/,rejected);
+ assert.match(await upgrade(origin,'/ws',`Origin: ${origin}\r\n`),/403/);
  for(const route of ['/','/ws/','/ws?x=1','/metrics','/healthz'])assert.match(await upgrade(undefined,route),/404/);
  const ws=new WebSocket(urls.ws);sockets.push(ws);const messages=[];
  ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));await new Promise((r,j)=>{ws.addEventListener('open',r);ws.addEventListener('error',j);});
@@ -51,5 +55,5 @@ try {
  assert(creations.at(-1).includes('rate limit'),'anonymous room creation is globally rate limited');
  assert.equal((await fetch(urls.management+'/readyz')).status,200,'abuse does not stall authoritative tick');
  if(child){const start=performance.now();const exit=new Promise(r=>child.once('exit',(code,signal)=>r({code,signal})));child.kill('SIGTERM');const result=await exit;assert.equal(result.code,0);assert(performance.now()-start<2000,'bounded shutdown');await sleep(50);assert(messages.some(m=>m.Error?.includes('backend restarting')),'clear restart message');assert(!log.includes(messages.find(m=>m.Welcome).Welcome.credential),'safe logs');}
- console.log(JSON.stringify({checks:['explicit production bind','exact HTTPS Origin and native policy','only /ws upgrades','private health/readiness and aggregate metrics','anonymous creation/code guessing globally rate limited without stalling tick','spoofed Forwarded/X-Forwarded-For cannot evade global limits',...(child?['SIGTERM notifies connected clients and exits cleanly within 2s']:[])],logs:log},null,2));
+ console.log(JSON.stringify({origin,checks:['explicit production bind','exact HTTPS Origin and native policy','only /ws upgrades','private health/readiness and aggregate metrics','anonymous creation/code guessing globally rate limited without stalling tick','spoofed Forwarded/X-Forwarded-For cannot evade global limits',...(child?['SIGTERM notifies connected clients and exits cleanly within 2s']:[])],logs:log},null,2));
 } finally {for(const s of sockets){if(s instanceof net.Socket)s.destroy();else s.close();}child?.kill('SIGKILL');}

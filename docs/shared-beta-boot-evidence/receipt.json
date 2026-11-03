@@ -1,0 +1,461 @@
+{
+  "base_source_sha": "79af9981d9af952d463a210b4162970015585194",
+  "generated_utc": "2026-11-03T19:30:37.709487+00:00",
+  "source_sha256": {
+    ".forgejo/workflows/ci.yml": "f7f5bfe5d55f6d8d71002dd92a4f2e0d788e00b19e5c8cc6709756fd711a0120",
+    "docs/online-deployment.md": "8c48b32e692550e9ace54ffa353e3c4a63b2f9a1f6b729068c9bf54f653ede28",
+    "docs/shared-beta.md": "ef62fedf66dd735ba8c6a589aea11f2af9e8d75020d8dcebaedf73f0f586f57b",
+    "scripts/beta-workflow.test.py": "1986a4206e9d2da0bf89f2764a171a5bf1d3c3371fff990b8d14f14c9b382f60",
+    "scripts/container-smoke.mjs": "59d2764d11a1a6222d173d0d5f74be87cbf0e3c7afbb00599116257d47bd0e58",
+    "scripts/production-smoke.mjs": "215f57b4f7b588773a7ccbda132a879aa7e64e58222ed45bee1c82ca5a7834a2",
+    "scripts/server-policy.test.mjs": "30d0e42372e3c7ecf44fb7e717eb94e7e19bc37d120a7b1452e8a4cb9ebd9f35",
+    "src/server.rs": "b80f288e706d96bf327df2bcf1f3fd10d424d48b616e0fb8d47001b4b0046ef8"
+  },
+  "gates": [
+    {
+      "name": "baseline-build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--bin",
+        "ryggattack-server",
+        "--bin",
+        "ryggattack-net-probe"
+      ],
+      "seconds": 0.981,
+      "exit": 0
+    },
+    {
+      "name": "beta-chart.test",
+      "command": [
+        "python3",
+        "scripts/beta-chart.test.py"
+      ],
+      "seconds": 0.078,
+      "exit": 0
+    },
+    {
+      "name": "beta-pointer.test",
+      "command": [
+        "python3",
+        "scripts/beta-pointer.test.py"
+      ],
+      "seconds": 9.929,
+      "exit": 0
+    },
+    {
+      "name": "beta-workflow.test",
+      "command": [
+        "python3",
+        "scripts/beta-workflow.test.py"
+      ],
+      "seconds": 0.043,
+      "exit": 0
+    },
+    {
+      "name": "chart-test",
+      "command": [
+        "python3",
+        "scripts/chart-test.py"
+      ],
+      "seconds": 0.246,
+      "exit": 0
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets"
+      ],
+      "seconds": 9.011,
+      "exit": 0
+    },
+    {
+      "name": "container-base-pull",
+      "command": [
+        "podman",
+        "pull",
+        "docker.io/library/debian:trixie-slim"
+      ],
+      "seconds": 3.681,
+      "exit": 0
+    },
+    {
+      "name": "container-server-build",
+      "command": [
+        "podman",
+        "build",
+        "-f",
+        "server/Dockerfile",
+        "-t",
+        "localhost/ryggattack-boot-server:local",
+        "/home/hermes/.hermes/cache/scratch/beta-boot-policy/container-context"
+      ],
+      "seconds": 3.339,
+      "exit": 0
+    },
+    {
+      "name": "container-web-base-pull",
+      "command": [
+        "podman",
+        "pull",
+        "docker.io/library/nginx:1.30-alpine"
+      ],
+      "seconds": 4.08,
+      "exit": 0
+    },
+    {
+      "name": "container-web-build",
+      "command": [
+        "podman",
+        "build",
+        "-f",
+        "web/Dockerfile",
+        "-t",
+        "localhost/ryggattack-boot-web:local",
+        "/home/hermes/.hermes/cache/scratch/beta-boot-policy/container-context"
+      ],
+      "seconds": 5.89,
+      "exit": 0
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "seconds": 0.007,
+      "exit": 0
+    },
+    {
+      "name": "green-beta-workflow",
+      "command": [
+        "python3",
+        "scripts/beta-workflow.test.py"
+      ],
+      "seconds": 0.046,
+      "exit": 0
+    },
+    {
+      "name": "green-build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--bin",
+        "ryggattack-server",
+        "--bin",
+        "ryggattack-net-probe"
+      ],
+      "seconds": 71.161,
+      "exit": 0
+    },
+    {
+      "name": "green-canonical-smoke",
+      "command": [
+        "node",
+        "scripts/production-smoke.mjs"
+      ],
+      "seconds": 5.176,
+      "exit": 0
+    },
+    {
+      "name": "green-server-policy",
+      "command": [
+        "node",
+        "scripts/server-policy.test.mjs"
+      ],
+      "seconds": 5.663,
+      "exit": 0
+    },
+    {
+      "name": "headless",
+      "command": [
+        "python3",
+        "scripts/headless-smoke.py"
+      ],
+      "seconds": 2.977,
+      "exit": 0
+    },
+    {
+      "name": "helm",
+      "command": [
+        "helm",
+        "lint",
+        "charts/ryggattack",
+        "--strict"
+      ],
+      "seconds": 0.162,
+      "exit": 0
+    },
+    {
+      "name": "js-gates",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/container-smoke-network.test.mjs",
+        "scripts/live-deployment-helpers.test.mjs",
+        "scripts/native-tls.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/pages-redirect.test.mjs",
+        "scripts/portable-container-build.test.mjs",
+        "scripts/prediction-delay.test.mjs",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/rooms-ui.test.mjs",
+        "scripts/server-banner.test.mjs",
+        "scripts/server-policy.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs"
+      ],
+      "seconds": 6.125,
+      "exit": 0
+    },
+    {
+      "name": "native-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "seconds": 196.998,
+      "exit": 0
+    },
+    {
+      "name": "native-tls",
+      "command": [
+        "node",
+        "scripts/native-tls.test.mjs"
+      ],
+      "seconds": 2.188,
+      "exit": 0
+    },
+    {
+      "name": "network-sockets",
+      "command": [
+        "node",
+        "scripts/network-sockets.mjs"
+      ],
+      "seconds": 10.373,
+      "exit": 0
+    },
+    {
+      "name": "pages-redirect",
+      "command": [
+        "node",
+        "scripts/pages-redirect.test.mjs"
+      ],
+      "seconds": 0.039,
+      "exit": 0
+    },
+    {
+      "name": "paired-beta-smoke",
+      "command": [
+        "node",
+        "scripts/container-smoke.mjs",
+        "localhost/ryggattack-boot-web:local",
+        "localhost/ryggattack-boot-server:local"
+      ],
+      "seconds": 9.708,
+      "exit": 0
+    },
+    {
+      "name": "paired-canonical-smoke",
+      "command": [
+        "node",
+        "scripts/container-smoke.mjs",
+        "localhost/ryggattack-boot-web:local",
+        "localhost/ryggattack-boot-server:local"
+      ],
+      "seconds": 9.399,
+      "exit": 0
+    },
+    {
+      "name": "portable-build",
+      "command": [
+        "node",
+        "scripts/portable-container-build.test.mjs"
+      ],
+      "seconds": 0.037,
+      "exit": 0
+    },
+    {
+      "name": "prediction-evidence",
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.py"
+      ],
+      "seconds": 0.679,
+      "exit": 0
+    },
+    {
+      "name": "prediction-evidence.test",
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.test.py"
+      ],
+      "seconds": 0.892,
+      "exit": 0
+    },
+    {
+      "name": "red-beta-workflow",
+      "command": [
+        "python3",
+        "scripts/beta-workflow.test.py"
+      ],
+      "seconds": 0.064,
+      "exit": 1
+    },
+    {
+      "name": "red-server-policy",
+      "command": [
+        "node",
+        "scripts/server-policy.test.mjs"
+      ],
+      "seconds": 0.348,
+      "exit": 1
+    },
+    {
+      "name": "rustfmt",
+      "command": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "src/server.rs"
+      ],
+      "seconds": 0.044,
+      "exit": 0
+    },
+    {
+      "name": "server-banner",
+      "command": [
+        "node",
+        "scripts/server-banner.test.mjs"
+      ],
+      "seconds": 0.096,
+      "exit": 0
+    },
+    {
+      "name": "update-chart-version.test",
+      "command": [
+        "python3",
+        "scripts/update-chart-version.test.py"
+      ],
+      "seconds": 0.12,
+      "exit": 0
+    }
+  ],
+  "expected_red_gates": [
+    "red-server-policy",
+    "red-beta-workflow"
+  ],
+  "native_tests_passed": 252,
+  "js_tests_passed": 171,
+  "warnings": {
+    "clippy": "7 warnings plus 7 lib-test duplicates; all warning source files unchanged from base SHA",
+    "files": [
+      "src/explosions.rs",
+      "src/online.rs",
+      "src/settings.rs",
+      "src/ui/mod.rs"
+    ],
+    "helm": "informational icon recommendation only"
+  },
+  "wasm_exclusion": {
+    "proof": "src/lib.rs:22-23 cfg(not(target_arch = \"wasm32\")) gates the only changed Rust module, src/server.rs",
+    "lib_sha256": "22f691515de46e2da44408b56d0e31021587365d0ac603bfc0067965f235d90e",
+    "build_run": false
+  },
+  "unchanged": [
+    ".forgejo/workflows/release.yml",
+    "charts/ryggattack/values.yaml",
+    "all client Rust/browser/assets"
+  ],
+  "containers": [
+    {
+      "name": "localhost/ryggattack-boot-web:local",
+      "id": "edbf4b5e13a0d8f9b216ce2a8c34b7e8fe903d22f2ee4c3c35d9c298374c9f59",
+      "user": "101:101"
+    },
+    {
+      "name": "localhost/ryggattack-boot-server:local",
+      "id": "9aa2a977f1a766a8fb1210de458be4d4b780286b0e107c024780ce139ba959ae",
+      "user": "10001:10001"
+    }
+  ],
+  "backend_debug_binary_sha256": "3463a17cab60324ef280f47c7481c0c4abce1291f6a6a764700dd0ab15b7a72e",
+  "container_backend_binary_sha256": "afaa5fcf35268d67f62a4b58491d389d2cb190486e31d0e3213c8dbe5d521913",
+  "container_artifact_provenance": {
+    "web": "read-only reuse of mobile-touch/dist/web; mixed source, not same-SHA CI compiler acceptance",
+    "web_hashes": {
+      "refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "touch-controls.mjs": "8dab5ba48b0560199267078118a31c043cc7472a2d37cb3374e3d4d9777801fb",
+      "ryggattack.js": "7ac5982a019499d2e63349386de2c482736d1e927e5dfa8036849cc171e79921",
+      "online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+      "online-hud.mjs": "a1fee8bcd13d21c2535b7cba494a3de21051b635956bc4a939612050065551b5",
+      "ryggattack_bg.wasm": "ee47ce928e085d754f1d19d91b5e4da3b99fa1bb1cbed08a6af09fccb4108755",
+      "index.html": "77ec4a652dbee5bd52e91ad6e4822ae7ef33c2209af2477f5153fe7e0d0b9a52",
+      "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+      "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22"
+    },
+    "backend": "current shared-beta native debug build, strip --strip-debug, production server Dockerfile",
+    "wasm_exclusion": "src/lib.rs:22 #[cfg(not(target_arch = \"wasm32\"))] gates pub mod server; no browser/Rust client source changed"
+  },
+  "limits": [
+    "Local rootless Podman, random loopback ports; not the Forgejo job network namespace",
+    "Production Dockerfiles and hardening exercised, but backend is stripped-debug native build, not release-profile CI build",
+    "Web bytes reused read-only from mobile-touch/dist/web; mixed-source packaging/socket smoke, not same-SHA client compiler or rendered gameplay acceptance",
+    "No WASM compilation, remote publication, cluster mutation, or production change"
+  ],
+  "log_sha256": {
+    "baseline-build.log": "d54ea3e8e9503de6df4d26fd1867201eda9b1f258a3ece2252b0159de2104b51",
+    "beta-chart.test.log": "d5e1bcb2fb0ba73bb509e8919fbe562d783e2d146b5e7e41861e3bc284d143dd",
+    "beta-pointer.test.log": "5248d75fc1df20f8cde5bab0f1c14999bbacb5176063642dc87abd17886e3e99",
+    "beta-workflow.test.log": "d654f61fc643912b52fd1d6142224c577ad3e0d15fca6aedc10dced999078a0f",
+    "chart-test.log": "40f0d5b49918ffd8ca8f1cbb8ec6747aaae3d3315bb8b5ebf902fcf731015233",
+    "clippy.log": "ee4e67eac93feb7742e81b6c2b3e9af92dd054d867cb17654a9e93faecdbe7db",
+    "container-base-pull.log": "cb53ec1f164cea242dbc7c295386907cad5af96ba66120cde4c5a06439549017",
+    "container-server-build.log": "486c272a5945f7d3edd0bd14ff8686229c28a310cff55156cdab90f8047cccd1",
+    "container-web-base-pull.log": "b2ac17001699da1ada868be832ab210cbad85439613476673b60248cdaae5d4f",
+    "container-web-build.log": "6d853a2326c6b5b0ff1520ea77774cc2a4e792cf8c39ab720c9b03dc980a12b8",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "green-beta-workflow.log": "d654f61fc643912b52fd1d6142224c577ad3e0d15fca6aedc10dced999078a0f",
+    "green-build.log": "0586a9a9b863e7411bb5e45d3f064b62e7e86260db8e7b4873fbecfc747fee04",
+    "green-canonical-smoke.log": "451d2c9f6626275cfff917cf8b3e9937c9eb672d4670de34a76ad12d37ec4e80",
+    "green-server-policy.log": "d2532fafafd56d529deec32472d0721f7cb47b375cd0065b6b1e3719fbfc02be",
+    "headless.log": "78c7886a67547414b96ba60ef6db0ef7dd91360006a98821456bbb55271b9e37",
+    "helm.log": "e8d514b25ac61f5a3df46debf913e6d8c52c24ef714642a3960908dff7b4937c",
+    "js-gates.log": "313444e20903ceb88cec5d9205b4aae7ffe8bed2863c97e1ae888228217790c0",
+    "native-tests.log": "f6aa6d1e297c18e2600c2d9decd1c8b70e3864eb2cd1f583fccb18b562082e65",
+    "native-tls.log": "7e4bb5ed2de4d6cc23f460bfc042bc1c3734defb23f3d811cb48b0c92cf8ebc0",
+    "network-sockets.log": "80a3c24da3e1a6dfb531e9aa3991c06069deac87a7a7e56ff90bcdb63ec9dcc0",
+    "pages-redirect.log": "044adea53bc4c2f40cc22dcbbc5757970c411560d98eae22c535c10ebd1f408e",
+    "paired-beta-smoke.log": "cfc5bb5dc3bcdf97bf8975d4a46113ec1ba05ecdd71c94e6e8c9dd7b02179512",
+    "paired-canonical-smoke.log": "eae868f9f40cd9a181deb5111382f65cbe2ccde2f1cf7694af100973b1c2ec8c",
+    "portable-build.log": "ab139e6df585ad8c6cbaade8e77293d411b4fff494f51457a110d0b49a7ccd21",
+    "prediction-evidence.log": "cf7b33804a8f5a2652597653bce909f39ebe58b5789ad54310247cc183863928",
+    "prediction-evidence.test.log": "84f7550091fd7e897d30d3d724d91c1dced52e57d331c039bc9ff23db2e10f72",
+    "red-beta-workflow.log": "3e89e945f0d27728102fbd17ecb1e102e13cb05803567f626362fda6fcff3531",
+    "red-server-policy.log": "c0007bede0e38108c8facc6861effa5eaeba325cab84b763444c39a3382f6e80",
+    "rustfmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "server-banner.log": "8bbed4d6ef9f8ae681c680550efcd49ec337994241315e231e766ef0dbab3941",
+    "update-chart-version.test.log": "bb345687e92dbefb56fe222c0a6b3157efa50753d2b18361ca0bcf1d4d564f93"
+  }
+}

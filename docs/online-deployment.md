@@ -22,9 +22,14 @@ not start a window or GPU. Gameplay, rear-contact collision rules and offline
 pause remain in the shared simulation/client, not in deployment code.
 
 `RYGGATTACK_MODE=production` is an explicit opt-in to non-loopback binding.
-Production also requires `RYGGATTACK_ALLOWED_ORIGINS` to be exactly
-`https://ryggattack.modig.online` (no wildcard, path, trailing slash, explicit
-443, list, HTTP, `null` or silent default). Only the exact request URI `/ws`
+Production also requires `RYGGATTACK_ALLOWED_ORIGINS` to be exactly one reviewed
+origin: `https://ryggattack.modig.online` for production, or
+`https://ryggattack-beta.modig.online` for the isolated shared beta. The production
+chart and release smoke still default to the canonical host. Both origins in one
+list are forbidden: each backend accepts only its selected origin. No arbitrary
+host, wildcard, path, trailing slash, explicit 443, list, HTTP, `null`, empty or
+silent default is allowed. Domain additions require a reviewed source change.
+Only the exact request URI `/ws`
 upgrades in production, not `/`, `/ws/`, query suffixes or management paths.
 Browser Origin must occur exactly once and match exactly. **Absent Origin is
 allowed for native clients by design**; Origin is not authentication and a

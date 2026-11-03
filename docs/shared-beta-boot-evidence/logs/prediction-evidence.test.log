@@ -1,0 +1,1 @@
+PASS: valid package; reject extra, changed, missing members and modified manifest checksum

@@ -195,6 +195,8 @@ jobs:
               --label "org.opencontainers.image.version=$VERSION" .
           done
       - name: Smoke tested web artifact and backend together
+        env:
+          PRODUCTION_ORIGIN: https://ryggattack-beta.modig.online
         run: CONTAINER_SMOKE_NETWORK_CONTAINER="$HOSTNAME" node scripts/container-smoke.mjs "$IMAGE/web:$VERSION" "$IMAGE/server:$VERSION"
       - name: Publish both beta images then advance desired state
         run: |

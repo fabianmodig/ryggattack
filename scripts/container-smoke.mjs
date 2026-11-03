@@ -7,6 +7,8 @@ import crypto from 'node:crypto';
 import net from 'node:net';
 import {smokeNetworkArgs,smokeHttpUrl} from './container-smoke-network.mjs';
 const networkContainer=process.env.CONTAINER_SMOKE_NETWORK_CONTAINER;
+const origin=process.env.PRODUCTION_ORIGIN??'https://ryggattack.modig.online';
+assert(['https://ryggattack.modig.online','https://ryggattack-beta.modig.online'].includes(origin),'reviewed runtime origin required');
 const exec=promisify(execFile),engine=process.env.ENGINE??'docker';
 const [web,server]=process.argv.slice(2);assert(web&&server,'web and backend image required');
 const names={web:`ryggattack-web-${process.pid}`,server:`ryggattack-server-${process.pid}`};
@@ -14,7 +16,7 @@ const cli=async(...args)=>(await exec(engine,args,{maxBuffer:1024*1024})).stdout
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const until=async(p,label)=>{let lastError;for(let i=0;i<100;i++){try{if(await p())return;}catch(error){lastError=error;}await sleep(100);}throw Error(label+(lastError?`: ${lastError.cause?.code??lastError.message}`:''));};
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const startBackend=async()=>await cli('run','-d','--name',names.server,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','-e','RYGGATTACK_MODE=production','-e','RYGGATTACK_ALLOWED_ORIGINS=https://ryggattack.modig.online','-e','RYGGATTACK_MANAGEMENT_BIND=0.0.0.0:8788',...smokeNetworkArgs([8787,8788],networkContainer),server);
+const startBackend=async()=>await cli('run','-d','--name',names.server,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','-e','RYGGATTACK_MODE=production','-e',`RYGGATTACK_ALLOWED_ORIGINS=${origin}`,'-e','RYGGATTACK_MANAGEMENT_BIND=0.0.0.0:8788',...smokeNetworkArgs([8787,8788],networkContainer),server);
 try {
  await cli('run','-d','--name',names.web,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--tmpfs','/tmp:rw,noexec,nosuid,size=16m',...smokeNetworkArgs([8080],networkContainer),web);
  await startBackend();
@@ -53,7 +55,7 @@ try {
  assert(startupFailure,'invalid nginx startup configuration must fail');
  assert.match(startupFailure.stderr,/\[emerg\].*missing-phase5-nginx\.conf/,'global infrastructure errors remain on stderr');
  for(const route of ['/metrics','/healthz','/readyz','/ws'])assert.equal((await fetch(webURL+route)).status,404,'web must not expose backend/management');
- const result=await new Promise(r=>{const c=spawn(process.execPath,['scripts/production-smoke.mjs'],{env:{...process.env,PRODUCTION_WS:wsURL,PRODUCTION_MANAGEMENT:management},stdio:'inherit'});c.once('exit',r);});assert.equal(result,0);
+ const result=await new Promise(r=>{const c=spawn(process.execPath,['scripts/production-smoke.mjs'],{env:{...process.env,PRODUCTION_WS:wsURL,PRODUCTION_MANAGEMENT:management,PRODUCTION_ORIGIN:origin},stdio:'inherit'});c.once('exit',r);});assert.equal(result,0);
  // Exercise the chart's actual Recreate contract. A fresh network namespace
  // avoids Podman/pasta's rapid same-port restart race without hiding app errors.
  await cli('stop','--time','10',names.server);await cli('rm',names.server);
@@ -70,7 +72,7 @@ try {
  await until(()=>closed,'shutdown closes client');assert(messages.some(m=>m.Error?.includes('backend restarting')));
  const inspect=JSON.parse(await cli('inspect',names.server))[0];assert.equal(inspect.State.ExitCode,0);
  const configs={};for(const [component,name] of Object.entries(names)){const i=JSON.parse(await cli('inspect',name))[0];assert(i.Config.User&&i.Config.User!=='0');assert(i.HostConfig.ReadonlyRootfs);configs[component]={image:i.Image,user:i.Config.User,readonly:i.HostConfig.ReadonlyRootfs,capDrop:i.HostConfig.CapDrop};}
- console.log(JSON.stringify({checks:['actual nonroot read-only cap-drop images','exact JS/WASM/HTML/module bytes and MIME','no public management routes','production socket/abuse contract','same-image Recreate resets all in-memory rooms','container SIGTERM notifies and closes real client with exit 0'],images:configs},null,2));
+ console.log(JSON.stringify({origin,checks:['actual nonroot read-only cap-drop images','exact JS/WASM/HTML/module bytes and MIME','no public management routes','production socket/abuse contract','same-image Recreate resets all in-memory rooms','container SIGTERM notifies and closes real client with exit 0'],images:configs},null,2));
 } catch(error) {
  // Preserve owned-container failure diagnostics before cleanup; never dump Env.
  for(const name of Object.values(names))try{

@@ -223,12 +223,14 @@ impl Server {
     }
     /// Explicit public binding opt-in. Browser origin is deliberately not configurable
     /// to arbitrary hosts: changing the deployment domain requires a reviewed change.
+    /// Only canonical production or the reviewed shared beta is allowed, never both.
     pub fn bind_production(address: &str) -> std::io::Result<Self> {
-        if std::env::var("RYGGATTACK_ALLOWED_ORIGINS").as_deref()
-            != Ok("https://ryggattack.modig.online")
-        {
+        if !matches!(
+            std::env::var("RYGGATTACK_ALLOWED_ORIGINS").as_deref(),
+            Ok("https://ryggattack.modig.online" | "https://ryggattack-beta.modig.online")
+        ) {
             return Err(io::Error::other(
-                "production requires exactly https://ryggattack.modig.online",
+                "production requires exactly one reviewed origin: https://ryggattack.modig.online or https://ryggattack-beta.modig.online",
             ));
         }
         Self::bind_policy(address, true)

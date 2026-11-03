@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/hermes/src/ryggattack-shared-beta/scripts/beta-workflow.test.py", line 30, in <module>
+    assert smoke.get('env', {}).get('PRODUCTION_ORIGIN') == 'https://ryggattack-beta.modig.online', 'beta images must boot with beta runtime origin, not the production default'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: beta images must boot with beta runtime origin, not the production default

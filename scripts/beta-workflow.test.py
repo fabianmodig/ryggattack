@@ -26,6 +26,13 @@ assert any('upload-artifact@v3' in s.get('uses', '') for s in jobs['web']['steps
 commands = '\n'.join(s.get('run', '') for s in steps)
 assert 'scripts/build-web.sh' not in commands, 'reuse tested web artifact; do not rebuild wasm'
 assert 'container-smoke.mjs' in commands
+smoke = next(s for s in steps if 'container-smoke.mjs' in s.get('run', ''))
+assert smoke.get('env', {}).get('PRODUCTION_ORIGIN') == 'https://ryggattack-beta.modig.online', 'beta images must boot with beta runtime origin, not the production default'
+container_smoke = Path('scripts/container-smoke.mjs').read_text()
+assert 'RYGGATTACK_ALLOWED_ORIGINS=${origin}' in container_smoke
+assert 'PRODUCTION_ORIGIN:origin' in container_smoke
+release = yaml.load(Path('.forgejo/workflows/release.yml').read_text(), Loader=yaml.BaseLoader)
+assert 'PRODUCTION_ORIGIN' not in str(release), 'production release must retain its canonical smoke default'
 assert commands.index('container-smoke.mjs') < commands.index('docker push') < commands.index('beta-pointer.py')
 assert ':latest' not in commands
 assert 'IMAGE=git.modig.online/ryggattack-beta/ryggattack' in commands

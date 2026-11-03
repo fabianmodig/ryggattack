@@ -12,7 +12,20 @@ native tests, clippy, runtime/abuse/socket/headless checks, chart contracts and
 web build. The new `beta` job needs **test + chart + web** to succeed. It reuses
 the web job's run-scoped artifact, verifies its source-SHA receipt, compiles the
 release backend, builds the two runtime images and runs the existing hardened
-paired-container smoke before publishing either image.
+paired-container smoke before publishing either image. The beta step explicitly
+sets `PRODUCTION_ORIGIN=https://ryggattack-beta.modig.online`, which is passed to
+the actual backend production-mode environment and the real socket verifier
+(including after Recreate). It must boot, reach readiness and accept the exact
+beta Origin while rejecting canonical production, arbitrary HTTP/HTTPS, null,
+wildcard, malformed and duplicate Origin headers. Native no-Origin clients remain
+allowed by design. The release workflow is unchanged and keeps its canonical
+production smoke default.
+
+The backend permits exactly **one** of two reviewed production-mode origins:
+`https://ryggattack.modig.online` or `https://ryggattack-beta.modig.online`. This is
+a reviewed domain extension, not arbitrary origin configuration: missing/empty
+values, lists (even both reviewed hosts), whitespace, HTTP, paths, ports and
+wildcards still fail startup. A beta deployment must not use development mode.
 
 Only **trusted same-repository PRs** publish. Fork PRs run tests/web builds only,
 do not upload the beta artifact or enter the secret-bearing job, and cannot
