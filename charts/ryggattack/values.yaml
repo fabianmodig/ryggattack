@@ -1,3 +1,8 @@
+publicHost: ryggattack.modig.online
+allowedOrigins: https://ryggattack.modig.online
+deployment:
+  sourceSHA: ""
+  pullRequest: ""
 image:
   web: git.modig.online/fabianmodig/ryggattack/web
   server: git.modig.online/fabianmodig/ryggattack/server
