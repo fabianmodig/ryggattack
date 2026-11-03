@@ -4,6 +4,10 @@ Ryggattack is a code-first, local multiplayer arena game built with Rust and
 [Bevy](https://bevy.org/). The current proof of concept focuses on the core
 idea: get behind another player and land a shot in their back.
 
+Shared PR beta delivery and its safety/bootstrap prerequisites are documented in
+[shared beta deployment](docs/shared-beta.md). This is configuration, not a claim
+that the beta hostname is already deployed.
+
 ## Current proof of concept
 
 - Up to four local players on WASD, the arrow keys, and gamepads

@@ -8,10 +8,10 @@ metadata:
 spec:
   ingressClassName: external
   tls:
-    - hosts: [ryggattack.modig.online]
+    - hosts: [{{ .Values.publicHost | quote }}]
       secretName: {{ .Release.Name }}-tls
   rules:
-    - host: ryggattack.modig.online
+    - host: {{ .Values.publicHost | quote }}
       http:
         paths:
           - path: /
@@ -31,10 +31,10 @@ metadata:
 spec:
   ingressClassName: external
   tls:
-    - hosts: [ryggattack.modig.online]
+    - hosts: [{{ .Values.publicHost | quote }}]
       secretName: {{ .Release.Name }}-tls
   rules:
-    - host: ryggattack.modig.online
+    - host: {{ .Values.publicHost | quote }}
       http:
         paths:
           - path: /ws

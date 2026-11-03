@@ -1,0 +1,18 @@
+STEP 1/8: FROM debian:trixie-slim
+STEP 2/8: RUN ldconfig -p | grep -q 'libgcc_s.so.1'
+--> bb3bf5ea5694
+STEP 3/8: COPY dist/server/ryggattack-server /usr/local/bin/ryggattack-server
+--> bd85b21b138a
+STEP 4/8: RUN chmod 0555 /usr/local/bin/ryggattack-server
+--> 9f90fd677b4a
+STEP 5/8: USER 10001:10001
+--> 9c7e70656053
+STEP 6/8: EXPOSE 8787 8788
+--> e256a54387e5
+STEP 7/8: ENTRYPOINT ["/usr/local/bin/ryggattack-server"]
+--> d88620d7d0d4
+STEP 8/8: CMD ["0.0.0.0:8787"]
+COMMIT localhost/ryggattack-boot-server:local
+--> 9aa2a977f1a7
+Successfully tagged localhost/ryggattack-boot-server:local
+9aa2a977f1a766a8fb1210de458be4d4b780286b0e107c024780ce139ba959ae

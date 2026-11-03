@@ -1,0 +1,26 @@
+STEP 1/11: FROM nginx:1.30-alpine
+STEP 2/11: LABEL org.opencontainers.image.title="Ryggattack (web)"       org.opencontainers.image.description="The Ryggattack WebAssembly build, served by nginx"
+--> 16cbb2d8d0df
+STEP 3/11: RUN nginx -V 2>&1 | grep -q -- --with-http_gzip_static_module
+--> d9c236847bc5
+STEP 4/11: COPY web/nginx-main.conf /etc/nginx/nginx.conf
+--> 02ddaf760251
+STEP 5/11: COPY web/nginx.conf /etc/nginx/conf.d/default.conf
+--> 857eb97b2c0b
+STEP 6/11: COPY dist/web /usr/share/nginx/html
+--> 1c67745cff39
+STEP 7/11: RUN chmod 0644 /etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf     && chmod -R a+rX /usr/share/nginx/html     && gzip -9 -c /usr/share/nginx/html/ryggattack_bg.wasm > /usr/share/nginx/html/ryggattack_bg.wasm.gz     && gzip -9 -c /usr/share/nginx/html/ryggattack.js > /usr/share/nginx/html/ryggattack.js.gz     && nginx -t     && rm -f /tmp/nginx.pid
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+--> ff97c48c5cb7
+STEP 8/11: USER 101:101
+--> fc2ba780be95
+STEP 9/11: ENTRYPOINT ["nginx"]
+--> 291e0b8e20d1
+STEP 10/11: CMD ["-g", "daemon off;"]
+--> 9294338aa231
+STEP 11/11: EXPOSE 8080
+COMMIT localhost/ryggattack-boot-web:local
+--> edbf4b5e13a0
+Successfully tagged localhost/ryggattack-boot-web:local
+edbf4b5e13a0d8f9b216ce2a8c34b7e8fe903d22f2ee4c3c35d9c298374c9f59

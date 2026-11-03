@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # Two Bevy dependencies resolve system libraries through pkg-config while
       # building: gilrs-core needs libudev and wayland-sys needs wayland-client.
@@ -93,6 +95,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Install Helm and YAML test dependency
         run: |
           apt-get update
@@ -103,6 +107,9 @@ jobs:
       - run: node scripts/portable-container-build.test.mjs
       - run: helm lint charts/ryggattack --strict
       - run: python3 scripts/chart-test.py
+      - run: python3 scripts/beta-chart.test.py
+      - run: python3 scripts/beta-pointer.test.py
+      - run: python3 scripts/beta-workflow.test.py
 
   web:
     name: web build
@@ -112,6 +119,8 @@ jobs:
     if: github.event_name != 'push'
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # No apt step: targeting wasm32 skips the two build scripts that reach
       # for system libraries on Linux.
@@ -121,3 +130,78 @@ jobs:
       # in release.yml.
       - name: Build the web bundle
         run: scripts/build-web.sh
+      - name: Bind web artifact to checked-out source
+        run: git rev-parse HEAD > dist/web/source-sha.txt
+      - uses: https://code.forgejo.org/actions/upload-artifact@v3
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          name: beta-web
+          path: dist/web
+          if-no-files-found: error
+          retention-days: 2
+
+  beta:
+    name: Publish shared beta desired state
+    needs: [test, chart, web]
+    # Same-repository contributors can execute workflows and receive secrets;
+    # they are trusted publishers. Forks only run the unprivileged checks.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: "0"
+      BETA_PACKAGE_USER: ${{ secrets.BETA_PACKAGE_USER }}
+      BETA_PACKAGE_TOKEN: ${{ secrets.BETA_PACKAGE_TOKEN }}
+      # Destination-only write credential; source checkout/API use automatic read token.
+      BETA_DEPLOY_TOKEN: ${{ secrets.BETA_DEPLOY_TOKEN }}
+      PR_READ_TOKEN: ${{ github.token }}
+    steps:
+      - name: Require publisher credentials
+        run: test -n "$BETA_PACKAGE_USER" && test -n "$BETA_PACKAGE_TOKEN" && test -n "$BETA_DEPLOY_TOKEN" && test -n "$PR_READ_TOKEN"
+      - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ github.token }}
+          fetch-depth: 0
+      - uses: https://code.forgejo.org/actions/download-artifact@v3
+        with:
+          name: beta-web
+          path: dist/web
+      - name: Verify artifact source and allocate unique beta pair
+        run: |
+          test "$(cat dist/web/source-sha.txt)" = "$(git rev-parse HEAD)"
+          echo "IMAGE=git.modig.online/ryggattack-beta/ryggattack" >> "$GITHUB_ENV"
+          # Independent of run-id/attempt semantics: retries of the same SHA
+          # get fresh artifact tags, separate from production image repositories.
+          python3 -c 'import hashlib,uuid; print("VERSION=sha-" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()[:40])' >> "$GITHUB_ENV"
+      - uses: https://github.com/actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: https://github.com/dtolnay/rust-toolchain@stable
+      - uses: https://github.com/Swatinem/rust-cache@v2.7.8
+        with:
+          shared-key: beta-server
+      - name: Install portable container and backend tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3-yaml
+      - name: Build backend and paired runtime images
+        run: |
+          cargo build --locked --release --bin ryggattack-server
+          mkdir -p dist/server
+          cp target/release/ryggattack-server dist/server/
+          for component in web server; do
+            docker build --file "$component/Dockerfile" --tag "$IMAGE/$component:$VERSION" \
+              --label "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
+              --label "org.opencontainers.image.version=$VERSION" .
+          done
+      - name: Smoke tested web artifact and backend together
+        env:
+          PRODUCTION_ORIGIN: https://ryggattack-beta.modig.online
+        run: CONTAINER_SMOKE_NETWORK_CONTAINER="$HOSTNAME" node scripts/container-smoke.mjs "$IMAGE/web:$VERSION" "$IMAGE/server:$VERSION"
+      - name: Publish both beta images then advance desired state
+        run: |
+          printf '%s' "$BETA_PACKAGE_TOKEN" | docker login git.modig.online --username "$BETA_PACKAGE_USER" --password-stdin
+          for component in web server; do
+            docker push "$IMAGE/$component:$VERSION"
+          done
+          python3 scripts/beta-pointer.py --tag "$VERSION"
