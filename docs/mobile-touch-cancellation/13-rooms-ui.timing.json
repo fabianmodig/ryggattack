@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/rooms-ui.test.mjs"
+  ],
+  "seconds": 0.087,
+  "exit": 0
+}

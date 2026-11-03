@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/network-sockets.mjs"
+  ],
+  "seconds": 10.381,
+  "exit": 0
+}

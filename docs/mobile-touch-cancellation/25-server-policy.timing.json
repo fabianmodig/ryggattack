@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/server-policy.test.mjs"
+  ],
+  "seconds": 0.115,
+  "exit": 0
+}

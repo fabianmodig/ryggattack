@@ -41,6 +41,24 @@ try{
   const local=()=>page.evaluate(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null'));
   const observation=()=>page.evaluate(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').find(p=>p.seat===0));
   const waitLocal=async condition=>page.waitForFunction(condition,null,{timeout:90000});
+  const traceSamples=async target=>target.evaluate(()=>{
+    globalThis.__cancelSamples=[];
+    const sample=globalThis.ryggattackSampleTouch;
+    globalThis.ryggattackSampleTouch=()=>{const value=sample();globalThis.__cancelSamples.push(JSON.parse(value));if(globalThis.__cancelSamples.length>500)globalThis.__cancelSamples.shift();return value;};
+  });
+  const fireThenCancel=async(target,session,mode)=>{
+    await target.evaluate(()=>{globalThis.__cancelSamples=[];});
+    await target.touchscreen.tap(180,370);
+    await target.waitForFunction(()=>globalThis.__cancelSamples.some(s=>s.fire));
+    const sampled=await target.evaluate(()=>globalThis.__cancelSamples.find(s=>s.fire));
+    await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:120,y:360,id:1},{x:240,y:360,id:2}]});
+    await target.waitForFunction(epoch=>globalThis.__cancelSamples.some(s=>s.epoch>epoch&&!s.fire&&s.horizontal===0&&s.vertical===0),sampled.epoch);
+    await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await target.waitForFunction(epoch=>globalThis.__cancelSamples.filter(s=>s.epoch>epoch).length>=3,sampled.epoch);
+    const after=await target.evaluate(epoch=>globalThis.__cancelSamples.filter(s=>s.epoch>epoch),sampled.epoch);
+    assert(after.every(s=>!s.fire&&s.horizontal===0&&s.vertical===0),'no gesture may survive multitouch cancellation');
+    step(`${mode} real sampled fire then multitouch cancellation epoch`,{sampled,after});
+  };
   await page.goto(`http://127.0.0.1:${port}/?quality=0`,{waitUntil:'domcontentloaded',timeout:90000});
   await waitLocal(()=>globalThis.ryggattackLocalScreen==='MainMenu');await shot('01-phone-main');
   await page.locator('#play-local').tap();await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.screen==='Lobby');
@@ -54,6 +72,10 @@ try{
   step('offline real ECS retained swipe; no accidental fire',{observation:await observation()});
   await tap();await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.cooldown>0),null,{timeout:15000});
   step('offline tap fired through existing cooldown',{observation:await observation()});await shot('03-phone-playing');
+  await traceSamples(page);await fireThenCancel(page,cdp,'offline');
+  await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===0&&p.turn[1]===0&&p.cooldown===0));
+  step('offline cancelled fire drains to zero cooldown and neutral real ECS');await shot('07-offline-cancelled');
+  await swipe();await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===1));
   await page.locator('#touch-pause').tap();await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
   await page.locator('#touch-resume').waitFor({state:'visible'});await shot('04-phone-paused');await page.locator('#touch-resume').tap();await waitLocal(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
   await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===0&&p.turn[1]===0));step('offline pause/resume clears retained steering');
@@ -104,6 +126,13 @@ try{
   const swipeInput=await online.evaluate(()=>globalThis.__touchInputs.find(i=>i.horizontal===1&&!i.fire));const tapInput=await online.evaluate(()=>globalThis.__touchInputs.find(i=>i.horizontal===1&&i.fire));
   const shotDeadline=Date.now()+15000;while(!serverShot&&Date.now()<shotDeadline)await online.waitForTimeout(100);assert(serverShot,'touch tap must produce the authoritative local cart cooldown, not just outgoing wire fire');
   await online.screenshot({path:resolve(out,'06-phone-online.png'),timeout:90000});step('online swipe and tap reached real websocket intent',{swipe:swipeInput,tap:tapInput,authority:result.online_authority_shots});
+  await traceSamples(online);await fireThenCancel(online,oc,'online');
+  const cancelWireStart=await online.evaluate(()=>globalThis.__touchInputs.length);
+  await online.waitForFunction(start=>globalThis.__touchInputs.length>=start+3,cancelWireStart);
+  const cancelledWire=await online.evaluate(start=>globalThis.__touchInputs.slice(start),cancelWireStart);
+  assert(cancelledWire.every(i=>!i.fire&&i.horizontal===0&&i.vertical===0));
+  step('online cancelled fire sends neutral real wire intents',{inputs:cancelledWire});
+  await online.screenshot({path:resolve(out,'08-online-cancelled.png'),timeout:90000});
   await online.locator('#open-match-menu').tap();await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackHud??'null')?.menu);
   await online.waitForFunction(()=>{const i=globalThis.__touchInputs?.at(-1);return i&&i.horizontal===0&&i.vertical===0&&!i.fire;});
   await online.locator('#resume-match').tap();await online.waitForFunction(()=>!JSON.parse(globalThis.ryggattackHud??'null')?.menu);step('online accessible menu/resume neutralized input; server keeps running');

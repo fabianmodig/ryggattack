@@ -1,0 +1,14 @@
+offline real ECS retained swipe; no accidental fire {"observation":{"cooldown":0,"fire":false,"seat":0,"turn":[1,0]}}
+offline tap fired through existing cooldown {"observation":{"cooldown":0.265625,"fire":true,"seat":0,"turn":[1,0]}}
+offline real sampled fire then multitouch cancellation epoch {"sampled":{"horizontal":1,"vertical":0,"fire":true,"epoch":292},"after":[{"horizontal":0,"vertical":0,"fire":false,"epoch":293},{"horizontal":0,"vertical":0,"fire":false,"epoch":293},{"horizontal":0,"vertical":0,"fire":false,"epoch":293}]}
+offline cancelled fire drains to zero cooldown and neutral real ECS {}
+offline pause/resume clears retained steering {}
+real multitouch clears steering {}
+real pointer cancellation clears steering {}
+actual DOM canvas blur clears input {}
+desktop keyboard steering preserved {}
+touch restart of a naturally completed match {}
+online swipe and tap reached real websocket intent {"swipe":{"sequence":6,"horizontal":1,"vertical":0,"fire":false},"tap":{"sequence":9,"horizontal":1,"vertical":0,"fire":true},"authority":[{"tick":804,"seat":0,"cooldown":0.5,"alive":true},{"tick":808,"seat":0,"cooldown":0.4375,"alive":true},{"tick":812,"seat":0,"cooldown":0.375,"alive":true},{"tick":816,"seat":0,"cooldown":0.3125,"alive":true},{"tick":820,"seat":0,"cooldown":0.25,"alive":true},{"tick":824,"seat":0,"cooldown":0.1875,"alive":true},{"tick":828,"seat":0,"cooldown":0.125,"alive":true},{"tick":832,"seat":0,"cooldown":0.0625,"alive":true},{"tick":836,"seat":0,"cooldown":0.5,"alive":true},{"tick":840,"seat":0,"cooldown":0.4375,"alive":true},{"tick":844,"seat":0,"cooldown":0.375,"alive":true},{"tick":848,"seat":0,"cooldown":0.3125,"alive":true}]}
+online real sampled fire then multitouch cancellation epoch {"sampled":{"horizontal":0,"vertical":0,"fire":true,"epoch":104},"after":[{"horizontal":0,"vertical":0,"fire":false,"epoch":105},{"horizontal":0,"vertical":0,"fire":false,"epoch":105},{"horizontal":0,"vertical":0,"fire":false,"epoch":105}]}
+online cancelled fire sends neutral real wire intents {"inputs":[{"sequence":31,"horizontal":0,"vertical":0,"fire":false},{"sequence":32,"horizontal":0,"vertical":0,"fire":false},{"sequence":33,"horizontal":0,"vertical":0,"fire":false}]}
+online accessible menu/resume neutralized input; server keeps running {}

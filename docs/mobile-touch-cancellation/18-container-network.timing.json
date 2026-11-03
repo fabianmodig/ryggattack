@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "scripts/container-smoke-network.test.mjs"
+  ],
+  "seconds": 0.15,
+  "exit": 0
+}

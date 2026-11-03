@@ -1,0 +1,9 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked"
+  ],
+  "seconds": 6.615,
+  "exit": 101
+}

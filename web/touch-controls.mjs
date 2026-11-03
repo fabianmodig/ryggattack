@@ -1,5 +1,5 @@
 // CSS-pixel gestures feed device-independent intent, never synthetic keys.
-export function createGesture() {
+export function createGesture(onCancel=()=>{}) {
   let pointer=null, horizontal=0, vertical=0, fire=false;
   function move(id,x,y) {
     if(pointer?.id!==id)return;
@@ -16,7 +16,8 @@ export function createGesture() {
     hasPointer(id){return fingers.has(id);},
     down(id,x,y,time){
       fingers.add(id);
-      if(fingers.size>1){pointer=null;horizontal=vertical=0;fire=false;return;}
+      // Invalidate already sampled fire without forgetting fingers still held.
+      if(fingers.size>1){pointer=null;horizontal=vertical=0;fire=false;onCancel();return;}
       pointer={id,x,y,time,swiped:false};
     },move,
     up(id,x,y,time){
@@ -33,8 +34,8 @@ export function createGesture() {
 // One canvas gesture surface; DOM menus keep native scrolling and editing.
 export function installTouchControls(env=globalThis) {
   const {document}=env,$=id=>document.getElementById(id),canvas=$('ryggattack-canvas');
-  const gesture=createGesture(),listeners=[];
   let epoch=0,lastMode='',destroyed=false;
+  const gesture=createGesture(()=>{epoch++;}),listeners=[];
   function reset(){gesture.reset();epoch++;}
   function status(){try{return JSON.parse(env.ryggattackLocalStatus??'null');}catch{return null;}}
   function playing(){

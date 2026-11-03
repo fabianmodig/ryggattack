@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/update-chart-version.test.py"
+  ],
+  "seconds": 0.173,
+  "exit": 0
+}

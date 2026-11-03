@@ -1,0 +1,4 @@
+# Preserve raw TAP assertion output; never apply to implementation source.
+*-red.txt -whitespace
+09-focus-*.txt -whitespace
+10-native-rerun.txt -whitespace

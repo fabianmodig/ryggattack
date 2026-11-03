@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=sampled tap cancellation",
+    "scripts/.cancellation-red.test.mjs"
+  ],
+  "seconds": 0.22,
+  "exit": 1
+}

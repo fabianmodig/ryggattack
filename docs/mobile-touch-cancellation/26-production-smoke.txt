@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "explicit production bind",
+    "exact HTTPS Origin and native policy",
+    "only /ws upgrades",
+    "private health/readiness and aggregate metrics",
+    "anonymous creation/code guessing globally rate limited without stalling tick",
+    "spoofed Forwarded/X-Forwarded-For cannot evade global limits",
+    "SIGTERM notifies connected clients and exits cleanly within 2s"
+  ],
+  "logs": "{\"event\":\"shutdown\",\"rooms_reset\":true}\n"
+}

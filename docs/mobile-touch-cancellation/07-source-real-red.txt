@@ -1,0 +1,38 @@
+TAP version 13
+# Subtest: sampled tap cancellation reaches source-real local pending-fire and online pending-send adapters
+not ok 1 - sampled tap cancellation reaches source-real local pending-fire and online pending-send adapters
+  ---
+  duration_ms: 87.349338
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-mobile-touch/scripts/.cancellation-red.test.mjs:94:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    
+    thread 'main' (1633916) panicked at /home/hermes/.hermes/cache/scratch/touch-adapters-gpMBnL/adapters.rs:90:2:
+    multitouch epoch must clear local fixed-tick pending fire
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    
+    
+    101 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 101
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-mobile-touch/scripts/.cancellation-red.test.mjs:153:61)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 169.076977

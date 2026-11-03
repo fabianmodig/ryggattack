@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/chart-test.py"
+  ],
+  "seconds": 0.247,
+  "exit": 0
+}

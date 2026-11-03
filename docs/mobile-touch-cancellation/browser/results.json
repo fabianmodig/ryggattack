@@ -1,0 +1,389 @@
+{
+  "status": "passed",
+  "steps": [
+    {
+      "name": "offline real ECS retained swipe; no accidental fire",
+      "observation": {
+        "cooldown": 0,
+        "fire": false,
+        "seat": 0,
+        "turn": [
+          1,
+          0
+        ]
+      },
+      "at": "2026-11-03T11:59:50.610Z"
+    },
+    {
+      "name": "offline tap fired through existing cooldown",
+      "observation": {
+        "cooldown": 0.265625,
+        "fire": true,
+        "seat": 0,
+        "turn": [
+          1,
+          0
+        ]
+      },
+      "at": "2026-11-03T11:59:51.767Z"
+    },
+    {
+      "name": "offline real sampled fire then multitouch cancellation epoch",
+      "sampled": {
+        "horizontal": 1,
+        "vertical": 0,
+        "fire": true,
+        "epoch": 292
+      },
+      "after": [
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 293
+        },
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 293
+        },
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 293
+        }
+      ],
+      "at": "2026-11-03T12:00:00.115Z"
+    },
+    {
+      "name": "offline cancelled fire drains to zero cooldown and neutral real ECS",
+      "at": "2026-11-03T12:00:00.118Z"
+    },
+    {
+      "name": "offline pause/resume clears retained steering",
+      "at": "2026-11-03T12:00:16.747Z"
+    },
+    {
+      "name": "real multitouch clears steering",
+      "at": "2026-11-03T12:00:21.036Z"
+    },
+    {
+      "name": "real pointer cancellation clears steering",
+      "at": "2026-11-03T12:00:26.264Z"
+    },
+    {
+      "name": "actual DOM canvas blur clears input",
+      "at": "2026-11-03T12:00:29.015Z"
+    },
+    {
+      "name": "desktop keyboard steering preserved",
+      "at": "2026-11-03T12:00:29.627Z"
+    },
+    {
+      "name": "touch restart of a naturally completed match",
+      "at": "2026-11-03T12:00:59.625Z"
+    },
+    {
+      "name": "online swipe and tap reached real websocket intent",
+      "swipe": {
+        "sequence": 6,
+        "horizontal": 1,
+        "vertical": 0,
+        "fire": false
+      },
+      "tap": {
+        "sequence": 9,
+        "horizontal": 1,
+        "vertical": 0,
+        "fire": true
+      },
+      "authority": [
+        {
+          "tick": 804,
+          "seat": 0,
+          "cooldown": 0.5,
+          "alive": true
+        },
+        {
+          "tick": 808,
+          "seat": 0,
+          "cooldown": 0.4375,
+          "alive": true
+        },
+        {
+          "tick": 812,
+          "seat": 0,
+          "cooldown": 0.375,
+          "alive": true
+        },
+        {
+          "tick": 816,
+          "seat": 0,
+          "cooldown": 0.3125,
+          "alive": true
+        },
+        {
+          "tick": 820,
+          "seat": 0,
+          "cooldown": 0.25,
+          "alive": true
+        },
+        {
+          "tick": 824,
+          "seat": 0,
+          "cooldown": 0.1875,
+          "alive": true
+        },
+        {
+          "tick": 828,
+          "seat": 0,
+          "cooldown": 0.125,
+          "alive": true
+        },
+        {
+          "tick": 832,
+          "seat": 0,
+          "cooldown": 0.0625,
+          "alive": true
+        },
+        {
+          "tick": 836,
+          "seat": 0,
+          "cooldown": 0.5,
+          "alive": true
+        },
+        {
+          "tick": 840,
+          "seat": 0,
+          "cooldown": 0.4375,
+          "alive": true
+        },
+        {
+          "tick": 844,
+          "seat": 0,
+          "cooldown": 0.375,
+          "alive": true
+        },
+        {
+          "tick": 848,
+          "seat": 0,
+          "cooldown": 0.3125,
+          "alive": true
+        }
+      ],
+      "at": "2026-11-03T12:01:21.623Z"
+    },
+    {
+      "name": "online real sampled fire then multitouch cancellation epoch",
+      "sampled": {
+        "horizontal": 0,
+        "vertical": 0,
+        "fire": true,
+        "epoch": 104
+      },
+      "after": [
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 105
+        },
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 105
+        },
+        {
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false,
+          "epoch": 105
+        }
+      ],
+      "at": "2026-11-03T12:01:23.057Z"
+    },
+    {
+      "name": "online cancelled fire sends neutral real wire intents",
+      "inputs": [
+        {
+          "sequence": 31,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false
+        },
+        {
+          "sequence": 32,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false
+        },
+        {
+          "sequence": 33,
+          "horizontal": 0,
+          "vertical": 0,
+          "fire": false
+        }
+      ],
+      "at": "2026-11-03T12:01:23.769Z"
+    },
+    {
+      "name": "online accessible menu/resume neutralized input; server keeps running",
+      "at": "2026-11-03T12:01:30.219Z"
+    }
+  ],
+  "errors": [],
+  "artifact": {
+    "index.html": "77ec4a652dbee5bd52e91ad6e4822ae7ef33c2209af2477f5153fe7e0d0b9a52",
+    "touch-controls.mjs": "8dab5ba48b0560199267078118a31c043cc7472a2d37cb3374e3d4d9777801fb",
+    "refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+    "rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+    "online-hud.mjs": "a1fee8bcd13d21c2535b7cba494a3de21051b635956bc4a939612050065551b5",
+    "online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+    "ryggattack.js": "7ac5982a019499d2e63349386de2c482736d1e927e5dfa8036849cc171e79921",
+    "ryggattack_bg.wasm": "ee47ce928e085d754f1d19d91b5e4da3b99fa1bb1cbed08a6af09fccb4108755"
+  },
+  "started": "2026-11-03T11:59:23.685Z",
+  "verifier_sha256": "c3778c6ff9393e28fd23f30766cfb5261da80da6179af1803261de54ab04eb64",
+  "source": {
+    "base": "c65a509d38decf37ee23850b2dc9122808a8d4e1",
+    "files": {
+      "Cargo.lock": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+      "Cargo.toml": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+      "scripts/build-web.sh": "594d6948c729539e07b3e11ae0667f529cc6380c419d4e6f46152b52d06e6ac2",
+      "src/arena.rs": "b3140e390aba2c3662ed0ff1b30ab8cf1b0cb6dababfee88fe970743279a2ce0",
+      "src/batch.rs": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+      "src/bin/ryggattack-headless.rs": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+      "src/bin/ryggattack-net-probe.rs": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+      "src/bin/ryggattack-server.rs": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+      "src/combat.rs": "100c8af20cec828a97876a76334c9188bd3c080e4512262de42471de3b862864",
+      "src/explosions.rs": "5639b1f6df1280d8aeddebb77a1b557cd154aa0e11250bd4a11c12cd5d2a2538",
+      "src/game.rs": "4b4f27d08eb23e204d9c4092b209c80b7d686b12869684199b20fcf55a8ec968",
+      "src/headless.rs": "d49f4f8757a11c1499c58768257e0bc3fe42d1f679c422df2f809f7e2872aaa4",
+      "src/input.rs": "83bae6f383ab008eead1cd2341ba15205b516de1e00c8344d70905e1d2df7221",
+      "src/lib.rs": "d92e0b1f6865533dbc213583cdd0e0300b89280d2d1ca7ac07ad3a1cea44ae8e",
+      "src/main.rs": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+      "src/management.rs": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+      "src/match_settings.rs": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+      "src/net_client/explosion_tests.rs": "39a818def8e64a3adf65cb48891e714538ecf54d60307b253c7a90c45074f15b",
+      "src/net_client.rs": "5242d06f5100d8e7c407d6e7f7a7080453cad91d82daace070e6fb69f06201cb",
+      "src/network.rs": "e8e033dc24b18421cf160bf0d80e999b5f9b9a86fcb4f16d9b164d9cac96600b",
+      "src/online/environment/tests.rs": "bba53b05abd50cbb96fee162a9221f4c4858e093827214b8f26605039bcdfdd6",
+      "src/online/environment.rs": "11ac77d589ec269b8b8bb8e8f7e2a8fdedf6c0bba7118941f0591a52976a6150",
+      "src/online/explosion_tests.rs": "8a317cf57f2093d90691d24e1705ff1f890164271d4e35176225e6d5e613590c",
+      "src/online/visual_tests.rs": "f2748fca62c6772b2810d7c7cfe5808d4d8e84a40c5c1e591b9c064af1e9c92e",
+      "src/online.rs": "55a13c1061b844117ec514e9e0f230c6f2a78cfaba0a28a03480fbb6cbb39163",
+      "src/players/mod.rs": "43aba90ebc8e14ed9882bd213ffb4370f9ce47c1923806721ac99e284de0f801",
+      "src/players/roster.rs": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+      "src/players/visuals.rs": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+      "src/powerups.rs": "7ec3f36dc8eede1299215152e5505493d625b7ec73e2c6e5a773eeb8be51768f",
+      "src/prediction/tests.rs": "fe8002b16f38865df0335ce7e8ef1d72937432417239f1b32de4b1a9bfb8d729",
+      "src/prediction.rs": "8566a82a4b445553b14187ca6dc8edbbdf7c45037cf3c4da5ab4d34bbb4e795f",
+      "src/rooms.rs": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+      "src/scene.rs": "b42453009c69c40eadcade8fd0b800176bc80bafd3cabc5dd0853445b26ff8b2",
+      "src/scenery.rs": "72ac79d41e6f2ea62163f2784ceb357568b068d1fde71ed397cd464c35ce7df5",
+      "src/server/authority_tests.rs": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+      "src/server/parity_tests.rs": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+      "src/server.rs": "56c3c816169c9f1603beb7d13e6b19ed88d7e5d3728cee7678cd3153ec80ef01",
+      "src/settings.rs": "53cba8b38277742e3afb0f99c7924787975f8ee713358cc0b4ae07aa782f0133",
+      "src/simulation.rs": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+      "src/tracks/map.rs": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+      "src/tracks/mod.rs": "837c9618e3d36fb46a3d048414f1f1e4bd37ba5563261b71000effd658e4b647",
+      "src/tracks/path.rs": "0ba32b96bd6abebfd585697f1d8dc6fff05d26eccb180d372c846623de629470",
+      "src/tracks/render.rs": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+      "src/ui/lobby.rs": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+      "src/ui/mod.rs": "02294b614ce40c4681a72611df2eb4cf7a89e9a78ded335f95cf848881c07107",
+      "src/ui/nav.rs": "574848624abe5e3403fc16e46ec4da14add2c8dc26ec863c626dcbb9d473fc29",
+      "web/Dockerfile": "d06e18b633d7983fd22e652f3f75d5309c56a9a5ecc7698973b30c26019e279e",
+      "web/index.html": "77ec4a652dbee5bd52e91ad6e4822ae7ef33c2209af2477f5153fe7e0d0b9a52",
+      "web/nginx-main.conf": "9ef62c425319fe5c4f2f87156faa43d09f2e7ecc42db08b1d1027ac5a3ae42b1",
+      "web/nginx.conf": "7236c92101e1a7cb959c1d0442b1b67a0c8d8719f32902b205faf9de483ec1de",
+      "web/online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+      "web/online-hud.mjs": "a1fee8bcd13d21c2535b7cba494a3de21051b635956bc4a939612050065551b5",
+      "web/pages-redirect.html": "21e496aa296735eb198c218cc30f0b7c7e5d36b0c623501c2c67437078dc4118",
+      "web/refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+      "web/rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+      "web/touch-controls.mjs": "8dab5ba48b0560199267078118a31c043cc7472a2d37cb3374e3d4d9777801fb",
+      "scripts/touch-controls.test.mjs": "0bc780ba5dfe66b6712e307e7cbeb504c529957af55e52c7b965da0d2425010e",
+      "scripts/mobile-touch-smoke.mjs": "c3778c6ff9393e28fd23f30766cfb5261da80da6179af1803261de54ab04eb64"
+    },
+    "optional_wasm_opt": false,
+    "provenance": "Mixed artifact: unchanged prior compiler WASM/bindgen; corrected web JS restaged. See artifact-receipt.json."
+  },
+  "online_authority_shots": [
+    {
+      "tick": 804,
+      "seat": 0,
+      "cooldown": 0.5,
+      "alive": true
+    },
+    {
+      "tick": 808,
+      "seat": 0,
+      "cooldown": 0.4375,
+      "alive": true
+    },
+    {
+      "tick": 812,
+      "seat": 0,
+      "cooldown": 0.375,
+      "alive": true
+    },
+    {
+      "tick": 816,
+      "seat": 0,
+      "cooldown": 0.3125,
+      "alive": true
+    },
+    {
+      "tick": 820,
+      "seat": 0,
+      "cooldown": 0.25,
+      "alive": true
+    },
+    {
+      "tick": 824,
+      "seat": 0,
+      "cooldown": 0.1875,
+      "alive": true
+    },
+    {
+      "tick": 828,
+      "seat": 0,
+      "cooldown": 0.125,
+      "alive": true
+    },
+    {
+      "tick": 832,
+      "seat": 0,
+      "cooldown": 0.0625,
+      "alive": true
+    },
+    {
+      "tick": 836,
+      "seat": 0,
+      "cooldown": 0.5,
+      "alive": true
+    },
+    {
+      "tick": 840,
+      "seat": 0,
+      "cooldown": 0.4375,
+      "alive": true
+    },
+    {
+      "tick": 844,
+      "seat": 0,
+      "cooldown": 0.375,
+      "alive": true
+    },
+    {
+      "tick": 848,
+      "seat": 0,
+      "cooldown": 0.3125,
+      "alive": true
+    }
+  ]
+}

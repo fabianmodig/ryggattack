@@ -1,0 +1,15 @@
+{
+  "status": "interrupted",
+  "outer_tool_timeout_seconds": 180,
+  "completed_prior_commands": [
+    "23-native-tls",
+    "24-server-banner",
+    "25-server-policy",
+    "26-production-smoke",
+    "27-network-sockets"
+  ],
+  "headless_exit_unconfirmed": true,
+  "headless_log_empty": true,
+  "cause": "The default helper invokes cargo run. Repeated environment sourcing duplicated RUSTFLAGS and could invalidate cache; outer tool terminated before the helper flushed buffered output. No source failure inferred. No live cargo/rustc process remained on inspection.",
+  "replacement": "29-headless-direct invokes the existing unchanged-source executable explicitly, avoiding an unnecessary Cargo run."
+}

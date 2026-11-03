@@ -1,0 +1,10 @@
+{
+  "command": [
+    "helm",
+    "lint",
+    "charts/ryggattack",
+    "--strict"
+  ],
+  "seconds": 0.056,
+  "exit": 0
+}

@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/portable-container-build.test.mjs"
+  ],
+  "seconds": 0.041,
+  "exit": 0
+}

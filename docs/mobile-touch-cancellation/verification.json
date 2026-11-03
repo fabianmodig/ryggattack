@@ -1,0 +1,351 @@
+{
+  "native_passed": 257,
+  "selected_node_passed": 168,
+  "browser_passed": 14,
+  "browser_viewport": [
+    375,
+    740
+  ],
+  "page_errors": [],
+  "screenshots": {
+    "01-phone-main.png": {
+      "sha256": "f25b75a91334bee59a2169a61361e56639ed4df4a729e39c3c266713a184e7da",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "02-phone-lobby.png": {
+      "sha256": "72ef7a93db5b641de513a95330c64f3ee423e31eef8129dd0fc286769229beb9",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "03-phone-playing.png": {
+      "sha256": "5850989c339ce42606a1e37de38b48cf036b96f1428082958ab39a790d2609c8",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "04-phone-paused.png": {
+      "sha256": "ef53d527030f567db15c769b8de030e53fdec22210b1369a0576731fe968b307",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "05-phone-match-over.png": {
+      "sha256": "6e80aeb0d1e5cf6ea25093acc4664daf812d92eb6fe4b6ca304d81447e092ad1",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "06-phone-online.png": {
+      "sha256": "e13afbb0146d88068f02e144800bb1100df3d3120397385a0611044a7d908d2c",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "07-offline-cancelled.png": {
+      "sha256": "628a008ad9cb566845f0953e53b78a759eebd58a66deee3a67c790f041ebf055",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    },
+    "08-online-cancelled.png": {
+      "sha256": "679ad08aee9034d1f1fb596728917cdd48a131c79996c01412d32ce02f63cfdb",
+      "visually_reviewed": true,
+      "findings": "Full portrait arena and readable DOM controls; synthetic local gameplay/TouchQA. No credentials or personal data visible. Still image alone is not input-state proof."
+    }
+  },
+  "timings": {
+    "05-native.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "seconds": 6.615,
+      "exit": 101
+    },
+    "07-source-real-red.timing.json": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=sampled tap cancellation",
+        "scripts/.cancellation-red.test.mjs"
+      ],
+      "seconds": 0.22,
+      "exit": 1
+    },
+    "08-node.timing.json": {
+      "command": [
+        "node",
+        "--test",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/touch-controls.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/prediction-delay.test.mjs",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-explosion-feedback.test.mjs"
+      ],
+      "seconds": 1.089,
+      "exit": 0
+    },
+    "09-focus-1.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+        "--",
+        "--exact"
+      ],
+      "seconds": 0.448,
+      "exit": 0
+    },
+    "09-focus-2.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+        "--",
+        "--exact"
+      ],
+      "seconds": 0.552,
+      "exit": 0
+    },
+    "09-focus-3.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+        "--",
+        "--exact"
+      ],
+      "seconds": 0.487,
+      "exit": 0
+    },
+    "09-focus-4.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+        "--",
+        "--exact"
+      ],
+      "seconds": 0.454,
+      "exit": 0
+    },
+    "09-focus-5.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+        "--",
+        "--exact"
+      ],
+      "seconds": 0.441,
+      "exit": 0
+    },
+    "10-native-rerun.timing.json": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "seconds": 42.292,
+      "exit": 0
+    },
+    "11-clippy.timing.json": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets"
+      ],
+      "seconds": 0.584,
+      "exit": 0
+    },
+    "12-node-all-selected.timing.json": {
+      "command": [
+        "node",
+        "--test",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/touch-controls.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/prediction-delay.test.mjs",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs"
+      ],
+      "seconds": 2.268,
+      "exit": 0
+    },
+    "13-rooms-ui.timing.json": {
+      "command": [
+        "node",
+        "scripts/rooms-ui.test.mjs"
+      ],
+      "seconds": 0.087,
+      "exit": 0
+    },
+    "14-pages.timing.json": {
+      "command": [
+        "node",
+        "scripts/pages-redirect.test.mjs"
+      ],
+      "seconds": 0.073,
+      "exit": 0
+    },
+    "15-chart-version.timing.json": {
+      "command": [
+        "python3",
+        "scripts/update-chart-version.test.py"
+      ],
+      "seconds": 0.173,
+      "exit": 0
+    },
+    "16-prediction-evidence.timing.json": {
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.py"
+      ],
+      "seconds": 1.525,
+      "exit": 0
+    },
+    "17-prediction-regressions.timing.json": {
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.test.py"
+      ],
+      "seconds": 1.568,
+      "exit": 0
+    },
+    "18-container-network.timing.json": {
+      "command": [
+        "node",
+        "--test",
+        "scripts/container-smoke-network.test.mjs"
+      ],
+      "seconds": 0.15,
+      "exit": 0
+    },
+    "19-portable-container.timing.json": {
+      "command": [
+        "node",
+        "scripts/portable-container-build.test.mjs"
+      ],
+      "seconds": 0.041,
+      "exit": 0
+    },
+    "20-helm.timing.json": {
+      "command": [
+        "helm",
+        "lint",
+        "charts/ryggattack",
+        "--strict"
+      ],
+      "seconds": 0.056,
+      "exit": 0
+    },
+    "21-chart.timing.json": {
+      "command": [
+        "python3",
+        "scripts/chart-test.py"
+      ],
+      "seconds": 0.247,
+      "exit": 0
+    },
+    "22-browser.timing.json": {
+      "command": [
+        "node",
+        "scripts/mobile-touch-smoke.mjs"
+      ],
+      "seconds": 133.73,
+      "exit": 0
+    },
+    "23-native-tls.timing.json": {
+      "command": [
+        "node",
+        "scripts/native-tls.test.mjs"
+      ],
+      "seconds": 2.195,
+      "exit": 0
+    },
+    "24-server-banner.timing.json": {
+      "command": [
+        "node",
+        "scripts/server-banner.test.mjs"
+      ],
+      "seconds": 0.073,
+      "exit": 0
+    },
+    "25-server-policy.timing.json": {
+      "command": [
+        "node",
+        "scripts/server-policy.test.mjs"
+      ],
+      "seconds": 0.115,
+      "exit": 0
+    },
+    "26-production-smoke.timing.json": {
+      "command": [
+        "node",
+        "scripts/production-smoke.mjs"
+      ],
+      "seconds": 5.092,
+      "exit": 0
+    },
+    "27-network-sockets.timing.json": {
+      "command": [
+        "node",
+        "scripts/network-sockets.mjs"
+      ],
+      "seconds": 10.381,
+      "exit": 0
+    },
+    "29-headless-direct.timing.json": {
+      "command": [
+        "python3",
+        "scripts/headless-smoke.py",
+        "target/debug/ryggattack-headless"
+      ],
+      "seconds": 1.258,
+      "exit": 0
+    },
+    "04-adapters-green-time.json": {
+      "seconds": 0.7244455830077641,
+      "exit": 0
+    },
+    "02-js-red-time.json": {
+      "seconds": 0.17011143401032314,
+      "exit": 1
+    },
+    "03-js-green-time.json": {
+      "seconds": 0.18560935003915802,
+      "exit": 0
+    }
+  },
+  "native_initial_failure_retained": true,
+  "native_focused_reruns_passed": 5,
+  "clippy_existing_warnings": 7,
+  "no_wasm_rebuild": true,
+  "physical_apple_safari_verified": false,
+  "publication_performed": false,
+  "independent_review_required": true
+}

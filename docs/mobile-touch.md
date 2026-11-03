@@ -27,6 +27,9 @@ controller schemes remain available.
   controls; text editing and scrolling are not converted into game gestures.
 
 A second finger cancels the gesture until all participating fingers lift.
+That cancellation advances the bridge epoch even if the tap was already sampled
+by Rust. It does not reset the active-finger set: lifting only one finger or
+adding a replacement finger cannot start a new gesture while another is held.
 Pointer cancellation, unexpected capture loss, canvas/window blur, visibility
 changes, entering menus and round boundaries clear retained steering and pending
 fire. Normal pointer-up / implicit capture loss deliberately retain a swipe.
@@ -84,9 +87,14 @@ and screenshots under `verification/mobile-touch/browser/`. It never contacts,
 publishes to or restarts the deployed game. Source-bound build hashes and TDD
 red/green logs are retained under `verification/mobile-touch/` in the feature
 worktree. The automated browser gate is separate from Node CI module tests.
-The [recorded acceptance report](mobile-touch-evidence/README.md) includes the
-final reviewed screenshots, measured timings, source/artifact hashes and selected
-red/green logs. Its final release replay omits only the optional wasm-opt pass.
+The [original acceptance report](mobile-touch-evidence/README.md) is immutable
+historical evidence for `c65a509`, not acceptance of the later cancellation fix.
+The [cancellation repair report](mobile-touch-cancellation/README.md) retains the
+observed-failing sampled-fire regression, corrected browser replay, screenshots,
+timings and mixed-artifact provenance. The Node touch suite requires `rustc`:
+it compiles actual checked-in Rust sample/local/online transition blocks with
+neutral device/transport fixtures, proving pending-fire cancellation between
+ticks/sends without changing or rebuilding the production WASM inputs.
 
 Native Apple Safari / physical iPhone or iPad hardware is **unverified**. Chromium
 mobile emulation does not establish Safari GPU, real safe-area, address-bar,

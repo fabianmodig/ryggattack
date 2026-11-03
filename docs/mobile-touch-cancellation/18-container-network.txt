@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: local smoke publishes only random loopback ports
+ok 1 - local smoke publishes only random loopback ports
+  ---
+  duration_ms: 1.833151
+  type: 'test'
+  ...
+# Subtest: remote-daemon CI smoke shares the calling job network without host exposure
+ok 2 - remote-daemon CI smoke shares the calling job network without host exposure
+  ---
+  duration_ms: 0.201362
+  type: 'test'
+  ...
+# Subtest: network helper rejects malformed namespaces, ports and non-loopback publication
+ok 3 - network helper rejects malformed namespaces, ports and non-loopback publication
+  ---
+  duration_ms: 2.047692
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 96.409869

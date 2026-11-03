@@ -1,0 +1,7 @@
+{
+  "baseline": "c65a509d38decf37ee23850b2dc9122808a8d4e1",
+  "path": "src/net_client.rs",
+  "baseline_and_current_sha256": "5242d06f5100d8e7c407d6e7f7a7080453cad91d82daace070e6fb69f06201cb",
+  "byte_identical": true,
+  "classification": "Real connection failure callback may race manually injected frame; focused and full reruns retained without modifying unrelated code."
+}

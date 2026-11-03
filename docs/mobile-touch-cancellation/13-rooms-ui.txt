@@ -1,0 +1,1 @@
+unified menu: validation, explicit admission, duplicate guard, invitations, scoped resume, lifecycle, authority, focus, clipboard and shared navigation passed

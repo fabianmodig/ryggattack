@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "scripts/refresh-rate.test.mjs",
+    "scripts/touch-controls.test.mjs",
+    "scripts/resilience-harness.test.mjs",
+    "scripts/network-harness.test.mjs",
+    "scripts/prediction-delay.test.mjs",
+    "scripts/client-feedback-helpers.test.mjs",
+    "scripts/solo-bots-helpers.test.mjs",
+    "scripts/online-hud.test.mjs",
+    "scripts/online-hud-bridge.test.mjs",
+    "scripts/online-explosion-feedback.test.mjs"
+  ],
+  "seconds": 1.089,
+  "exit": 0
+}

@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/native-tls.test.mjs"
+  ],
+  "seconds": 2.195,
+  "exit": 0
+}

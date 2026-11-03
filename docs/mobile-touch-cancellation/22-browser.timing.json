@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/mobile-touch-smoke.mjs"
+  ],
+  "seconds": 133.73,
+  "exit": 0
+}

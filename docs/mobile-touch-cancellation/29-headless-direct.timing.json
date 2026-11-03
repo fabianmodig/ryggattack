@@ -1,0 +1,9 @@
+{
+  "command": [
+    "python3",
+    "scripts/headless-smoke.py",
+    "target/debug/ryggattack-headless"
+  ],
+  "seconds": 1.258,
+  "exit": 0
+}

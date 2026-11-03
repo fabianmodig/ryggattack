@@ -1,0 +1,1 @@
+Pages canonical redirect preserves room/settings, replaces obsolete backends, retains offline entry

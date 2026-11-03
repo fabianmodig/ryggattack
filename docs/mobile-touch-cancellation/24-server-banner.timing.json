@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/server-banner.test.mjs"
+  ],
+  "seconds": 0.073,
+  "exit": 0
+}

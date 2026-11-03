@@ -1,0 +1,13 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--lib",
+    "net_client::resilience_tests::frame_arrival_time_survives_a_late_adapter_poll",
+    "--",
+    "--exact"
+  ],
+  "seconds": 0.448,
+  "exit": 0
+}

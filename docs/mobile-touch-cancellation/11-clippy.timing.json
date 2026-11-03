@@ -1,0 +1,10 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--all-targets"
+  ],
+  "seconds": 0.584,
+  "exit": 0
+}

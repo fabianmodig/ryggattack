@@ -1,0 +1,8 @@
+{
+  "command": [
+    "node",
+    "scripts/production-smoke.mjs"
+  ],
+  "seconds": 5.092,
+  "exit": 0
+}

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: swipe chooses a cardinal direction retained for the next junction, without firing
+ok 1 - swipe chooses a cardinal direction retained for the next junction, without firing
+  ---
+  duration_ms: 3.071192
+  type: 'test'
+  ...
+# Subtest: short taps latch exactly once; long holds and out-and-back swipes never tap-fire
+ok 2 - short taps latch exactly once; long holds and out-and-back swipes never tap-fire
+  ---
+  duration_ms: 0.395077
+  type: 'test'
+  ...
+# Subtest: multitouch cancels until every finger lifts; reset drops direction and pending tap
+ok 3 - multitouch cancels until every finger lifts; reset drops direction and pending tap
+  ---
+  duration_ms: 0.517789
+  type: 'test'
+  ...
+# Subtest: real bridge consumes taps and resets on cancel/blur/visibility/menu without hijacking mouse or forms
+ok 4 - real bridge consumes taps and resets on cancel/blur/visibility/menu without hijacking mouse or forms
+  ---
+  duration_ms: 2.099245
+  type: 'test'
+  ...
+# Subtest: multitouch invalidates an already sampled tap and blocks replacements until every finger lifts
+ok 5 - multitouch invalidates an already sampled tap and blocks replacements until every finger lifts
+  ---
+  duration_ms: 0.623407
+  type: 'test'
+  ...
+# Subtest: entry scopes touch-action to gestures, retains form scrolling and packages safe-area controls
+ok 6 - entry scopes touch-action to gestures, retains form scrolling and packages safe-area controls
+  ---
+  duration_ms: 0.880277
+  type: 'test'
+  ...
+# Subtest: online bridge only samples live Running gameplay, resets across round/menu and retains normal pointer-up
+ok 7 - online bridge only samples live Running gameplay, resets across round/menu and retains normal pointer-up
+  ---
+  duration_ms: 0.613754
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 124.230775

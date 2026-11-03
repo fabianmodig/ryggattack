@@ -1,0 +1,25 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "scripts/refresh-rate.test.mjs",
+    "scripts/touch-controls.test.mjs",
+    "scripts/resilience-harness.test.mjs",
+    "scripts/network-harness.test.mjs",
+    "scripts/prediction-delay.test.mjs",
+    "scripts/client-feedback-helpers.test.mjs",
+    "scripts/solo-bots-helpers.test.mjs",
+    "scripts/online-hud-artifacts.test.mjs",
+    "scripts/online-hud-assets.test.mjs",
+    "scripts/online-hud-bridge.test.mjs",
+    "scripts/online-hud-cases.test.mjs",
+    "scripts/online-hud-startup.test.mjs",
+    "scripts/online-hud-temporal.test.mjs",
+    "scripts/online-hud.test.mjs",
+    "scripts/online-explosion-cleanup.test.mjs",
+    "scripts/online-explosion-evidence.test.mjs",
+    "scripts/online-explosion-privacy.test.mjs"
+  ],
+  "seconds": 2.268,
+  "exit": 0
+}

@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/prediction-evidence.py"
+  ],
+  "seconds": 1.525,
+  "exit": 0
+}
