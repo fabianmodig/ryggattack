@@ -1,0 +1,113 @@
+{
+  "results": [
+    {
+      "command": [
+        "helm",
+        "lint",
+        "charts/ryggattack",
+        "--strict"
+      ],
+      "exit": 0,
+      "seconds": 0.126
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/chart-test.py"
+      ],
+      "exit": 0,
+      "seconds": 0.253
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/beta-chart.test.py"
+      ],
+      "exit": 0,
+      "seconds": 0.103
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/beta-pointer.test.py"
+      ],
+      "exit": 0,
+      "seconds": 10.631
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/beta-workflow.test.py"
+      ],
+      "exit": 0,
+      "seconds": 0.044
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/update-chart-version.test.py"
+      ],
+      "exit": 0,
+      "seconds": 0.141
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.py"
+      ],
+      "exit": 0,
+      "seconds": 0.825
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/prediction-evidence.test.py"
+      ],
+      "exit": 0,
+      "seconds": 1.11
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/rooms-ui.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/prediction-delay.test.mjs",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs",
+        "scripts/pages-redirect.test.mjs",
+        "scripts/portable-container-build.test.mjs",
+        "scripts/container-smoke-network.test.mjs",
+        "scripts/live-deployment-helpers.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs"
+      ],
+      "exit": 1,
+      "seconds": 1.194
+    }
+  ],
+  "elapsed_seconds": 14.426,
+  "base_commit": "82e4ac50bee958cce45301791d699bc00bab434a",
+  "candidate_sha256": {
+    ".forgejo/workflows/ci.yml": "7e3dd901d03b5c6d18fe42a0d97922fc3c74a934d843dac2ed7d1029031fb42e",
+    "scripts/beta-pointer.py": "e5246f5076de83b1e2ca269f9d01ddb3174c189b22fb74282b03775924fa75a3",
+    "scripts/beta-pointer.test.py": "2c72d1207139def0f3a7fff821aa0948fef19df22b67872ffe7617f7eeb2cca4",
+    "scripts/beta-workflow.test.py": "afe84d3fce0b9fa791b2c234cb4a5e49eb0c11fc2fbcb3fa8cac947bab61d950",
+    "docs/shared-beta.md": "65fceea71ac04a1cad165848166700ae8a61419ccddc27304c3eca6535abaeac"
+  },
+  "node_version": "v26.12.1",
+  "node_failure": "Unchanged solo-bots-helpers.test.mjs:54 expects TAP text; nested test passed but default reporter emits spec. Reporter-pinned rerun blocked by approval, not run/retried.",
+  "independent_review": "pending parent review; local commit is not approval or publication",
+  "external_writes": false,
+  "cargo_wasm_container_builds": false
+}

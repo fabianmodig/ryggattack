@@ -15,7 +15,12 @@ assert 'github.event.pull_request.head.repo.full_name == github.repository' in b
 steps = beta['steps']
 checkout = next(s for s in steps if s.get('uses', '').endswith('checkout@v4'))
 assert checkout['with']['ref'] == '${{ github.event.pull_request.head.sha }}'
-assert checkout['with']['token'] == '${{ secrets.BETA_DEPLOY_TOKEN }}'
+assert checkout['with']['token'] == '${{ github.token }}', 'source checkout must use ordinary read token'
+assert beta['env']['PR_READ_TOKEN'] == '${{ github.token }}'
+assert beta['env']['BETA_PACKAGE_USER'] == '${{ secrets.BETA_PACKAGE_USER }}'
+assert beta['env']['BETA_PACKAGE_TOKEN'] == '${{ secrets.BETA_PACKAGE_TOKEN }}'
+assert 'PACKAGE_USER' not in beta['env'] and 'PACKAGE_TOKEN' not in beta['env']
+assert beta['env']['BETA_DEPLOY_TOKEN'] == '${{ secrets.BETA_DEPLOY_TOKEN }}'
 assert any('download-artifact@v3' in s.get('uses', '') for s in steps)
 assert any('upload-artifact@v3' in s.get('uses', '') for s in jobs['web']['steps'])
 commands = '\n'.join(s.get('run', '') for s in steps)
@@ -23,7 +28,10 @@ assert 'scripts/build-web.sh' not in commands, 'reuse tested web artifact; do no
 assert 'container-smoke.mjs' in commands
 assert commands.index('container-smoke.mjs') < commands.index('docker push') < commands.index('beta-pointer.py')
 assert ':latest' not in commands
-assert '/beta' in commands
+assert 'IMAGE=git.modig.online/ryggattack-beta/ryggattack' in commands
+assert '$PACKAGE_' not in commands
+assert 'test "$(cat dist/web/source-sha.txt)" = "$(git rev-parse HEAD)"' in commands
+assert 'org.opencontainers.image.revision=$(git rev-parse HEAD)' in commands
 assert 'uuid' in commands, 'reruns must use a fresh artifact ID, not overwrite SHA tags'
 assert 'BETA_DEPLOY_TOKEN' in beta['env']
 assert all('PACKAGE_TOKEN' not in j.get('env', {}) and 'BETA_DEPLOY_TOKEN' not in j.get('env', {})

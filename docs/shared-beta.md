@@ -24,8 +24,8 @@ against malicious collaborators.
 
 Beta images are separate package repositories:
 
-- `git.modig.online/fabianmodig/ryggattack/beta/web:sha-<artifact-id>`
-- `git.modig.online/fabianmodig/ryggattack/beta/server:sha-<artifact-id>`
+- `git.modig.online/ryggattack-beta/ryggattack/web:sha-<artifact-id>`
+- `git.modig.online/ryggattack-beta/ryggattack/server:sha-<artifact-id>`
 
 The shared 40-hex artifact ID is derived from a fresh random UUID per execution,
 not from Forgejo's run/attempt counters. Same-SHA reruns get a new pair and
@@ -35,11 +35,15 @@ commits; OCI revision labels and pod annotations identify the actual PR SHA.
 Production image names/tags and `release.yml` are unchanged.
 
 After **both** pushes succeed, `scripts/beta-pointer.py` copies the PR's chart
-into a commit on the stable **beta-deploy** branch, setting the paired image
+into a commit on the stable **beta-deploy** branch of the private isolated repo
+`https://git.modig.online/fabianmodig/ryggattack-beta-deploy.git`, setting the paired image
 names/tag, beta host/Origin and source SHA/PR/run metadata. It never pushes main.
 The entire chart is delivered, so PR chart changes are exercised too, without a
-semver bump. Only this branch's chart is a delivery source; its other files are
-not a source checkout for builds. Do not merge the generated branch into main.
+semver bump. The first commit is an orphan in a fresh temporary Git repository:
+its tree contains **only `charts/ryggattack`**, with no app source or source
+history. Later commits descend only from the destination branch. Source `main`
+and all source refs remain untouched. Do not merge generated delivery commits
+into the source repository. No production repository/package migration occurs.
 
 ## Concurrency and failures
 
@@ -51,7 +55,12 @@ are ordinary non-force pushes, rejecting competing stale parents. The loser
 fetches the new tip and retries up to eight times. No force-push, rebase of a
 candidate source tree, or production commit-back is used. A real temporary-Git
 regression creates a concurrent winning commit and proves the retry is its
-child, not a history overwrite.
+child, not a history overwrite. A second regression races the first orphan
+branch creation and proves the losing publisher retries on that first winner.
+After every successful push, an authenticated `ls-remote` of the exact
+`refs/heads/beta-deploy` must equal the local commit before reporting success.
+A concurrent advancement during read-back fails closed rather than claiming
+this candidate is still current; the already-pushed commit is not rolled back.
 
 The publisher reads the live PR API after fetching each parent and again just
 before pushing. Closed PRs, forks and changed heads are skipped; conflict retries
@@ -80,30 +89,50 @@ Matching references (not GitHub assumptions):
 - [Flux HelmRelease, revision reconciliation and impersonation](https://fluxcd.io/flux/components/helm/helmreleases/)
 
 Forgejo PR automatic tokens are read-only, including same-repository PRs.
-Therefore the new job requires **BETA_DEPLOY_TOKEN**, a repository-write token
-for this app repository (also used for the PR API). `PACKAGE_USER` and
-`PACKAGE_TOKEN` publish packages as in the existing release pipeline. No cluster
-credential, kubeconfig or Kubernetes network access is required in CI.
-Provision secrets through the operator's existing secure process; never commit
-them or send them in chat. Protect main from the beta bot identity and permit
-that identity to create/update only `beta-deploy` via branch protection. Verify
-these effective rights before supplying its token. Do not rely on a GitHub
-`permissions:` block; it does not grant Forgejo PR write access. Package rights
-should be minimized to beta publication where the registry/account model
-allows it. Trusted same-repo workflows can access the configured secrets;
-branch protection and contributor trust are prerequisites, not optional claims
-that the workflow can enforce on itself.
+Credentials are deliberately separated:
+
+| Credential | Use and effective boundary |
+| --- | --- |
+| `${{ github.token }}` | Ordinary source checkout token, also exported as `PR_READ_TOKEN` for source live-PR API reads. No source write permission needed. |
+| `BETA_DEPLOY_TOKEN` | Bot `ryggattack-beta`, repository-scoped write to **only** private `fabianmodig/ryggattack-beta-deploy`; no source repository rights. |
+| `BETA_PACKAGE_USER` / `BETA_PACKAGE_TOKEN` | Bot-owned `ryggattack-beta` package publication; separate owner from all production packages. |
+
+The beta job never uses production `PACKAGE_USER`/`PACKAGE_TOKEN`, and
+`release.yml` stays unchanged. The delivery bot must **not** be granted source
+access. This avoids relying on branch protection to separate a shared source
+write token from the automatic production release identity. Same-repository
+contributors are still trusted with beta secrets and workload control, not
+production source or production package publishing credentials via this job.
+
+The isolated Git remote is named `beta`. Its token is Basic-auth encoded only
+in memory, supplied through subprocess `GIT_CONFIG_*` environment entries for
+`http.extraHeader`, never a remote URL, argv or persistent Git config. Source
+checkout auth is not copied. Git/API private diagnostics are suppressed on
+failure so a remote cannot echo credentials into logs. The source read token is
+used only by the PR API request; the destination write token is never sent to
+that API. A local absolute-path destination override exists for temporary-Git
+regressions only; production defaults to the exact isolated HTTPS URL above.
+No cluster credential, kubeconfig or Kubernetes network access is required in CI.
+Do not rely on GitHub `permissions:` to grant Forgejo PR write access.
+
+Operator provisioning metadata on 2026-11-03 reports bot ID 3, destination repo
+ID 27, default branch name `beta-deploy`, **no seeded branches**, and all three
+beta Actions secrets installed. This is a provisioning receipt, not publishing
+or rollout acceptance. Actual bot-owned image push, first chart-only branch
+creation, automatic source-token API access and runner artifact transport must
+still be exercised by reviewed CI. Never record credential values in evidence.
 
 Artifact upload/download use Forgejo-hosted v3 actions and same-run artifact
 names, not GitHub's v4 service. The first real run must verify artifact transport
-and PR token checkout/push on the installed runner. UUID allocation intentionally
+and automatic-token source checkout/API plus destination-only push on the
+installed runner. UUID allocation intentionally
 does not depend on unverified `run_attempt` rerun semantics.
 
-The companion nixos-config change defines isolated Flux resources. It is
-suspended and names a namespace-scoped impersonation ServiceAccount with **no
-new RBAC grants in this change**. Bootstrap, RBAC approval and live acceptance
-are documented there. Do not bypass this by reconciling PR charts as
-helm-controller's cluster-admin identity.
+The companion nixos-config work owns isolated Flux resources, the private
+destination Git URL/read-only credential and namespace-scoped impersonation
+RBAC. Activation and live acceptance are documented there; no infra or mobile
+files are changed by this app revision. Do not bypass namespace isolation by
+reconciling PR charts as helm-controller's cluster-admin identity.
 
 ## Local tests and TDD
 
@@ -133,3 +162,32 @@ No Cargo/WASM/container build was run locally for this configuration change
 while the separate mobile work used shared build caches. Required build/runtime
 CI gates remain in place. Publishing, actual rerun/concurrency behavior, Flux
 RBAC and live HTTPS/WSS acceptance are not implied by these local tests.
+
+### Isolated-delivery revision (2026-11-03)
+
+Prior prototype/failure evidence remains unchanged; the earlier six-case result
+above describes the original source-branch prototype, not isolated acceptance.
+The revised RED slice failed because the destination had no `beta-deploy` ref
+(the old publisher wrote to source origin). GREEN creates an orphan chart-only
+initial tree and separate linear destination history. A second RED slice
+rejected checkout with the destination token; GREEN uses `${{ github.token }}`
+and beta-only package credentials while preserving all full CI gates and web
+source-SHA/OCI provenance checks.
+
+The expanded temporary source + destination bare-Git/API suite covers source
+ref/history isolation, chart-only first tree, source-token API authorization,
+stale/closed/fork rejection, final live-head and final API-failure checks,
+initial creation races, existing-parent non-force retry, subprocess-only
+private destination auth, and exact-ref read-back (including a transport that
+falsely reports push success). No external writes or Cargo/WASM builds are
+part of these local regressions. Independent review and actual CI publication
+remain separate gates after this local commit.
+
+Local verification of this isolated revision: Helm strict lint and all seven
+Python gates passed (including 11 pointer cases). The 168-test Node nonbuild
+run passed 167 and failed the preexisting solo privacy fixture's reporter-text
+assertion: Node 22.23.4 emitted `ℹ tests 1` while the unchanged test expects
+`# tests 1`. Its nested privacy test itself passed. No Node/runtime/mobile file
+was modified to work around this. A proposed reporter-pinned rerun was blocked
+by the execution approval layer and was not executed or retried. The original
+failure log is retained separately; this is **not** an all-green gate claim.

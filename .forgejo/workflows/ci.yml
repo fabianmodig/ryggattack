@@ -149,17 +149,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: "0"
-      PACKAGE_USER: ${{ secrets.PACKAGE_USER }}
-      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
-      # PR automatic tokens are read-only on Forgejo, even for same-repo PRs.
+      BETA_PACKAGE_USER: ${{ secrets.BETA_PACKAGE_USER }}
+      BETA_PACKAGE_TOKEN: ${{ secrets.BETA_PACKAGE_TOKEN }}
+      # Destination-only write credential; source checkout/API use automatic read token.
       BETA_DEPLOY_TOKEN: ${{ secrets.BETA_DEPLOY_TOKEN }}
+      PR_READ_TOKEN: ${{ github.token }}
     steps:
       - name: Require publisher credentials
-        run: test -n "$PACKAGE_USER" && test -n "$PACKAGE_TOKEN" && test -n "$BETA_DEPLOY_TOKEN"
+        run: test -n "$BETA_PACKAGE_USER" && test -n "$BETA_PACKAGE_TOKEN" && test -n "$BETA_DEPLOY_TOKEN" && test -n "$PR_READ_TOKEN"
       - uses: https://data.forgejo.org/actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          token: ${{ secrets.BETA_DEPLOY_TOKEN }}
+          token: ${{ github.token }}
           fetch-depth: 0
       - uses: https://code.forgejo.org/actions/download-artifact@v3
         with:
@@ -168,8 +169,7 @@ jobs:
       - name: Verify artifact source and allocate unique beta pair
         run: |
           test "$(cat dist/web/source-sha.txt)" = "$(git rev-parse HEAD)"
-          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
-          echo "IMAGE=git.modig.online/$repository/beta" >> "$GITHUB_ENV"
+          echo "IMAGE=git.modig.online/ryggattack-beta/ryggattack" >> "$GITHUB_ENV"
           # Independent of run-id/attempt semantics: retries of the same SHA
           # get fresh artifact tags, separate from production image repositories.
           python3 -c 'import hashlib,uuid; print("VERSION=sha-" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()[:40])' >> "$GITHUB_ENV"
@@ -198,7 +198,7 @@ jobs:
         run: CONTAINER_SMOKE_NETWORK_CONTAINER="$HOSTNAME" node scripts/container-smoke.mjs "$IMAGE/web:$VERSION" "$IMAGE/server:$VERSION"
       - name: Publish both beta images then advance desired state
         run: |
-          printf '%s' "$PACKAGE_TOKEN" | docker login git.modig.online --username "$PACKAGE_USER" --password-stdin
+          printf '%s' "$BETA_PACKAGE_TOKEN" | docker login git.modig.online --username "$BETA_PACKAGE_USER" --password-stdin
           for component in web server; do
             docker push "$IMAGE/$component:$VERSION"
           done

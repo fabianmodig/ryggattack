@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Exercise beta delivery with real temporary Git remotes and a local PR API."""
 import json
+import base64
+import shutil
 import os
 from pathlib import Path
 import subprocess
@@ -21,7 +23,10 @@ class PointerTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.remote = self.root / 'remote.git'
+        self.source_remote = self.root / 'source.git'
+        self.source_remote.mkdir()
+        git(self.source_remote, 'init', '--bare')
+        self.remote = self.root / 'destination.git'
         self.source = self.root / 'source'
         self.remote.mkdir()
         git(self.remote, 'init', '--bare')
@@ -37,18 +42,35 @@ class PointerTest(unittest.TestCase):
         git(self.source, 'add', '.')
         git(self.source, 'commit', '-m', 'source')
         self.sha = git(self.source, 'rev-parse', 'HEAD')
-        git(self.source, 'remote', 'add', 'origin', str(self.remote))
+        (self.source / 'private-source.txt').write_text('must never be delivered')
+        git(self.source, 'add', '.')
+        git(self.source, 'commit', '-m', 'private source history')
+        self.sha = git(self.source, 'rev-parse', 'HEAD')
+        git(self.source, 'remote', 'add', 'origin', str(self.source_remote))
         git(self.source, 'push', 'origin', 'main')
         self.pr = {'state': 'open', 'head': {'sha': self.sha, 'repo': {'full_name': 'owner/game'}},
                    'base': {'repo': {'full_name': 'owner/game'}}}
         self.event = self.root / 'event.json'
         self.event.write_text(json.dumps({'number': 42, 'pull_request': self.pr}))
+        self.headers = []
+        self.api_status = 200
+        self.extra_env = {}
         self.on_get = lambda: None
+        self.source_refs = git(self.source_remote, 'show-ref')
+        self.source_history = git(self.source_remote, 'rev-list', '--all')
+        self.source_config = (self.source / '.git/config').read_bytes()
+        def source_unchanged():
+            self.assertEqual(git(self.source_remote, 'show-ref'), self.source_refs)
+            self.assertEqual(git(self.source_remote, 'rev-list', '--all'), self.source_history)
+            self.assertEqual((self.source / '.git/config').read_bytes(), self.source_config)
+            self.assertEqual(git(self.source, 'status', '--porcelain'), '')
+        self.addCleanup(source_unchanged)
         outer = self
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
+                outer.headers.append((self.path, self.headers.get('Authorization')))
                 outer.on_get()
-                self.send_response(200)
+                self.send_response(outer.api_status)
                 self.end_headers()
                 self.wfile.write(json.dumps(outer.pr).encode())
             def log_message(self, format, *args):
@@ -64,20 +86,85 @@ class PointerTest(unittest.TestCase):
                                '--event', str(self.event), '--tag', tag], text=True, capture_output=True,
                               env={**os.environ, 'GITHUB_REPOSITORY': 'owner/game', 'GITHUB_EVENT_NAME': 'pull_request',
                                    'GITHUB_API_URL': f'http://127.0.0.1:{self.server.server_port}',
-                                   'BETA_DEPLOY_TOKEN': 'local-test', 'GITHUB_RUN_ID': '9'})
+                                   'BETA_DEPLOY_TOKEN': 'destination-secret', 'PR_READ_TOKEN': 'source-read-secret',
+                                   'BETA_DEPLOY_REPOSITORY': str(self.remote), 'GITHUB_RUN_ID': '9', **self.extra_env})
 
     def test_atomic_chart_and_pair_does_not_modify_main(self):
         result = self.run_pointer()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(git(self.remote, 'rev-parse', 'main'), self.sha)
+        self.assertEqual(git(self.source_remote, 'rev-parse', 'main'), self.sha)
+        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), 'refs/heads/beta-deploy')
         values = git(self.remote, 'show', 'beta-deploy:charts/ryggattack/values.yaml')
-        self.assertIn('git.modig.online/owner/game/beta/web', values)
-        self.assertIn('git.modig.online/owner/game/beta/server', values)
+        self.assertIn('git.modig.online/ryggattack-beta/ryggattack/web', values)
+        self.assertIn('git.modig.online/ryggattack-beta/ryggattack/server', values)
         self.assertIn(self.sha, values)
         self.assertIn('ryggattack-beta.modig.online', values)
         self.assertIn('sha-' + 'b' * 40, git(self.remote, 'show', 'beta-deploy:charts/ryggattack/Chart.yaml'))
         self.assertEqual(git(self.remote, 'show', 'beta-deploy:charts/ryggattack/candidate.txt'), 'chart from PR')
         self.assertEqual(git(self.source, 'status', '--porcelain'), '')
+        self.assertEqual(git(self.remote, 'rev-list', '--count', 'beta-deploy'), '1')
+        files = git(self.remote, 'ls-tree', '-r', '--name-only', 'beta-deploy').splitlines()
+        self.assertTrue(files)
+        self.assertTrue(all(f.startswith('charts/ryggattack/') for f in files), files)
+        self.assertEqual(git(self.source_remote, 'for-each-ref', '--format=%(refname)'), 'refs/heads/main')
+        self.assertNotIn('destination-secret', (self.source / '.git/config').read_text())
+
+    def test_api_uses_source_automatic_read_token_only(self):
+        result = self.run_pointer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.headers, [('/repos/owner/game/pulls/42', 'token source-read-secret')] * 2)
+        self.assertNotIn('source-read-secret', result.stdout + result.stderr)
+        self.assertNotIn('destination-secret', result.stdout + result.stderr)
+
+    def test_initial_concurrent_creation_retries_without_source_ancestry(self):
+        competitor = None
+        count = 0
+        def compete():
+            nonlocal competitor, count
+            count += 1
+            if count != 2:
+                return
+            other = self.root / 'other'
+            other.mkdir()
+            git(other, 'init', '-b', 'beta-deploy')
+            git(other, 'config', 'user.name', 'Other')
+            git(other, 'config', 'user.email', 'other@example.invalid')
+            chart = other / 'charts/ryggattack'
+            chart.mkdir(parents=True)
+            (chart / 'competitor').write_text('initial winner')
+            git(other, 'add', '.')
+            git(other, 'commit', '-m', 'initial concurrent delivery')
+            competitor = git(other, 'rev-parse', 'HEAD')
+            git(other, 'push', str(self.remote), 'HEAD:beta-deploy')
+        self.on_get = compete
+        result = self.run_pointer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(git(self.remote, 'rev-parse', 'beta-deploy^'), competitor)
+        self.assertEqual(git(self.remote, 'rev-list', '--count', 'beta-deploy'), '2')
+        self.assertEqual(git(self.source_remote, 'rev-parse', 'main'), self.sha)
+        self.assertEqual(len(self.headers), 4)
+
+    def test_final_api_failure_keeps_destination_unchanged(self):
+        self.assertEqual(self.run_pointer().returncode, 0)
+        before = git(self.remote, 'rev-parse', 'beta-deploy')
+        count = 0
+        def fail_final():
+            nonlocal count
+            count += 1
+            if count == 2:
+                self.api_status = 403
+        self.on_get = fail_final
+        result = self.run_pointer('sha-' + 'f' * 40)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(count, 2)
+        self.assertEqual(git(self.remote, 'rev-parse', 'beta-deploy'), before)
+
+    def test_live_fork_rejected_before_push(self):
+        self.pr['head']['repo']['full_name'] = 'fork/game'
+        result = self.run_pointer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Skipped', result.stdout)
+        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), '')
 
     def test_stale_or_closed_pr_retains_previous_state(self):
         self.assertEqual(self.run_pointer().returncode, 0)
@@ -99,7 +186,7 @@ class PointerTest(unittest.TestCase):
         result = self.run_pointer()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('same-repository', result.stderr)
-        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), 'refs/heads/main')
+        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), '')
 
     def test_head_rechecked_immediately_before_push(self):
         count = 0
@@ -112,7 +199,7 @@ class PointerTest(unittest.TestCase):
         result = self.run_pointer()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('superseded before', result.stdout)
-        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), 'refs/heads/main')
+        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), '')
 
     def test_non_force_conflict_retries_on_global_branch_tip(self):
         self.assertEqual(self.run_pointer().returncode, 0)
@@ -134,8 +221,37 @@ class PointerTest(unittest.TestCase):
         result = self.run_pointer('sha-' + 'e' * 40)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(git(self.remote, 'rev-parse', 'beta-deploy^'), competitor)
-        self.assertEqual(git(self.remote, 'rev-parse', 'main'), self.sha)
+        self.assertEqual(git(self.source_remote, 'rev-parse', 'main'), self.sha)
         self.assertIn('sha-' + 'e' * 40, git(self.remote, 'show', 'beta-deploy:charts/ryggattack/Chart.yaml'))
+
+    def test_secure_destination_auth_and_remote_readback(self):
+        shim = self.root / 'bin'
+        shim.mkdir()
+        real_git = shutil.which('git')
+        audit = self.root / 'audit.jsonl'
+        executable = shim / 'git'
+        executable.write_text('#!/usr/bin/env python3\n' +
+            'import os,sys,json,subprocess\n' +
+            'args=sys.argv[1:]\n' +
+            "if any(x in args for x in ('ls-remote','fetch','push')):\n" +
+            " assert 'destination-secret' not in ' '.join(args)\n" +
+            " from pathlib import Path\n" +
+            " config=(Path(args[1])/'.git/config').read_text()\n" +
+            " assert 'destination-secret' not in config and 'extraheader' not in config.lower()\n" +
+            " assert os.environ.get('GIT_CONFIG_KEY_0') == 'http.https://git.modig.online/.extraHeader'\n" +
+            " assert os.environ.get('GIT_CONFIG_VALUE_0') == 'Authorization: Basic ' + __import__('base64').b64encode(b'ryggattack-beta:destination-secret').decode()\n" +
+            " with open(" + repr(str(audit)) + ", 'a') as f: f.write(json.dumps(args)+'\\n')\n" +
+            " if 'push' in args: sys.exit(0) # transport claims success but no ref moved\n" +
+            'sys.exit(subprocess.call([' + repr(real_git) + ']+args))\n')
+        executable.chmod(0o755)
+        self.extra_env['PATH'] = str(shim) + os.pathsep + os.environ['PATH']
+        result = self.run_pointer()
+        self.assertNotEqual(result.returncode, 0, 'must verify actual remote ref after successful push')
+        operations = [json.loads(line) for line in audit.read_text().splitlines()]
+        self.assertEqual([a[2] for a in operations], ['ls-remote', 'push', 'ls-remote'])
+        self.assertEqual(git(self.remote, 'for-each-ref', '--format=%(refname)'), '')
+        self.assertNotIn('destination-secret', result.stdout + result.stderr)
+        self.assertNotIn(base64.b64encode(b'ryggattack-beta:destination-secret').decode(), result.stdout + result.stderr)
 
     def test_api_failure_does_not_change_desired_state(self):
         self.assertEqual(self.run_pointer().returncode, 0)
