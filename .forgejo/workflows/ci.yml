@@ -48,6 +48,9 @@ jobs:
         with:
           # Start a fresh archive namespace after a failed legacy-cache restore.
           prefix-key: v1-rust-zstd
+          # Runner v13 duplicate GC can delete a PR-scoped archive mid-restore.
+          # Keep PR restores, but avoid creating competing scoped duplicates.
+          save-if: ${{ github.ref == 'refs/heads/main' }}
           # Compiling Bevy is nearly all of a cold run, and a failing test does
           # not invalidate it, so keep the dependency build either way.
           cache-on-failure: true

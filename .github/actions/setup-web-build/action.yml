@@ -25,6 +25,8 @@ runs:
       with:
         # Match the native cache epoch, while keeping distinct target keys.
         prefix-key: v1-rust-zstd
+        # Main releases warm the base cache; PRs must not create GC duplicates.
+        save-if: ${{ github.ref == 'refs/heads/main' }}
         # One entry for every job that compiles this target, which is why the
         # configuration lives here: a release only starts from a warm cache if
         # its key matches the one a build on the default branch saved, and two

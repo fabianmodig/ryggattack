@@ -40,6 +40,13 @@ class CacheContract(unittest.TestCase):
         self.assertIs(native["cache-on-failure"], True)
         self.assertIs(web["cache-on-failure"], True)
 
+    def test_only_main_can_save_caches(self):
+        for label, steps in (("native", self.native), ("web", self.web)):
+            with self.subTest(job=label):
+                config = cache_step(steps)[1]["with"]
+                self.assertEqual(config.get("save-if"),
+                                 "${{ github.ref == 'refs/heads/main' }}")
+
 
 if __name__ == "__main__":
     unittest.main()

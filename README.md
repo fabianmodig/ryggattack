@@ -217,12 +217,17 @@ anything.
 Native tests and web/release builds install `zstd` **before** restoring Cargo
 caches, so the cache action can select fast zstd compression instead of gzip.
 Both use the `v1-rust-zstd` cache epoch, with separate `test` and `web` keys;
-PR and release web builds share the same setup action. The new epoch bypasses
-legacy entries, including a native cache download that failed extraction.
-It does not establish why that download was invalid.
+PR and release web builds share the same setup action. Only main saves caches;
+PRs can still restore the main cache but do not retain PR-specific updates.
+This avoids generating duplicate branch-scoped archives: runner v13.2.0's
+duplicate garbage collection can delete an archive between lookup and download.
+The failed native restore coincided with deletion of its multi-gigabyte cache,
+strongly suggesting this race; the original HTTP status/body was not retained.
+The new epoch bypasses existing duplicates. It is a mitigation, not a runner fix.
 
-The first run in the new namespace is cold. Confirm a successful cache save,
-then check a later run for successful restoration and `.tzst` archive commands.
+The first run in the new namespace is cold. After merging, confirm a successful
+main cache save, then check a later run for successful restoration and `.tzst`
+archive commands. A pre-merge PR run cannot validate the main-only save path.
 Compare Cargo's compile time and the **post-action cache save** separately;
 tests finishing does not mean the runner has been released. A new branch can
 still be cold because Actions cache access remains branch-scoped. There are no
