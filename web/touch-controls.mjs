@@ -101,7 +101,7 @@ export function installTouchControls(env=globalThis) {
   for(const [id,action] of [['help-resume','resume'],['help-back','back']])listen($(id),'focus',()=>{env.ryggattackPauseDomFocus=action;});
   listen($('offline-pause'),'keydown',event=>{
     if(event.key==='Escape'){event.preventDefault();reset();env.ryggattackTouchAction='resume';}
-    if(event.key==='Tab'||event.key==='ArrowUp'||event.key==='ArrowDown'){event.preventDefault();(document.activeElement===$('help-resume')?$('help-back'):$('help-resume')).focus();}
+    if(event.key==='Tab'||event.key==='ArrowUp'||event.key==='ArrowDown'||event.code==='KeyW'||event.code==='KeyS'||/^[ws]$/i.test(event.key??'')){event.preventDefault();(document.activeElement===$('help-resume')?$('help-back'):$('help-resume')).focus();}
   });
   const timer=env.setInterval(update,100);update();
   return {destroy(){if(destroyed)return;destroyed=true;reset();env.clearInterval(timer);for(const off of listeners)off();delete env.ryggattackSampleTouch;}};

@@ -1,0 +1,257 @@
+{
+  "provenance": "mixed: unchanged freshly compiled WASM/bindgen retained from 49 receipt, repaired browser module from current candidate",
+  "base_commit": "49cba9281bf7a06c8fb221a7619a244009e702cd",
+  "compiler_manifest_sha256": "2fc4fbc2b5c9b45f85f134ad30e7a0a3bea8f390fc5907c8075557896293220a",
+  "commit_proof_sha256": "e62a29c0bd8bbdb2f634cce23c0a81ad6091602bb187c75a0e7334824442245f",
+  "compiled_inputs": {
+    "Cargo.lock": "629c4bf15c49ae306137011e5c0cccf358f7155056273b4c36b242f66709fbf7",
+    "Cargo.toml": "940c19ccda85d97b959c619355e2a1e568697d32cd231ed032d3198b79f4264b",
+    "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+    "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+    "scripts/build-web.sh": "594d6948c729539e07b3e11ae0667f529cc6380c419d4e6f46152b52d06e6ac2",
+    "src/arena.rs": "b3140e390aba2c3662ed0ff1b30ab8cf1b0cb6dababfee88fe970743279a2ce0",
+    "src/batch.rs": "23ee4ce6e71583796510886d1605dd419eaea59de8abf41725b5bcd87f8628ad",
+    "src/bin/ryggattack-headless.rs": "9b62fb122c4cd1eda5a038633f88b9343fdc3e4966a985564e607501d8f5c2cd",
+    "src/bin/ryggattack-net-probe.rs": "0bb5d968fa9857d2e0948111a6118580d2ae2472650fe793cc045e6d4b703633",
+    "src/bin/ryggattack-server.rs": "f048513958cf2649ef5153c59300c2c36c472ff97bb2793700559a74738095b3",
+    "src/combat.rs": "100c8af20cec828a97876a76334c9188bd3c080e4512262de42471de3b862864",
+    "src/explosions.rs": "5639b1f6df1280d8aeddebb77a1b557cd154aa0e11250bd4a11c12cd5d2a2538",
+    "src/game.rs": "4b4f27d08eb23e204d9c4092b209c80b7d686b12869684199b20fcf55a8ec968",
+    "src/headless.rs": "d49f4f8757a11c1499c58768257e0bc3fe42d1f679c422df2f809f7e2872aaa4",
+    "src/input.rs": "83bae6f383ab008eead1cd2341ba15205b516de1e00c8344d70905e1d2df7221",
+    "src/lib.rs": "d92e0b1f6865533dbc213583cdd0e0300b89280d2d1ca7ac07ad3a1cea44ae8e",
+    "src/main.rs": "5f1c9956acda1b00af2f95640e2a4a8bad0a9911f6576213d6dba953c24704c8",
+    "src/management.rs": "1da0cdce8465767413061574cc969a539660b7fe43e55683d79f591c52da44c0",
+    "src/match_settings.rs": "369087f49b211f583d3592905f164daec744de41e3482f4c7b5bd168e5e42e76",
+    "src/net_client.rs": "5242d06f5100d8e7c407d6e7f7a7080453cad91d82daace070e6fb69f06201cb",
+    "src/net_client/explosion_tests.rs": "39a818def8e64a3adf65cb48891e714538ecf54d60307b253c7a90c45074f15b",
+    "src/network.rs": "e8e033dc24b18421cf160bf0d80e999b5f9b9a86fcb4f16d9b164d9cac96600b",
+    "src/online.rs": "55a13c1061b844117ec514e9e0f230c6f2a78cfaba0a28a03480fbb6cbb39163",
+    "src/online/environment.rs": "11ac77d589ec269b8b8bb8e8f7e2a8fdedf6c0bba7118941f0591a52976a6150",
+    "src/online/environment/tests.rs": "bba53b05abd50cbb96fee162a9221f4c4858e093827214b8f26605039bcdfdd6",
+    "src/online/explosion_tests.rs": "8a317cf57f2093d90691d24e1705ff1f890164271d4e35176225e6d5e613590c",
+    "src/online/visual_tests.rs": "f2748fca62c6772b2810d7c7cfe5808d4d8e84a40c5c1e591b9c064af1e9c92e",
+    "src/players/mod.rs": "43aba90ebc8e14ed9882bd213ffb4370f9ce47c1923806721ac99e284de0f801",
+    "src/players/roster.rs": "871b6b132e4b3a31bd0eb403a94815695d12fe33583431e2783a3ffb415c2949",
+    "src/players/visuals.rs": "825fda251179dffa5789835f3b4587b659b9bfd7895a2a5063c48f7037c19574",
+    "src/powerups.rs": "7ec3f36dc8eede1299215152e5505493d625b7ec73e2c6e5a773eeb8be51768f",
+    "src/prediction.rs": "8566a82a4b445553b14187ca6dc8edbbdf7c45037cf3c4da5ab4d34bbb4e795f",
+    "src/prediction/tests.rs": "fe8002b16f38865df0335ce7e8ef1d72937432417239f1b32de4b1a9bfb8d729",
+    "src/rooms.rs": "b6d266a1577f992d5ec35637636d20c3269b5ea8b585ce8421faaa0731b535c8",
+    "src/scene.rs": "b42453009c69c40eadcade8fd0b800176bc80bafd3cabc5dd0853445b26ff8b2",
+    "src/scenery.rs": "72ac79d41e6f2ea62163f2784ceb357568b068d1fde71ed397cd464c35ce7df5",
+    "src/server.rs": "b80f288e706d96bf327df2bcf1f3fd10d424d48b616e0fb8d47001b4b0046ef8",
+    "src/server/authority_tests.rs": "0c6a0715f3e74e11a6358635533c107c6eefc024aa856f21ebc0c86ca109d282",
+    "src/server/parity_tests.rs": "e80e3b975e7dbd7ab74cefca4416819081734c0cbf7f0938568a06b22c68cbf9",
+    "src/settings.rs": "53cba8b38277742e3afb0f99c7924787975f8ee713358cc0b4ae07aa782f0133",
+    "src/simulation.rs": "a19a158f70eadaa35cd7976d58c256045ba1ee9e914deb5c62d457ccf6cfa2f9",
+    "src/tracks/map.rs": "d0776097a0fbb0cd83a85d666dc7acb9f6b02a6e3bafdc6cf41fa9d8f4dce965",
+    "src/tracks/mod.rs": "837c9618e3d36fb46a3d048414f1f1e4bd37ba5563261b71000effd658e4b647",
+    "src/tracks/path.rs": "0ba32b96bd6abebfd585697f1d8dc6fff05d26eccb180d372c846623de629470",
+    "src/tracks/render.rs": "a66ec31946b8d668019c2374a0ebff202273fbbd09fa37488675e863c901dc63",
+    "src/ui/lobby.rs": "d63a7e204ee7ff4d5a8eccbbb56071d9537c254fd3407b6c9d5baaba93e8c062",
+    "src/ui/mod.rs": "ed930aaf15a161c8d7f84b20bbec90765d746d488287a9b8abd75133d32bc87d",
+    "src/ui/nav.rs": "574848624abe5e3403fc16e46ec4da14add2c8dc26ec863c626dcbb9d473fc29"
+  },
+  "before_bundle": {
+    "refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+    "touch-controls.mjs": "5fd2035fa3c1ba6ce0f3ef3cfe1daa742eea99167f47946e4a5fc3ba43e432ac",
+    "ryggattack.js": "e92efdd6fb1af2f2cfc4b496b24cf18f50cb72a4e41b02a4148fecf1a3561416",
+    "online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+    "rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+    "online-hud.mjs": "a1fee8bcd13d21c2535b7cba494a3de21051b635956bc4a939612050065551b5",
+    "ryggattack_bg.wasm": "89f37307cddbfb9a5855e2227b6fa8cc5f27e8103cb3035b1534d4f806a81945",
+    "index.html": "ecaac77567ac0e65ab0c79a47648fb5b1ae8119213d73ca08f3347dc4a1bbab3",
+    "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304",
+    "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22"
+  },
+  "candidate_bundle": {
+    "ryggattack.js": "e92efdd6fb1af2f2cfc4b496b24cf18f50cb72a4e41b02a4148fecf1a3561416",
+    "rooms.mjs": "2ec454eceb682fd54eebecd8abb1839f734f71f4fd94304159e80915286d2d9b",
+    "refresh-rate.mjs": "0c6c9327cb97963fa2ec26115c7334bb0e58d98931b0350ab67a23530f016a48",
+    "ryggattack_bg.wasm": "89f37307cddbfb9a5855e2227b6fa8cc5f27e8103cb3035b1534d4f806a81945",
+    "index.html": "ecaac77567ac0e65ab0c79a47648fb5b1ae8119213d73ca08f3347dc4a1bbab3",
+    "online-hud.mjs": "a1fee8bcd13d21c2535b7cba494a3de21051b635956bc4a939612050065551b5",
+    "online-hud-bridge.mjs": "4559f7f7fb43d2d8787ed84bfb16ebaac08bbef96bde5f2ed8e30f2cd0a28ccc",
+    "touch-controls.mjs": "57ce300dce83663d9d1644e6bc2e6d45643d8f1a131409ffb0116e56259d8c06",
+    "assets/players/riders.png": "1157c1a4c7d7bead5df29cf7bada5591dc1fc38138679ba55658bc05cc688b22",
+    "assets/players/cart-riders.png": "e90ca6e0796dbbc6ec00d618c4d7954f1c89b9fc3931005745cb753dec6aa304"
+  },
+  "runtime_delta": [
+    "touch-controls.mjs"
+  ],
+  "no_rust_or_wasm_compilation": true,
+  "optional_wasm_opt": "historical build omitted; no optimization rerun",
+  "physical_safari_verified": false,
+  "source_sha256": {
+    "web/touch-controls.mjs": "57ce300dce83663d9d1644e6bc2e6d45643d8f1a131409ffb0116e56259d8c06",
+    "scripts/touch-controls.test.mjs": "9eff4efe2eebc6ed59215f3e5e2b5c49749df21679b2d5dfab1f616860377a3f",
+    "scripts/pause-keyboard-smoke.mjs": "41875b09a0ea979553c1ae199dfe19dda351eca00b38984cf1bad03c688184f8",
+    "docs/mobile-pause-ws-repair.md": "9de8de5216106aeccfb8daf408f9b988385f317b7709800dd7485ef63b694c9b"
+  },
+  "source_state": "candidate based on 49cba9281bf7a06c8fb221a7619a244009e702cd; final commit bound separately after commit",
+  "verifier_sha256": "41875b09a0ea979553c1ae199dfe19dda351eca00b38984cf1bad03c688184f8",
+  "evidence_root": "/home/hermes/.hermes/cache/scratch/hud-ws-repair",
+  "runs": {
+    "red-unit": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=paused DOM W/S",
+        "scripts/touch-controls.test.mjs"
+      ],
+      "exit": 1,
+      "seconds": 0.1367917790194042
+    },
+    "green-unit": {
+      "command": [
+        "node",
+        "--test",
+        "scripts/touch-controls.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.2209656410268508
+    },
+    "red-browser": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 1,
+      "seconds": 30.925532300956547
+    },
+    "green-browser": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 1,
+      "seconds": 140.9532913659932
+    },
+    "green-browser-02": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 1,
+      "seconds": 34.54792127001565
+    },
+    "green-browser-03": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 0,
+      "seconds": 40.47944493201794
+    },
+    "red-browser-final-verifier": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 1,
+      "seconds": 31.94117989996448
+    },
+    "green-browser-04": {
+      "command": [
+        "node",
+        "scripts/pause-keyboard-smoke.mjs"
+      ],
+      "exit": 0,
+      "seconds": 38.85866610601079
+    },
+    "js-gates": {
+      "command": [
+        "node",
+        "--test",
+        "scripts/refresh-rate.test.mjs",
+        "scripts/touch-controls.test.mjs",
+        "scripts/resilience-harness.test.mjs",
+        "scripts/network-harness.test.mjs",
+        "scripts/prediction-delay.test.mjs",
+        "scripts/client-feedback-helpers.test.mjs",
+        "scripts/solo-bots-helpers.test.mjs",
+        "scripts/online-hud-artifacts.test.mjs",
+        "scripts/online-hud-assets.test.mjs",
+        "scripts/online-hud-bridge.test.mjs",
+        "scripts/online-hud-cases.test.mjs",
+        "scripts/online-hud-startup.test.mjs",
+        "scripts/online-hud-temporal.test.mjs",
+        "scripts/online-hud.test.mjs",
+        "scripts/online-explosion-cleanup.test.mjs",
+        "scripts/online-explosion-evidence.test.mjs",
+        "scripts/online-explosion-privacy.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 1.343623372958973
+    },
+    "rooms-ui": {
+      "command": [
+        "node",
+        "scripts/rooms-ui.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.04999223002232611
+    },
+    "pages-redirect": {
+      "command": [
+        "node",
+        "scripts/pages-redirect.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.04136526503134519
+    }
+  },
+  "evidence_sha256": {
+    "red-unit.log": "cb6ef687b67bc6b2ea6c23f5a46b1866ab95f5caf8b11c38dbef178fc907f2de",
+    "red-unit.time.json": "2c8839ccbd12850324e4879615af4fa50caf2b3cf3dfe8b494848d99e7e7c371",
+    "green-unit.log": "96020f17511f166c0fa7b9a7c8d1c7fc26abef148e96eefa09dad4fec9729a73",
+    "green-unit.time.json": "5b89e1e2d3694ae3b2d12d9b0085a35bcf60c439d2dd27553e501d21c7df3c5a",
+    "red-browser.log": "aa2085cc3ca87b98043196bf6001836b211d7945f8b73c91ea70ec7de0a7871c",
+    "red-browser.time.json": "f2226b539c0fa465bccf308595b9aefe643f1f9b55b877f2e0606a978977975a",
+    "green-browser.log": "1128ce87f5293111ee3a3e71121f4add2899b069d27e7c5fa5d2a9113b296ba2",
+    "green-browser.time.json": "728e9a9c5f95b845c0198d79e193792a1949dced75d144c244c6a070ab3d6442",
+    "green-browser-02.log": "aa2085cc3ca87b98043196bf6001836b211d7945f8b73c91ea70ec7de0a7871c",
+    "green-browser-02.time.json": "c81af6d3f133a2348c833b3fc7063f051b717f657c1baf27e24b036f8f092c72",
+    "green-browser-03.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "green-browser-03.time.json": "0e5a273cb9a19951bb605c908c50dcb8c801d0912b8020e88852f8e9b768c3c1",
+    "red-browser-final-verifier.log": "3da4524f425e87098acd6c0a522a9fba7566593d88eb00ee9d187ade10fe19a5",
+    "red-browser-final-verifier.time.json": "d302bb2d29df2e7f131a094aa5703e9200698bdfde6be33e9694d4f4b93bd8f2",
+    "green-browser-04.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "green-browser-04.time.json": "c641599671dea5b2559ec6483ec0560cfebc0e22f8f87e9fe9c987ab1be6eb98",
+    "js-gates.log": "a734e9ce0d33a42a0c1629c0790234a9a4c290dc91edca08b42ac1e84218d750",
+    "js-gates.time.json": "43bf56f01ebcf3340a7a5856569b027d79e03aed841abbcba8fc37e882c78e95",
+    "rooms-ui.log": "6655796595382a924fd583ddffd9b4178d6ab74d851ff2520032271d49e3c91b",
+    "rooms-ui.time.json": "eee1afd844eab25e485cc135c6c496cb5fa6c891a1706fb9dcb53cc3cb568c25",
+    "pages-redirect.log": "044adea53bc4c2f40cc22dcbbc5757970c411560d98eae22c535c10ebd1f408e",
+    "pages-redirect.time.json": "a9b885e5e3d798a42bd5ebf04fb3308c966d76c026e5e2d4e7e28b4c3b66a419",
+    "red-browser/failure.png": "6dbf514edcaca55a48ab70cd616b730b38b588341e84b0a1f0dfcc064b11efa4",
+    "red-browser/results.json": "aff91512eda1aa4886654794b6c55add285b16879349ea91e60b3747b31cb02f",
+    "green-browser/ws-selected-resume.png": "c97c395cd8db1007f84f3e06dc476434dd70859ea62ece5b9a25662e61c5838e",
+    "green-browser/results.json": "622520408e11239f747766692a69cdddbf2446af0c641a81bd38c963bf7b05ef",
+    "green-browser/ws-selected-back.png": "a4fa0a1990307f2cd0ff4caba87d10e79bc77a521903d975debdc4d5a5c78e19",
+    "green-browser/failure.png": "61258a683c3dfb3416e71d61580b5d4177a547420d77e804d63b7f8ccb48edab",
+    "green-browser-02/results.json": "acf230c7433e2d7f826ff669b4fba1a71abc4b68a68eedab4e15e737bf6f0015",
+    "green-browser-02/failure.png": "c8e5cebedd8038f5224dcd2dfd9e8179fa1851a7edb63a85c44e0f7f144535e5",
+    "green-browser-03/ws-selected-back.png": "a4fa0a1990307f2cd0ff4caba87d10e79bc77a521903d975debdc4d5a5c78e19",
+    "green-browser-03/ws-selected-resume.png": "c97c395cd8db1007f84f3e06dc476434dd70859ea62ece5b9a25662e61c5838e",
+    "green-browser-03/results.json": "087473ae7c0be67613a2dee9166c65b30fe1277a4031c3e98944bafd83dc5584",
+    "red-browser-final-verifier/results.json": "525d465b620de8f9834d983c7d009091be45707940b95854aec57ce27ad30666",
+    "red-browser-final-verifier/failure.png": "8d2a96861c8a39e66ca5b9d2c351decde5cf920aa62af6d1de401445c3cdb363",
+    "green-browser-04/ws-selected-back.png": "b4df0215257551c2017fc162fbae78989712e5519a4302d82e0f8131b3f6960d",
+    "green-browser-04/ws-selected-resume.png": "fc1583f96df0b900709f2b8a47637b8cddff0067f6b0b1ffc77e0dcc6657c4dd",
+    "green-browser-04/results.json": "f196230d21f29e03320702d5c35ac3ace3b4ec47f1af99b1c01292f2794c2457",
+    "verifiers/pause-keyboard-v1.mjs": "99afded1e639512ee186aa297539dbf13abf21d0892b5b32184ca02dd3ae5561",
+    "verifiers/pause-keyboard-v2.mjs": "a56600c50842091af1d7da95e513a4ce83feb7ffde4912fb7a92c955736b0f3f",
+    "verifiers/pause-keyboard-final.mjs": "41875b09a0ea979553c1ae199dfe19dda351eca00b38984cf1bad03c688184f8"
+  },
+  "historical_files_sha256": "50eb47b03ca24daae04efa4d83d94de08fd2cc37d2997a195fd96f0d358e7c04",
+  "limits": [
+    "physical Safari/iPhone not exercised",
+    "physical gamepad not exercised; unchanged selection-to-DOM mirror unit-tested",
+    "same-frame burst navigation not established",
+    "no Cargo/clippy/full WASM compile or optional wasm-opt",
+    "no full layout/online replay, CI, push, merge or deployment",
+    "independent re-review pending before publication"
+  ]
+}

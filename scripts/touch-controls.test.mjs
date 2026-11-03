@@ -119,6 +119,30 @@ test('offline essentials use a reserved arena band; help is paused-only and onli
   f.control.destroy();
 });
 
+test('paused DOM W/S physical codes and key fallbacks publish focus without changing activation',()=>{
+  const f=fixture(),$=id=>f.env.document.getElementById(id);
+  f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing',paused:true});f.tick();
+  const keydown=$('offline-pause').handlers.get('keydown');
+  for(const event of [
+    {code:'KeyS',key:'ы'}, {code:'KeyW',key:'ц'}, // physical positions on a non-Latin layout
+    {key:'s'}, {key:'w'}, {key:'S'}, {key:'W'},
+    {key:'ArrowDown'}, {key:'ArrowUp'}, {key:'Tab'}, {key:'Tab',shiftKey:true},
+  ]){
+    const expected=f.env.document.activeElement===$('help-resume')?'back':'resume';let prevented=false;
+    keydown({...event,preventDefault(){prevented=true;}});
+    assert.equal(f.env.document.activeElement,$(`help-${expected}`),JSON.stringify(event));
+    assert.equal(f.env.ryggattackPauseDomFocus,expected,'publish DOM selection to the real Bevy menu');
+    assert.equal(prevented,true,'navigation must not scroll pause help');
+    assert.equal(f.env.ryggattackTouchAction,undefined,'navigation alone must not activate');
+  }
+  // Unhandled activation stays native to the focused button (real browser replay).
+  for(const key of ['Enter',' ']){let prevented=false;keydown({key,preventDefault(){prevented=true;}});assert.equal(prevented,false);}
+  f.env.ryggattackPauseSelection='back';f.tick();assert.equal(f.env.document.activeElement,$('help-back'));
+  f.tick();assert.equal(f.env.document.activeElement,$('help-back'),'no repeated DOM write fights the gamepad selection');
+  f.env.ryggattackPauseSelection='resume';f.tick();assert.equal(f.env.document.activeElement,$('help-resume'));
+  f.control.destroy();
+});
+
 // Compile the checked-in Rust transition blocks, not a JS imitation of latches.
 // Neutral device/transport fixtures isolate the interval before fixed tick/send.
 // The native ECS regression separately exercises apply_inputs on real players.
