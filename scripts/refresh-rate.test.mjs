@@ -75,7 +75,7 @@ test('page pointer routing respects room and HUD controls without stealing focus
  const source=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*;$/gm,'');
  await vm.runInNewContext(`(async()=>{${source}})()`,{...clock.env,window,installRoomControls(){},installOnlineHud(){},installTouchControls(){},calibrateRefreshRate:async()=>null,init:async()=>{}});
  assert.equal(focus,0,'visible integrated menu keeps its initial focus');
- for(const selector of ['#online-entry','.rygg-online-hud','#touch-controls','#open-match-menu']) {
+ for(const selector of ['#online-entry','.rygg-online-hud','#touch-controls','#open-match-menu','#offline-pause','#offline-hud']) {
   handlers.get('pointerdown')({target:{closest:selectors=>selectors.split(',').map(s=>s.trim()).includes(selector)?{}:null}});
   assert.equal(focus,0,'interactive room/HUD content must retain its own focus');
  }

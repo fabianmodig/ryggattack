@@ -40,7 +40,7 @@ function fixture(){
   const document={hidden:false,activeElement:null,addEventListener:(n,f)=>listeners.set('doc:'+n,f),removeEventListener(){},getElementById(id){
     if(!elements.has(id))elements.set(id,{hidden:true,textContent:'',dataset:{},handlers:new Map(),
       addEventListener(n,f){this.handlers.set(n,f);},removeEventListener(){},
-      focus(){document.activeElement=this;},setPointerCapture(){},classList:{toggle(){}},
+      focus(){document.activeElement=this;this.handlers.get("focus")?.();},setPointerCapture(){},classList:{values:new Set(),toggle(n,on){if(on)this.values.add(n);else this.values.delete(n);},contains(n){return this.values.has(n);}},
       querySelectorAll(){return [];}});
     return elements.get(id);
   }};
@@ -85,6 +85,37 @@ test('multitouch invalidates an already sampled tap and blocks replacements unti
   f.event('pointerdown',{pointerId:5,timeStamp:300});
   f.event('pointerup',{pointerId:5,timeStamp:350});
   assert.equal(f.sample().fire,true,'fresh single-finger gesture works after all lifted');
+  f.control.destroy();
+});
+
+test('offline essentials use a reserved arena band; help is paused-only and online remains separate',()=>{
+  const f=fixture(),$=id=>f.env.document.getElementById(id);
+  f.env.ryggattackOfflineHud='FIRST TO 3\nP1: 2 IN SPD10s HIT10s\nSOLO - no scoring';f.tick();
+  assert.equal($('offline-hud').hidden,false);
+  assert.equal($('offline-hud').textContent,f.env.ryggattackOfflineHud);
+  assert.equal($('game').classList.contains('offline-playing'),true);
+  assert.equal($('offline-pause').hidden,true);
+  assert.equal($('touch-hint').textContent,'');
+  f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing',paused:true});f.tick();
+  assert.equal($('offline-pause').hidden,false);
+  assert.equal(f.env.document.activeElement,$('help-resume'));
+  f.env.ryggattackPauseSelection='back';f.tick();
+  assert.equal(f.env.document.activeElement,$('help-back'),'actual Bevy gamepad menu focus must be visible in the DOM');
+  f.env.ryggattackPauseSelection='resume';f.tick();
+  assert.equal(f.env.document.activeElement,$('help-resume'));
+  const keydown=$('offline-pause').handlers.get('keydown');
+  keydown({key:'Tab',preventDefault(){}});assert.equal(f.env.document.activeElement,$('help-back'));
+  assert.equal(f.env.ryggattackPauseDomFocus,'back','DOM selection is returned to the actual Bevy menu');
+  keydown({key:'Tab',preventDefault(){}});assert.equal(f.env.document.activeElement,$('help-resume'));
+  keydown({key:'Escape',preventDefault(){}});assert.equal(f.env.ryggattackTouchAction,'resume');
+  assert.equal($('touch-controls').hidden,true);
+  $('help-resume').onclick();assert.equal(f.env.ryggattackTouchAction,'resume');
+  $('help-back').onclick();assert.equal(f.env.ryggattackTouchAction,'back');
+  f.env.ryggattackLaunch='online';f.tick();
+  assert.equal($('offline-hud').hidden,true);assert.equal($('offline-pause').hidden,true);
+  assert.equal($('game').classList.contains('offline-playing'),false);
+  f.env.ryggattackLaunch=null;f.env.ryggattackLocalStatus=JSON.stringify({screen:'MainMenu'});f.tick();
+  assert.equal($('offline-hud').hidden,true);assert.equal($('game').classList.contains('offline-playing'),false);
   f.control.destroy();
 });
 

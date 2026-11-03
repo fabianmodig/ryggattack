@@ -69,14 +69,20 @@ pub(crate) fn spawn_hud(commands: &mut Commands) {
         Hud,
         Text::new(""),
         TextFont {
-            font_size: FontSize::Px(25.0),
+            font_size: FontSize::Px(18.0),
             ..default()
         },
         TextColor(Color::WHITE),
         Node {
             position_type: PositionType::Absolute,
-            top: px(18),
-            left: px(22),
+            // The web uses the same ECS text in an accessible, reserved DOM band.
+            display: if cfg!(target_arch = "wasm32") {
+                Display::None
+            } else {
+                Display::Flex
+            },
+            top: px(12),
+            left: px(16),
             ..default()
         },
     ));
@@ -99,40 +105,40 @@ pub(crate) fn update_hud(
                 .map_or(default(), |powerups| powerups.buffs[p.id]);
             let mut effects = String::new();
             if p.alive && buffs.speed > 0.0 {
-                effects.push_str(&format!(" [SPEED +25% {:.0}s]", buffs.speed.ceil()));
+                effects.push_str(&format!(" SPD{:.0}s", buffs.speed.ceil()));
             }
             if p.alive && buffs.all_hits > 0.0 {
-                effects.push_str(&format!(" [ALL HITS {:.0}s]", buffs.all_hits.ceil()));
+                effects.push_str(&format!(" HIT{:.0}s", buffs.all_hits.ceil()));
             }
             format!(
-                "P{}: {}{}{effects}",
+                "P{}: {} {}{effects}",
                 p.id + 1,
                 round.wins[p.id],
-                if p.alive { "" } else { " (OUT)" }
+                if p.alive { "IN" } else { "OUT" }
             )
         })
         .collect::<Vec<_>>()
         .join("\n");
     let status = if let Some(winner) = round.winner {
-        format!(
-            "MATCH OVER - Player {} wins!\nR, gamepad Start, or click RESTART MATCH",
-            winner + 1
-        )
+        format!("P{} wins match", winner + 1)
     } else if round.finished {
         match round.round_winner {
-            Some(id) => format!("Player {} wins the round! Next round...", id + 1),
-            None => "DRAW - no point. Next round...".into(),
+            Some(id) => format!("P{} wins round", id + 1),
+            None => "DRAW".into(),
         }
     } else if seats.len() == 1 {
-        "SOLO PRACTICE - no scoring".into()
+        "SOLO - no scoring".into()
     } else {
-        "ONE LIFE - rear hits eliminate (ALL HITS: any side). Last standing wins.".into()
+        "ROUND LIVE".into()
     };
-    let text = format!(
-        "FIRST TO {}   {scores}\n{status}\nRail drops: yellow = SPEED +25%, pink = ALL HITS (10s)",
-        settings.wins_target
-    );
+    let text = format!("FIRST TO {}\n{scores}\n{status}", settings.wins_target);
     if hud.0 != text {
+        #[cfg(target_arch = "wasm32")]
+        let _ = js_sys::Reflect::set(
+            &js_sys::global(),
+            &"ryggattackOfflineHud".into(),
+            &text.clone().into(),
+        );
         hud.0 = text;
     }
 }
@@ -140,6 +146,34 @@ pub(crate) fn update_hud(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pause_menu_keeps_device_navigation_and_visible_selection_order() {
+        let mut app = App::new();
+        app.insert_resource(State::new(AppState::Playing))
+            .init_resource::<MenuFocus>()
+            .init_resource::<MenuInput>()
+            .add_systems(Startup, |mut commands: Commands| {
+                spawn_pause_dialog(&mut commands)
+            })
+            .add_systems(Update, (navigate_menu, update_menu_buttons).chain());
+        app.update();
+        let first = app.world().resource::<MenuFocus>().0.unwrap();
+        assert!(matches!(
+            app.world().get::<MenuAction>(first),
+            Some(MenuAction::Resume)
+        ));
+        app.world_mut().resource_mut::<MenuInput>().down = true;
+        app.update();
+        let second = app.world().resource::<MenuFocus>().0.unwrap();
+        assert!(matches!(
+            app.world().get::<MenuAction>(second),
+            Some(MenuAction::ReturnToMenu)
+        ));
+        assert_eq!(
+            app.world().get::<BackgroundColor>(second).unwrap().0,
+            Color::srgb(0.22, 0.34, 0.54)
+        );
+    }
     #[test]
     fn browser_start_uses_the_same_menu_action_without_keyboard_events() {
         let mut app = action_app(MenuAction::Back, false, false);
@@ -153,6 +187,69 @@ mod tests {
             app.world().resource::<NextState<AppState>>(),
             NextState::Pending(AppState::Playing)
         ));
+    }
+    #[test]
+    fn offline_hud_is_bounded_essentials_not_help_prose() {
+        let mut app = App::new();
+        let mut powerups = crate::powerups::Powerups::default();
+        let mut round = Round::default();
+        for id in 0..4 {
+            round.wins[id] = 7;
+            powerups.buffs[id].grant(crate::powerups::Kind::Speed);
+            powerups.buffs[id].grant(crate::powerups::Kind::AllHits);
+            app.world_mut().spawn(Player {
+                id,
+                active: true,
+                alive: id != 3,
+                score: 0,
+                shot_cooldown: 0.0,
+                wants_to_fire: false,
+                input: None,
+            });
+        }
+        app.insert_resource(powerups)
+            .insert_resource(round)
+            .insert_resource(crate::match_settings::MatchSettings::default());
+        let hud = app.world_mut().spawn((Hud, Text::new(""))).id();
+        app.add_systems(Update, update_hud);
+        for (finished, round_winner, winner, status) in [
+            (false, None, None, ""),
+            (true, Some(0), None, "P1 wins round"),
+            (true, None, None, "DRAW"),
+            (true, Some(0), Some(0), "P1 wins match"),
+        ] {
+            {
+                let mut round = app.world_mut().resource_mut::<Round>();
+                round.finished = finished;
+                round.round_winner = round_winner;
+                round.winner = winner;
+            }
+            app.update();
+            let text = &app.world().get::<Text>(hud).unwrap().0;
+            for prose in [
+                "Rail drops",
+                "rear hits",
+                "ONE LIFE",
+                "gamepad",
+                "RESTART",
+                "yellow",
+                "+25%",
+            ] {
+                assert!(!text.contains(prose), "active HUD contains help: {text}");
+            }
+            assert!(text.contains("FIRST TO 3"));
+            assert!(text.contains("P1: 7 IN SPD10s HIT10s"));
+            assert!(text.contains("P4: 7 OUT"));
+            assert!(text.contains(status));
+            assert!(
+                text.lines().count() <= 6,
+                "four seats must fit six fixed lines: {text}"
+            );
+            assert!(
+                text.lines().all(|line| line.len() <= 28),
+                "HUD must not wrap at narrow phone widths: {text}"
+            );
+        }
     }
     #[test]
     fn hud_shows_coexisting_buffs_and_hides_expired_effects() {
@@ -176,15 +273,15 @@ mod tests {
         app.add_systems(Update, update_hud);
         app.update();
         let text = &app.world().get::<Text>(hud).unwrap().0;
-        assert!(text.contains("SPEED +25% 10s"));
-        assert!(text.contains("ALL HITS 10s"));
+        assert!(text.contains("SPD10s"));
+        assert!(text.contains("HIT10s"));
         app.world_mut()
             .resource_mut::<crate::powerups::Powerups>()
             .buffs[0] = default();
         app.update();
         let text = &app.world().get::<Text>(hud).unwrap().0;
-        assert!(!text.contains("[SPEED +25%"));
-        assert!(!text.contains("ALL HITS 10s"));
+        assert!(!text.contains("SPD"));
+        assert!(!text.contains("HIT"));
     }
     fn action_app(action: MenuAction, mouse: bool, start: bool) -> App {
         let mut app = App::new();
@@ -354,6 +451,11 @@ pub(crate) fn sync_match_over_ui(
             Button,
             Node {
                 position_type: PositionType::Absolute,
+                display: if cfg!(target_arch = "wasm32") {
+                    Display::None
+                } else {
+                    Display::Flex
+                },
                 bottom: px(30),
                 left: percent(38),
                 padding: UiRect::all(px(18)),
@@ -455,6 +557,8 @@ fn spawn_pause_dialog(commands: &mut Commands) {
         .spawn((
             PauseDialogUi,
             Node {
+                // Browser pause/help is DOM-based, with native scrolling and focus.
+                display: if cfg!(target_arch = "wasm32") { Display::None } else { Display::Flex },
                 width: percent(100),
                 height: percent(100),
                 position_type: PositionType::Absolute,
@@ -493,7 +597,7 @@ fn spawn_pause_dialog(commands: &mut Commands) {
                     panel.spawn(menu_button("RESUME", MenuAction::Resume, 0));
                     panel.spawn(menu_button("RETURN TO MENU", MenuAction::ReturnToMenu, 1));
                     panel.spawn((
-                        Text::new("Up/Down or D-pad: choose   |   Escape or B: resume"),
+                        Text::new("One life: rear hits eliminate. Last standing wins.\nYellow: SPD = +25% speed (10s).\nPink: HIT = hits eliminate from any side (10s).\nUp/Down or D-pad: choose | Escape or B: resume"),
                         TextFont {
                             font_size: FontSize::Px(17.0),
                             ..default()
@@ -537,12 +641,12 @@ pub(crate) fn navigate_menu(
     input: Res<MenuInput>,
     state: Res<State<AppState>>,
     mut focus: ResMut<MenuFocus>,
-    items: Query<(Entity, &MenuItem)>,
+    items: Query<(Entity, &MenuItem, &MenuAction)>,
     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
 ) {
     let mut ordered: Vec<(Entity, usize)> = items
         .iter()
-        .map(|(entity, item)| (entity, item.order))
+        .map(|(entity, item, _)| (entity, item.order))
         .collect();
     ordered.sort_by_key(|(_, order)| *order);
     if ordered.is_empty() {
@@ -556,6 +660,29 @@ pub(crate) fn navigate_menu(
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
+    {
+        // Consume actual DOM focus changes once; do not overwrite a new pad
+        // selection every frame while the browser's presentation poll catches up.
+        let global = js_sys::global();
+        if let Ok(value) = js_sys::Reflect::get(&global, &"ryggattackPauseDomFocus".into())
+            && let Some(action) = value.as_string()
+        {
+            let _ = js_sys::Reflect::set(
+                &global,
+                &"ryggattackPauseDomFocus".into(),
+                &wasm_bindgen::JsValue::NULL,
+            );
+            if let Some((entity, _, _)) = items.iter().find(|(_, _, item)| {
+                matches!(
+                    (action.as_str(), item),
+                    ("resume", MenuAction::Resume) | ("back", MenuAction::ReturnToMenu)
+                )
+            }) {
+                focus.0 = Some(entity);
+            }
+        }
+    }
     let known = focus
         .0
         .and_then(|entity| ordered.iter().position(|(button, _)| *button == entity));
@@ -583,12 +710,31 @@ fn nav_axis(state: &AppState) -> NavAxis {
 pub(crate) fn update_menu_buttons(
     focus: Res<MenuFocus>,
     mut buttons: Query<
-        (Entity, &Interaction, &mut BackgroundColor, &mut BorderColor),
+        (
+            Entity,
+            &Interaction,
+            &mut BackgroundColor,
+            &mut BorderColor,
+            &MenuAction,
+        ),
         With<MenuItem>,
     >,
 ) {
-    for (entity, interaction, mut background, mut border) in &mut buttons {
+    for (entity, interaction, mut background, mut border, _action) in &mut buttons {
         let focused = focus.0 == Some(entity);
+        #[cfg(target_arch = "wasm32")]
+        if focused {
+            let selection = match _action {
+                MenuAction::Resume => "resume",
+                MenuAction::ReturnToMenu => "back",
+                _ => "",
+            };
+            let _ = js_sys::Reflect::set(
+                &js_sys::global(),
+                &"ryggattackPauseSelection".into(),
+                &selection.into(),
+            );
+        }
         background.0 = match (interaction, focused) {
             (Interaction::Pressed, _) => Color::srgb(0.90, 0.55, 0.16),
             (_, true) => Color::srgb(0.22, 0.34, 0.54),

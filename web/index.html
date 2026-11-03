@@ -22,6 +22,20 @@
         position: absolute;
         inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
       }
+      /* Offline HUD and arena occupy separate rectangles, not an overlay.
+         Six 18px lines + 16px padding covers all four seats with both buffs.
+         Resize the actual Bevy surface so its existing projection fits the arena. */
+      #game.offline-playing { top:calc(env(safe-area-inset-top, 0px) + 124px); }
+      #offline-hud { position:absolute; box-sizing:border-box; margin:0; top:env(safe-area-inset-top, 0px); left:env(safe-area-inset-left, 0px); right:env(safe-area-inset-right, 0px); height:124px; padding:8px 12px; color:white; background:#090b13; font:14px/18px monospace; white-space:pre; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+      #offline-pause { position:absolute; z-index:7; inset:env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); overflow:auto; background:#090b13f5; }
+      #offline-pause .menu-panel { gap:12px; }
+      #offline-pause h2 { margin:0; color:white; }
+      #offline-pause p { margin:0; line-height:1.5; }
+      #offline-pause button { min-height:48px; padding:10px; font:16px monospace; color:white; background:#212e4a; border:2px solid #547ab8; border-radius:8px; }
+      #offline-pause :focus-visible { outline:2px solid #f2c73d; outline-offset:2px; }
+      #touch-hint:empty { display:none; }
+      #game.offline-playing { bottom:calc(env(safe-area-inset-bottom, 0px) + 80px); }
+      #touch-controls.offline-match:not([hidden]) { display:flex; gap:8px; height:68px; box-sizing:border-box; overflow:visible; }
       /* The canvas container already excludes unsafe areas. */
       #game > .rygg-online-hud { top:8px; left:8px; right:8px; }
 
@@ -93,6 +107,16 @@
   </head>
   <body>
     <div id="game"><canvas id="ryggattack-canvas" tabindex="0"></canvas></div>
+    <pre id="offline-hud" aria-label="Offline scores and active effects" hidden></pre>
+    <section id="offline-pause" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
+      <div class="menu-panel">
+        <h2 id="pause-title">PAUSED · HOW TO PLAY</h2>
+        <div class="menu-stack"><button id="help-resume">RESUME</button><button id="help-back">RETURN TO MENU</button></div>
+        <p>One life: rear hits eliminate. Last cart standing wins the round. Reach the win target to win the match. Solo practice has no scoring.</p>
+        <p>Yellow rail drops: <strong>SPD</strong> = +25% speed. Pink rail drops: <strong>HIT</strong> = hits eliminate from any side. Both last 10 seconds; remaining seconds appear beside each cart's score. IN / OUT shows who is still in the round.</p>
+        <p>Phone: swipe to steer at junctions; tap to shoot. Keyboard: WASD / Space, or arrows / Right Ctrl, to steer / shoot. Gamepad: stick / D-pad to steer, A to shoot. Escape / B resumes; Start selects. R or Start restarts a finished match.</p>
+      </div>
+    </section>
     <div id="status">Loading Ryggattack…</div>
     <main id="online-entry" aria-label="Game menu">
       <div class="menu-panel">
@@ -165,7 +189,7 @@
       // for the keyboard controls to work.
       if (document.getElementById('online-entry').hidden) canvas.focus();
       window.addEventListener("pointerdown", (event) => {
-        if (!event.target.closest("#online-entry, .rygg-online-hud, #touch-controls, #open-match-menu")) canvas.focus();
+        if (!event.target.closest("#online-entry, .rygg-online-hud, #touch-controls, #open-match-menu, #offline-pause, #offline-hud")) canvas.focus();
       });
 
       try {

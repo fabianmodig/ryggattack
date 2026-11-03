@@ -77,7 +77,7 @@ try{
   step('offline cancelled fire drains to zero cooldown and neutral real ECS');await shot('07-offline-cancelled');
   await swipe();await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===1));
   await page.locator('#touch-pause').tap();await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
-  await page.locator('#touch-resume').waitFor({state:'visible'});await shot('04-phone-paused');await page.locator('#touch-resume').tap();await waitLocal(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
+  await page.locator('#help-resume').waitFor({state:'visible'});await shot('04-phone-paused');await page.locator('#help-resume').tap();await waitLocal(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
   await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===0&&p.turn[1]===0));step('offline pause/resume clears retained steering');
   await swipe(0,-85);await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[1]===1));
   await touch('touchStart',[[120,360],[240,360,2]]);await touch('touchEnd',[]);
