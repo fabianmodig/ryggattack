@@ -311,6 +311,20 @@ one, so `scripts/build-web.sh` has to run first.
 
 ## Controls
 
+### Phone / touch web
+
+Swipe on the game canvas to select a direction for the next junction; lifting
+keeps that direction selected. Tap without swiping to fire using the normal
+cooldown. In local play, use **JOIN CART** and **START MATCH**, then **PAUSE** /
+**RESUME**, **BACK TO MENU**, or **RESTART MATCH** after a match. Online uses the
+existing room buttons and **MENU** / **RESUME INPUT** (the server keeps running).
+Menus, cancellation, multiple fingers, blur and visibility changes reset touch
+intent; room forms retain normal editing and scrolling. Desktop controls remain
+available. See [touch behavior, adapter and verification](docs/mobile-touch.md).
+Physical Apple Safari/iPhone verification is not yet claimed.
+
+### Keyboard / gamepad
+
 Every seat steers the same way; only the buttons differ.
 
 | Action | WASD seat | Arrow seat | Gamepad seat |

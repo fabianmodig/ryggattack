@@ -372,12 +372,15 @@ pub(crate) fn restart_round(
     pads: Query<&Gamepad>,
     buttons: Query<&Interaction, (With<crate::ui::RestartButton>, Changed<Interaction>)>,
     mut reset: RoundReset,
+    browser: Option<ResMut<crate::ui::BrowserActions>>,
 ) {
+    let browser_restart = browser.is_some_and(|mut b| std::mem::take(&mut b.restart));
     // Start rather than a face button, so that a pad still holding fire as the
     // match ends does not restart the moment it is tapped again.
-    let requested = buttons
-        .iter()
-        .any(|interaction| *interaction == Interaction::Pressed)
+    let requested = browser_restart
+        || buttons
+            .iter()
+            .any(|interaction| *interaction == Interaction::Pressed)
         || keys.just_pressed(KeyCode::KeyR)
         || pads
             .iter()

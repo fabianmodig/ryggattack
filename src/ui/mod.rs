@@ -43,6 +43,12 @@ pub(crate) struct MenuItem {
 #[derive(Resource, Default)]
 pub(crate) struct MenuFocus(Option<Entity>);
 
+#[derive(Resource, Default)]
+pub(crate) struct BrowserActions {
+    pub(crate) menu: Option<MenuAction>,
+    pub(crate) restart: bool,
+}
+
 #[derive(Component, Clone, Copy)]
 pub(crate) enum MenuAction {
     Start,
@@ -53,6 +59,8 @@ pub(crate) enum MenuAction {
     Back,
     Exit,
     Resume,
+    #[cfg_attr(not(target_arch = "wasm32"), allow(dead_code))] // DOM pause button
+    Pause,
     ReturnToMenu,
 }
 
@@ -132,6 +140,20 @@ pub(crate) fn update_hud(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn browser_start_uses_the_same_menu_action_without_keyboard_events() {
+        let mut app = action_app(MenuAction::Back, false, false);
+        app.world_mut().resource_mut::<MenuInput>().accept = false;
+        app.insert_resource(BrowserActions {
+            menu: Some(MenuAction::Launch),
+            ..default()
+        });
+        app.update();
+        assert!(matches!(
+            app.world().resource::<NextState<AppState>>(),
+            NextState::Pending(AppState::Playing)
+        ));
+    }
     #[test]
     fn hud_shows_coexisting_buffs_and_hides_expired_effects() {
         let mut app = App::new();
@@ -602,7 +624,9 @@ pub(crate) fn handle_menu_actions(
     roster: Res<Roster>,
     mut settings: ResMut<crate::match_settings::MatchSettings>,
     mut next_state: ResMut<NextState<AppState>>,
+    browser: Option<ResMut<BrowserActions>>,
 ) {
+    let browser_action = browser.and_then(|mut b| b.menu.take());
     let clicked = buttons
         .iter()
         .find(|(interaction, _)| **interaction == Interaction::Pressed)
@@ -614,7 +638,7 @@ pub(crate) fn handle_menu_actions(
             .and_then(|entity| actions.get(entity).ok())
             .copied()
     };
-    let Some(action) = clicked.or_else(confirmed) else {
+    let Some(action) = browser_action.or(clicked).or_else(confirmed) else {
         return;
     };
 
@@ -643,6 +667,12 @@ pub(crate) fn handle_menu_actions(
         MenuAction::Back => next_state.set(AppState::MainMenu),
         MenuAction::Exit => {
             commands.write_message(AppExit::Success);
+        }
+        MenuAction::Pause => {
+            if !pause.0 {
+                pause.0 = true;
+                spawn_pause_dialog(&mut commands);
+            }
         }
         MenuAction::Resume => {
             pause.0 = false;

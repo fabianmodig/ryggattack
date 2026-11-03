@@ -571,6 +571,7 @@ impl Plugin for SettingsPlugin {
             })
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_systems(Startup, spawn_scene_view)
+            .add_systems(Update, fit_world_camera)
             .add_systems(
                 PostUpdate,
                 (
@@ -582,6 +583,36 @@ impl Plugin for SettingsPlugin {
                 )
                     .chain(),
             );
+    }
+}
+
+/// Keep the arena's desktop horizontal field visible in portrait as well.
+/// Update before Bevy's PostUpdate camera projection, for both render scales
+/// and both local/online apps. Wide windows retain the original vertical FOV.
+fn fit_world_camera(
+    windows: Query<&Window, With<PrimaryWindow>>,
+    mut cameras: Query<&mut Projection, With<WorldCamera>>,
+) {
+    let Some(window) = windows.iter().next() else {
+        return;
+    };
+    let aspect = window.width() / window.height();
+    if !aspect.is_finite() || aspect <= 0.0 {
+        return;
+    }
+    let reference_aspect = 1280.0 / 720.0;
+    let default_fov = PerspectiveProjection::default().fov;
+    let fov = if aspect >= reference_aspect {
+        default_fov
+    } else {
+        2.0 * ((default_fov / 2.0).tan() * reference_aspect / aspect).atan()
+    };
+    for mut projection in &mut cameras {
+        if let Projection::Perspective(perspective) = &mut *projection
+            && perspective.fov != fov
+        {
+            perspective.fov = fov;
+        }
     }
 }
 
@@ -1138,5 +1169,57 @@ mod tests {
             UVec2::new(1920, 1080)
         );
         assert_eq!(scaled_size(UVec2::ZERO, RenderScale::Half), UVec2::ONE);
+    }
+}
+
+#[cfg(test)]
+mod mobile_camera_tests {
+    use super::*;
+    #[test]
+    fn portrait_projection_preserves_desktop_horizontal_field_and_restores_on_rotation() {
+        let mut app = App::new();
+        let window = app
+            .world_mut()
+            .spawn((
+                Window {
+                    resolution: (375, 740).into(),
+                    ..default()
+                },
+                PrimaryWindow,
+            ))
+            .id();
+        let camera = app
+            .world_mut()
+            .spawn((
+                WorldCamera,
+                Projection::Perspective(PerspectiveProjection::default()),
+            ))
+            .id();
+        app.add_systems(Update, fit_world_camera);
+        app.update();
+        let Projection::Perspective(projection) = app.world().get::<Projection>(camera).unwrap()
+        else {
+            panic!("perspective camera required")
+        };
+        let default_fov = PerspectiveProjection::default().fov;
+        let minimum_horizontal = (default_fov / 2.0).tan() * (1280.0 / 720.0);
+        assert!(
+            (projection.fov / 2.0).tan() * (375.0 / 740.0) >= minimum_horizontal - 1e-5,
+            "portrait must not crop rail branches visible in the reference desktop view"
+        );
+        app.world_mut()
+            .get_mut::<Window>(window)
+            .unwrap()
+            .resolution
+            .set(1280.0, 720.0);
+        app.update();
+        let Projection::Perspective(projection) = app.world().get::<Projection>(camera).unwrap()
+        else {
+            unreachable!()
+        };
+        assert_eq!(
+            projection.fov, default_fov,
+            "desktop framing must be restored after rotation"
+        );
     }
 }

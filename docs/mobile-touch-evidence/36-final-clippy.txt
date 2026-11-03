@@ -1,0 +1,101 @@
+    Checking ryggattack v0.1.0 (/home/hermes/src/ryggattack-mobile-touch)
+warning: this function has too many arguments (8/7)
+   --> src/explosions.rs:222:1
+    |
+222 | / pub(crate) fn run_detonations(
+223 | |     mut commands: Commands,
+224 | |     time: Res<Time>,
+225 | |     assets: Res<EffectAssets>,
+...   |
+230 | |     mut wrecked: Local<HashSet<Entity>>,
+231 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:667:19
+    |
+667 |       mut replicas: Query<
+    |  ___________________^
+668 | |         (
+669 | |             Entity,
+670 | |             &Replica,
+...   |
+674 | |         Without<crate::players::Player>,
+675 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+    = note: `#[warn(clippy::type_complexity)]` on by default
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/online.rs:678:16
+    |
+678 |       cosmetics: Query<
+    |  ________________^
+679 | |         Entity,
+680 | |         Or<(
+681 | |             With<crate::explosions::Smoke>,
+...   |
+685 | |         )>,
+686 | |     >,
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: this `if` statement can be collapsed
+   --> src/online.rs:807:13
+    |
+807 | /             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity) {
+808 | |                 if let Some(blast) = frame.bodies.iter().find(|body| {
+809 | |                     body.explosion
+810 | |                         .and_then(|effect| effect.burst)
+...   |
+835 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#collapsible_if
+    = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+    |
+807 ~             if !reset_scene && let Ok((prop, children)) = prop_children.get(entity)
+808 ~                 && let Some(blast) = frame.bodies.iter().find(|body| {
+809 |                     body.explosion
+...
+833 |                     }
+834 ~                 }
+    |
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/settings.rs:746:25
+    |
+746 |     mut canvas_cameras: Query<(Entity, &mut Camera), (With<CanvasCamera>, Without<WorldCamera>)>,
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:541:17
+    |
+541 |     pointed_at: Query<(Entity, &Interaction), (Changed<Interaction>, With<MenuItem>)>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> src/ui/mod.rs:621:14
+    |
+621 |     buttons: Query<(&Interaction, &MenuAction), (Changed<Interaction>, With<Button>)>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+
+warning: `ryggattack` (lib) generated 7 warnings (run `cargo clippy --fix --lib -p ryggattack -- ` to apply 1 suggestion)
+warning: `ryggattack` (lib test) generated 7 warnings (7 duplicates)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 7.64s
+
+real	0m7.775s
+user	0m4.340s
+sys	0m2.475s

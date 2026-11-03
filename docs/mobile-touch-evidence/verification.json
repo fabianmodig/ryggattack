@@ -1,0 +1,92 @@
+{
+  "native_tests_passed": 257,
+  "browser_steps_passed": 10,
+  "viewport": [
+    375,
+    740
+  ],
+  "clippy_warnings": 7,
+  "baseline_clippy_warnings": 7,
+  "native_apple_safari_hardware_verified": false,
+  "final_optional_wasm_opt": false,
+  "screenshots": {
+    "01-phone-main.png": {
+      "sha256": "f25b75a91334bee59a2169a61361e56639ed4df4a729e39c3c266713a184e7da",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    },
+    "02-phone-lobby.png": {
+      "sha256": "72ef7a93db5b641de513a95330c64f3ee423e31eef8129dd0fc286769229beb9",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    },
+    "03-phone-playing.png": {
+      "sha256": "941e3673b2faffcc67aaec3fa78232bcdb4329a6b1ecbc69726de461d2237a12",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    },
+    "04-phone-paused.png": {
+      "sha256": "8b66f54598546ca6555502338ac6fb5f8208697387f031ac74868c674c9d6365",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    },
+    "05-phone-match-over.png": {
+      "sha256": "6f654b75d7107a2849e7077012e25a1bf229ddd715d25930f17f81758b8836b5",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    },
+    "06-phone-online.png": {
+      "sha256": "1ff7c29b699987340f49d68969c2339dd744b46131281c24645bd3d7d010e625",
+      "visually_reviewed": true,
+      "privacy": "synthetic local gameplay; no credentials or personal data visible"
+    }
+  },
+  "timings_seconds": {
+    "07-rust-red.txt": 87.495,
+    "08-rust-green.txt": 0.466,
+    "11-menu-red.txt": 70.159,
+    "12-rust-green.txt": 71.381,
+    "16-native-all.txt": 242.04,
+    "17-clippy.txt": 8.93,
+    "18-node-all.txt": 1.567,
+    "26-web-build.txt": 646.093,
+    "28-browser.txt": 119.246,
+    "29-browser-diagnostic.txt": 72.563,
+    "30-browser-atomic-tap.txt": 226.889,
+    "31-camera-red.txt": 63.854,
+    "35-final-native.txt": 208.987,
+    "36-final-clippy.txt": 7.775,
+    "37-final-web-build.txt": 572.826,
+    "40-final-browser.txt": 118.833,
+    "41-baseline-clippy.txt": 9.711,
+    "42-native-tls.test.txt": 2.266,
+    "42-network-sockets.txt": 10.373,
+    "42-production-smoke.txt": 5.132,
+    "42-server-banner.test.txt": 0.106,
+    "42-server-policy.test.txt": 0.106,
+    "43-headless-smoke.txt": 3.161,
+    "48-final-browser.txt": 121.787
+  },
+  "notes": [
+    "Only the final successful screenshots are selected here; failed and superseded replays remain in ignored verification/mobile-touch/.",
+    "Final source/JS/WASM hashes match the exact final browser artifact. No image publication or deployment was performed.",
+    "Online held-intent protocol semantics are unchanged; very slow neutral delivery can permit repeated fire at the normal cooldown."
+  ],
+  "node_feature_and_ui_tests_passed": 166,
+  "additional_local_gates": [
+    "room UI",
+    "Pages redirect",
+    "chart version helper",
+    "frozen prediction evidence/verifier regressions",
+    "native TLS",
+    "server banner",
+    "server policy",
+    "production socket contract",
+    "fragment/abuse socket contract",
+    "headless executable",
+    "container network helper (3 tests)",
+    "portable container build contract",
+    "Helm lint",
+    "chart contract"
+  ]
+}

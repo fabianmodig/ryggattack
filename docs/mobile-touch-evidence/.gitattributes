@@ -1,0 +1,3 @@
+# Preserve verbatim TDD failure output (Node TAP indents blank lines).
+# This exception is scoped to archived red logs, never runtime/test source.
+*-red.txt -whitespace

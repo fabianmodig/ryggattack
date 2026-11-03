@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Ryggattack</title>
     <link rel="icon" href="data:," />
     <style>
@@ -20,8 +20,10 @@
 
       #game {
         position: absolute;
-        inset: 0;
+        inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
       }
+      /* The canvas container already excludes unsafe areas. */
+      #game > .rygg-online-hud { top:8px; left:8px; right:8px; }
 
       #game canvas {
         display: block;
@@ -30,6 +32,13 @@
         outline: none;
       }
 
+      #ryggattack-canvas.touch-playing { touch-action: none; user-select: none; -webkit-user-select: none; }
+      #touch-controls { display:none; position:absolute; z-index:5; left:max(12px,env(safe-area-inset-left)); right:max(12px,env(safe-area-inset-right)); bottom:max(12px,env(safe-area-inset-bottom)); padding:10px; background:#090b13e8; border-radius:12px; max-height:50dvh; overflow:auto; }
+      #touch-controls button { min-height:48px; padding:8px 12px; background:#212e4a; color:white; border:1px solid #547ab8; border-radius:8px; font:16px monospace; touch-action:manipulation; }
+      #touch-lobby, #touch-playing-controls { display:flex; flex-wrap:wrap; gap:8px; }
+      #touch-hint { margin:0 0 6px; }
+      @media (pointer:coarse) { #touch-controls:not([hidden]) { display:block; } }
+      @media(max-width:440px) { .settings-row { grid-template-columns:1fr 1fr; } .settings-row > label:first-child { grid-column:1/-1; } }
       [hidden] { display: none !important; }
       #online-entry { position:absolute; inset:0; z-index:6; overflow:auto; background:#060911; }
       .menu-panel { box-sizing:border-box; width:min(100%,660px); min-height:100%; margin:auto; padding:clamp(20px,5vh,48px) 22px; display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:16px; }
@@ -58,6 +67,9 @@
       body:has(#online-entry:not([hidden])) .rygg-online-hud { visibility:hidden; }
       @media(max-width:440px) { #room-roster { grid-template-columns:1fr; } .menu-panel { padding:20px 16px; } #menu-subtitle { font-size:18px; } }
 
+      /* These follow the menu's base/small-screen padding declarations. */
+      .menu-panel { padding-top:max(20px,env(safe-area-inset-top)); padding-bottom:max(20px,env(safe-area-inset-bottom)); padding-left:max(16px,env(safe-area-inset-left)); padding-right:max(16px,env(safe-area-inset-right)); }
+      #open-match-menu { bottom:max(12px,env(safe-area-inset-bottom)); right:max(12px,env(safe-area-inset-right)); }
       #status {
         position: absolute;
         inset: 0;
@@ -89,7 +101,7 @@
         <section id="main-controls" class="menu-stack" aria-label="Choose play mode">
           <button id="play-local">PLAY LOCAL</button>
           <button id="play-online">PLAY ONLINE</button>
-          <small>Arrow keys or D-pad: choose · Enter or A: select</small>
+          <small>Phone: swipe to steer · tap to shoot<br>Keyboard / gamepad controls also supported</small>
         </section>
         <section id="online-setup" hidden aria-label="Online setup">
           <form id="room-form" class="menu-stack" novalidate>
@@ -125,12 +137,25 @@
     </main>
     <button id="open-match-menu" hidden>MENU · SERVER KEEPS RUNNING</button>
 
+    <aside id="touch-controls" aria-label="Touch game controls" hidden>
+      <p id="touch-hint"></p>
+      <div id="touch-lobby">
+        <button id="touch-join">JOIN CART</button><button id="touch-start">START MATCH</button>
+        <button id="touch-bots">BOTS: 3</button><button id="touch-target">FIRST TO: 3</button><button id="touch-arena">Forest</button>
+      </div>
+      <div id="touch-playing-controls">
+        <button id="touch-pause">PAUSE</button><button id="touch-resume">RESUME</button><button id="touch-restart">RESTART MATCH</button>
+      </div>
+      <button id="touch-back">BACK TO MENU</button>
+    </aside>
     <script type="module">
       import init from "./ryggattack.js";
       import { calibrateRefreshRate } from "./refresh-rate.mjs";
       import { installRoomControls } from "./rooms.mjs";
       import { installOnlineHud } from "./online-hud-bridge.mjs";
+      import { installTouchControls } from "./touch-controls.mjs";
       installRoomControls();
+      installTouchControls();
       installOnlineHud();
 
       const status = document.getElementById("status");
@@ -140,7 +165,7 @@
       // for the keyboard controls to work.
       if (document.getElementById('online-entry').hidden) canvas.focus();
       window.addEventListener("pointerdown", (event) => {
-        if (!event.target.closest("#online-entry, .rygg-online-hud")) canvas.focus();
+        if (!event.target.closest("#online-entry, .rygg-online-hud, #touch-controls, #open-match-menu")) canvas.focus();
       });
 
       try {

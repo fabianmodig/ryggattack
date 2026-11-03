@@ -46,8 +46,10 @@ pub fn run_client() {
         .init_resource::<powerups::Powerups>()
         .insert_resource(RailMap::random())
         .init_resource::<PauseState>()
+        .init_resource::<ui::BrowserActions>()
         .init_resource::<Roster>()
         .init_resource::<input::SeatInputs>()
+        .init_resource::<input::TouchInput>()
         .init_resource::<match_settings::MatchSettings>()
         .init_resource::<LobbyLatch>()
         .init_resource::<MenuInput>()
@@ -73,7 +75,13 @@ pub fn run_client() {
         .add_plugins(settings::SettingsPlugin)
         .init_state::<AppState>()
         .add_systems(Startup, scene::setup)
-        .add_systems(PreUpdate, browser_local_menu)
+        .add_systems(
+            PreUpdate,
+            browser_local_menu
+                .after(ui::gather_menu_input)
+                .before(ui::navigate_menu),
+        )
+        .add_systems(PreUpdate, input::sample_touch.before(players::human_input))
         // After the scene has built the forest; runs again whenever the
         // automatic quality changes the forest's density.
         .add_systems(
@@ -142,21 +150,88 @@ pub fn run_client() {
 
 // Browser selection changes only the local application's existing state.
 // Online launch selects a separate presentation-only adapter at startup.
+#[allow(clippy::too_many_arguments)]
 fn browser_local_menu(
     state: Res<State<AppState>>,
     mut next: ResMut<NextState<AppState>>,
     windows: Query<&Window>,
     mut scale: ResMut<UiScale>,
+    mut roster: ResMut<Roster>,
+    round: Res<Round>,
+    pause: Res<PauseState>,
+    settings: Res<match_settings::MatchSettings>,
+    mut browser: ResMut<ui::BrowserActions>,
+    players: Query<(&players::Player, &tracks::RailFollower)>,
 ) {
     #[cfg(target_arch = "wasm32")]
     {
         let global = js_sys::global();
+        let paused = !ui::gameplay_is_running(pause);
+        let status = serde_json::json!({"screen":format!("{:?}",state.get()),"paused":paused,
+            "finished":round.finished,"winner":round.winner.is_some(),
+            "joined":roster.seat_of(players::InputSource::Wasd).is_some(),
+            "bots":settings.bots,"target":settings.wins_target,"arena":format!("{:?}",settings.arena)});
+        js_sys::Reflect::set(
+            &global,
+            &"ryggattackLocalStatus".into(),
+            &status.to_string().into(),
+        )
+        .ok();
+        // Optional read-only actual ECS input/cooldown observations for browser QA.
+        if js_sys::Reflect::get(&global, &"ryggattackTouchDebug".into())
+            .ok()
+            .and_then(|v| v.as_bool())
+            == Some(true)
+        {
+            let data:Vec<_>=players.iter().map(|(p,r)|serde_json::json!({"seat":p.id,"turn":[r.requested_turn.x,-r.requested_turn.z],"fire":p.wants_to_fire,"cooldown":p.shot_cooldown})).collect();
+            js_sys::Reflect::set(
+                &global,
+                &"ryggattackTouchObservation".into(),
+                &serde_json::to_string(&data).unwrap().into(),
+            )
+            .ok();
+        }
+        let action = js_sys::Reflect::get(&global, &"ryggattackTouchAction".into())
+            .ok()
+            .and_then(|v| v.as_string());
+        if let Some(action) = action {
+            js_sys::Reflect::set(
+                &global,
+                &"ryggattackTouchAction".into(),
+                &wasm_bindgen::JsValue::NULL,
+            )
+            .ok();
+            use ui::MenuAction;
+            browser.menu = match (state.get(), action.as_str()) {
+                (AppState::Lobby, "join") => {
+                    roster.join(players::InputSource::Wasd);
+                    None
+                }
+                (AppState::Lobby, "start") => Some(MenuAction::Launch),
+                (AppState::Lobby, "bots") => Some(MenuAction::CycleBots),
+                (AppState::Lobby, "target") => Some(MenuAction::CycleTarget),
+                (AppState::Lobby, "arena") => Some(MenuAction::CycleArena),
+                (AppState::Lobby | AppState::Playing, "back") => Some(MenuAction::ReturnToMenu),
+                (AppState::Playing, "pause") if !paused && !round.finished => {
+                    Some(MenuAction::Pause)
+                }
+                (AppState::Playing, "resume") if paused => Some(MenuAction::Resume),
+                (AppState::Playing, "restart") if round.winner.is_some() => {
+                    browser.restart = true;
+                    None
+                }
+                _ => None,
+            };
+        }
         scale.0 = if *state.get() == AppState::Lobby {
             windows.iter().next().map_or(1.0, |w| {
                 (w.width() / 960.0).min(w.height() / 650.0).min(1.0)
             })
         } else {
-            1.0
+            windows
+                .iter()
+                .next()
+                .map_or(1.0, |w| (w.width() / 700.0).clamp(0.6, 1.0))
         };
         js_sys::Reflect::set(
             &global,
@@ -183,6 +258,17 @@ fn browser_local_menu(
     }
     #[cfg(not(target_arch = "wasm32"))]
     {
-        let _ = (state, &mut next, windows, &mut scale);
+        let _ = (
+            state,
+            &mut next,
+            windows,
+            &mut scale,
+            &mut roster,
+            round,
+            pause,
+            settings,
+            &mut browser,
+            players,
+        );
     }
 }

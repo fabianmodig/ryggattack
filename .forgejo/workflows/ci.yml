@@ -61,8 +61,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Test refresh-rate calibration
-        run: node --test scripts/refresh-rate.test.mjs
+      - name: Test browser calibration and touch controls
+        run: node --test scripts/refresh-rate.test.mjs scripts/touch-controls.test.mjs
 
       - name: Test room UI states and validation
         run: |

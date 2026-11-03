@@ -1,0 +1,31 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-mobile-touch)
+warning: variants `Start` and `Exit` are never constructed
+  --> src/ui/mod.rs:54:5
+   |
+53 | pub(crate) enum MenuAction {
+   |                 ---------- variants in this enum
+54 |     Start,
+   |     ^^^^^
+...
+60 |     Exit,
+   |     ^^^^
+   |
+   = note: `MenuAction` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `main_menu` is never used
+   --> src/ui/mod.rs:399:4
+    |
+399 | fn main_menu(commands: &mut Commands) {
+    |    ^^^^^^^^^
+
+warning: `ryggattack` (lib) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 9m 22s
+note: wasm-opt was not found, so the module keeps its full size.
+
+Built dist/web. Serve it with:
+  python3 -m http.server 8080 --directory dist/web
+
+real	9m32.826s
+user	9m12.680s
+sys	0m25.357s

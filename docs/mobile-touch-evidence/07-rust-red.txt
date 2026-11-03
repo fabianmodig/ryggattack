@@ -1,0 +1,40 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-mobile-touch)
+warning: field `reset` is never read
+  --> src/input.rs:15:16
+   |
+13 | pub(crate) struct TouchInput {
+   |                   ---------- field in this struct
+14 |     pub(crate) intent: ControlIntent,
+15 |     pub(crate) reset: bool,
+   |                ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `ryggattack` (lib test) generated 1 warning
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 27s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test players::tests::touch_intent_reaches_local_fixed_input_and_clears_pending_on_cancel ... FAILED
+
+failures:
+
+---- players::tests::touch_intent_reaches_local_fixed_input_and_clears_pending_on_cancel stdout ----
+
+thread 'players::tests::touch_intent_reaches_local_fixed_input_and_clears_pending_on_cancel' (1563060) panicked at src/players/mod.rs:374:9:
+assertion `left == right` failed
+  left: Vec3(0.0, 0.0, 0.0)
+ right: Vec3(1.0, 0.0, 0.0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    players::tests::touch_intent_reaches_local_fixed_input_and_clears_pending_on_cancel
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 205 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+real	1m27.495s
+user	1m21.975s
+sys	0m18.156s

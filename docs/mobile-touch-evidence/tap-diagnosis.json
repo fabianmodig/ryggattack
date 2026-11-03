@@ -1,0 +1,7 @@
+{
+  "tap_pointer_duration_ms": 638.5,
+  "tap_limit_ms": 350,
+  "sampled_fire_count": 0,
+  "seat0_positive_cooldown_count": 0,
+  "conclusion": "Harness awaited two serialized CDP round trips plus 90ms while SwiftShader ran: the intended tap was actually a 638.5ms hold, which the product deliberately rejects. Replay will use Playwright trusted atomic touchscreen.tap, preserving product duration semantics."
+}

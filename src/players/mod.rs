@@ -72,6 +72,7 @@ const ARROWS: KeyBindings = KeyBindings {
 /// worn stick would keep picking junctions on its own.
 const PAD_DEADZONE: f32 = 0.5;
 
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn human_input(
     keys: Res<ButtonInput<KeyCode>>,
     pads: Query<&Gamepad>,
@@ -80,8 +81,11 @@ pub(crate) fn human_input(
     pause: Option<Res<crate::ui::PauseState>>,
     mut inputs: ResMut<crate::input::SeatInputs>,
     players: Query<&Player>,
+    touch: Option<Res<crate::input::TouchInput>>,
 ) {
-    let running = !round.finished && pause.is_none_or(crate::ui::gameplay_is_running);
+    let running = !round.finished
+        && pause.is_none_or(crate::ui::gameplay_is_running)
+        && crate::online::canvas_focused();
     for player in &players {
         let Some(source) = player.input else {
             continue;
@@ -92,12 +96,24 @@ pub(crate) fn human_input(
             continue;
         }
         let (turn, fire) = read_source(source, &roster, &keys, &pads);
-        inputs.local_fire_pending[player.id] |= fire;
-        inputs.intents[player.id] = crate::input::ControlIntent {
+        let device = crate::input::ControlIntent {
             horizontal: turn.x,
             vertical: -turn.z,
             fire,
         };
+        let touch_seat = roster
+            .seat_of(InputSource::Wasd)
+            .or_else(|| roster.seat_of(InputSource::Arrows));
+        let intent = if touch_seat == Some(player.id) {
+            if touch.as_ref().is_some_and(|t| t.reset) {
+                inputs.local_fire_pending[player.id] = false;
+            }
+            crate::input::merge_touch(device, touch.as_ref().map_or(default(), |t| t.intent))
+        } else {
+            device
+        };
+        inputs.local_fire_pending[player.id] |= intent.fire;
+        inputs.intents[player.id] = intent;
     }
 }
 
@@ -349,6 +365,84 @@ fn axis(keys: &ButtonInput<KeyCode>, negative: KeyCode, positive: KeyCode) -> f3
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn touch_intent_reaches_local_fixed_input_and_clears_pending_on_cancel() {
+        use bevy::ecs::system::RunSystemOnce;
+        let mut app = App::new();
+        app.init_resource::<ButtonInput<KeyCode>>()
+            .insert_resource(seated(&[InputSource::Wasd, InputSource::Arrows]))
+            .init_resource::<crate::input::SeatInputs>()
+            .init_resource::<Round>()
+            .insert_resource(crate::input::TouchInput {
+                intent: crate::input::ControlIntent {
+                    horizontal: 1.0,
+                    vertical: 0.0,
+                    fire: true,
+                },
+                reset: false,
+            });
+        let player = app
+            .world_mut()
+            .spawn((
+                Player {
+                    id: 0,
+                    active: true,
+                    alive: true,
+                    score: 0,
+                    shot_cooldown: 0.0,
+                    wants_to_fire: false,
+                    input: Some(InputSource::Wasd),
+                },
+                RailFollower {
+                    path: crate::tracks::RailPath::Edge { from: 0, to: 1 },
+                    progress: 0.0,
+                    requested_turn: Vec3::ZERO,
+                    collision_cooldown: 0.0,
+                },
+            ))
+            .id();
+        app.add_systems(PreUpdate, human_input);
+        app.update();
+        app.world_mut()
+            .resource_mut::<crate::input::TouchInput>()
+            .intent
+            .fire = false;
+        app.update(); // zero-tick render frame: retain tap for the next fixed tick
+        app.world_mut()
+            .run_system_once(crate::input::apply_inputs)
+            .unwrap();
+        assert_eq!(
+            app.world()
+                .get::<RailFollower>(player)
+                .unwrap()
+                .requested_turn,
+            Vec3::X
+        );
+        assert!(app.world().get::<Player>(player).unwrap().wants_to_fire);
+        app.world_mut()
+            .run_system_once(crate::input::apply_inputs)
+            .unwrap();
+        assert!(!app.world().get::<Player>(player).unwrap().wants_to_fire);
+        app.world_mut()
+            .resource_mut::<crate::input::SeatInputs>()
+            .local_fire_pending[0] = true;
+        *app.world_mut().resource_mut::<crate::input::TouchInput>() = crate::input::TouchInput {
+            reset: true,
+            ..default()
+        };
+        app.update();
+        app.world_mut()
+            .run_system_once(crate::input::apply_inputs)
+            .unwrap();
+        assert_eq!(
+            app.world()
+                .get::<RailFollower>(player)
+                .unwrap()
+                .requested_turn,
+            Vec3::ZERO
+        );
+        assert!(!app.world().get::<Player>(player).unwrap().wants_to_fire);
+    }
     #[test]
     fn local_input_does_not_buffer_actions_while_paused_or_round_finished() {
         use bevy::ecs::system::RunSystemOnce;

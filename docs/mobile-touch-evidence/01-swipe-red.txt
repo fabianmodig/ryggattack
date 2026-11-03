@@ -1,0 +1,36 @@
+TAP version 13
+# Subtest: swipe chooses a cardinal direction retained for the next junction, without firing
+not ok 1 - swipe chooses a cardinal direction retained for the next junction, without firing
+  ---
+  duration_ms: 1.455998
+  type: 'test'
+  location: '/home/hermes/src/ryggattack-mobile-touch/scripts/touch-controls.test.mjs:6:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    touch gesture adapter is missing
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/hermes/src/ryggattack-mobile-touch/scripts/touch-controls.test.mjs:7:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86.343391

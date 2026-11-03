@@ -264,6 +264,8 @@ pub(crate) fn run(address: String, name: String) {
             code: String::new(),
         })
         .init_resource::<View>()
+        .init_resource::<crate::input::TouchInput>()
+        .add_systems(PreUpdate, crate::input::sample_touch)
         .add_plugins(crate::settings::SettingsPlugin)
         .init_resource::<crate::ui::MenuInput>()
         .init_resource::<crate::ui::StickLatch>()
@@ -391,7 +393,7 @@ fn publish_hud(client: &NetworkClient, menu: bool, write: impl FnOnce(&str, &str
 fn canvas_status_text(label: String, dom_ready: bool) -> String {
     if dom_ready { String::new() } else { label }
 }
-fn canvas_focused() -> bool {
+pub(crate) fn canvas_focused() -> bool {
     #[cfg(target_arch = "wasm32")]
     {
         web_sys::window()
@@ -415,6 +417,7 @@ fn network_input(
     mut status: Query<&mut Text, With<Status>>,
     mut menu: Local<bool>,
     mut fire: Local<bool>,
+    touch: Res<crate::input::TouchInput>,
     mut warmup: Local<u8>,
     entry: Res<Entry>,
 ) {
@@ -467,6 +470,9 @@ fn network_input(
         .as_ref()
         .is_some_and(|l| l.phase == crate::rooms::Phase::Running)
         && gameplay_active(*menu, windows.iter().all(|w| w.focused), canvas_focused);
+    if touch.reset {
+        *fire = false;
+    }
     let mut intent = ControlIntent::default();
     if active {
         intent.horizontal = (keys.pressed(KeyCode::KeyD) || keys.pressed(KeyCode::ArrowRight)) as u8
@@ -486,6 +492,9 @@ fn network_input(
             }
             intent.fire |= pad.pressed(GamepadButton::South);
         }
+        intent = crate::input::merge_touch(intent, touch.intent);
+        *fire |= touch.intent.fire;
+        intent.fire |= *fire;
     } else {
         *fire = false;
     }

@@ -1,0 +1,26 @@
+   Compiling ryggattack v0.1.0 (/home/hermes/src/ryggattack-mobile-touch)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 03s
+     Running unittests src/lib.rs (/home/hermes/src/ryggattack/target/debug/deps/ryggattack-6688cd1a362c34c8)
+
+running 1 test
+test settings::mobile_camera_tests::portrait_projection_preserves_desktop_horizontal_field_and_restores_on_rotation ... FAILED
+
+failures:
+
+---- settings::mobile_camera_tests::portrait_projection_preserves_desktop_horizontal_field_and_restores_on_rotation stdout ----
+
+thread 'settings::mobile_camera_tests::portrait_projection_preserves_desktop_horizontal_field_and_restores_on_rotation' (1586699) panicked at src/settings.rs:1160:9:
+portrait must not crop rail branches visible in the reference desktop view
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    settings::mobile_camera_tests::portrait_projection_preserves_desktop_horizontal_field_and_restores_on_rotation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 209 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`
+
+real	1m3.854s
+user	1m3.441s
+sys	0m9.084s

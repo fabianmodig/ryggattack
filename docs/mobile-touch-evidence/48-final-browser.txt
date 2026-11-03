@@ -1,0 +1,14 @@
+offline real ECS retained swipe; no accidental fire {"observation":{"cooldown":0,"fire":false,"seat":0,"turn":[1,0]}}
+offline tap fired through existing cooldown {"observation":{"cooldown":0.265625,"fire":true,"seat":0,"turn":[1,0]}}
+offline pause/resume clears retained steering {}
+real multitouch clears steering {}
+real pointer cancellation clears steering {}
+actual DOM canvas blur clears input {}
+desktop keyboard steering preserved {}
+touch restart of a naturally completed match {}
+online swipe and tap reached real websocket intent {"swipe":{"sequence":6,"horizontal":1,"vertical":0,"fire":false},"tap":{"sequence":9,"horizontal":1,"vertical":0,"fire":true},"authority":[{"tick":712,"seat":0,"cooldown":0.46875,"alive":true},{"tick":716,"seat":0,"cooldown":0.40625,"alive":true},{"tick":720,"seat":0,"cooldown":0.34375,"alive":true},{"tick":724,"seat":0,"cooldown":0.28125,"alive":true},{"tick":728,"seat":0,"cooldown":0.21875,"alive":true},{"tick":732,"seat":0,"cooldown":0.15625,"alive":true},{"tick":736,"seat":0,"cooldown":0.09375,"alive":true},{"tick":740,"seat":0,"cooldown":0.03125,"alive":true}]}
+online accessible menu/resume neutralized input; server keeps running {}
+
+real	2m1.787s
+user	0m3.438s
+sys	0m1.179s
