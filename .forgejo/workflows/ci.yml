@@ -33,7 +33,8 @@ jobs:
       - name: Install Linux build dependencies
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends libudev-dev libwayland-dev python3 openssl
+          apt-get install -y --no-install-recommends libudev-dev libwayland-dev python3 openssl zstd
+          zstd --version
 
       # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
       # than whatever the runner image happens to ship.
@@ -45,6 +46,8 @@ jobs:
       - name: Cache cargo registry and build artifacts
         uses: https://github.com/Swatinem/rust-cache@v2.7.8
         with:
+          # Start a fresh archive namespace after a failed legacy-cache restore.
+          prefix-key: v1-rust-zstd
           # Compiling Bevy is nearly all of a cold run, and a failing test does
           # not invalidate it, so keep the dependency build either way.
           cache-on-failure: true
@@ -105,6 +108,7 @@ jobs:
           install linux-amd64/helm /usr/local/bin/helm
       - run: node --test scripts/container-smoke-network.test.mjs
       - run: node scripts/portable-container-build.test.mjs
+      - run: python3 scripts/ci-cache.test.py
       - run: helm lint charts/ryggattack --strict
       - run: python3 scripts/chart-test.py
       - run: python3 scripts/beta-chart.test.py
@@ -122,8 +126,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      # No apt step: targeting wasm32 skips the two build scripts that reach
-      # for system libraries on Linux.
+      # The shared setup installs zstd for caching, but WASM needs none of the
+      # native Linux graphics/input development libraries.
       - uses: ./.github/actions/setup-web-build
 
       # Without this job a broken web build would surface only after the merge,

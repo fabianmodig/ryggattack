@@ -212,6 +212,27 @@ The repository lives on `git.modig.online` and is push-mirrored to GitHub.
 `dist/web/` in the `web build` job of `ci.yml` on Forgejo, without publishing
 anything.
 
+### CI build caches
+
+Native tests and web/release builds install `zstd` **before** restoring Cargo
+caches, so the cache action can select fast zstd compression instead of gzip.
+Both use the `v1-rust-zstd` cache epoch, with separate `test` and `web` keys;
+PR and release web builds share the same setup action. The new epoch bypasses
+legacy entries, including a native cache download that failed extraction.
+It does not establish why that download was invalid.
+
+The first run in the new namespace is cold. Confirm a successful cache save,
+then check a later run for successful restoration and `.tzst` archive commands.
+Compare Cargo's compile time and the **post-action cache save** separately;
+tests finishing does not mean the runner has been released. A new branch can
+still be cold because Actions cache access remains branch-scoped. There are no
+host-mounted shared writable targets, runner sizing/concurrency changes, or
+changes to the production Cargo optimization profile.
+
+The Helm contract job runs `python3 scripts/ci-cache.test.py` (requires PyYAML)
+to guard installation order and matching cache configuration. If another cache
+epoch is needed, update both cache consumers and the contract together.
+
 ### The published container image
 
 A main release builds/tests separate web and backend images, publishes them

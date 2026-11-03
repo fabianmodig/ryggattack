@@ -6,6 +6,15 @@ description: >
 runs:
   using: composite
   steps:
+    # The minimal runner image lacks zstd. Install it before rust-cache chooses
+    # its archive format; gzip cache saves were taking several minutes.
+    - name: Install fast cache compression
+      shell: bash
+      run: |
+        apt-get update
+        apt-get install -y --no-install-recommends zstd
+        zstd --version
+
     # Bevy 0.19 needs rustc 1.95 or newer, so pick up current stable rather
     # than whatever the runner image happens to ship.
     - uses: https://github.com/dtolnay/rust-toolchain@stable
@@ -14,6 +23,8 @@ runs:
 
     - uses: https://github.com/Swatinem/rust-cache@v2.7.8
       with:
+        # Match the native cache epoch, while keeping distinct target keys.
+        prefix-key: v1-rust-zstd
         # One entry for every job that compiles this target, which is why the
         # configuration lives here: a release only starts from a warm cache if
         # its key matches the one a build on the default branch saved, and two
