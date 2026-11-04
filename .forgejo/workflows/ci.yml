@@ -112,6 +112,7 @@ jobs:
       - run: node --test scripts/container-smoke-network.test.mjs
       - run: node scripts/portable-container-build.test.mjs
       - run: python3 scripts/ci-cache.test.py
+      - run: python3 scripts/backend-artifact.test.py
       - run: helm lint charts/ryggattack --strict
       - run: python3 scripts/chart-test.py
       - run: python3 scripts/beta-chart.test.py
@@ -146,6 +147,26 @@ jobs:
           path: dist/web
           if-no-files-found: error
           retention-days: 2
+      - name: Install beta backend build dependencies
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends libudev-dev libwayland-dev
+      - name: Build beta backend artifact
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          cargo build --locked --release --bin ryggattack-server
+          mkdir -p dist/server
+          cp target/release/ryggattack-server dist/server/
+          git rev-parse HEAD > dist/server/source-sha.txt
+          (cd dist/server && sha256sum ryggattack-server > SHA256SUMS)
+      - uses: https://code.forgejo.org/actions/upload-artifact@v3
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          name: beta-server
+          path: dist/server
+          if-no-files-found: error
+          retention-days: 2
 
   beta:
     name: Publish shared beta desired state
@@ -173,6 +194,14 @@ jobs:
         with:
           name: beta-web
           path: dist/web
+      - uses: https://code.forgejo.org/actions/download-artifact@v3
+        with:
+          name: beta-server
+          path: dist/server
+      - name: Verify backend artifact
+        run: |
+          test "$(cat dist/server/source-sha.txt)" = "$(git rev-parse HEAD)"
+          (cd dist/server && sha256sum --check SHA256SUMS)
       - name: Verify artifact source and allocate unique beta pair
         run: |
           test "$(cat dist/web/source-sha.txt)" = "$(git rev-parse HEAD)"
@@ -183,25 +212,12 @@ jobs:
       - uses: https://github.com/actions/setup-node@v4
         with:
           node-version: 22
-      - uses: https://github.com/dtolnay/rust-toolchain@stable
-      - name: Install portable container and backend tools
+      - name: Install portable container tools
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3-yaml zstd
-          zstd --version
-      - uses: https://github.com/Swatinem/rust-cache@v2.7.8
-        with:
-          # Main's release cache includes the native release backend as well as
-          # WASM dependencies. Reuse it instead of an unwarmed PR-only key.
-          prefix-key: v1-rust-zstd
-          shared-key: web
-          # This job only runs on PRs; main's release remains the sole writer.
-          save-if: "false"
-      - name: Build backend and paired runtime images
+          apt-get install -y --no-install-recommends docker.io python3-yaml
+      - name: Build paired runtime images
         run: |
-          cargo build --locked --release --bin ryggattack-server
-          mkdir -p dist/server
-          cp target/release/ryggattack-server dist/server/
           for component in web server; do
             docker build --file "$component/Dockerfile" --tag "$IMAGE/$component:$VERSION" \
               --label "org.opencontainers.image.revision=$(git rev-parse HEAD)" \

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard compression prerequisites and native/web/beta cache compatibility."""
+"""Guard build-cache compatibility and a cache-free beta publisher."""
 import pathlib
 import unittest
 
@@ -24,8 +24,7 @@ class CacheContract(unittest.TestCase):
         self.web = load(".github/actions/setup-web-build/action.yml")["runs"]["steps"]
 
     def test_zstd_is_installed_before_each_cache_restore(self):
-        for label, steps in (("native", self.native), ("web", self.web),
-                             ("beta", self.beta)):
+        for label, steps in (("native", self.native), ("web", self.web)):
             with self.subTest(job=label):
                 index, _ = cache_step(steps)
                 before = "\n".join(s.get("run", "") for s in steps[:index])
@@ -49,20 +48,18 @@ class CacheContract(unittest.TestCase):
                 self.assertEqual(config.get("save-if"),
                                  "${{ github.ref == 'refs/heads/main' }}")
 
-    def test_beta_restores_main_release_cache_without_writing(self):
-        beta_step = cache_step(self.beta)[1]
+    def test_backend_producer_reuses_main_release_cache(self):
         web_step = cache_step(self.web)[1]
-        self.assertEqual(beta_step["uses"], web_step["uses"])
-        self.assertEqual(beta_step["with"].get("prefix-key"),
-                         web_step["with"]["prefix-key"])
-        self.assertEqual(beta_step["with"]["shared-key"],
-                         web_step["with"]["shared-key"])
-        self.assertEqual(beta_step["with"].get("save-if"), "false")
+        producer = load(".forgejo/workflows/ci.yml")["jobs"]["web"]["steps"]
         release = load(".forgejo/workflows/release.yml")["jobs"]["publish"]["steps"]
-        self.assertTrue(any(s.get("uses") == "./.github/actions/setup-web-build"
-                            for s in release))
-        commands = "\n".join(s.get("run", "") for s in release)
-        self.assertIn("cargo build --locked --release --bin ryggattack-server", commands)
+        for steps in (producer, release):
+            setup = next(i for i, s in enumerate(steps)
+                         if s.get("uses") == "./.github/actions/setup-web-build")
+            build = next(i for i, s in enumerate(steps)
+                         if "cargo build --locked --release --bin ryggattack-server"
+                         in s.get("run", ""))
+            self.assertLess(setup, build)
+        self.assertFalse(any("rust-cache" in s.get("uses", "") for s in self.beta))
         self.assertEqual(web_step["with"]["save-if"],
                          "${{ github.ref == 'refs/heads/main' }}")
 

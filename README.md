@@ -238,14 +238,25 @@ The Helm contract job runs `python3 scripts/ci-cache.test.py` (requires PyYAML)
 to guard installation order and matching cache configuration. If another cache
 epoch is needed, update all cache consumers and the contract together.
 
-The PR-only beta publisher also installs zstd before restoring the `web` cache,
-which main's release populates with both native release-backend and WASM
-dependencies. Beta explicitly disables cache saves rather than maintaining an
-isolated `beta-server` cache with no main warmer. This removes its post-build
-archive creation and avoids scoped duplicate entries; the backend still builds
-from the exact PR source and runs the existing paired-container smoke checks.
-The broader release cache is larger to download than the former backend-only
-cache, so compare the complete beta job time, not just the removed save step.
+For trusted same-repository PRs, the web job uses that same restored `web`
+cache to build the native release backend after the WASM build. It uploads a
+separate `beta-server` artifact containing the executable, checked-out source
+SHA and SHA-256 checksum. The beta publisher downloads both artifacts from the
+current workflow run and verifies their source markers and the backend checksum
+before building either image. Missing, stale-source or corrupted backend bytes
+fail the job; there is no fallback rebuild. These markers bind the trusted
+same-run transfer, not an independently signed compiler attestation.
+
+Beta no longer installs Rust, restores Cargo caches, or compiles the backend.
+The backend compilation has moved to the producer, not disappeared; expected
+savings come from removing duplicate toolchain setup and the multi-gigabyte
+cache transfer, offset by the smaller executable artifact transfer. Fork and
+manual web checks do not build/upload this beta-only backend. Existing native
+checks, paired-container smoke, fork exclusion and publication gates remain.
+The Helm job runs `python3 scripts/backend-artifact.test.py` to check workflow
+wiring and execute the exact verification shell against valid, stale, tampered
+and missing-file fixtures. Actual server execution remains covered by CI's
+paired runtime smoke. Compare full pipeline times as well as beta job times.
 Changes to Cargo.lock or the toolchain may still cause cache misses/recompiles.
 
 ### The published container image
