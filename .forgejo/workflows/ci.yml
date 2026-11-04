@@ -184,13 +184,19 @@ jobs:
         with:
           node-version: 22
       - uses: https://github.com/dtolnay/rust-toolchain@stable
-      - uses: https://github.com/Swatinem/rust-cache@v2.7.8
-        with:
-          shared-key: beta-server
       - name: Install portable container and backend tools
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3-yaml
+          apt-get install -y --no-install-recommends docker.io libudev-dev libwayland-dev python3-yaml zstd
+          zstd --version
+      - uses: https://github.com/Swatinem/rust-cache@v2.7.8
+        with:
+          # Main's release cache includes the native release backend as well as
+          # WASM dependencies. Reuse it instead of an unwarmed PR-only key.
+          prefix-key: v1-rust-zstd
+          shared-key: web
+          # This job only runs on PRs; main's release remains the sole writer.
+          save-if: "false"
       - name: Build backend and paired runtime images
         run: |
           cargo build --locked --release --bin ryggattack-server

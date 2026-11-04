@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard compression prerequisites and native/web cache compatibility."""
+"""Guard compression prerequisites and native/web/beta cache compatibility."""
 import pathlib
 import unittest
 
@@ -20,10 +20,12 @@ def cache_step(steps):
 class CacheContract(unittest.TestCase):
     def setUp(self):
         self.native = load(".forgejo/workflows/ci.yml")["jobs"]["test"]["steps"]
+        self.beta = load(".forgejo/workflows/ci.yml")["jobs"]["beta"]["steps"]
         self.web = load(".github/actions/setup-web-build/action.yml")["runs"]["steps"]
 
     def test_zstd_is_installed_before_each_cache_restore(self):
-        for label, steps in (("native", self.native), ("web", self.web)):
+        for label, steps in (("native", self.native), ("web", self.web),
+                             ("beta", self.beta)):
             with self.subTest(job=label):
                 index, _ = cache_step(steps)
                 before = "\n".join(s.get("run", "") for s in steps[:index])
@@ -46,6 +48,23 @@ class CacheContract(unittest.TestCase):
                 config = cache_step(steps)[1]["with"]
                 self.assertEqual(config.get("save-if"),
                                  "${{ github.ref == 'refs/heads/main' }}")
+
+    def test_beta_restores_main_release_cache_without_writing(self):
+        beta_step = cache_step(self.beta)[1]
+        web_step = cache_step(self.web)[1]
+        self.assertEqual(beta_step["uses"], web_step["uses"])
+        self.assertEqual(beta_step["with"].get("prefix-key"),
+                         web_step["with"]["prefix-key"])
+        self.assertEqual(beta_step["with"]["shared-key"],
+                         web_step["with"]["shared-key"])
+        self.assertEqual(beta_step["with"].get("save-if"), "false")
+        release = load(".forgejo/workflows/release.yml")["jobs"]["publish"]["steps"]
+        self.assertTrue(any(s.get("uses") == "./.github/actions/setup-web-build"
+                            for s in release))
+        commands = "\n".join(s.get("run", "") for s in release)
+        self.assertIn("cargo build --locked --release --bin ryggattack-server", commands)
+        self.assertEqual(web_step["with"]["save-if"],
+                         "${{ github.ref == 'refs/heads/main' }}")
 
 
 if __name__ == "__main__":

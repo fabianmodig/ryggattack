@@ -236,7 +236,17 @@ changes to the production Cargo optimization profile.
 
 The Helm contract job runs `python3 scripts/ci-cache.test.py` (requires PyYAML)
 to guard installation order and matching cache configuration. If another cache
-epoch is needed, update both cache consumers and the contract together.
+epoch is needed, update all cache consumers and the contract together.
+
+The PR-only beta publisher also installs zstd before restoring the `web` cache,
+which main's release populates with both native release-backend and WASM
+dependencies. Beta explicitly disables cache saves rather than maintaining an
+isolated `beta-server` cache with no main warmer. This removes its post-build
+archive creation and avoids scoped duplicate entries; the backend still builds
+from the exact PR source and runs the existing paired-container smoke checks.
+The broader release cache is larger to download than the former backend-only
+cache, so compare the complete beta job time, not just the removed save step.
+Changes to Cargo.lock or the toolchain may still cause cache misses/recompiles.
 
 ### The published container image
 
