@@ -6,7 +6,7 @@ import {resolve,sep,extname} from 'node:path';
 import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
 const {chromium}=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url)('playwright');
-const root=resolve('dist/web'),out=resolve(process.env.HUD_EVIDENCE??'verification/mobile-hud-fix');mkdirSync(out,{recursive:true});
+const root=resolve(process.env.HUD_BUNDLE??'dist/web'),out=resolve(process.env.HUD_EVIDENCE??'verification/mobile-hud-fix');mkdirSync(out,{recursive:true});
 const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
 const result={status:'running',started:new Date().toISOString(),verifier:hash(new URL(import.meta.url)),artifact:{},views:[],errors:[]};
 for(const name of ['index.html','touch-controls.mjs','ryggattack.js','ryggattack_bg.wasm'])result.artifact[name]=hash(resolve(root,name));
@@ -34,17 +34,17 @@ try {
   await page.waitForTimeout(1600); // allow real Winit resize + projection frames, not just DOM reflow
   await page.waitForFunction(()=>document.querySelector('canvas').classList.contains('touch-playing')||JSON.parse(globalThis.ryggattackLocalStatus??'null')?.finished);
   await shot(name+'-playing');
-  result.views.push(await page.evaluate(name=>{const rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right};};const hud=document.getElementById('offline-hud');return {name,canvas:rect(document.querySelector('canvas')),canvasPixels:[document.querySelector('canvas').width,document.querySelector('canvas').height],hud:hud?rect(hud):null,text:hud?.textContent,controls:rect(document.getElementById('touch-controls')),ecs:globalThis.ryggattackOfflineHud,local:globalThis.ryggattackLocalStatus};},name));save();
-  if(!process.env.HUD_BASELINE){
-   const view=result.views.at(-1);assert(view.hud,'actual offline ECS HUD must be mounted');
-   assert(view.hud.bottom<=view.canvas.y,'HUD intersects rendered Bevy arena surface');
-   assert(view.canvas.bottom<=view.controls.y,'touch controls intersect rendered Bevy arena surface');
-   assert(view.canvas.width>=width-1&&view.canvas.height>=150,'real canvas must retain usable reserved space');
+  result.views.push(await page.evaluate(name=>{const rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right};};const hud=document.getElementById('offline-hud'),canvas=document.querySelector('canvas');return {name,canvas:rect(canvas),canvasPixels:[canvas.width,canvas.height],hudHidden:hud.hidden,text:hud.textContent,pause:rect(document.getElementById('touch-pause')),visibleButtons:[...document.querySelectorAll('button')].filter(e=>e.getClientRects().length).map(e=>e.id),ecs:globalThis.ryggattackOfflineHud,local:globalThis.ryggattackLocalStatus};},name));save();
+  {
+   const view=result.views.at(-1);
+   assert.equal(view.canvas.y,0,'mobile must not reserve a top info band');
+   assert.equal(view.canvas.x,0);
+   assert.equal(view.canvas.width,width);assert.equal(view.canvas.height,height,'mobile canvas must fill the viewport, without a bottom control row');
+   assert.equal(view.hudHidden,true,'scores belong in pause, not active gameplay');
+   assert.deepEqual(view.visibleButtons,['touch-pause'],'only one discreet active-play pause affordance');
+   assert(view.pause.width>=44&&view.pause.width<=56&&view.pause.height>=44&&view.pause.height<=56,'pause must be accessible but discreet');
    assert(Math.abs(view.canvasPixels[0]-view.canvas.width)<=1&&Math.abs(view.canvasPixels[1]-view.canvas.height)<=1,'Bevy backing surface did not resize');
-   assert.equal(view.text,view.ecs,'HUD must render the actual ECS publication');
-   assert(!/Rail drops|rear hits|ONE LIFE|yellow|gamepad|RESTART|\+25%/.test(view.text));
-   assert(view.text.includes('FIRST TO 3'));assert.equal(view.text.split('\n').filter(l=>/^P\d:/.test(l)).length,4);
-   const bounds=await page.locator('#offline-hud').evaluate(e=>({scroll:e.scrollWidth,width:e.clientWidth,height:e.scrollHeight,clientHeight:e.clientHeight}));assert(bounds.scroll<=bounds.width&&bounds.height<=bounds.clientHeight,'HUD is wrapping/scrolling/clipping');
+   assert.equal(view.text,view.ecs,'retained scores must be actual ECS publication');
    // A trusted tap and real ECS cooldown prove this is the running Bevy game.
    if(name==='phone'){
     await page.waitForFunction(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.finished&&/^P1:.* IN/m.test(globalThis.ryggattackOfflineHud??''));
@@ -57,6 +57,7 @@ try {
     await page.waitForFunction(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.finished);
     await page.locator('#touch-pause').tap();await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.paused);
     await page.locator('#offline-pause').waitFor({state:'visible'});await shot(name+'-pause-help');
+    assert.equal(await page.locator('#pause-scores').innerText(),await page.evaluate(()=>globalThis.ryggattackOfflineHud));
     const help=await page.locator('#offline-pause').innerText();for(const term of ['rear','yellow','pink','SPD','HIT','swipe','gamepad'])assert(help.toLowerCase().includes(term.toLowerCase()),`missing pause help ${term}`);
     if(name==='landscape'){
      await page.locator('#offline-pause').evaluate(e=>{e.scrollTop=e.scrollHeight;});await shot(name+'-pause-help-details');
@@ -70,7 +71,19 @@ try {
    }
   }
  }
- if(process.env.HUD_BASELINE)assert(result.views.every(v=>v.canvas.y>=124),'offline HUD has no reserved space: explanatory canvas text overlays the arena');
+
+ await context.close();
+ const desktopContext=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1});
+ page=await desktopContext.newPage();page.setDefaultTimeout(90000);page.on('pageerror',e=>result.errors.push(String(e)));
+ await page.goto(`http://127.0.0.1:${port}/?quality=0`,{waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='MainMenu');await page.locator('#play-local').click();
+ await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Lobby');await page.waitForTimeout(500);
+ await page.keyboard.down('w');await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.joined);await page.keyboard.up('w');
+ await page.keyboard.press('Enter');await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Playing');
+ await page.waitForFunction(()=>!document.getElementById('offline-hud').hidden);await page.waitForTimeout(1600);
+ result.desktop=await page.evaluate(()=>{const c=document.querySelector('canvas'),r=c.getBoundingClientRect();return {canvas:{x:r.x,y:r.y,width:r.width,height:r.height},backing:[c.width,c.height],hudVisible:!!document.getElementById('offline-hud').getClientRects().length,menuVisible:!!document.getElementById('touch-back').getClientRects().length};});
+ assert.deepEqual(result.desktop.canvas,{x:0,y:124,width:1280,height:516});assert.deepEqual(result.desktop.backing,[1280,516]);assert(result.desktop.hudVisible&&result.desktop.menuVisible,'desktop HUD and control behavior must remain unchanged');
+ await shot('desktop-playing');
  assert.deepEqual(result.errors,[]);result.status='passed';
 }catch(error){result.status='failed';result.failure=String(error.stack??error);console.error(error);process.exitCode=1;}
 finally{result.finished=new Date().toISOString();save();if(browser)await browser.close();await new Promise(r=>server.close(r));}

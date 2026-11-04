@@ -1,5 +1,10 @@
 # Offline HUD layout correction (PR 24)
 
+**Historical layout, superseded by [immersive mobile gameplay](mobile-immersive.md).**
+The reserved mobile bands described below were rejected in favor of game-only
+active play. They remain the desktop behavior. Earlier evidence stays immutable;
+the new report records separate TDD and rendered acceptance.
+
 The offline HUD used one absolutely positioned Bevy text node for scores, every
 player's effects, match rules, power-up legend and restart instructions. On a
 short landscape phone this covered the rails; on narrow Safari it could also

@@ -21,7 +21,11 @@ let browser,page;
 try {
  browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
  const context=await browser.newContext({viewport:{width:375,height:740},hasTouch:true,isMobile:true,deviceScaleFactor:1});
- await context.addInitScript(()=>{Date.now=()=>3000;});
+ await context.addInitScript(()=>{
+  Date.now=()=>3000;
+  // Emulated hardware API only: selection/action still cross gilrs and ECS.
+  globalThis.__qaPad=null;Object.defineProperty(navigator,'getGamepads',{value:()=>[globalThis.__qaPad]});
+ });
  page=await context.newPage();page.setDefaultTimeout(90000);page.on('pageerror',e=>result.errors.push(String(e)));
  await page.goto(`http://127.0.0.1:${port}/?quality=0`,{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='MainMenu');
@@ -47,6 +51,20 @@ try {
  await pause();await page.keyboard.press('s');await selected('back');await page.keyboard.press('w');await selected('resume');
  await page.keyboard.press('Space');await resumed();await observe('Space resumes after S/W');
  await pause();await page.keyboard.press('s');await selected('back');await page.keyboard.press('Escape');await resumed();await observe('Escape resumes from back');
+ await pause();
+ await page.evaluate(()=>{globalThis.__qaPad={id:'QA standard gamepad',index:0,connected:true,mapping:'standard',axes:[0,0,0,0],buttons:Array.from({length:17},()=>({pressed:false,touched:false,value:0})),timestamp:performance.now()};});
+ await page.waitForTimeout(1000);
+ const pad=async(index,condition)=>{
+  await page.evaluate(i=>{const p=globalThis.__qaPad;p.buttons[i]={pressed:true,touched:true,value:1};p.timestamp=performance.now();},index);
+  await condition();
+  await page.evaluate(i=>{const p=globalThis.__qaPad;p.buttons[i]={pressed:false,touched:false,value:0};p.timestamp=performance.now();},index);
+  await page.waitForTimeout(400);
+ };
+ await pad(13,()=>selected('back'));await observe('gamepad D-pad down selects back in ECS and DOM');
+ await pad(12,()=>selected('resume'));await observe('gamepad D-pad up selects resume in ECS and DOM');
+ await pad(0,resumed);await observe('gamepad south resumes');
+ await pad(9,async()=>{await page.locator('#offline-pause').waitFor({state:'visible'});await selected('resume');});await observe('gamepad Start pauses');
+ await pad(1,resumed);await observe('gamepad east resumes');
  await pause();await page.keyboard.press('s');await selected('back');
  await page.screenshot({path:resolve(out,'ws-selected-back.png'),timeout:90000});
  await page.keyboard.press('Enter');await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='MainMenu');await page.locator('#offline-pause').waitFor({state:'hidden'});await observe('S then Enter returns to main menu');

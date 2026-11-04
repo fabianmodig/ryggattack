@@ -1,3 +1,5 @@
+import {buildOnlineHudModel} from './online-hud.mjs';
+
 // CSS-pixel gestures feed device-independent intent, never synthetic keys.
 export function createGesture(onCancel=()=>{}) {
   let pointer=null, horizontal=0, vertical=0, fire=false;
@@ -69,9 +71,22 @@ export function installTouchControls(env=globalThis) {
     const paused=offlineMatch&&!!local.paused;
     const wasPaused=!$('offline-pause').hidden;
     $('game').classList.toggle('offline-playing',offlineMatch);
-    $('offline-hud').hidden=!offlineMatch;
+    const mobile=env.matchMedia('(pointer:coarse)').matches;
+    $('offline-hud').hidden=!offlineMatch||mobile;
     const text=env.ryggattackOfflineHud??'';
     if($('offline-hud').textContent!==text)$('offline-hud').textContent=text;
+    if($('pause-scores').textContent!==text)$('pause-scores').textContent=text;
+    let hud;try{hud=JSON.parse(env.ryggattackHud??'null');}catch{/* no valid snapshot yet */}
+    $('online-pause-details').hidden=!(mobile&&online&&hud?.menu);
+    if(mobile&&online&&hud?.menu){
+      const model=buildOnlineHudModel(hud);
+      const scores=model.players.map(p=>`${p.name}${p.you?' (you)':''}: ${p.score} wins · ${p.out?'OUT':'IN'}${p.buffs.map(b=>` · ${b.label} ${Math.ceil(b.seconds)}s`).join('')}`);
+      $('online-pause-scores').textContent=[...scores,model.outcome?.text].filter(Boolean).join('\n');
+    }
+    // A single floating pause affordance replaces the active mobile toolbar.
+    // Keep round transitions immersive too; end-of-match actions remain reachable.
+    $('touch-controls').classList.toggle('immersive-match',mobile&&offlineMatch&&!local?.winner);
+    $('touch-back').hidden=mobile&&offlineMatch&&!local?.winner;
     $('offline-pause').hidden=!paused;
     if(paused&&!wasPaused){env.ryggattackPauseSelection='resume';$('help-resume').focus();}
     const selection=paused?env.ryggattackPauseSelection??'':'';

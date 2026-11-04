@@ -18,9 +18,12 @@ controller schemes remain available.
   not automatic fire. Taps use the existing simulation cooldown; taps during
   cooldown are not queued for later shots. Several unsampled taps coalesce into
   one pending press, like the existing frame-to-fixed-tick local latch.
-- **PAUSE**, **RESUME**, **BACK TO MENU** and, after a completed match,
-  **RESTART MATCH** are touch-sized local controls. A local pause freezes the
-  simulation. The online **MENU** / **RESUME INPUT** controls suspend your input
+- Active mobile play is **only the game canvas**, filling the viewport in
+  portrait or landscape, with one discreet 48px floating **pause** button.
+  There is no score/info band or bottom Pause/Menu row. Scores, active effects,
+  rules and return-to-menu are available while paused; **RESTART MATCH** appears
+  after a completed match. A local pause freezes the simulation.
+  The online pause icon / **RESUME INPUT** controls suspend your input
   only: the authoritative server keeps running. Online rematches use the existing
   same-room lobby and **READY** button, not a client-side restart.
 - Online creation, joining, readiness, settings and room links remain native DOM
@@ -55,12 +58,13 @@ this change does not alter those existing wire semantics or add an action queue.
 
 `touch-action: none` is limited to the active game gesture canvas. Native form
 controls keep normal touch scrolling/editing, and viewport zoom is not globally
-disabled. Viewport-fit and CSS safe-area insets protect the canvas, DOM menus
-and online HUD. Both local and online world cameras widen their vertical field
+disabled. Viewport-fit and CSS safe-area insets protect floating controls and
+DOM menus; the mobile canvas extends behind those insets without reserving bars.
+Both local and online world cameras widen their vertical field
 on narrow windows to preserve the desktop horizontal field, so portrait does
 not crop off rail branches. Wide-window framing is restored on rotation. Local
-Bevy UI scales for narrow viewports; the DOM toolbar avoids relying
-on scaled-down canvas buttons for touch targets.
+Bevy UI scales for narrow viewports. Desktop HUD/layout and keyboard/gamepad
+controls remain unchanged. No orientation lock is requested.
 
 The optional `ryggattackTouchDebug = true` browser flag publishes read-only local
 ECS steering/fire/cooldown observations as `ryggattackTouchObservation`. It does

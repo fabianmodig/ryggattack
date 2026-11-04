@@ -52,6 +52,27 @@
       #touch-lobby, #touch-playing-controls { display:flex; flex-wrap:wrap; gap:8px; }
       #touch-hint { margin:0 0 6px; }
       @media (pointer:coarse) { #touch-controls:not([hidden]) { display:block; } }
+      @media (pointer:coarse) {
+        /* The arena owns the complete viewport in either orientation. Safe
+           areas protect the lone control, never shrink the render surface. */
+        #game, #game.offline-playing { inset:0; }
+        #game > .rygg-online-hud { display:none !important; }
+        #touch-controls.immersive-match:not([hidden]) {
+          display:block; left:auto; right:max(10px,env(safe-area-inset-right));
+          top:max(10px,env(safe-area-inset-top)); bottom:auto;
+          height:auto; max-height:none; padding:0; background:none; overflow:visible;
+        }
+        #touch-controls.immersive-match #touch-playing-controls { display:block; }
+        #touch-controls.immersive-match #touch-pause, body #open-match-menu {
+          box-sizing:border-box; width:48px; height:48px; min-height:48px;
+          padding:0; border:1px solid #b8c7e65c; border-radius:50%;
+          background:#090b1399; color:white; font-size:0; opacity:.75;
+        }
+        #touch-controls.immersive-match #touch-pause::after, body #open-match-menu::after { content:'Ⅱ'; font:22px/1 monospace; }
+        #touch-controls.immersive-match #touch-pause:focus-visible, body #open-match-menu:focus-visible { outline:2px solid #f2c73d; outline-offset:3px; opacity:1; }
+        body #open-match-menu { top:max(10px,env(safe-area-inset-top)); right:max(10px,env(safe-area-inset-right)); bottom:auto; }
+      }
+      #pause-scores, #online-pause-scores { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.5; }
       @media(max-width:440px) { .settings-row { grid-template-columns:1fr 1fr; } .settings-row > label:first-child { grid-column:1/-1; } }
       [hidden] { display: none !important; }
       #online-entry { position:absolute; inset:0; z-index:6; overflow:auto; background:#060911; }
@@ -112,6 +133,7 @@
       <div class="menu-panel">
         <h2 id="pause-title">PAUSED · HOW TO PLAY</h2>
         <div class="menu-stack"><button id="help-resume">RESUME</button><button id="help-back">RETURN TO MENU</button></div>
+        <pre id="pause-scores" aria-label="Scores and active effects"></pre>
         <p>One life: rear hits eliminate. Last cart standing wins the round. Reach the win target to win the match. Solo practice has no scoring.</p>
         <p>Yellow rail drops: <strong>SPD</strong> = +25% speed. Pink rail drops: <strong>HIT</strong> = hits eliminate from any side. Both last 10 seconds; remaining seconds appear beside each cart's score. IN / OUT shows who is still in the round.</p>
         <p>Phone: swipe to steer at junctions; tap to shoot. Keyboard: WASD / Space, or arrows / Right Ctrl, to steer / shoot. Gamepad: stick / D-pad to steer, A to shoot. Escape / B resumes; Start selects. R or Start restarts a finished match.</p>
@@ -155,11 +177,17 @@
         <section id="match-menu" class="menu-stack" hidden aria-label="Online match menu">
           <p>The match is not paused. Return to this room's lobby automatically after the match; leaving releases your seat.</p>
           <button id="resume-match">RESUME INPUT</button><button id="leave-match">LEAVE ROOM</button>
+          <div id="online-pause-details" hidden>
+            <pre id="online-pause-scores" aria-label="Online scores and active effects"></pre>
+            <p>One life: rear hits eliminate. Last cart standing wins the round. Reach the room's win target to win the match.</p>
+            <p>Yellow rail drops: SPD = +25% speed. Pink: HIT = hits eliminate from any side. Both last 10 seconds.</p>
+            <p>Swipe to steer at junctions; tap to shoot. Keyboard: WASD / Space or arrows / Right Ctrl. Gamepad: stick / D-pad and A. Resume input to return to the arena.</p>
+          </div>
         </section>
         <p id="room-notice" role="status" aria-live="polite"></p>
       </div>
     </main>
-    <button id="open-match-menu" hidden>MENU · SERVER KEEPS RUNNING</button>
+    <button id="open-match-menu" aria-label="Pause input and open match menu (server keeps running)" hidden>MENU · SERVER KEEPS RUNNING</button>
 
     <aside id="touch-controls" aria-label="Touch game controls" hidden>
       <p id="touch-hint"></p>
@@ -168,7 +196,7 @@
         <button id="touch-bots">BOTS: 3</button><button id="touch-target">FIRST TO: 3</button><button id="touch-arena">Forest</button>
       </div>
       <div id="touch-playing-controls">
-        <button id="touch-pause">PAUSE</button><button id="touch-resume">RESUME</button><button id="touch-restart">RESTART MATCH</button>
+        <button id="touch-pause" aria-label="Pause game">PAUSE</button><button id="touch-resume">RESUME</button><button id="touch-restart">RESTART MATCH</button>
       </div>
       <button id="touch-back">BACK TO MENU</button>
     </aside>

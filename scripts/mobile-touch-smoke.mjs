@@ -8,7 +8,7 @@ import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 const require=createRequire(process.env.PLAYWRIGHT_NODE_MODULES??import.meta.url);
 const {chromium}=require('playwright');
-const root=resolve('dist/web'),out=resolve(process.env.TOUCH_EVIDENCE??'verification/mobile-touch/browser');mkdirSync(out,{recursive:true});
+const root=resolve(process.env.TOUCH_BUNDLE??'dist/web'),out=resolve(process.env.TOUCH_EVIDENCE??'verification/mobile-touch/browser');mkdirSync(out,{recursive:true});
 const result={status:'running',steps:[],errors:[],artifact:{},started:new Date().toISOString(),verifier_sha256:createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex')};
 const sourcePath=process.env.TOUCH_SOURCE_MANIFEST??'verification/mobile-touch/build-source.json';
 if(existsSync(sourcePath)){const source=JSON.parse(readFileSync(sourcePath));for(const [path,hash] of Object.entries(source.files))assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'),hash,`source changed since build: ${path}`);result.source=source;}else result.source=null; // interaction coverage is not compiler provenance
@@ -24,7 +24,7 @@ const server=createServer((req,res)=>{
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
 const raw=path=>new Promise((resolve,reject)=>get({hostname:'127.0.0.1',port,path},r=>{r.resume();r.on('end',()=>resolve(r.statusCode));}).on('error',reject));
 assert.equal(await raw('/%2e%2e/README.md'),403);assert.equal(await raw('/%00'),400);assert.equal(await raw('/%ZZ'),400);
-let browser,backend,lastPage;
+let browser,backend,lastPage,neutralPeer,peerTimer;
 try{
   browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
   const context=await browser.newContext({viewport:{width:375,height:740},deviceScaleFactor:1,isMobile:true,hasTouch:true});
@@ -89,14 +89,14 @@ try{
   await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===0&&p.turn[1]===0));step('actual DOM canvas blur clears input');
   // Keyboard regression still enters the same ECS path on a touch viewport.
   await page.locator('canvas').focus();await page.keyboard.down('ArrowLeft');await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackTouchObservation??'[]').some(p=>p.seat===0&&p.turn[0]===-1));await page.keyboard.up('ArrowLeft');step('desktop keyboard steering preserved');
-  await page.locator('#touch-back').tap();await waitLocal(()=>globalThis.ryggattackLocalScreen==='MainMenu');
+  await page.locator('#touch-pause').tap();await page.locator('#help-back').tap();await waitLocal(()=>globalThis.ryggattackLocalScreen==='MainMenu');
   await page.locator('#play-local').tap();await waitLocal(()=>globalThis.ryggattackLocalScreen==='Lobby');await page.locator('#touch-bots').tap();await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.bots===1);
   for(const target of [5,7,1]){await page.locator('#touch-target').tap();await waitLocal(new Function(`return JSON.parse(globalThis.ryggattackLocalStatus??'null')?.target===${target}`));}
   await page.locator('#touch-start').tap();await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.screen==='Playing');
   // Real bots/combat determine the winner; no ECS/winner injection.
   await waitLocal(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.winner);await page.locator('#touch-restart').waitFor({state:'visible'});await shot('05-phone-match-over');
   await page.locator('#touch-restart').tap();await waitLocal(()=>!JSON.parse(globalThis.ryggattackLocalStatus??'null')?.finished);step('touch restart of a naturally completed match');
-  await page.locator('#touch-back').tap();await waitLocal(()=>globalThis.ryggattackLocalScreen==='MainMenu');
+  await page.locator('#touch-pause').tap();await page.locator('#help-back').tap();await waitLocal(()=>globalThis.ryggattackLocalScreen==='MainMenu');
   await context.close();
   // Same built client, one local authoritative server, no competing renderer.
   const binary=resolve('target/debug/ryggattack-server');assert(existsSync(binary),'build the native server first');
@@ -114,8 +114,24 @@ try{
   assert.equal(await online.locator('#online-entry').evaluate(e=>getComputedStyle(e).touchAction),'auto');
   await online.locator('#create-room').tap();
   await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'null')?.lobby?.phase==='Lobby',null,{timeout:120000});
-  await online.locator('#bots-room').fill('1');await online.locator('#target-room').selectOption('7');await online.locator('#apply-room').tap();
-  await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'null')?.lobby?.settings?.bots===1);
+  // Online solo is intentionally rejected. Use a second legal, neutral human
+  // transport (not another renderer or gameplay-state injection), with no bots,
+  // to keep this input/layout case alive across slow captures. Natural bot
+  // endgame/restart remains the independent offline case above.
+  await online.locator('#bots-room').fill('0');await online.locator('#target-room').selectOption('7');await online.locator('#apply-room').tap();
+  await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'null')?.lobby?.settings?.bots===0);
+  const code=await online.evaluate(()=>JSON.parse(globalThis.ryggattackRoom).lobby.code);
+  let peerPhase,peerSequence=0;
+  neutralPeer=new WebSocket(backendAddress);
+  await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(Error('neutral peer admission timed out')),10000);
+    neutralPeer.addEventListener('error',()=>{clearTimeout(timer);reject(Error('neutral peer transport error'));});
+    neutralPeer.addEventListener('open',()=>neutralPeer.send(JSON.stringify({Hello:{version:4,name:'LayoutPeer',room:code}})));
+    neutralPeer.addEventListener('message',event=>{const m=JSON.parse(event.data);if(m.Lobby){peerPhase=m.Lobby.phase;if(m.Lobby.humans.length===2){clearTimeout(timer);resolve();}}});
+  });
+  neutralPeer.send(JSON.stringify({Ready:true}));
+  peerTimer=setInterval(()=>{if(peerPhase==='Running'&&neutralPeer.readyState===WebSocket.OPEN)neutralPeer.send(JSON.stringify({Input:{sequence:++peerSequence,horizontal:0,vertical:0,fire:false}}));},100);
+  result.onlineFixture={renderedHumans:1,neutralTransportHumans:1,bots:0};save();
   await online.locator('#ready-room').tap();await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackHud??'null')?.lobby?.phase==='Running',null,{timeout:120000});
   await online.waitForFunction(()=>document.getElementById('online-entry').hidden&&document.getElementById('ryggattack-canvas').classList.contains('touch-playing')&&document.activeElement?.id==='ryggattack-canvas');
   const oc=await onlineContext.newCDPSession(online);
@@ -133,11 +149,21 @@ try{
   assert(cancelledWire.every(i=>!i.fire&&i.horizontal===0&&i.vertical===0));
   step('online cancelled fire sends neutral real wire intents',{inputs:cancelledWire});
   await online.screenshot({path:resolve(out,'08-online-cancelled.png'),timeout:90000});
+  result.onlineViews=[];
+  for(const [name,width,height] of [['portrait',375,740],['narrow',320,640],['landscape',740,375],['rotated-back',375,740]]){
+    await online.setViewportSize({width,height});await online.waitForTimeout(1600);
+    await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackHud??'null')?.lobby?.phase==='Running'&&document.getElementById('online-entry').hidden);
+    const view=await online.evaluate(()=>{const c=document.querySelector('canvas'),r=c.getBoundingClientRect(),b=document.getElementById('open-match-menu').getBoundingClientRect();return {canvas:{x:r.x,y:r.y,width:r.width,height:r.height},backing:[c.width,c.height],hudVisible:!!document.querySelector('.rygg-online-hud').getClientRects().length,buttons:[...document.querySelectorAll('button')].filter(e=>e.getClientRects().length).map(e=>e.id),pause:{x:b.x,y:b.y,width:b.width,height:b.height}};});
+    assert.deepEqual(view.canvas,{x:0,y:0,width,height});assert.deepEqual(view.backing,[width,height]);assert.equal(view.hudVisible,false);assert.deepEqual(view.buttons,['open-match-menu']);assert.equal(view.pause.width,48);assert.equal(view.pause.height,48);
+    await online.screenshot({path:resolve(out,`online-${name}.png`),timeout:90000});result.onlineViews.push({name,...view});save();
+  }
   await online.locator('#open-match-menu').tap();await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackHud??'null')?.menu);
+  await online.locator('#online-pause-details').waitFor({state:'visible'});assert.match(await online.locator('#online-pause-scores').innerText(),/TouchQA.*wins/);
+  assert.match(await online.locator('#online-pause-details').innerText(),/rear hits|Yellow/);await online.screenshot({path:resolve(out,'online-input-paused.png'),timeout:90000});
   await online.waitForFunction(()=>{const i=globalThis.__touchInputs?.at(-1);return i&&i.horizontal===0&&i.vertical===0&&!i.fire;});
   await online.locator('#resume-match').tap();await online.waitForFunction(()=>!JSON.parse(globalThis.ryggattackHud??'null')?.menu);step('online accessible menu/resume neutralized input; server keeps running');
   await online.locator('#open-match-menu').tap();await online.locator('#leave-match').tap();
   await online.waitForFunction(()=>JSON.parse(globalThis.ryggattackRoom??'null')?.status==='Left room; create or join another');
   await onlineContext.close();assert.deepEqual(result.errors,[]);result.status='passed';save();
 }catch(error){if(lastPage&&!lastPage.isClosed())result.diagnostic=await lastPage.evaluate(()=>({pointers:globalThis.__pointerTrace,samples:globalThis.__sampleTrace,focus:document.activeElement?.id,status:globalThis.ryggattackLocalStatus,room:globalThis.ryggattackRoom?JSON.parse(globalThis.ryggattackRoom).lobby?.phase:null,menuHidden:document.getElementById('online-entry')?.hidden,inputs:globalThis.__touchInputs?.slice(-20),hudPhase:globalThis.ryggattackHud?JSON.parse(globalThis.ryggattackHud).lobby?.phase:null}));if(lastPage&&!lastPage.isClosed())try{await lastPage.screenshot({path:resolve(out,'failure.png'),timeout:90000});}catch{}result.status='failed';result.failure=String(error.stack??error);save();console.error(error);process.exitCode=1;}
-finally{if(browser)await browser.close();if(backend&&backend.exitCode===null){backend.kill('SIGTERM');await new Promise(r=>backend.once('exit',r));}await new Promise(r=>server.close(r));}
+finally{if(peerTimer)clearInterval(peerTimer);if(neutralPeer){if(neutralPeer.readyState===WebSocket.OPEN)neutralPeer.send(JSON.stringify('Leave'));neutralPeer.close();}if(browser)await browser.close();if(backend&&backend.exitCode===null){backend.kill('SIGTERM');await new Promise(r=>backend.once('exit',r));}await new Promise(r=>server.close(r));}

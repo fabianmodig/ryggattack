@@ -35,7 +35,7 @@ test('multitouch cancels until every finger lifts; reset drops direction and pen
   assert.deepEqual(g.sample(),{horizontal:0,vertical:0,fire:false});
 });
 
-function fixture(){
+function fixture(coarse=false){
   const listeners=new Map(), elements=new Map();
   const document={hidden:false,activeElement:null,addEventListener:(n,f)=>listeners.set('doc:'+n,f),removeEventListener(){},getElementById(id){
     if(!elements.has(id))elements.set(id,{hidden:true,textContent:'',dataset:{},handlers:new Map(),
@@ -46,7 +46,7 @@ function fixture(){
   }};
   let tick;
   const env={document,ryggattackLocalStatus:JSON.stringify({screen:'Playing',paused:false,winner:false}),ryggattackBrowserMenu:false,
-    addEventListener:(n,f)=>listeners.set(n,f),removeEventListener(){},setInterval:f=>{tick=f;return 1;},clearInterval(){},matchMedia:()=>({matches:true})};
+    addEventListener:(n,f)=>listeners.set(n,f),removeEventListener(){},setInterval:f=>{tick=f;return 1;},clearInterval(){},matchMedia:()=>({matches:coarse})};
   const canvas=document.getElementById('ryggattack-canvas');canvas.focus();
   const control=module.installTouchControls(env);
   const event=(type,values={})=>canvas.handlers.get(type)?.({pointerId:1,pointerType:'touch',clientX:100,clientY:100,timeStamp:0,preventDefault(){},...values});
@@ -88,7 +88,7 @@ test('multitouch invalidates an already sampled tap and blocks replacements unti
   f.control.destroy();
 });
 
-test('offline essentials use a reserved arena band; help is paused-only and online remains separate',()=>{
+test('desktop offline essentials retain their arena band; help is paused-only and online remains separate',()=>{
   const f=fixture(),$=id=>f.env.document.getElementById(id);
   f.env.ryggattackOfflineHud='FIRST TO 3\nP1: 2 IN SPD10s HIT10s\nSOLO - no scoring';f.tick();
   assert.equal($('offline-hud').hidden,false);
@@ -116,6 +116,36 @@ test('offline essentials use a reserved arena band; help is paused-only and onli
   assert.equal($('game').classList.contains('offline-playing'),false);
   f.env.ryggattackLaunch=null;f.env.ryggattackLocalStatus=JSON.stringify({screen:'MainMenu'});f.tick();
   assert.equal($('offline-hud').hidden,true);assert.equal($('game').classList.contains('offline-playing'),false);
+  f.control.destroy();
+});
+
+test('mobile offline play exposes only floating pause; actual scores move into pause and desktop stays unchanged',()=>{
+  const f=fixture(true),$=id=>f.env.document.getElementById(id);
+  f.env.ryggattackOfflineHud='FIRST TO 3\nP1: 2 IN SPD10s HIT10s\nROUND LIVE';f.tick();
+  assert.equal($('offline-hud').hidden,true,'mobile active scores must not reserve or overlay gameplay');
+  assert.equal($('touch-back').hidden,true,'menu is reachable through pause, not an active control row');
+  assert.equal($('touch-pause').hidden,false);
+  assert.equal($('touch-controls').classList.contains('immersive-match'),true);
+  f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing',paused:true});f.tick();
+  assert.equal($('pause-scores').textContent,f.env.ryggattackOfflineHud,'pause uses actual ECS scores/effects');
+  assert.equal($('offline-pause').hidden,false);
+  $('help-resume').onclick();assert.equal(f.env.ryggattackTouchAction,'resume');
+  f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing',paused:false});f.tick();
+  assert.equal($('offline-pause').hidden,true);assert.equal($('offline-hud').hidden,true);
+  f.control.destroy();
+});
+
+test('mobile online scores are available only in the input-pause menu from authoritative publication',()=>{
+  const f=fixture(true),$=id=>f.env.document.getElementById(id);
+  f.env.ryggattackLaunch='online';
+  const hud={status:'Connected',seat:0,lobby:{phase:'Running'},menu:false,frame:{names:['TouchQA'],wins:[2],carts:[{id:0,active:true,alive:true,speed_seconds:4}]}};
+  f.env.ryggattackHud=JSON.stringify(hud);f.tick();
+  assert.equal($('online-pause-details').hidden,true);
+  hud.menu=true;f.env.ryggattackHud=JSON.stringify(hud);f.tick();
+  assert.equal($('online-pause-details').hidden,false,'authoritative scores and rules must remain available while input is suspended');
+  assert.match($('online-pause-scores').textContent,/TouchQA.*2 wins.*IN.*Speed 4s/);
+  hud.menu=false;f.env.ryggattackHud=JSON.stringify(hud);f.tick();
+  assert.equal($('online-pause-details').hidden,true);
   f.control.destroy();
 });
 
