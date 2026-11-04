@@ -789,22 +789,80 @@ mod resilience_tests {
         assert_eq!(client.travel_intent(held), None);
     }
     #[test]
+    #[cfg(not(target_arch = "wasm32"))]
     fn frame_arrival_time_survives_a_late_adapter_poll() {
-        let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
-        sim.step();
-        let mut client = NetworkClient::connect("ws://127.0.0.1:9", "clock test").unwrap();
-        let arrival = Instant::now() - Duration::from_millis(200);
-        {
-            let mut inbox = client.inbox.lock().unwrap();
-            inbox.frame = Some(sim.network_frame());
-            inbox.frame_received = Some(arrival);
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = format!("ws://{}", listener.local_addr().unwrap());
+        let (release, hold) = std::sync::mpsc::channel();
+        let server = std::thread::spawn(move || {
+            let (stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(5)))
+                .unwrap();
+            let mut ws = tungstenite::accept(stream).unwrap();
+            let hello = ws.read().unwrap().into_text().unwrap();
+            assert!(matches!(
+                decode_client(&hello),
+                Ok(ClientMessage::Hello {
+                    version: VERSION,
+                    ..
+                })
+            ));
+            let mut sim = crate::headless::Simulation::new(Default::default()).unwrap();
+            sim.step();
+            let mut lobby = crate::rooms::Lobby::new(1, "a".repeat(20), 1, "clock test".into());
+            lobby.phase = crate::rooms::Phase::Running;
+            for message in [
+                ServerMessage::Welcome {
+                    version: VERSION,
+                    seat: 0,
+                    room: 1,
+                    participant: 1,
+                    edges: sim.network_edges(),
+                    code: lobby.code.clone(),
+                    credential: "b".repeat(64),
+                },
+                ServerMessage::Lobby(lobby),
+                ServerMessage::State(sim.network_frame()),
+            ] {
+                ws.send(tungstenite::Message::Text(
+                    serde_json::to_string(&message).unwrap().into(),
+                ))
+                .unwrap();
+            }
+            // A closed-port fixture races a real disconnect against pump.
+            // Keep this transport alive until the arrival-time assertions finish.
+            hold.recv_timeout(Duration::from_secs(10)).unwrap();
+        });
+        let mut client = NetworkClient::connect(&address, "clock test").unwrap();
+        client.pump(Default::default());
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while !client.inbox.lock().unwrap().opened {
+            assert!(Instant::now() < deadline, "transport did not open");
+            std::thread::sleep(Duration::from_millis(1));
         }
+        client.pump(Default::default()); // Send Hello before waiting for State.
+        let arrival = loop {
+            let inbox = client.inbox.lock().unwrap();
+            assert!(!inbox.disconnected && inbox.error.is_none());
+            if inbox.frame.is_some() {
+                break inbox.frame_received.unwrap();
+            }
+            assert!(Instant::now() < deadline, "callback did not receive State");
+            drop(inbox);
+            std::thread::sleep(Duration::from_millis(1));
+        };
+        std::thread::sleep(Duration::from_millis(200));
         client.pump(Default::default());
         assert!(client.frame.is_some());
+        assert!(!client.failed && !client.awaiting_welcome);
+        assert_eq!(client.frame_received, arrival);
         assert!(
             client.frame_received.elapsed() >= Duration::from_millis(190),
             "render consumption must not reset snapshot time"
         );
+        release.send(()).unwrap();
+        server.join().unwrap();
     }
     #[test]
     fn prediction_rail_metadata_rejects_invalid_paths_and_progress() {
