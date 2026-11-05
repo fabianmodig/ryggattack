@@ -1,5 +1,9 @@
 # Immersive mobile gameplay · PR 24
 
+Historical evidence for PR 24 follows unchanged. Its coarse-pointer-only scope
+and desktop reserved-band contract are superseded by
+[shared gameplay layout](shared-play-layout.md).
+
 ## Contract
 
 On coarse-pointer phones, active offline and online play uses the **entire

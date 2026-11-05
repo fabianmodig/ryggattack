@@ -20,13 +20,11 @@
 
       #game {
         position: absolute;
-        inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+        /* One viewport for local and online, touch and mouse. Safe areas
+           protect controls/menus, never reserve empty render bands. */
+        inset: 0;
       }
-      /* Offline HUD and arena occupy separate rectangles, not an overlay.
-         Six 18px lines + 16px padding covers all four seats with both buffs.
-         Resize the actual Bevy surface so its existing projection fits the arena. */
-      #game.offline-playing { top:calc(env(safe-area-inset-top, 0px) + 124px); }
-      #offline-hud { position:absolute; box-sizing:border-box; margin:0; top:env(safe-area-inset-top, 0px); left:env(safe-area-inset-left, 0px); right:env(safe-area-inset-right, 0px); height:124px; padding:8px 12px; color:white; background:#090b13; font:14px/18px monospace; white-space:pre; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+
       #offline-pause { position:absolute; z-index:7; inset:env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); overflow:auto; background:#090b13f5; }
       #offline-pause .menu-panel { gap:12px; }
       #offline-pause h2 { margin:0; color:white; }
@@ -34,10 +32,9 @@
       #offline-pause button { min-height:48px; padding:10px; font:16px monospace; color:white; background:#212e4a; border:2px solid #547ab8; border-radius:8px; }
       #offline-pause :focus-visible { outline:2px solid #f2c73d; outline-offset:2px; }
       #touch-hint:empty { display:none; }
-      #game.offline-playing { bottom:calc(env(safe-area-inset-bottom, 0px) + 80px); }
+
       #touch-controls.offline-match:not([hidden]) { display:flex; gap:8px; height:68px; box-sizing:border-box; overflow:visible; }
-      /* The canvas container already excludes unsafe areas. */
-      #game > .rygg-online-hud { top:8px; left:8px; right:8px; }
+      #game.gameplay > .rygg-online-hud { display:none !important; }
 
       #game canvas {
         display: block;
@@ -52,26 +49,7 @@
       #touch-lobby, #touch-playing-controls { display:flex; flex-wrap:wrap; gap:8px; }
       #touch-hint { margin:0 0 6px; }
       @media (pointer:coarse) { #touch-controls:not([hidden]) { display:block; } }
-      @media (pointer:coarse) {
-        /* The arena owns the complete viewport in either orientation. Safe
-           areas protect the lone control, never shrink the render surface. */
-        #game, #game.offline-playing { inset:0; }
-        #game > .rygg-online-hud { display:none !important; }
-        #touch-controls.immersive-match:not([hidden]) {
-          display:block; left:auto; right:max(10px,env(safe-area-inset-right));
-          top:max(10px,env(safe-area-inset-top)); bottom:auto;
-          height:auto; max-height:none; padding:0; background:none; overflow:visible;
-        }
-        #touch-controls.immersive-match #touch-playing-controls { display:block; }
-        #touch-controls.immersive-match #touch-pause, body #open-match-menu {
-          box-sizing:border-box; width:48px; height:48px; min-height:48px;
-          padding:0; border:1px solid #b8c7e65c; border-radius:50%;
-          background:#090b1399; color:white; font-size:0; opacity:.75;
-        }
-        #touch-controls.immersive-match #touch-pause::after, body #open-match-menu::after { content:'Ⅱ'; font:22px/1 monospace; }
-        #touch-controls.immersive-match #touch-pause:focus-visible, body #open-match-menu:focus-visible { outline:2px solid #f2c73d; outline-offset:3px; opacity:1; }
-        body #open-match-menu { top:max(10px,env(safe-area-inset-top)); right:max(10px,env(safe-area-inset-right)); bottom:auto; }
-      }
+
       #pause-scores, #online-pause-scores { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.5; }
       @media(max-width:440px) { .settings-row { grid-template-columns:1fr 1fr; } .settings-row > label:first-child { grid-column:1/-1; } }
       [hidden] { display: none !important; }
@@ -105,6 +83,22 @@
       /* These follow the menu's base/small-screen padding declarations. */
       .menu-panel { padding-top:max(20px,env(safe-area-inset-top)); padding-bottom:max(20px,env(safe-area-inset-bottom)); padding-left:max(16px,env(safe-area-inset-left)); padding-right:max(16px,env(safe-area-inset-right)); }
       #open-match-menu { bottom:max(12px,env(safe-area-inset-bottom)); right:max(12px,env(safe-area-inset-right)); }
+      /* Shared gameplay affordance, after ALL base menu rules so the later
+         bottom/padding declarations cannot stretch the online pause button. */
+      #touch-controls.immersive-match:not([hidden]) {
+        display:block; left:auto; right:max(10px,env(safe-area-inset-right));
+        top:max(10px,env(safe-area-inset-top)); bottom:auto;
+        height:auto; max-height:none; padding:0; background:none; overflow:visible;
+      }
+      #touch-controls.immersive-match #touch-playing-controls { display:block; }
+      #touch-controls .game-pause, #open-match-menu.game-pause {
+        box-sizing:border-box; width:48px; height:48px; min-height:48px;
+        padding:0; border:1px solid #b8c7e65c; border-radius:50%;
+        background:#090b1399; color:white; font-size:0; opacity:.75;
+      }
+      body .game-pause::after { content:'Ⅱ'; font:22px/1 monospace; }
+      body .game-pause:focus-visible { outline:2px solid #f2c73d; outline-offset:3px; opacity:1; }
+      body #open-match-menu.game-pause { top:max(10px,env(safe-area-inset-top)); right:max(10px,env(safe-area-inset-right)); bottom:auto; }
       #status {
         position: absolute;
         inset: 0;
@@ -187,7 +181,7 @@
         <p id="room-notice" role="status" aria-live="polite"></p>
       </div>
     </main>
-    <button id="open-match-menu" aria-label="Pause input and open match menu (server keeps running)" hidden>MENU · SERVER KEEPS RUNNING</button>
+    <button id="open-match-menu" class="game-pause" aria-label="Pause input and open match menu (server keeps running)" hidden>MENU · SERVER KEEPS RUNNING</button>
 
     <aside id="touch-controls" aria-label="Touch game controls" hidden>
       <p id="touch-hint"></p>
@@ -196,7 +190,7 @@
         <button id="touch-bots">BOTS: 3</button><button id="touch-target">FIRST TO: 3</button><button id="touch-arena">Forest</button>
       </div>
       <div id="touch-playing-controls">
-        <button id="touch-pause" aria-label="Pause game">PAUSE</button><button id="touch-resume">RESUME</button><button id="touch-restart">RESTART MATCH</button>
+        <button id="touch-pause" class="game-pause" aria-label="Pause game">PAUSE</button><button id="touch-resume">RESUME</button><button id="touch-restart">RESTART MATCH</button>
       </div>
       <button id="touch-back">BACK TO MENU</button>
     </aside>

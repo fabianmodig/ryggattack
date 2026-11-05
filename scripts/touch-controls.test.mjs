@@ -88,12 +88,14 @@ test('multitouch invalidates an already sampled tap and blocks replacements unti
   f.control.destroy();
 });
 
-test('desktop offline essentials retain their arena band; help is paused-only and online remains separate',()=>{
+test('offline play is game-only for fine pointers too; help and scores remain paused-only',()=>{
   const f=fixture(),$=id=>f.env.document.getElementById(id);
   f.env.ryggattackOfflineHud='FIRST TO 3\nP1: 2 IN SPD10s HIT10s\nSOLO - no scoring';f.tick();
-  assert.equal($('offline-hud').hidden,false);
+  assert.equal($('offline-hud').hidden,true,'fine pointers must not retain local-only score bands');
+  assert.equal($('touch-controls').classList.contains('immersive-match'),true);
+  assert.equal($('touch-back').hidden,true);
   assert.equal($('offline-hud').textContent,f.env.ryggattackOfflineHud);
-  assert.equal($('game').classList.contains('offline-playing'),true);
+  assert.equal($('game').classList.contains('gameplay'),true);
   assert.equal($('offline-pause').hidden,true);
   assert.equal($('touch-hint').textContent,'');
   f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing',paused:true});f.tick();
@@ -113,13 +115,19 @@ test('desktop offline essentials retain their arena band; help is paused-only an
   $('help-back').onclick();assert.equal(f.env.ryggattackTouchAction,'back');
   f.env.ryggattackLaunch='online';f.tick();
   assert.equal($('offline-hud').hidden,true);assert.equal($('offline-pause').hidden,true);
-  assert.equal($('game').classList.contains('offline-playing'),false);
+  assert.equal($('game').classList.contains('gameplay'),false);
+  f.env.ryggattackHud=JSON.stringify({status:'Connected',lobby:{phase:'Running'},menu:false});f.tick();
+  assert.equal($('game').classList.contains('gameplay'),true,'online uses the same gameplay state as local');
+  f.env.ryggattackHud=JSON.stringify({status:'Connected',lobby:{phase:'Running'},menu:true});f.tick();
+  assert.equal($('online-pause-details').hidden,false,'fine-pointer players still have scores and help');
   f.env.ryggattackLaunch=null;f.env.ryggattackLocalStatus=JSON.stringify({screen:'MainMenu'});f.tick();
-  assert.equal($('offline-hud').hidden,true);assert.equal($('game').classList.contains('offline-playing'),false);
+  assert.equal($('offline-hud').hidden,true);assert.equal($('game').classList.contains('gameplay'),false);
+  f.env.ryggattackLocalStatus=JSON.stringify({screen:'Playing'});f.tick();
+  assert.equal($('game').classList.contains('gameplay'),true,'returning from online reuses the local viewport');
   f.control.destroy();
 });
 
-test('mobile offline play exposes only floating pause; actual scores move into pause and desktop stays unchanged',()=>{
+test('mobile offline play exposes only floating pause; actual scores move into pause',()=>{
   const f=fixture(true),$=id=>f.env.document.getElementById(id);
   f.env.ryggattackOfflineHud='FIRST TO 3\nP1: 2 IN SPD10s HIT10s\nROUND LIVE';f.tick();
   assert.equal($('offline-hud').hidden,true,'mobile active scores must not reserve or overlay gameplay');
@@ -243,7 +251,9 @@ fn main() {
 test('entry scopes touch-action to gestures, retains form scrolling and packages safe-area controls',()=>{
   const html=readFileSync(new URL('../web/index.html',import.meta.url),'utf8');
   assert.match(html,/viewport-fit=cover/);
-  assert.match(html,/#game\s*\{[^}]*inset:\s*env\(safe-area-inset-top/);
+  assert.match(html,/#game\s*\{[^}]*inset:\s*0/);
+  assert.doesNotMatch(html,/#game\.offline-playing|124px|80px/,'no local-only viewport reservations');
+  assert.match(html,/#game\.gameplay\s*>\s*\.rygg-online-hud/,'shared gameplay hides active info bars');
   assert.doesNotMatch(html,/user-scalable=no/);
   assert.match(html,/#ryggattack-canvas\.touch-playing\s*\{[^}]*touch-action:\s*none/);
   assert.match(html,/env\(safe-area-inset-bottom/);

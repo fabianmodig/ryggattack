@@ -80,9 +80,9 @@ try {
  await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Lobby');await page.waitForTimeout(500);
  await page.keyboard.down('w');await page.waitForFunction(()=>JSON.parse(globalThis.ryggattackLocalStatus??'null')?.joined);await page.keyboard.up('w');
  await page.keyboard.press('Enter');await page.waitForFunction(()=>globalThis.ryggattackLocalScreen==='Playing');
- await page.waitForFunction(()=>!document.getElementById('offline-hud').hidden);await page.waitForTimeout(1600);
+ await page.waitForFunction(()=>document.getElementById('game').classList.contains('gameplay'));await page.waitForTimeout(1600);
  result.desktop=await page.evaluate(()=>{const c=document.querySelector('canvas'),r=c.getBoundingClientRect();return {canvas:{x:r.x,y:r.y,width:r.width,height:r.height},backing:[c.width,c.height],hudVisible:!!document.getElementById('offline-hud').getClientRects().length,menuVisible:!!document.getElementById('touch-back').getClientRects().length};});
- assert.deepEqual(result.desktop.canvas,{x:0,y:124,width:1280,height:516});assert.deepEqual(result.desktop.backing,[1280,516]);assert(result.desktop.hudVisible&&result.desktop.menuVisible,'desktop HUD and control behavior must remain unchanged');
+ assert.deepEqual(result.desktop.canvas,{x:0,y:0,width:1280,height:720});assert.deepEqual(result.desktop.backing,[1280,720]);assert(!result.desktop.hudVisible&&!result.desktop.menuVisible,'desktop shares game-only layout; scores and menu live in pause');
  await shot('desktop-playing');
  assert.deepEqual(result.errors,[]);result.status='passed';
 }catch(error){result.status='failed';result.failure=String(error.stack??error);console.error(error);process.exitCode=1;}

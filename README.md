@@ -315,12 +315,13 @@ one, so `scripts/build-web.sh` has to run first.
 
 Swipe on the game canvas to select a direction for the next junction; lifting
 keeps that direction selected. Tap without swiping to fire using the normal
-cooldown. In local play, use **JOIN CART** and **START MATCH**, then **PAUSE** /
-**RESUME**, **MENU**, or **RESTART MATCH** after a match. Offline scores, IN/OUT,
-win target and effect timers occupy a reserved band outside the arena; rules,
-power-up meanings and controls are available in paused-only help, not over
-active play. See [the offline HUD layout contract](docs/mobile-offline-hud-fix.md).
-Online uses the existing room buttons and **MENU** / **RESUME INPUT** (the server keeps running).
+cooldown. In local play, use **JOIN CART** and **START MATCH**, then the floating
+**PAUSE** control for **RESUME** or **RETURN TO MENU**, or **RESTART MATCH** after
+a match. Local and online gameplay share the full viewport on touch and desktop:
+no reserved score or control bands. Scores, IN/OUT, win target, effect timers,
+rules and controls live in pause/menu. Online uses the same floating pause
+affordance and **RESUME INPUT** (the server keeps running).
+See [the shared gameplay layout contract](docs/shared-play-layout.md).
 Menus, cancellation, multiple fingers, blur and visibility changes reset touch
 intent; room forms retain normal editing and scrolling. Desktop controls remain
 available. See [touch behavior, adapter and verification](docs/mobile-touch.md).
