@@ -14,6 +14,7 @@ pub(crate) enum AppState {
     MainMenu,
     Lobby,
     Playing,
+    Online,
 }
 
 #[derive(Resource)]

@@ -8,6 +8,8 @@ mod game;
 pub mod headless;
 pub mod input;
 #[cfg(not(target_arch = "wasm32"))]
+pub mod invitation;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod management;
 mod match_settings;
 pub mod net_client;
@@ -39,7 +41,8 @@ pub fn run_client() {
         online::run(address, name);
         return;
     }
-    App::new()
+    let mut app = App::new();
+    app
         // The fog colour, so that anything past the tree line fades into it.
         .insert_resource(ClearColor(Color::srgb(0.62, 0.72, 0.66)))
         .insert_resource(Round::default())
@@ -86,7 +89,9 @@ pub fn run_client() {
         // automatic quality changes the forest's density.
         .add_systems(
             PostUpdate,
-            (arena::apply_arena, scenery::apply_forest_density).chain(),
+            (arena::apply_arena, scenery::apply_forest_density)
+                .chain()
+                .run_if(not(in_state(AppState::Online))),
         )
         .add_systems(OnEnter(AppState::MainMenu), ui::spawn_main_menu)
         .add_systems(OnExit(AppState::MainMenu), ui::despawn_main_menu)
@@ -144,8 +149,10 @@ pub fn run_client() {
                 .chain()
                 .run_if(in_state(AppState::Playing))
                 .run_if(ui::gameplay_is_running),
-        )
-        .run();
+        );
+    #[cfg(not(target_arch = "wasm32"))]
+    app.add_plugins(online::desktop::DesktopOnlinePlugin);
+    app.run();
 }
 
 // Browser selection changes only the local application's existing state.

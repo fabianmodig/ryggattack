@@ -26,7 +26,7 @@ pub(crate) fn apply_arena(
     mut clear: ResMut<ClearColor>,
     mut applied: Local<Option<Arena>>,
 ) {
-    if *applied == Some(settings.arena) {
+    if *applied == Some(settings.arena) && !forest.is_changed() {
         return;
     }
     let volcanic = settings.arena == Arena::Volcano;

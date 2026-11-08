@@ -428,7 +428,7 @@ pub(crate) fn apply_forest_density(
     let Some(forest) = forest else {
         return;
     };
-    if *grown == Some((settings.forest, forest.arena)) {
+    if *grown == Some((settings.forest, forest.arena)) && !forest.is_changed() {
         return;
     }
     for entity in &backdrop {

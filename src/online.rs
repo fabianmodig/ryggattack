@@ -2,6 +2,8 @@
 //! local pause, scoring, RNG, collision, or round-reset system.
 use crate::{input::ControlIntent, net_client::NetworkClient, network::Frame};
 use bevy::prelude::*;
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) mod desktop;
 mod environment;
 #[derive(Resource, Default)]
 struct View {
@@ -420,6 +422,7 @@ fn network_input(
     touch: Res<crate::input::TouchInput>,
     mut warmup: Local<u8>,
     entry: Res<Entry>,
+    #[cfg(not(target_arch = "wasm32"))] mut desktop: Option<ResMut<desktop::Desktop>>,
 ) {
     // In WASM the first GPU submissions can block the JS thread for seconds.
     // Yield initial presentations before opening a transport whose callbacks
@@ -462,7 +465,14 @@ fn network_input(
             *menu = false;
         }
     }
-    if canvas_focused && keys.just_pressed(KeyCode::Escape) {
+    #[cfg(not(target_arch = "wasm32"))]
+    let native_menu = desktop.as_ref().map(|desktop| desktop.menu);
+    #[cfg(target_arch = "wasm32")]
+    let native_menu: Option<bool> = None;
+    if let Some(open) = native_menu {
+        *menu = open;
+    }
+    if native_menu.is_none() && canvas_focused && keys.just_pressed(KeyCode::Escape) {
         *menu = !*menu;
     }
     let active = client
@@ -497,6 +507,10 @@ fn network_input(
         intent.fire |= *fire;
     } else {
         *fire = false;
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    if let Some(desktop) = desktop.as_mut() {
+        intent = desktop.gameplay_intent(intent);
     }
     if client.pump(intent) {
         *fire = false;
@@ -542,6 +556,39 @@ fn network_input(
             .unwrap_or(false)
     };
     let label = canvas_status_text(label, dom_hud_ready);
+    #[cfg(not(target_arch = "wasm32"))]
+    let label = if desktop.is_some() {
+        if client
+            .lobby
+            .as_ref()
+            .is_some_and(|l| l.phase == crate::rooms::Phase::Running)
+        {
+            let scores = client
+                .frame
+                .as_ref()
+                .map(|f| {
+                    f.carts
+                        .iter()
+                        .filter(|c| c.active)
+                        .map(|c| {
+                            format!(
+                                "{}: {} {}",
+                                f.names[c.id].as_deref().unwrap_or("Bot"),
+                                f.wins[c.id],
+                                if c.alive { "IN" } else { "OUT" }
+                            )
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                })
+                .unwrap_or_default();
+            format!("{}\n{}\n{}", client.status, scores, client.notice)
+        } else {
+            String::new()
+        }
+    } else {
+        label
+    };
     for mut text in &mut status {
         **text = label.clone();
     }

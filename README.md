@@ -58,14 +58,43 @@ cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ada
 cargo run --locked --bin ryggattack -- --online ws://127.0.0.1:8787 --name Ben --room <code>
 ```
 
-Build/serve the browser bundle as below, then choose **PLAY LOCAL** or
-**PLAY ONLINE** from the regular menu. Online setup has explicit create/join
-buttons, with the same-origin backend selected by default and custom addresses
-under **Advanced**. A shared `?online=...&room=...` link opens setup with the code
+Choose **PLAY LOCAL** or **PLAY ONLINE** from the regular desktop or browser
+menu. Both use the same authoritative multiplayer service: desktop and browser
+players can join the same room by using the same backend and room code. Desktop
+online setup accepts a player name, backend address, and room code, with explicit
+create/join actions; no command-line flags are required. Its default backend is
+`wss://ryggattack.modig.online/ws`; for local development, use
+`ws://127.0.0.1:8787`. Browser setup selects the same-origin backend by default
+and exposes custom addresses under **Advanced**.
+
+In the desktop room lobby, **COPY INVITE LINK** copies a browser invitation and
+**COPY ROOM CODE** copies just the code. These controls are also available in
+the online input menu. Clipboard success or failure is shown in the menu.
+Friends on desktop can use **PASTE CODE / INVITE**, or select the room-code
+field and press Ctrl+V (Cmd+V on macOS). A full invitation fills in both backend
+and code; a code alone keeps the selected backend. **JOIN ROOM** is still explicit.
+
+Invitation links use the production browser client (or the beta client for the
+beta backend). For a custom browser host, set `RYGGATTACK_WEB_URL` when launching
+the desktop client. For example, with a locally served web bundle:
+
+```sh
+RYGGATTACK_WEB_URL=http://127.0.0.1:8080/ cargo run --locked -j 1
+```
+
+An insecure `ws://` backend needs an HTTP-hosted browser client; otherwise copy
+the room code instead. The WebSocket service's port is not assumed to host the
+browser bundle. Invitations contain the backend and room code, not private
+reconnect credentials. Steam friend invites are not implemented; the invitation
+data is separate from clipboard delivery so another adapter can be added later.
+
+Build/serve the browser bundle as below to play in a browser. A shared
+`?online=...&room=...` link opens browser setup with the code
 prefilled; it does not join until **JOIN ROOM** is selected, and it does not grant
 ownership of a previous player's seat. A valid scoped saved seat resumes on
 reload. See [integrated menu lifecycle and verification](docs/unified-menu.md).
-Native online controls: **R** ready/unready; host **B** bots, **T** win target,
+The native command-line online entry remains available. Its controls are
+**R** ready/unready; host **B** bots, **T** win target,
 **V** arena; **L** deliberately leaves. After leaving, **F2** creates a room,
 or type a code (Backspace edits) and press **Enter** to join. The launch name
 comes from `--name`. Browser controls also expose explicit buttons/settings
@@ -491,6 +520,17 @@ that bundle into the image a tag push publishes.
 the game. Tuning constants live with the feature they control. Tests live
 alongside the code they check; run them with `cargo test` inside the development
 environment. Use `cargo fmt` to format changes.
+
+On memory-constrained machines, keep builds and test runs sequential:
+
+```sh
+CARGO_BUILD_JOBS=1 cargo test --locked -j 1 -- --test-threads=1
+CARGO_BUILD_JOBS=1 cargo build --locked -j 1
+```
+
+Do not run native and WebAssembly builds concurrently on these machines. The
+single build job limits concurrent compilation/linking; `--test-threads=1`
+also limits concurrent tests.
 
 ### Gameplay verification
 

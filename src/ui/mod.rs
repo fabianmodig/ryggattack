@@ -52,6 +52,7 @@ pub(crate) struct BrowserActions {
 #[derive(Component, Clone, Copy)]
 pub(crate) enum MenuAction {
     Start,
+    Online,
     Launch,
     CycleBots,
     CycleTarget,
@@ -146,6 +147,18 @@ pub(crate) fn update_hud(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn desktop_main_menu_offers_online_without_relaunch() {
+        let mut app = App::new();
+        app.add_systems(Startup, spawn_main_menu);
+        app.update();
+        assert!(
+            app.world_mut()
+                .query::<&Text>()
+                .iter(app.world())
+                .any(|t| t.0 == "PLAY ONLINE")
+        );
+    }
     #[test]
     fn pause_menu_keeps_device_navigation_and_visible_selection_order() {
         let mut app = App::new();
@@ -535,7 +548,8 @@ fn main_menu(commands: &mut Commands) {
             ));
             parent.spawn(menu_button("PLAY LOCAL", MenuAction::Start, 0));
             if CAN_EXIT {
-                parent.spawn(menu_button("EXIT", MenuAction::Exit, 1));
+                parent.spawn(menu_button("PLAY ONLINE", MenuAction::Online, 1));
+                parent.spawn(menu_button("EXIT", MenuAction::Exit, 2));
             }
             parent.spawn((
                 Text::new(if CAN_EXIT {
@@ -805,6 +819,7 @@ pub(crate) fn handle_menu_actions(
             }
         }
         MenuAction::Start => next_state.set(AppState::Lobby),
+        MenuAction::Online => next_state.set(AppState::Online),
         MenuAction::Launch => {
             if roster.humans() > 0 {
                 next_state.set(AppState::Playing);

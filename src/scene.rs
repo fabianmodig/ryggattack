@@ -82,25 +82,51 @@ pub(crate) fn setup(
         affects_lightmapped_meshes: true,
     });
 
-    for (index, (mesh, material, transform)) in floor_and_walls(&mut meshes, &mut materials)
-        .into_iter()
-        .enumerate()
-    {
-        let mut entity = commands.spawn((Mesh3d(mesh), MeshMaterial3d(material), transform));
-        if index < 2 {
-            entity.insert((crate::arena::Ground(index == 0), NotShadowCaster));
-        }
-    }
-    spawn_tracks(&mut commands, &mut meshes, &mut materials, &rail_map);
-
-    setup_gameplay(
+    spawn_world(
         &mut commands,
         &mut meshes,
         &mut materials,
         &rail_map,
         match_settings.arena,
     );
-    spawn_hud(&mut commands);
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) fn rebuild_world(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    rail_map: Res<RailMap>,
+    settings: Res<crate::match_settings::MatchSettings>,
+) {
+    spawn_world(
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        &rail_map,
+        settings.arena,
+    );
+}
+
+fn spawn_world(
+    commands: &mut Commands,
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
+    rail_map: &RailMap,
+    arena: crate::match_settings::Arena,
+) {
+    for (index, (mesh, material, transform)) in
+        floor_and_walls(meshes, materials).into_iter().enumerate()
+    {
+        let mut entity = commands.spawn((Mesh3d(mesh), MeshMaterial3d(material), transform));
+        if index < 2 {
+            entity.insert((crate::arena::Ground(index == 0), NotShadowCaster));
+        }
+    }
+    spawn_tracks(commands, meshes, materials, rail_map);
+
+    setup_gameplay(commands, meshes, materials, rail_map, arena);
+    spawn_hud(commands);
 }
 
 /// Shared presentation geometry; the first two pieces are the inner/outer ground.
