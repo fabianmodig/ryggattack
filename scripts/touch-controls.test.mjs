@@ -217,7 +217,11 @@ enum GamepadButton { South }
 struct Stick {x:f32,y:f32} struct Pad; impl Pad {fn left_stick(&self)->Stick{Stick{x:0.,y:0.}} fn pressed(&self,_:GamepadButton)->bool{false}}
 #[derive(Default)] struct Client { send:bool, sent:Vec<ControlIntent> }
 impl Client {fn pump(&mut self,intent:ControlIntent)->bool {if self.send {self.sent.push(intent);} self.send}}
+// No desktop UI is installed in this touch-only fixture. Keep the native
+// adapter boundary type-checked without changing the extracted send logic.
+struct Desktop; impl Desktop {fn gameplay_intent(&mut self,intent:ControlIntent)->ControlIntent{intent}}
 fn online(fire:&mut bool,touch:&TouchInput,client:&mut Client) {
+ let mut desktop:Option<Desktop>=None;
  let active=true;let keys=Keys;let pads:Vec<Pad>=vec![]; ${onlineBlock}
 }
 fn main() {
