@@ -144,6 +144,15 @@ mode. Development browser origins default to exactly
 `RYGGATTACK_ALLOWED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080` on the
 server. Native clients without Origin remain allowed.
 
+## Desktop downloads
+
+Windows x64 ZIP and Linux x64 tar.gz packages are built by the independent
+Forgejo tag-release workflow. Extract the complete archive (including assets),
+check `SHA256SUMS`, and follow its `README.txt`; on Linux use `./launch.sh`.
+See [desktop releases](docs/desktop-releases.md) for dependencies, unsigned-build
+limitations, manual CI artifact builds, and draft-first publication/recovery.
+macOS is deferred; native Windows graphical testing is not implied.
+
 ## Run it
 
 On NixOS or any system with Nix and flakes enabled, run the game directly in

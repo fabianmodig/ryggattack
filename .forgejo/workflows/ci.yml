@@ -113,6 +113,9 @@ jobs:
       - run: node scripts/portable-container-build.test.mjs
       - run: python3 scripts/ci-cache.test.py
       - run: python3 scripts/backend-artifact.test.py
+      - run: python3 scripts/desktop-workflow.test.py
+      - run: python3 scripts/desktop-release.test.py
+      - run: python3 scripts/desktop-publish.test.py
       - run: helm lint charts/ryggattack --strict
       - run: python3 scripts/chart-test.py
       - run: python3 scripts/beta-chart.test.py

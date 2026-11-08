@@ -1,0 +1,119 @@
+name: Desktop release
+
+# Every tag, including slash-containing names. Branch/manual runs never publish.
+on:
+  push:
+    tags: ['**']
+  workflow_dispatch:
+
+# Do not cancel a publisher mid-upload. Existing-release checks also fail closed
+# on reruns; an interrupted draft requires operator inspection, not overwriting.
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Desktop ${{ matrix.platform }} x64
+    runs-on: ubuntu-latest
+    # Keep the runner's stock node:22-bookworm job image. Both lanes fit the
+    # existing capacity=2 / 10 GiB runner with one concurrent Cargo job per lane.
+    env:
+      CARGO_BUILD_JOBS: '1'
+      RUSTFLAGS: ''
+      DESKTOP_TAG: ${{ github.event_name == 'push' && github.ref_name || '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            target: x86_64-unknown-linux-gnu
+          - platform: windows
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Install build prerequisites before cache restore
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends build-essential pkg-config libudev-dev libwayland-dev clang lld llvm cmake ninja-build python3 python3-venv curl ca-certificates zstd
+          zstd --version
+      - uses: https://github.com/dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Cache desktop dependencies (main-only writer)
+        uses: https://github.com/Swatinem/rust-cache@v2.7.8
+        with:
+          prefix-key: v1-desktop-rust-zstd
+          shared-key: desktop-${{ matrix.platform }}
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-on-failure: true
+      - name: Install pinned prebuilt cargo-xwin
+        if: matrix.platform == 'windows'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/cargo-xwin-venv"
+          . "$RUNNER_TEMP/cargo-xwin-venv/bin/activate"
+          pip install --only-binary=:all: cargo-xwin==0.23.1
+          echo "$RUNNER_TEMP/cargo-xwin-venv/bin" >> "$GITHUB_PATH"
+      - name: Build Linux graphical client
+        if: matrix.platform == 'linux'
+        run: cargo build --locked --release --bin ryggattack --target x86_64-unknown-linux-gnu
+      - name: Cross-build Windows graphical client
+        if: matrix.platform == 'windows'
+        env:
+          # Keep host/Linux flags out of the cross-build. Static CRT avoids
+          # distributing a separate MSVC runtime; inspect actual imports in CI.
+          RUSTFLAGS: '-C target-feature=+crt-static'
+          CMAKE_GENERATOR: Ninja
+        run: |
+          cargo xwin build --locked --release --bin ryggattack --target x86_64-pc-windows-msvc
+          llvm-readobj --coff-imports target/x86_64-pc-windows-msvc/release/ryggattack.exe
+      - name: Package complete runtime and bind source
+        env:
+          DESKTOP_PLATFORM: ${{ matrix.platform }}
+          DESKTOP_TARGET: ${{ matrix.target }}
+        run: |
+          binary="target/$DESKTOP_TARGET/release/ryggattack"
+          if [ "$DESKTOP_PLATFORM" = windows ]; then binary="$binary.exe"; fi
+          python3 scripts/package-desktop.py --platform "$DESKTOP_PLATFORM" --binary "$binary" --source-sha "$(git rev-parse HEAD)" --tag="$DESKTOP_TAG" --output "dist/desktop/$DESKTOP_PLATFORM"
+      # Upload archives, not loose executables: v3 artifact transfer loses modes.
+      - uses: https://code.forgejo.org/actions/upload-artifact@v3
+        with:
+          name: desktop-${{ matrix.platform }}
+          path: dist/desktop/${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish complete desktop release
+    needs: [build]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    env:
+      # Automatic repository token only here, never a package/build credential.
+      FORGEJO_RELEASE_TOKEN: ${{ github.token }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install publisher runtime
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 ca-certificates
+      - uses: https://code.forgejo.org/actions/download-artifact@v3
+        with:
+          name: desktop-linux
+          path: dist/desktop/linux
+      - uses: https://code.forgejo.org/actions/download-artifact@v3
+        with:
+          name: desktop-windows
+          path: dist/desktop/windows
+      - name: Verify both archives, draft, upload, read back, publish
+        run: python3 scripts/publish-desktop.py --directory dist/desktop
