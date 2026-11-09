@@ -115,5 +115,5 @@ jobs:
         with:
           name: desktop-windows
           path: dist/desktop/windows
-      - name: Verify both archives, draft, upload, read back, publish
+      - name: Verify archives, upload draft, validate metadata, publish, verify bytes
         run: python3 scripts/publish-desktop.py --directory dist/desktop
