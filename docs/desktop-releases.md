@@ -91,25 +91,45 @@ receives `github.token` as `FORGEJO_RELEASE_TOKEN` for Forgejo release writes.
 
 ## Publication safety and recovery
 
-The small standard-library Python publisher uses Forgejo's release API. It
-checks that the remote tag resolves to the exact built full commit, refuses any
-existing release (including drafts), creates a **draft**, uploads both archives
-and the combined checksums, lists and downloads all assets to compare exact
-bytes, then rechecks the draft and tag before making it public. It reads back
-the public release/assets afterward. No existing asset/release is overwritten
-or automatically deleted. Unexpected redirects/cross-origin downloads fail
-closed to avoid forwarding the token to another origin.
+The small standard-library Python publisher uses Forgejo's release API:
 
-An upload, checksum, source-binding or readback failure leaves a draft rather
-than intentionally publishing an incomplete release. If interrupted or failed,
-inspect that draft and its exact tag/SHA before an operator deletes it and
-reruns. Reruns are deliberately **not** an update/clobber operation. Forgejo
-release publication is not an atomic transaction with a concurrent tag move;
-do not retarget/delete release tags while publishing. An error after the final
-publish write can leave a complete public release needing inspection rather
-than automatic rollback. Actual instance permissions, encoded slash-tag API
-routing, asset-download authorization and real compiler portability must be
-verified by a real CI/tag run; local fake-server success does not prove them.
+1. Before any API writes, validate both local archives, checksums and embedded
+   source/tag/platform metadata. Check that the remote tag resolves to the exact
+   built full commit and refuse any existing release, including drafts.
+2. Create a **draft**, upload both archives and the combined checksums, then
+   validate the API attachment list: exact names/count, sizes and same-origin
+   browser download URLs. Recheck the remote tag and draft release ID/tag/SHA.
+   There are **no browser downloads while draft**: on Forgejo 17.0.1 the automatic
+   workflow token can read draft API metadata and upload attachments, but draft
+   browser/attachment URLs return HTTP 404. No PAT or extra secret is required.
+3. Publish the complete draft, read back its identity/source/public state, then
+   download all three assets through their browser URLs and compare exact bytes
+   (including the combined SHA-256 checksums). Recheck the remote tag afterward.
+
+Partial uploads and prepublication validation failures stay draft. Any exception
+in the publication attempt or subsequent verification triggers recovery: read
+back the newly-created release at its exact ID, require matching ID/tag/source
+SHA, restore it to draft only if public, and read back to confirm draft state.
+A failed publish/rollback response may still have applied the write; readback
+resolves that uncertainty. A mismatched release is never mutated by recovery.
+The original exception is preserved; if draft state cannot be confirmed, its
+traceback explicitly includes `ROLLBACK FAILED` and requires operator inspection.
+No assets are deleted and no pre-existing release is overwritten or resumed.
+Unexpected redirects/cross-origin downloads are rejected rather than forwarding
+the token to another origin.
+
+**Publication and byte verification are not atomic.** Assets are temporarily
+public during postpublication verification, even if verification later fails.
+Rollback cannot revoke bytes already downloaded or cached, and cannot guarantee
+recovery after process termination, lost permissions, network failure or a
+concurrent release modification. An interrupted run can leave a public release;
+inspect its exact ID/tag/SHA and assets. Reruns deliberately refuse existing
+releases, including the user's existing drafts: recovery/resume is an operator
+operation, not an automatic update/clobber operation. Do not retarget/delete
+release tags while publishing; publication is not atomic with a concurrent tag
+move. Actual instance permissions, encoded slash-tag API routing, public asset
+downloads and real compiler portability still require a real CI/tag run; local
+fake-server success does not prove those deployment properties.
 
 ## No-build regression tests
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Fail-closed Forgejo draft publication after both desktop archives are verified.
+"""Metadata-gated Forgejo draft publication, then public byte verification.
 
-No existing releases/assets are modified. An interrupted run leaves a draft for
-operator inspection/removal; rerunning intentionally refuses to clobber it.
+Existing releases/assets are never overwritten. Failed uploads stay draft;
+failures during/after publication attempt an identity-bound return to draft.
 """
 import argparse
 import hashlib
@@ -141,7 +141,8 @@ def publish(server, repository, token, tag, sha, directory):
             raise ValueError("remote tag no longer points to built source")
 
     def bind_release(release, draft):
-        if (release.get("tag_name") != tag or release.get("target_commitish") != sha
+        if (type(release.get("id")) is not int or release.get("id") != identity
+                or release.get("tag_name") != tag or release.get("target_commitish") != sha
                 or release.get("draft") is not draft):
             raise ValueError("release source/tag/draft mismatch")
 
@@ -153,10 +154,10 @@ def publish(server, repository, token, tag, sha, directory):
                          "hide_archive_links": False,
                          "body": "Unsigned Windows/Linux x64 desktop builds. Source: " + sha
                          + "\nExtract the complete archive and read README.txt. See docs/desktop-releases.md for dependencies and limitations."})
-    bind_release(release, True)
     identity = release.get("id")
     if type(identity) is not int or identity <= 0:
         raise ValueError("invalid release ID")
+    bind_release(release, True)
     path = f"/releases/{identity}"
     bind_release(api.request("GET", path), True)
     if api.request("GET", path + "/assets") != []:
@@ -170,7 +171,7 @@ def publish(server, repository, token, tag, sha, directory):
         if uploaded.get("name") != name or uploaded.get("size") != len(data):
             raise ValueError("upload receipt mismatch")
 
-    def verify_assets():
+    def verify_assets(download=False):
         assets = api.request("GET", path + "/assets")
         if len(assets) != len(payloads) or {a.get("name") for a in assets} != set(payloads):
             raise ValueError("release assets incomplete or unexpected")
@@ -179,16 +180,42 @@ def publish(server, repository, token, tag, sha, directory):
             url = asset.get("browser_download_url", "")
             if not url.startswith(api.origin + "/") or asset.get("size") != len(data):
                 raise ValueError("invalid asset readback URL/size")
-            if api.request("GET", url, raw=True) != data:
+            if download and api.request("GET", url, raw=True) != data:
                 raise ValueError("uploaded asset bytes mismatch")
 
     verify_assets()
     bind_tag()
     bind_release(api.request("GET", path), True)
-    bind_release(api.request("PATCH", path, {"draft": False}), False)
-    bind_release(api.request("GET", path), False)
-    verify_assets()
-    bind_tag()
+    # Automatic workflow tokens can inspect draft metadata but cannot download
+    # draft attachments on Forgejo. Verify bytes only after making it public.
+    try:
+        bind_release(api.request("PATCH", path, {"draft": False}), False)
+        bind_release(api.request("GET", path), False)
+        verify_assets(download=True)
+        bind_tag()
+    except Exception as error:
+        try:
+            current = api.request("GET", path)
+            if not isinstance(current, dict) or type(current.get("draft")) is not bool:
+                raise ValueError("invalid rollback draft state")
+            draft = current["draft"]
+            bind_release(current, draft)  # Never mutate a different release/source.
+            rollback_write_error = None
+            if not draft:
+                try:
+                    api.request("PATCH", path, {"draft": True})
+                except Exception as write_error:
+                    # A failed response does not prove the write failed.
+                    rollback_write_error = write_error
+            try:
+                bind_release(api.request("GET", path), True)
+            except Exception:
+                if rollback_write_error is not None:
+                    raise rollback_write_error
+                raise
+        except Exception as rollback_error:
+            error.add_note(f"ROLLBACK FAILED: cannot confirm release {identity} is draft: {rollback_error}")
+        raise
     return identity
 
 
